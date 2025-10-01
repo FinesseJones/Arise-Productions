@@ -1,0 +1,36 @@
+{
+  "name": "unified-3d-production-studio",
+  "version": "1.0.0",
+  "description": "Unified 3D Production Studio - Modern React-based content creation platform",
+  "type": "module",
+  "packageManager": "npm",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm run --prefix frontend dev",
+    "build": "npm run --prefix frontend build",
+    "preview": "npm run --prefix frontend preview",
+    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend",
+    "clean": "rm -rf frontend/node_modules backend/node_modules frontend/dist",
+    "typecheck": "npm run --prefix frontend typecheck"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "^4.0.2",
+    "@stripe/stripe-js": "^7.9.0",
+    "stripe": "^18.5.0"
+  },
+  "keywords": [
+    "3d",
+    "production",
+    "studio",
+    "react",
+    "typescript",
+    "three.js",
+    "content-creation",
+    "unreal-engine-ready"
+  ],
+  "author": "Finesse Jones Content Foundry Studios",
+  "license": "MIT"
+}
