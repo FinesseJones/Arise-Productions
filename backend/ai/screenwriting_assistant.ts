@@ -232,7 +232,7 @@ async function generateWritingRoomDiscussion(req: WritingRoomSessionRequest) {
 }
 
 function generateNextSteps(sessionType: string, discussionPoints: any[]) {
-  const stepTemplates: Record<string, any> = {
+  const stepTemplates = {
     brainstorm: [
       { action: "Develop chosen concept into treatment", assigned_to: "Lead Writer", priority: "high" as const, estimated_time: "2-3 days" },
       { action: "Research similar films for reference", assigned_to: "Research Assistant", priority: "medium" as const, estimated_time: "1 day" },

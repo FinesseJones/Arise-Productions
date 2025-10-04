@@ -42,13 +42,15 @@ interface SaveProfileRequest {
   profile: any;
 }
 
+interface SaveProfileResponseData {
+  id: string;
+  created_at: string;
+  profile?: any;
+}
+
 interface SaveProfileResponse {
   success: boolean;
-  data: {
-    id: string;
-    created_at: string;
-    [key: string]: any;
-  };
+  data: SaveProfileResponseData;
 }
 
 interface ProfilesResponse {
@@ -136,8 +138,8 @@ export const saveCastingProfile = api(
       success: true,
       data: {
         id: Date.now().toString(),
-        ...req.profile,
         created_at: new Date().toISOString(),
+        profile: req.profile,
       },
     };
   }

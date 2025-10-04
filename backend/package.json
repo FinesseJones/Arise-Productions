@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.65.0",
-    "encore.dev": "^1.48.8"
+    "encore.dev": "^1.50.0"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

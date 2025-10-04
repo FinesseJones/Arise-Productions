@@ -85,7 +85,7 @@ export const generateFormPackage = api<GenerateFormPackageRequest, GenerateFormP
 );
 
 function createFormContent(req: GenerateFormRequest): string {
-  const formTemplates: Record<string, string> = {
+  const formTemplates = {
     talent_release: generateTalentRelease(),
     location_release: generateLocationRelease(),
     crew_deal_memo: generateCrewDealMemo(),
@@ -103,7 +103,7 @@ function createFormContent(req: GenerateFormRequest): string {
     festival_submission: generateFestivalSubmission(),
     distribution_agreement: generateDistributionAgreement()
   };
-
+  
   return formTemplates[req.form_type] || generateGenericForm(req.form_type);
 }
 
@@ -917,7 +917,7 @@ function generateFormMetadata(formType: string) {
 }
 
 function generateFormInstructions(formType: string): string {
-  const instructions: Record<string, string> = {
+  const instructions = {
     talent_release: "Complete all fields before filming. Ensure performer understands usage rights. Keep original with production files.",
     location_release: "Obtain signatures before filming begins. Verify property owner authority. Include insurance certificate.",
     crew_deal_memo: "Finalize terms before crew member starts work. Include all equipment and expense details.",
@@ -929,12 +929,12 @@ function generateFormInstructions(formType: string): string {
     budget_breakdown: "Update regularly throughout production. Track actual vs. estimated costs. Include all receipts.",
     shot_log: "Maintain accurate records for each take. Note technical settings. Critical for post-production workflow."
   };
-
+  
   return instructions[formType] || "Complete all required fields. Obtain necessary signatures. Keep copies for production records.";
 }
 
 function findRelatedForms(formType: string): string[] {
-  const relatedForms: Record<string, string[]> = {
+  const relatedForms = {
     talent_release: ["crew_deal_memo", "call_sheet", "production_report"],
     location_release: ["call_sheet", "safety_report", "equipment_checkout"],
     crew_deal_memo: ["talent_release", "equipment_checkout", "production_report"],
@@ -946,7 +946,7 @@ function findRelatedForms(formType: string): string[] {
     budget_breakdown: ["crew_deal_memo", "location_release", "equipment_checkout"],
     shot_log: ["production_report", "continuity_log", "vfx_notes"]
   };
-
+  
   return relatedForms[formType] || [];
 }
 

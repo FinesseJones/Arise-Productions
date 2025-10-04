@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Menu,
-  X,
-  Play,
-  Camera,
-  Film,
-  Users,
+import { 
+  Menu, 
+  X, 
+  Play, 
+  Camera, 
+  Film, 
+  Users, 
   CreditCard,
   FolderOpen,
-  Settings,
-  Palette,
-  Clapperboard
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ThemeSelector, useTheme } from '@/hooks/useTheme';
 
 interface NavItem {
   name: string;
@@ -49,24 +46,17 @@ const navItems: NavItem[] = [
     icon: <Settings className="w-5 h-5" />, 
     description: 'Client portal' 
   },
-  {
-    name: 'Assets',
-    href: '/assets',
-    icon: <FolderOpen className="w-5 h-5" />,
-    description: 'File management'
-  },
-  {
-    name: 'Casting',
-    href: '/casting',
-    icon: <Clapperboard className="w-5 h-5" />,
-    description: 'AI-powered casting'
+  { 
+    name: 'Assets', 
+    href: '/assets', 
+    icon: <FolderOpen className="w-5 h-5" />, 
+    description: 'File management' 
   },
 ];
 
 export const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { theme, classes } = useTheme();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -82,12 +72,12 @@ export const Navigation: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-gold-500 to-gold-600 rounded-xl flex items-center justify-center">
                 <Film className="w-6 h-6 text-black" />
               </div>
               <div className="hidden sm:block">
                 <span className="text-xl font-bold text-white">Finesse</span>
-                <span className="text-sm text-yellow-400 block -mt-1">Digital Studio</span>
+                <span className="text-sm text-gold-400 block -mt-1">Digital Studio</span>
               </div>
             </Link>
 
@@ -99,7 +89,7 @@ export const Navigation: React.FC = () => {
                   to={item.href}
                   className={`relative group px-3 py-2 rounded-lg transition-all duration-200 ${
                     location.pathname === item.href
-                      ? 'text-yellow-400 bg-yellow-500/10'
+                      ? 'text-gold-400 bg-gold-500/10'
                       : 'text-white/80 hover:text-white hover:bg-white/5'
                   }`}
                 >
@@ -110,7 +100,7 @@ export const Navigation: React.FC = () => {
                   {location.pathname === item.href && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute inset-0 bg-yellow-500/20 rounded-lg border border-yellow-500/30"
+                      className="absolute inset-0 bg-gold-500/20 rounded-lg border border-gold-500/30"
                       initial={false}
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
@@ -119,11 +109,10 @@ export const Navigation: React.FC = () => {
               ))}
             </div>
 
-            {/* CTA Button and Theme Selector */}
+            {/* CTA Button */}
             <div className="hidden md:flex items-center space-x-4">
-              <ThemeSelector className="mr-2" />
               <Button
-                className={classes.primaryButton}
+                className="bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-600 hover:to-gold-700 transition-all duration-200"
               >
                 Start Project
               </Button>
@@ -163,12 +152,12 @@ export const Navigation: React.FC = () => {
                 {/* Mobile Header */}
                 <div className="flex items-center justify-between p-6 border-b border-white/10">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-gold-500 to-gold-600 rounded-xl flex items-center justify-center">
                       <Film className="w-6 h-6 text-black" />
                     </div>
                     <div>
                       <span className="text-xl font-bold text-white">Finesse</span>
-                      <span className="text-sm text-yellow-400 block -mt-1">Digital Studio</span>
+                      <span className="text-sm text-gold-400 block -mt-1">Digital Studio</span>
                     </div>
                   </div>
                   <button
@@ -193,7 +182,7 @@ export const Navigation: React.FC = () => {
                         onClick={toggleMenu}
                         className={`block p-4 rounded-xl transition-all duration-200 ${
                           location.pathname === item.href
-                            ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30'
+                            ? 'bg-gold-500/10 text-gold-400 border border-gold-500/30'
                             : 'text-white/80 hover:text-white hover:bg-white/5'
                         }`}
                       >
@@ -212,7 +201,7 @@ export const Navigation: React.FC = () => {
                 {/* Mobile CTA */}
                 <div className="p-6 border-t border-white/10">
                   <Button
-                    className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-semibold hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200"
+                    className="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-600 hover:to-gold-700 transition-all duration-200"
                     onClick={toggleMenu}
                   >
                     Start Project

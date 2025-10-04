@@ -272,13 +272,13 @@ function identifyCriticalPath(calendar: any): string[] {
 }
 
 function generateBudgetBreakdown(tier: string, shootDays: number): Record<string, number> {
-  const baseBudgets: Record<string, number> = {
+  const baseBudgets = {
     micro: 10000,
     low: 50000,
     medium: 250000,
     high: 1000000
   };
-
+  
   const totalBudget = baseBudgets[tier] * (shootDays / 10);
   
   return {

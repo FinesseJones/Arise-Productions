@@ -1,223 +1,193 @@
-import React, { useRef, Suspense } from 'react';
+import React, { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, PerspectiveCamera, OrbitControls } from '@react-three/drei';
+import { Text, Float, Environment, PerspectiveCamera, useScroll } from '@react-three/drei';
+import { motion } from 'framer-motion';
 import * as THREE from 'three';
 
-// Import modular 3D components
-import { FilmEquipmentSet } from './elements/FilmEquipment';
-import { StudioLogo3D, StudioTagline } from './elements/StudioBranding';
-import { ParticleEffectsSet } from './elements/ParticleEffects';
-import type { Scene3DConfig } from '@/types/studio';
-
-interface Scene3DProps {
-  config?: Partial<Scene3DConfig>;
-  interactive?: boolean;
-  autoRotate?: boolean;
-  showControls?: boolean;
-  performance?: 'low' | 'medium' | 'high';
+interface FloatingElementProps {
+  position: [number, number, number];
+  children: React.ReactNode;
 }
 
-const DynamicCamera: React.FC<{ autoRotate: boolean; interactive: boolean }> = ({ 
-  autoRotate, 
-  interactive 
-}) => {
-  const cameraRef = useRef<THREE.PerspectiveCamera>(null);
+const FloatingElement: React.FC<FloatingElementProps> = ({ position, children }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
   
-  useFrame((state) => {
-    if (cameraRef.current && autoRotate && !interactive) {
-      const time = state.clock.elapsedTime;
-      cameraRef.current.position.x = Math.sin(time * 0.1) * 12;
-      cameraRef.current.position.y = Math.cos(time * 0.15) * 8;
-      cameraRef.current.position.z = 15 + Math.sin(time * 0.05) * 5;
-      cameraRef.current.lookAt(0, 0, 0);
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta * 0.2;
+      meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 2) * 0.01;
     }
   });
 
   return (
-    <PerspectiveCamera 
-      ref={cameraRef} 
-      makeDefault 
-      position={[0, 0, 15]} 
-      fov={60}
-      near={0.1}
-      far={1000}
-    />
+    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+      <mesh ref={meshRef} position={position}>
+        {children}
+      </mesh>
+    </Float>
   );
 };
 
-const SceneLighting: React.FC<{ config?: Scene3DConfig }> = ({ config }) => {
+const Camera3D: React.FC = () => {
+  const cameraRef = useRef<THREE.PerspectiveCamera>(null);
+  
+  useFrame((state) => {
+    if (cameraRef.current) {
+      cameraRef.current.position.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.5;
+      cameraRef.current.position.y = Math.cos(state.clock.elapsedTime * 0.15) * 0.2;
+      cameraRef.current.lookAt(0, 0, 0);
+    }
+  });
+
+  return <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 10]} fov={60} />;
+};
+
+const FilmElements: React.FC = () => {
   return (
     <>
-      {/* Ambient Light */}
-      <ambientLight 
-        intensity={config?.lighting?.ambientIntensity || 0.4} 
-        color="#ffffff"
-      />
-      
-      {/* Key Light */}
-      <directionalLight 
-        position={[10, 10, 5]} 
-        intensity={1.2}
-        color="#ffffff"
-        castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-        shadow-camera-far={50}
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
-        shadow-camera-top={10}
-        shadow-camera-bottom={-10}
-      />
-      
-      {/* Fill Light */}
-      <directionalLight 
-        position={[-5, 5, 5]} 
-        intensity={0.6}
-        color="#b8d4ff"
-      />
-      
-      {/* Rim Light */}
-      <pointLight 
-        position={[0, 0, -10]} 
-        intensity={0.8} 
-        color="#d4af37"
-        distance={30}
-      />
-      
-      {/* Accent Lights */}
-      <pointLight 
-        position={[-8, 4, 2]} 
-        intensity={0.4} 
-        color="#ff6b35"
-        distance={15}
-      />
-      <pointLight 
-        position={[8, -2, 4]} 
-        intensity={0.3} 
-        color="#4ecdc4"
-        distance={12}
-      />
-    </>
-  );
-};
+      {/* Film Camera */}
+      <FloatingElement position={[-4, 2, 0]}>
+        <boxGeometry args={[1, 0.8, 1.2]} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
+      </FloatingElement>
 
-const SceneContent: React.FC<{ 
-  config?: Scene3DConfig;
-  performance: 'low' | 'medium' | 'high';
-}> = ({ config, performance }) => {
-  const particleCount = performance === 'high' ? 200 : performance === 'medium' ? 100 : 50;
-  
-  return (
-    <>
-      {/* Main Studio Elements */}
-      <group>
-        <FilmEquipmentSet />
-        <StudioLogo3D scale={0.8} />
-        <StudioTagline />
-      </group>
-      
-      {/* Particle Effects */}
-      {performance !== 'low' && <ParticleEffectsSet />}
-      
-      {/* Background Elements */}
-      <mesh position={[0, 0, -15]} receiveShadow>
-        <planeGeometry args={[100, 100]} />
+      {/* Lens */}
+      <FloatingElement position={[-3.8, 2, 0.7]}>
+        <cylinderGeometry args={[0.3, 0.4, 0.5, 8]} />
+        <meshStandardMaterial color="#333" metalness={0.9} roughness={0.1} />
+      </FloatingElement>
+
+      {/* Film Reel */}
+      <FloatingElement position={[4, 1, 0]}>
+        <cylinderGeometry args={[0.8, 0.8, 0.1, 16]} />
+        <meshStandardMaterial color="#d4af37" metalness={0.7} roughness={0.3} />
+      </FloatingElement>
+
+      {/* Director's Clapperboard */}
+      <FloatingElement position={[0, -2, 2]}>
+        <boxGeometry args={[1.5, 1, 0.1]} />
+        <meshStandardMaterial color="#000" />
+      </FloatingElement>
+
+      {/* Floating Screens */}
+      <FloatingElement position={[2, 3, -1]}>
+        <planeGeometry args={[2, 1.2]} />
         <meshStandardMaterial 
-          color={config?.backgroundColor || "#0a0a0a"} 
-          transparent 
-          opacity={0.6}
+          color="#fff" 
+          emissive="#0080ff" 
+          emissiveIntensity={0.2}
+          transparent
+          opacity={0.8}
         />
-      </mesh>
-      
-      {/* Ground Plane */}
-      <mesh position={[0, -8, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[50, 50]} />
-        <meshStandardMaterial 
-          color="#111" 
-          transparent 
-          opacity={0.3}
-        />
-      </mesh>
-    </>
-  );
-};
+      </FloatingElement>
 
-const LoadingFallback: React.FC = () => {
-  return (
-    <div className="w-full h-full flex items-center justify-center bg-slate-900">
-      <div className="text-center">
-        <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-yellow-400 text-lg font-semibold">Loading Studio...</p>
-      </div>
-    </div>
-  );
-};
+      {/* Studio Light */}
+      <FloatingElement position={[-2, 4, 1]}>
+        <coneGeometry args={[0.5, 1.5, 8]} />
+        <meshStandardMaterial color="#333" />
+      </FloatingElement>
 
-export const Scene3D: React.FC<Scene3DProps> = ({ 
-  config,
-  interactive = false,
-  autoRotate = true,
-  showControls = false,
-  performance = 'medium'
-}) => {
-  const dpr = performance === 'high' ? [1, 2] : performance === 'medium' ? [1, 1.5] : [0.5, 1];
-  
-  return (
-    <div className="w-full h-screen relative bg-gradient-to-br from-slate-900 via-slate-800 to-black">
-      <Suspense fallback={<LoadingFallback />}>
-        <Canvas
-          dpr={dpr as [number, number]}
-          shadows={performance !== 'low'}
-          gl={{ 
-            antialias: performance === 'high',
-            alpha: true,
-            powerPreference: 'high-performance'
-          }}
+      {/* Floating Text - Studio Name */}
+      <Float speed={0.8} rotationIntensity={0.2} floatIntensity={0.3}>
+        <Text
+          position={[0, 0, 0]}
+          fontSize={0.8}
+          color="#d4af37"
+          anchorX="center"
+          anchorY="middle"
         >
-          <DynamicCamera autoRotate={autoRotate} interactive={interactive} />
-          
-          {/* Controls */}
-          {(showControls || interactive) && (
-            <OrbitControls
-              enablePan={interactive}
-              enableZoom={interactive}
-              enableRotate={interactive}
-              autoRotate={!interactive && autoRotate}
-              autoRotateSpeed={0.5}
-              minDistance={5}
-              maxDistance={50}
-            />
-          )}
-          
-          {/* Lighting */}
-          <SceneLighting config={config} />
-          
-          {/* Environment */}
-          <Environment 
-            preset={config?.environment?.preset || "studio"}
-            background={false}
-            blur={config?.environment?.backgroundBlur || 0.6}
+          FINESSE
+        </Text>
+      </Float>
+
+      <Float speed={0.6} rotationIntensity={0.1} floatIntensity={0.2}>
+        <Text
+          position={[0, -1, 0]}
+          fontSize={0.5}
+          color="#fff"
+          anchorX="center"
+          anchorY="middle"
+        >
+          DIGITAL STUDIO
+        </Text>
+      </Float>
+    </>
+  );
+};
+
+const ParticleField: React.FC = () => {
+  const pointsRef = useRef<THREE.Points>(null);
+  
+  const particleCount = 100;
+  const positions = new Float32Array(particleCount * 3);
+  
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+  }
+
+  useFrame((state) => {
+    if (pointsRef.current) {
+      pointsRef.current.rotation.y += 0.001;
+      pointsRef.current.rotation.x += 0.0005;
+    }
+  });
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={particleCount}
+          array={positions}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.02}
+        color="#d4af37"
+        transparent
+        opacity={0.6}
+      />
+    </points>
+  );
+};
+
+export const Scene3D: React.FC = () => {
+  return (
+    <div className="w-full h-screen relative">
+      <Canvas dpr={[1, 2]} shadows>
+        <Camera3D />
+        
+        {/* Lighting */}
+        <ambientLight intensity={0.3} />
+        <directionalLight 
+          position={[10, 10, 5]} 
+          intensity={1}
+          castShadow
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+        />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#d4af37" />
+        
+        {/* Environment */}
+        <Environment preset="studio" />
+        
+        {/* 3D Elements */}
+        <FilmElements />
+        <ParticleField />
+        
+        {/* Background */}
+        <mesh position={[0, 0, -10]} receiveShadow>
+          <planeGeometry args={[50, 50]} />
+          <meshStandardMaterial 
+            color="#0a0a0a" 
+            transparent 
+            opacity={0.8}
           />
-          
-          {/* Scene Content */}
-          <SceneContent config={config} performance={performance} />
-          
-          {/* Fog */}
-          <fog attach="fog" args={['#000', 20, 50]} />
-        </Canvas>
-      </Suspense>
-      
-      {/* Scene Controls Overlay */}
-      {showControls && (
-        <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white text-sm">
-          <p className="mb-2 font-semibold">Scene Controls</p>
-          <ul className="space-y-1 text-xs">
-            <li>• Mouse: Rotate view</li>
-            <li>• Scroll: Zoom in/out</li>
-            <li>• Drag: Pan camera</li>
-          </ul>
-        </div>
-      )}
+        </mesh>
+      </Canvas>
     </div>
   );
 };

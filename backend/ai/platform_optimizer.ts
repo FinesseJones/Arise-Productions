@@ -110,7 +110,7 @@ export const exportPlatformPackage = api<ExportPlatformPackageRequest, ExportPla
 );
 
 function generateOptimizationSettings(platform: string) {
-  const platformSpecs: Record<string, any> = {
+  const platformSpecs = {
     netflix: {
       video_specs: {
         resolution: "4K (3840x2160)",
@@ -175,12 +175,12 @@ function generateOptimizationSettings(platform: string) {
       }
     }
   };
-
+  
   return platformSpecs[platform] || platformSpecs.youtube;
 }
 
 function generateContentGuidelines(platform: string, contentType: string) {
-  const guidelines: Record<string, any> = {
+  const guidelines = {
     netflix: {
       duration_limits: "No strict limits for features, 20-60 min for series episodes",
       content_restrictions: ["Age rating required", "Content warnings", "Regional compliance"],
@@ -200,12 +200,12 @@ function generateContentGuidelines(platform: string, contentType: string) {
       accessibility_features: ["Open captions", "Audio descriptions", "Assistive listening"]
     }
   };
-
+  
   return guidelines[platform] || guidelines.youtube;
 }
 
 function generateDeliveryPackage(platform: string) {
-  const packages: Record<string, any> = {
+  const packages = {
     netflix: {
       required_files: [
         "Master_4K_ProRes.mov",
@@ -248,7 +248,7 @@ function generateDeliveryPackage(platform: string) {
       ]
     }
   };
-
+  
   return packages[platform] || packages.youtube;
 }
 

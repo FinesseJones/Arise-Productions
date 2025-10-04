@@ -182,7 +182,7 @@ function createStoryboardFrames(req: GenerateStoryboardRequest) {
 }
 
 function generateVisualStyleGuide(style: string) {
-  const styleGuides: Record<string, any> = {
+  const styleGuides = {
     realistic: {
       color_palette: ["#2C3E50", "#34495E", "#7F8C8D", "#BDC3C7", "#ECF0F1"],
       lighting_notes: "Natural lighting with practical sources, minimal artificial enhancement",
@@ -199,7 +199,7 @@ function generateVisualStyleGuide(style: string) {
       composition_rules: ["Widescreen framing", "Depth layering", "Leading lines"]
     }
   };
-
+  
   return styleGuides[style] || styleGuides.cinematic;
 }
 
@@ -230,14 +230,14 @@ function createShotSimulation(req: SimulateCameraShotRequest) {
 }
 
 function getEquipmentForCameraType(type: string): string[] {
-  const equipmentMap: Record<string, string[]> = {
+  const equipmentMap = {
     handheld: ["Camera body", "Handheld rig", "Follow focus", "Monitor"],
     steadicam: ["Camera body", "Steadicam system", "Vest", "Monitor"],
     dolly: ["Camera body", "Dolly track", "Dolly", "Tripod head"],
     crane: ["Camera body", "Crane/jib", "Remote head", "Wireless monitor"],
     drone: ["Drone", "Gimbal", "FPV goggles", "Landing pad"]
   };
-
+  
   return equipmentMap[type] || equipmentMap.handheld;
 }
 

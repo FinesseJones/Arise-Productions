@@ -202,7 +202,7 @@ function analyzeRoughCut(req: GenerateEditNotesRequest) {
 }
 
 function generateColorNotes(genre: string) {
-  const genreColorGuides: Record<string, any> = {
+  const genreColorGuides = {
     drama: [
       {
         scene: "Interior scenes",
@@ -228,7 +228,7 @@ function generateColorNotes(genre: string) {
       }
     ]
   };
-
+  
   return genreColorGuides[genre] || genreColorGuides.drama;
 }
 
@@ -376,18 +376,18 @@ function createVersionControl(req: GenerateVersionTrackingRequest) {
 }
 
 function generateVersionNumber(type: string): string {
-  const versionMap: Record<string, string> = {
+  const versionMap = {
     rough_cut: "RC_001",
-    fine_cut: "FC_001",
+    fine_cut: "FC_001", 
     picture_lock: "PL_001",
     final: "FINAL_001"
   };
-
+  
   return versionMap[type] || "V_001";
 }
 
 function generateDeliverySpecs(versionType: string) {
-  const specs: Record<string, any> = {
+  const specs = {
     rough_cut: {
       formats_needed: ["H.264 MP4", "ProRes 422"],
       resolution_requirements: ["1080p", "720p for review"],
@@ -407,6 +407,6 @@ function generateDeliverySpecs(versionType: string) {
       subtitle_requirements: ["All required languages", "SDH"]
     }
   };
-
+  
   return specs[versionType] || specs.final;
 }

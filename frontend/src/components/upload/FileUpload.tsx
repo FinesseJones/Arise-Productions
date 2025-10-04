@@ -191,7 +191,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       <Card 
         className={`border-2 border-dashed transition-all duration-300 cursor-pointer ${
           isDragOver 
-            ? 'border-yellow-500 bg-yellow-500/10' 
+            ? 'border-gold-500 bg-gold-500/10' 
             : 'border-white/30 bg-white/5 hover:border-white/50 hover:bg-white/10'
         }`}
         onClick={openFileDialog}
@@ -204,7 +204,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             animate={{ scale: isDragOver ? 1.1 : 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
-            <Upload className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+            <Upload className="w-16 h-16 text-gold-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">
               {isDragOver ? 'Drop files here' : 'Upload your files'}
             </h3>

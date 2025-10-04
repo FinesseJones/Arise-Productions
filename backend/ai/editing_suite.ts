@@ -215,7 +215,7 @@ export const exportEdit = api<ExportEditRequest, ExportEditResponse>(
 );
 
 function getEditingTools(sessionType: string): string[] {
-  const toolSets: Record<string, string[]> = {
+  const toolSets = {
     rough_cut: [
       'Timeline Editor',
       'Clip Trimmer',
@@ -257,12 +257,12 @@ function getEditingTools(sessionType: string): string[] {
       'Surround Panner'
     ]
   };
-
+  
   return toolSets[sessionType] || toolSets.rough_cut;
 }
 
 function generateAISuggestions(sessionType: string, footageFiles: string[]): string[] {
-  const suggestions: Record<string, string[]> = {
+  const suggestions = {
     rough_cut: [
       'AI detected 15 potential cut points based on action',
       'Suggested opening with wide establishing shot',
@@ -282,12 +282,12 @@ function generateAISuggestions(sessionType: string, footageFiles: string[]): str
       'AI upscaling recommended for archive footage'
     ]
   };
-
+  
   return suggestions[sessionType] || suggestions.rough_cut;
 }
 
 function getDefaultColorSettings(gradeType: string): Record<string, number> {
-  const settings: Record<string, Record<string, number>> = {
+  const settings = {
     cinematic: {
       exposure: 0.2,
       contrast: 1.3,
@@ -316,6 +316,6 @@ function getDefaultColorSettings(gradeType: string): Record<string, number> {
       saturation: 1.2
     }
   };
-
+  
   return settings[gradeType] || settings.natural;
 }

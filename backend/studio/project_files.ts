@@ -72,7 +72,7 @@ export const getProjectFiles = api<GetProjectFilesRequest, GetProjectFilesRespon
     
     query += ` ORDER BY created_at DESC`;
     
-    const files = await studioDB.queryAll<any>(query as any);
+    const files = await studioDB.queryAll<any>(query);
     
     return {
       files: files.map(file => ({

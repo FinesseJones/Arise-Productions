@@ -225,12 +225,12 @@ function generateProductionNotes(req: GeneratePressKitRequest): string {
 }
 
 function generateFestivalStrategy(genre: string): string[] {
-  const strategies: Record<string, string[]> = {
+  const strategies = {
     drama: ["Sundance Film Festival", "Toronto International Film Festival", "Cannes Film Festival"],
     thriller: ["Fantastic Fest", "Sitges Film Festival", "Midnight Madness at TIFF"],
     scifi: ["SXSW", "Fantasia International Film Festival", "Comic-Con Film Festival"]
   };
-
+  
   return strategies[genre] || strategies.drama;
 }
 
@@ -239,12 +239,12 @@ function identifyTargetAudience(genre: string, synopsis: string): string {
 }
 
 function findComparableFilms(genre: string): string[] {
-  const comparables: Record<string, string[]> = {
+  const comparables = {
     drama: ["Manchester by the Sea", "Moonlight", "Lady Bird"],
     thriller: ["Gone Girl", "Zodiac", "Prisoners"],
     scifi: ["Ex Machina", "Arrival", "Her"]
   };
-
+  
   return comparables[genre] || comparables.drama;
 }
 
@@ -307,7 +307,7 @@ function createScreenerPackage(req: GenerateScreenerRequest) {
 }
 
 function generateDistributionList(recipientType: string) {
-  const lists: Record<string, Array<{ recipient_category: string; delivery_method: string; timeline: string }>> = {
+  const lists = {
     festival: [
       { recipient_category: "Festival Programmers", delivery_method: "Secure link", timeline: "2 weeks before deadline" },
       { recipient_category: "Selection Committees", delivery_method: "Password protected", timeline: "1 week before deadline" }
@@ -321,7 +321,7 @@ function generateDistributionList(recipientType: string) {
       { recipient_category: "Entertainment Journalists", delivery_method: "Press screening", timeline: "1 week before release" }
     ]
   };
-
+  
   return lists[recipientType] || lists.festival;
 }
 
@@ -416,14 +416,7 @@ function generateDistributionWindows(platforms: string[]) {
 }
 
 function generatePlatformRequirements(platforms: string[]) {
-  type RequirementType = {
-    platform: string;
-    technical_specs: Record<string, string>;
-    content_requirements: string[];
-    submission_process: string[];
-  };
-
-  const requirements: Record<string, RequirementType> = {
+  const requirements = {
     streaming: {
       platform: "Netflix/Hulu/HBO Max",
       technical_specs: {
@@ -467,8 +460,8 @@ function generatePlatformRequirements(platforms: string[]) {
       ]
     }
   };
-
-  return platforms.map(platform =>
+  
+  return platforms.map(platform => 
     requirements[platform] || requirements.streaming
   );
 }
