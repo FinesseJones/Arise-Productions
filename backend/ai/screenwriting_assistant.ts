@@ -1,9 +1,9 @@
 import { api } from "encore.dev/api";
 import { secret } from "encore.dev/config";
 
-const openAIKey = secret("OpenAIKey");
-const anthropicKey = secret("AnthropicKey");
-const geminiKey = secret("GeminiKey");
+const openAIKey = secret("openai");
+const anthropicKey = secret("anthropic");
+const geminiKey = secret("gemini");
 
 export interface GenerateScriptRequest {
   project_id: number;
