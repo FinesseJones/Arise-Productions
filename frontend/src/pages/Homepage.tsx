@@ -1,12 +1,13 @@
 import React, { Suspense } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Scene3D } from '@/components/3d/Scene3D';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Play, 
-  Award, 
-  Users, 
+import {
+  Play,
+  Award,
+  Users,
   Zap,
   ArrowDown,
   Star,
@@ -14,6 +15,8 @@ import {
 } from 'lucide-react';
 
 const Hero3D: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* 3D Background */}
@@ -36,7 +39,7 @@ const Hero3D: React.FC = () => {
           className="space-y-8"
         >
           <div className="space-y-4">
-            <motion.h1 
+            <motion.h1
               className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-white via-gold-200 to-gold-400 bg-clip-text text-transparent"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -44,7 +47,7 @@ const Hero3D: React.FC = () => {
             >
               FINESSE
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="text-xl md:text-2xl text-white/80 font-light tracking-wide"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -54,33 +57,35 @@ const Hero3D: React.FC = () => {
             </motion.p>
           </div>
 
-          <motion.p 
+          <motion.p
             className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.2 }}
           >
-            Crafting premium video experiences that captivate audiences and elevate brands 
+            Crafting premium video experiences that captivate audiences and elevate brands
             through cutting-edge technology and artistic vision.
           </motion.p>
 
-          <motion.div 
+          <motion.div
             className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.4 }}
           >
-            <Button 
+            <Button
               size="lg"
               className="bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-600 hover:to-gold-700 px-8 py-4 text-lg shadow-2xl"
+              onClick={() => navigate('/dashboard')}
             >
               <Play className="w-5 h-5 mr-2" />
               Start Your Project
             </Button>
-            <Button 
+            <Button
               variant="outline"
               size="lg"
               className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg"
+              onClick={() => navigate('/portfolio')}
             >
               View Portfolio
             </Button>
@@ -88,7 +93,7 @@ const Hero3D: React.FC = () => {
         </motion.div>
 
         {/* Scroll Indicator */}
-        <motion.div 
+        <motion.div
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -99,7 +104,7 @@ const Hero3D: React.FC = () => {
             transition={{ duration: 2, repeat: Infinity }}
             className="text-white/50 cursor-pointer hover:text-white/80 transition-colors"
           >
-            <ArrowDown className="w-6 h-6" />
+            <ArrowDown className="w-6 h-5" />
           </motion.div>
         </motion.div>
       </div>

@@ -1279,4 +1279,11 @@ export enum ErrCode {
     Unauthenticated = "unauthenticated",
 }
 
-export default new Client(import.meta.env.VITE_CLIENT_TARGET, { requestInit: { credentials: "include" } });
+// Get the API base URL from environment or use production default
+const getAPIURL = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (import.meta.env.PROD) return 'https://staging-unified3dproduction-dazi.encr.app';
+  return 'http://localhost:4000';
+};
+
+export default new Client(getAPIURL(), { requestInit: { credentials: "include" } });
