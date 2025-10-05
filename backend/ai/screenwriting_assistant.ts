@@ -110,7 +110,7 @@ export const generateScript = api<GenerateScriptRequest, GenerateScriptResponse>
     `;
 
     // Use selected AI provider
-    const response = await callAIProvider(req.ai_provider || 'openai', systemPrompt, userPrompt);
+    const aiResponse = await callAIProvider(req.ai_provider || 'openai', systemPrompt, userPrompt);
 
     const mockScript = generateMockScript(req);
 
@@ -121,7 +121,7 @@ export const generateScript = api<GenerateScriptRequest, GenerateScriptResponse>
       id: req.project_id
     });
 
-    const response = addCopyrightToJSON({
+    const scriptResponse = addCopyrightToJSON({
       ...mockScript,
       script: copyrightedScript
     }, {
@@ -130,7 +130,7 @@ export const generateScript = api<GenerateScriptRequest, GenerateScriptResponse>
       id: req.project_id
     });
 
-    return withLegalMetadata(response).data;
+    return withLegalMetadata(scriptResponse).data;
   }
 );
 
