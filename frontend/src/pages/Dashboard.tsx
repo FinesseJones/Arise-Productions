@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { 
-  Plus, 
-  Film, 
-  Sparkles, 
-  Zap, 
-  Globe, 
-  ArrowRight, 
+import {
+  Plus,
+  Film,
+  Sparkles,
+  Zap,
+  Globe,
+  ArrowRight,
   Brain,
   Camera,
   Users,
@@ -25,7 +25,8 @@ import {
   Eye,
   Wand2,
   Scissors,
-  Mic
+  Mic,
+  CreditCard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -341,24 +342,26 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {aiAgents.map((agent, index) => (
-            <Card key={agent.name} className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group">
-              <CardHeader>
-                <div className="flex flex-col items-center text-center gap-4">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${agent.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg animate-pulse`}>
-                    <agent.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-white group-hover:text-gold-400 transition-colors text-lg text-center">
-                      {agent.name}
-                    </CardTitle>
-                    <div className="flex items-center justify-center gap-1 mt-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                      <span className="text-xs text-green-400">Online</span>
+            <Link key={agent.name} to="/ai-team" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group cursor-pointer">
+                <CardHeader>
+                  <div className="flex flex-col items-center text-center gap-4">
+                    <div className={`w-16 h-16 bg-gradient-to-r ${agent.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg animate-pulse`}>
+                      <agent.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-white group-hover:text-gold-400 transition-colors text-lg text-center">
+                        {agent.name}
+                      </CardTitle>
+                      <div className="flex items-center justify-center gap-1 mt-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                        <span className="text-xs text-green-400 font-semibold">Click to Chat</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
-            </Card>
+                </CardHeader>
+              </Card>
+            </Link>
           ))}
         </div>
 
@@ -397,6 +400,96 @@ export default function Dashboard() {
               </CardDescription>
             </CardHeader>
           </Card>
+        </div>
+
+        {/* Production Modules */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-gold-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">Production Modules</h2>
+            <p className="text-gray-400">Access specialized tools for every stage of production</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <Link to="/casting" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <Users className="w-8 h-8 mx-auto mb-2 text-purple-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Casting</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/production-budget" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <CreditCard className="w-8 h-8 mx-auto mb-2 text-blue-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Budget</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/scheduling" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <Calendar className="w-8 h-8 mx-auto mb-2 text-green-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Scheduling</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/sound-design" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <Mic className="w-8 h-8 mx-auto mb-2 text-orange-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Sound</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/visual-effects" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <Wand2 className="w-8 h-8 mx-auto mb-2 text-pink-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">VFX</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/color-grading" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <Palette className="w-8 h-8 mx-auto mb-2 text-cyan-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Color</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/marketing" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <TrendingUp className="w-8 h-8 mx-auto mb-2 text-yellow-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Marketing</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/analytics" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <TrendingUp className="w-8 h-8 mx-auto mb-2 text-indigo-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Analytics</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/asset-management" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <Layers className="w-8 h-8 mx-auto mb-2 text-teal-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Assets</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/settings" className="block">
+              <Card className="bg-gradient-to-br from-navy-800/30 via-purple-800/20 to-gold-800/10 border-gold-500/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-navy-800/50 hover:via-purple-800/30 hover:to-gold-800/20 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
+                <CardContent className="p-4 text-center">
+                  <Settings className="w-8 h-8 mx-auto mb-2 text-gray-400 group-hover:text-gold-400 transition-colors" />
+                  <p className="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">Settings</p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
         </div>
 
         {/* Projects Section */}
