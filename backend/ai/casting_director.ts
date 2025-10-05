@@ -1,4 +1,5 @@
 import { api } from "encore.dev/api";
+import { addCopyrightNotice, addCopyrightToJSON } from "../lib/copyright";
 
 export interface GenerateCastingProfileRequest {
   project_id: number;
@@ -21,6 +22,7 @@ export interface GenerateCastingProfileResponse {
   };
   casting_sheet: string;
   audition_instructions: string;
+  _copyright?: any;
 }
 
 export interface GenerateAuditionSidesRequest {
@@ -68,12 +70,26 @@ export const generateCastingProfile = api<GenerateCastingProfileRequest, Generat
     const profile = createCastingProfile(req);
     const castingSheet = generateCastingSheet(profile);
     const auditionInstructions = createAuditionInstructions(profile);
-    
-    return {
+
+    const response = {
       casting_profile: profile,
-      casting_sheet: castingSheet,
-      audition_instructions: auditionInstructions
+      casting_sheet: addCopyrightNotice(castingSheet, {
+        author: 'Finesse Jones Production Studio',
+        createdAt: new Date(),
+        id: req.project_id
+      }),
+      audition_instructions: addCopyrightNotice(auditionInstructions, {
+        author: 'Finesse Jones Production Studio',
+        createdAt: new Date(),
+        id: req.project_id
+      })
     };
+
+    return addCopyrightToJSON(response, {
+      author: 'Finesse Jones Production Studio',
+      createdAt: new Date(),
+      id: req.project_id
+    });
   }
 );
 

@@ -1,5 +1,6 @@
 import { api } from "encore.dev/api";
 import { secret } from "encore.dev/config";
+import { addCopyrightNotice, addCopyrightToJSON } from "../lib/copyright";
 
 const openAIKey = secret("OPENAI");
 const anthropicKey = secret("PRODUCTION");
@@ -18,6 +19,7 @@ export interface GenerateScriptResponse {
   title_suggestions: string[];
   logline: string;
   treatment: string;
+  _copyright?: any;
 }
 
 export interface ConvertNovelRequest {
@@ -108,8 +110,24 @@ export const generateScript = api<GenerateScriptRequest, GenerateScriptResponse>
 
     // Use selected AI provider
     const response = await callAIProvider(req.ai_provider || 'openai', systemPrompt, userPrompt);
-    
-    return generateMockScript(req);
+
+    const mockScript = generateMockScript(req);
+
+    // Add copyright to script content
+    const copyrightedScript = addCopyrightNotice(mockScript.script, {
+      author: 'Finesse Jones Production Studio',
+      createdAt: new Date(),
+      id: req.project_id
+    });
+
+    return addCopyrightToJSON({
+      ...mockScript,
+      script: copyrightedScript
+    }, {
+      author: 'Finesse Jones Production Studio',
+      createdAt: new Date(),
+      id: req.project_id
+    });
   }
 );
 

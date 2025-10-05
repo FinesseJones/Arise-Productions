@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { Navigation } from '@/components/layout/Navigation';
+import { CopyrightFooter } from '@/components/ui/CopyrightNotice';
 import Homepage from './pages/Homepage';
 import Portfolio from './pages/Portfolio';
 import Services from './pages/Services';
@@ -52,9 +53,14 @@ function AppInner() {
         {/* Copyright Footer */}
         <footer className="bg-navy-900/50 border-t border-gold-500/20 backdrop-blur-sm mt-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <p className="text-gold-400 font-medium">
                 © Finesse Jones | Vision-Driven | Creator-Led | Built To Empower Bold
+              </p>
+              <CopyrightFooter className="text-xs" />
+              <p className="text-xs text-muted-foreground">
+                All content created using Finesse Jones Production Studio.
+                Unauthorized reproduction or distribution prohibited.
               </p>
             </div>
           </div>
