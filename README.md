@@ -32,39 +32,43 @@ A comprehensive digital production studio powered by AI and Unreal Engine 5, des
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- Encore CLI (for backend)
+### 📖 **[Complete Installation Guide →](./INSTALLATION.md)**
 
-### Installation
+**Step-by-step instructions for:**
+- ✅ Mac Installation
+- ✅ Windows Installation
+- ✅ Linux Installation
+- ✅ Unreal Engine 5 Integration
+- ✅ Troubleshooting Guide
+
+### 🌐 Live Demo
+
+**Frontend:** https://frontend-a0s11lix5-finesse-jones-projects-287f926d.vercel.app
+**Backend API:** https://staging-unified3dproduction-dazi.encr.app
+
+### Quick Local Setup (TL;DR)
 
 ```bash
-# Clone the repository
-git clone https://github.com/FinesseJones/Unified-3D-Production-Studio.git
+# 1. Install prerequisites
+# - Node.js 18+
+# - Encore CLI: https://encore.dev/docs/install
+
+# 2. Clone repository
+git clone https://github.com/PARPUBLISHING/Unified-3D-Production-Studio.git
 cd Unified-3D-Production-Studio
 
-# Install dependencies
-npm install
+# 3. Install dependencies
+cd backend && npm install && cd ..
+cd frontend && npm install && cd ..
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env and add your API keys
+# 4. Set up environment (see INSTALLATION.md for details)
+
+# 5. Run (in two separate terminals)
+cd backend && encore run        # Terminal 1
+cd frontend && npm run dev      # Terminal 2
 ```
 
-### Development
-
-```bash
-# Start backend (Terminal 1)
-cd backend
-encore run
-
-# Start frontend (Terminal 2)
-cd frontend
-npm run dev
-```
-
-Visit: http://localhost:5001
+**Visit:** http://localhost:5000
 
 ## 📁 Project Structure
 
@@ -159,10 +163,12 @@ UNREAL_WEBSOCKET_URL=ws://localhost:8080
 
 ## 📚 Documentation
 
+- **[Complete Installation Guide](./INSTALLATION.md)** - Mac, Windows, Linux, Unreal Engine
+- **[Features Guide](./FEATURES.md)** - All features and what's clickable
+- **[Deployment Session](./DEPLOYMENT_SESSION.md)** - Production deployment details
 - [Integration Guide](./INTEGRATION_COMPLETE.md)
 - [API Documentation](./docs/api.md) (Coming Soon)
 - [Component Library](./docs/components.md) (Coming Soon)
-- [Unreal Engine Setup](./docs/unreal-setup.md) (Coming Soon)
 
 ## 🤝 Contributing
 
