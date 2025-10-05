@@ -43,11 +43,11 @@ function AppInner() {
           <Route path="/" element={<Homepage />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/services" element={<Services />} />
-          <Route path="/dashboard" element={<ClientDashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/assets" element={<AssetLibrary />} />
-          
+
           {/* Legacy routes for existing functionality */}
-          <Route path="/old-dashboard" element={<Dashboard />} />
+          <Route path="/client-dashboard" element={<ClientDashboard />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/studio-tour" element={<StudioTour />} />
           <Route path="/project/:id" element={<ProjectDetail />} />
