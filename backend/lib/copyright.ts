@@ -6,11 +6,14 @@ const LEGAL_INFO = {
     dba: "Finesse Jones",
   },
   product: {
-    name_with_tm: "Finesse Jones™ Production Studio",
+    name_with_tm: "TACF Hybrid 3D Studio™",
+  },
+  technology: {
+    credit_full: "Built on the Finesse Jones Platform",
   },
   copyright: {
     owner: "The AI Content Foundry LLC",
-    full_notice: "© 2025 The AI Content Foundry LLC. All rights reserved. Finesse Jones™ Production Studio is a trademark of The AI Content Foundry LLC.",
+    full_notice: "© 2025 The AI Content Foundry LLC. All rights reserved. TACF Hybrid 3D Studio™ is a trademark of The AI Content Foundry LLC. Built on Finesse Jones Technology.",
   },
 };
 

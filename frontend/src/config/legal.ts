@@ -9,27 +9,41 @@ export const LEGAL_INFO = {
   },
 
   product: {
-    name: "Finesse Jones Production Studio",
-    name_with_tm: "Finesse Jones™ Production Studio",
-    tagline: "AI-Powered Digital Film Production",
+    name: "TACF Hybrid 3D Studio",
+    name_with_tm: "TACF Hybrid 3D Studio™",
+    full_name: "TACF Hybrid 3D Studio - AI-Powered Film Production Platform",
+    tagline: "Vision-Driven | Creator-Led | Built To Empower Bold",
     version: "1.0.0",
+  },
+
+  technology: {
+    platform: "Finesse Jones Platform",
+    credit: "Powered by Finesse Jones Technology",
+    credit_full: "Built on the Finesse Jones Platform",
   },
 
   copyright: {
     owner: "The AI Content Foundry LLC",
     year: 2025,
-    notice: `© 2025 The AI Content Foundry LLC. All rights reserved.`,
+    notice: "© 2025 The AI Content Foundry LLC. All rights reserved.",
     dba_notice: "Operating as Finesse Jones",
-    full_notice: `© 2025 The AI Content Foundry LLC. All rights reserved. Finesse Jones™ Production Studio is a trademark of The AI Content Foundry LLC.`,
+    trademark_notice: "TACF Hybrid 3D Studio™ is a trademark of The AI Content Foundry LLC",
+    full_notice: "© 2025 The AI Content Foundry LLC. All rights reserved. TACF Hybrid 3D Studio™ is a trademark of The AI Content Foundry LLC. Built on Finesse Jones Technology.",
   },
 
   contact: {
-    email: "contact@finessejones.com",
+    email: "finessejones@theaicontentfoundry.com",
     address: "196 W College St, Hickory, MS 39332",
     city: "Hickory",
     state: "Mississippi",
     zip: "39332",
     country: "USA",
+  },
+
+  taglines: {
+    primary: "Vision-Driven | Creator-Led | Built To Empower Bold",
+    secondary: "AI-Powered Film Production Platform",
+    mission: "Empowering bold creators with cutting-edge AI technology",
   },
 
   terms: {
@@ -39,8 +53,11 @@ export const LEGAL_INFO = {
 };
 
 export const TERMS_OF_SERVICE = `
-FINESSE JONES™ PRODUCTION STUDIO
+TACF HYBRID 3D STUDIO™
 TERMS OF SERVICE
+
+Product: ${LEGAL_INFO.product.name_with_tm}
+${LEGAL_INFO.technology.credit_full}
 
 Legal Entity: The AI Content Foundry LLC
 Business ID: 1477089
