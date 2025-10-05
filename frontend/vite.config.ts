@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -15,13 +15,13 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
-  mode: "development",
   build: {
-    minify: false,
+    minify: mode === 'production',
+    sourcemap: mode === 'development',
   },
   server: {
     port: 5000,
     host: true,
     allowedHosts: true
   }
-})
+}))

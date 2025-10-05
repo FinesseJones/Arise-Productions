@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Menu, 
@@ -57,6 +57,7 @@ const navItems: NavItem[] = [
 export const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -113,6 +114,7 @@ export const Navigation: React.FC = () => {
             <div className="hidden md:flex items-center space-x-4">
               <Button
                 className="bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-600 hover:to-gold-700 transition-all duration-200"
+                onClick={() => navigate('/dashboard')}
               >
                 Start Project
               </Button>
@@ -202,7 +204,10 @@ export const Navigation: React.FC = () => {
                 <div className="p-6 border-t border-white/10">
                   <Button
                     className="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-black font-semibold hover:from-gold-600 hover:to-gold-700 transition-all duration-200"
-                    onClick={toggleMenu}
+                    onClick={() => {
+                      navigate('/dashboard');
+                      toggleMenu();
+                    }}
                   >
                     Start Project
                   </Button>
