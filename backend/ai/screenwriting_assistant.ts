@@ -1,6 +1,7 @@
 import { api } from "encore.dev/api";
 import { secret } from "encore.dev/config";
 import { addCopyrightNotice, addCopyrightToJSON } from "../lib/copyright";
+import { withLegalMetadata } from "../lib/api-metadata";
 
 const openAIKey = secret("OPENAI");
 const anthropicKey = secret("PRODUCTION");
@@ -120,7 +121,7 @@ export const generateScript = api<GenerateScriptRequest, GenerateScriptResponse>
       id: req.project_id
     });
 
-    return addCopyrightToJSON({
+    const response = addCopyrightToJSON({
       ...mockScript,
       script: copyrightedScript
     }, {
@@ -128,6 +129,8 @@ export const generateScript = api<GenerateScriptRequest, GenerateScriptResponse>
       createdAt: new Date(),
       id: req.project_id
     });
+
+    return withLegalMetadata(response).data;
   }
 );
 
