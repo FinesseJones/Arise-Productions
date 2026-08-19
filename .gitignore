@@ -60,3 +60,4 @@ Saved/
 
 # Build artifacts
 *.tsbuildinfo
+.dyad/
