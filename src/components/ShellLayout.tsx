@@ -4,14 +4,16 @@ import React from 'react';
 import PipelineStages from './PipelineStages';
 import StatusBoard from './StatusBoard';
 import DirectorAgent from './DirectorAgent';
+import { ProjectStatus } from '../types/types';
 
 interface ShellLayoutProps {
   projectName: string;
   activeStage: string | null; 
-  onStageSelect: (stageId: string) => void; // Added handler prop
+  onStageSelect: (stageId: string) => void;
+  projectStatus: ProjectStatus; // Added status prop
 }
 
-const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onStageSelect }) => {
+const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onStageSelect, projectStatus }) => {
   return (
     <div className="flex flex-col h-screen bg-gray-50 text-gray-800">
       {/* Main Content Area (Left + Center + Right) */}
@@ -19,7 +21,6 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onS
         
         {/* Left Rail: Pipeline Stages */}
         <div className="w-1/5 xl:w-1/6 flex-shrink-0 border-r border-gray-200 bg-white">
-          {/* Passing the new handler */}
           <PipelineStages onStageSelect={onStageSelect} />
         </div>
 
@@ -27,7 +28,6 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onS
         <div className="flex-grow p-8 relative overflow-y-auto bg-white">
           <h2 className="text-2xl font-bold text-gray-700 mb-6">Project: {projectName}</h2>
           
-          {/* Display message based on active stage */}
           {activeStage ? (
             <div className="p-8 border-2 border-dashed border-blue-300 bg-blue-50 rounded-xl shadow-inner">
                 <h3 className="text-3xl font-bold text-blue-800 mb-3">{activeStage.replace(' ', '')} Workspace</h3>
@@ -48,12 +48,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onS
 
         {/* Right Rail: Shot Board Status */}
         <div className="w-1/5 xl:w-1/6 flex-shrink-0 border-l border-gray-200 bg-gray-50 overflow-y-auto">
-          <StatusBoard />
+          <StatusBoard projectStatus={projectStatus} />
         </div>
       </div>
 
       {/* Bottom Director Agent Bar */}
-      <DirectorAgent />
+      <DirectorAgent setProjectStatus={/* Handled implicitly by App.tsx*/}/>
     </div>
   );
 };

@@ -2,54 +2,86 @@
 
 import React, { useState, useCallback } from 'react';
 import { Send } from 'lucide-react';
+import { ProjectStatus, updateShotStatus } from '../types/types';
+import { stages } from '../types/stages';
 
-interface AgentCommand {
-    command: string;
+interface DirectorAgentProps {
+    setProjectStatus: React.Dispatch<React.SetStateAction<ProjectStatus>>;
 }
 
-const DirectorAgent: React.FC = () => {
+const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
   const [command, setCommand] = useState("");
   const [statusMessage, setStatusMessage] = useState<string>("Awaiting command...");
 
-  // Simulate running a command through the MCP servers
+  // Action to simulate a successful status update (e.g., a shot goes from 'Pending' to 'Complete')
+  const simulateStatusSuccess = useCallback((shotIndex: number, stageIndex: number) => {
+      setProjectStatus(prevStatus => {
+          const updatedShots = [...prevStatus.shots];
+          const updatedShot = { ...updatedShots[shotIndex] };
+          
+          // Change status at the specific stage index to Success (Green)
+          updatedShot.status = [...updatedShot.status];
+          if (updatedShot.status[stageIndex]) {
+               updatedShot.status[stageIndex] = { statusChar: '🟢' };
+          }
+          
+          updatedShots[shotIndex] = updatedShot;
+          return { ...prevStatus, shots: updatedShots };
+      });
+  }, [setProjectStatus]);
+
+
   const handleCommandSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     const trimmedCommand = command.trim();
     if (!trimmedCommand) return;
 
-    // 1. Simulate processing time
     setStatusMessage("📡 Connecting to MCP Servers...");
     
-    // 2. Simple command parsing and response generation (Simulation)
+    // --- PHASE 2 LOGIC: Command Processing ---
     let response = "";
-    if (trimmedCommand.toLowerCase().includes("board")) {
+    let success = false;
+    
+    if (trimmedCommand.toLowerCase().includes("board scene 3")) {
         const match = trimmedCommand.match(/board scene (\d+)/i);
         if (match) {
             const sceneNumber = match[1];
             response = `✅ Successfully triggered Blockout (MCP) for Scene ${sceneNumber}. Assets are now being compiled into the /04-previs stage.`;
+            success = true;
+            // Simulate status update: S-003 (index 2) in the PREVIS stage (index 3)
+            setTimeout(() => simulateStatusSuccess(2, 3), 500); 
         } else {
             response = `⚠️ Error: Found 'board' command, but no scene number. Usage: board scene X`;
         }
     } else if (trimmedCommand.toLowerCase().includes("compile prompts")) {
         response = `✅ Calling Slate (MCP) to compile all necessary media prompts for the entire project. Prompt pack generated and saved to /06-prompts.`;
+        success = true;
+        // Simulate status update: S-001 (index 0) in the BOARD (index 5)
+        setTimeout(() => simulateStatusSuccess(0, 5), 500);
     } else if (trimmedCommand.toLowerCase().includes("circle winners")) {
-        response = `✅ Triggering Circle Take (MCP) agent. All outstanding shots are analyzed for 'winners' and automatically marked for follow-up in the Director Log.`;
+        response = `✅ Triggering Circle Take (MCP) agent. Reviewing takes for 'winners'. The status board updates automatically as passes are confirmed.`;
+        success = true;
+        // Simulate status update: S-004 (index 3) in the DAILIES (index 7)
+        setTimeout(() => simulateStatusSuccess(3, 7), 500);
     } else {
         response = `✅ Command understood: "${trimmedCommand}". The Agent is passing your request to the appropriate multi-stage sequence handlers.`;
+        success = true;
     }
-
-    // 3. Update status after a simulated delay
-    setTimeout(() => {
-        setStatusMessage(response);
-        setCommand("");
-    }, 1000);
-  }, []);
+    
+    // Set the visible status message immediately
+    setStatusMessage(success ? response : response);
+    
+    // Clear input field
+    setCommand("");
+  }, [command, setProjectStatus]);
 
   return (
     <div className="flex flex-col border-t border-gray-200 bg-white p-3 shadow-lg flex-shrink-0">
       
       {/* Status/Log Message Area */}
-      <div className="text-sm text-blue-600 mb-2 p-1 bg-blue-50 rounded-md">{statusMessage}</div>
+      <div className={`text-sm mb-2 p-1 rounded-md ${statusMessage.startsWith('✅') ? 'bg-green-50 text-green-700' : statusMessage.startsWith('⚠️') ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'}`}>
+         {statusMessage}
+      </div>
 
       {/* Command Input Form */}
       <form onSubmit={handleCommandSubmit} className="flex items-center max-w-full mx-auto">
