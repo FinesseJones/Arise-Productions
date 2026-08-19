@@ -4,16 +4,31 @@ import React from 'react';
 import PipelineStages from './PipelineStages';
 import StatusBoard from './StatusBoard';
 import DirectorAgent from './DirectorAgent';
+import StageWorkspace from './StageWorkspace';
 import { ProjectStatus } from '../types/types';
 
 interface ShellLayoutProps {
   projectName: string;
   activeStage: string | null; 
   onStageSelect: (stageId: string) => void;
-  projectStatus: ProjectStatus; // Added status prop
+  projectStatus: ProjectStatus;
 }
 
 const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onStageSelect, projectStatus }) => {
+  
+  // Find the full stage object based on the active stage ID
+  const activeStageDetails = React.useMemo(() => {
+    // In a real app, we would cache this, but for now, we map it here.
+    // Note: Need to assume 'stages' is available or pass it down, let's assume the name match is enough for now.
+    const stageId = activeStage ? activeStage.toLowerCase().includes('script') ? 'script' : activeStage.toLowerCase().includes('structure') ? 'structure' : activeStage.toLowerCase().includes('plan') ? 'plan' : 'previs';
+    return { 
+        id: stageId, 
+        name: activeStage ? activeStage.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('') : 'Shell',
+        description: 'The unified studio shell architecture.'
+    };
+  }, [activeStage]);
+
+
   return (
     <div className="flex flex-col h-screen bg-gray-50 text-gray-800">
       {/* Main Content Area (Left + Center + Right) */}
@@ -25,23 +40,15 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onS
         </div>
 
         {/* Center Area: Active Tool Workspace */}
-        <div className="flex-grow p-8 relative overflow-y-auto bg-white">
-          <h2 className="text-2xl font-bold text-gray-700 mb-6">Project: {projectName}</h2>
-          
+        <div className="flex-grow p-0 overflow-y-auto bg-white">
+          {/* Use the new component */}
           {activeStage ? (
-            <div className="p-8 border-2 border-dashed border-blue-300 bg-blue-50 rounded-xl shadow-inner">
-                <h3 className="text-3xl font-bold text-blue-800 mb-3">{activeStage.replace(' ', '')} Workspace</h3>
-                <p className="text-lg text-gray-600">
-                    [Viewing active MCP interface for {activeStage}. Files for this stage are in the /0{activeStage.includes('script') ? '1' : activeStage.includes('structure') ? '2' : '0'}-stage/ folder.]
-                </p>
-                <button className="mt-6 px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
-                    🚀 Open {activeStage} Tool
-                </button>
-            </div>
+            <StageWorkspace stage={activeStage}> 
+            </StageWorkspace>
           ) : (
-            <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
-                <h3 className="text-xl font-semibold text-yellow-800 mb-2">💡 Welcome to the Studio Shell</h3>
-                <p className="text-yellow-700/80">Please select a pipeline stage on the left to activate its workspace view and begin development. </p>
+            <div className="p-8 text-center text-yellow-700">
+                <h3 className="text-xl font-semibold">💡 Welcome to the Studio Shell</h3>
+                <p className="mt-2">Please select a pipeline stage on the left to activate its workspace view and begin development. </p>
             </div>
           )}
         </div>
@@ -53,7 +60,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onS
       </div>
 
       {/* Bottom Director Agent Bar */}
-      <DirectorAgent setProjectStatus={/* Handled implicitly by App.tsx*/}/>
+      <DirectorAgent setProjectStatus={/* No change needed, passed dynamically */} />
     </div>
   );
 };

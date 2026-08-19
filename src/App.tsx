@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import ShellLayout from './components/ShellLayout';
-import { stages } from './types/stages';
 import { getMockProjectState, ProjectStatus } from './types/types';
 
 const App: React.FC = () => {
@@ -16,9 +15,7 @@ const App: React.FC = () => {
   const handleProjectSelect = (name: string) => {
     setProjectName(name);
     setIsProjectSelected(true);
-    setActiveStageId(null); // Reset active stage when changing projects
-    // Here we would ideally load initial manifest data for the project name
-    // For now, we just keep the mock status
+    setActiveStageId(null); 
   }
   
   // Handler for Pipeline Stages clicking the Left Rail
@@ -75,10 +72,10 @@ const App: React.FC = () => {
             projectName={projectName} 
             activeStage={activeStageId ? activeStageId.replace('-', ' ') : null}
             onStageSelect={handleStageSelect}
-            projectStatus={projectStatus} // Passing the state object
+            projectStatus={projectStatus}
         />
       )}
-    </div>
+    </div >
   );
 };
 
