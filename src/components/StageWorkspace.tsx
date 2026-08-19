@@ -8,6 +8,7 @@ interface StageWorkspaceProps {
 }
 
 const StageWorkspace: React.FC<StageWorkspaceProps> = ({ stage }) => {
+    
     const getStageDescription = (stageName: string) => {
         switch(stageName) {
             case 'ScriptBreak':
@@ -17,7 +18,7 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({ stage }) => {
             case 'Master Canvas':
                 return "The ultimate handoff bundle. All key assets, mood boards, and continuity prompts are aggregated here for the creative team.";
             case 'Blockout':
-                return "Detailed visual blocking: camera movement, character choreography, and rough scene layouts. The storyboard foundation.";
+                return "Detailed visual blocking: camera movement, character choreography, and rough scene layouts. This stage validates the feasibility of the shot before shooting.";
             case 'Storybook Reference Studio':
                 return "The visual bible for the look and feel. This stage contains approved boards, animatics, and generative prompt examples.";
             case 'Slate':
@@ -35,52 +36,65 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({ stage }) => {
         }
     }
 
+    const renderContent = () => {
+        const stageName = stage.name;
+        
+        if (stageName === 'Blockout') {
+            return (
+                <div className="grid grid-cols-3 gap-6 h-64">
+                    {/* Camera/Shot Placeholder */}
+                    <div className="col-span-2 bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-400 relative overflow-hidden rounded-lg">
+                        <div className="absolute inset-0 bg-repeat opacity-5 pointer-events-none" style="background-image: radial-gradient(#ccc 1px, transparent 1px), radial-gradient(#ccc 1px, transparent 1px); background-size: 20px 20px; background-position: 0 0, 10px 10px;"></div>
+                        <div className="p-4 text-center bg-white/80">
+                            <p className='text-xl font-bold text-blue-700'>Scene 3: Protagonist Conflict</p>
+                            <p className='text-sm text-gray-600 mt-1'>Primary Viewport (Camera Angle: Wide, Action)</p>
+                        </div>
+                    </div>
+                    {/* Camera Controls Panel */}
+                    <div className="bg-white p-4 border rounded-lg shadow-sm flex flex-col space-y-3">
+                        <h5 className="text-lg font-semibold text-gray-700">Camera Controls</h5>
+                        <label className="text-sm block">Angle:</label>
+                        <select className="border p-1 rounded block text-sm w-full focus:ring-blue-500">
+                            <option>Low Angle / Ground</option>
+                            <option selected>Eye Level / Cinematic</option>
+                            <option>High Angle / God's Eye</option>
+                        </select>
+                        <label className="text-sm block pt-2">Lens Type:</label>
+                        <select className="border p-1 rounded block text-sm w-full focus:ring-blue-500">
+                            <option selected>35mm Standard</option>
+                            <option>24mm Wide</option>
+                            <option>85mm Telephoto</option>
+                        </select>
+                        <button className="mt-4 py-2 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600 transition">Re-solve Camera Path</button>
+                    </div>
+                </div>
+            );
+        }
+        
+        // General default content
+        return (
+            <div className='p-4 bg-gray-50 rounded-lg text-center text-gray-500'>
+                <p>This area contains the visual assets, reference footage, and interactive tools specific to the {stageName} stage. Please select a stage to see its specialized dashboard.</p>
+            </div>
+        );
+    }
+
 
     return (
         <div className="p-4">
             <div className="flex justify-between items-center border-b pb-4 mb-6">
-                <div>
+                <div onClick={() => console.log('Simulation click')}>
                     <h3 className="text-3xl font-extrabold text-gray-800">{stage.name} Workspace</h3>
-                    <p className="text-gray-500 mt-1">{stage.description}</p>
+                    <p className="text-gray-500 mt-1">{getStageDescription(stage.name)}</p>
                 </div>
-                <button className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition">
-                    📖 View Manifest
+                <button className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
+                    ⚙️ Access Tool Backend
                 </button>
             </div>
 
-            {/* Simulated Content Area */}
-            <div className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-6">
-                <div className="p-4 bg-gray-50 border-l-4 border-blue-500">
-                    <h4 className='font-semibold text-xl mb-2'>Core Functionality:</h4>
-                    <p className={ 'text-gray-700'}>{getStageDescription(stage.name)}</p>
-                </div>
-                
-                {/* Specific UI implementation based on stage */}
-                {stage.id === 'script' && (
-                    <div className='grid grid-cols-2 gap-4'>
-                        <div className='p-4 bg-red-50 border border-red-200 rounded'>Character Bible Mockup</div>
-                        <div className='p-4 bg-lime-50 border border-lime-200 rounded'>Location Index Map</div>
-                    </div>
-                )}
-                 {stage.id === 'prompt' && (
-                    <div className='text-center py-10'>
-                        <svg className="mx-auto h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 0l4 4-4 4"/>
-                        </svg>
-                        <p className='mt-2 text-sm font-medium text-gray-700'>Prompt Generation Area: Select media type (Video/Image/Music) and generate continuity-locked prompts.</p>
-                    </div>
-                 )}
-                 {stage.id === 'edit' && (
-                    <div className='text-center py-10'>
-                        <svg className="mx-auto h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.853.554L15 10zM5 18v-4m0 0l3 3m-3-3l3-3"/></svg>
-                        <p className='mt-2 text-sm font-medium text-gray-700'>Non-Linear Editor Interface: DaVinci Resolve API integration for color, cuts, and master QC checks.</p>
-                    </div>
-                 )}
-                
-                <div className='pt-4 border-t text-right'>
-                    <button className='text-blue-600 hover:text-blue-800 text-sm'>
-                        <span className='flex items-center'><0xF0><0x9F><0x97><0x82>️ Download Tool Output</span>
-                    </button>
-                </div>
+            {/* Specific Content Renderer */}
+            <div className="min-h-[400px]">
+                {renderContent()}
             </div>
         </div>
     );
