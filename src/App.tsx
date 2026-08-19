@@ -2,17 +2,24 @@
 
 import React, { useState } from 'react';
 import ShellLayout from './components/ShellLayout';
-import { useState } from 'react';
 
 const App: React.FC = () => {
   const [projectName, setProjectName] = useState<string | null>(null);
   const [isProjectSelected, setIsProjectSelected] = useState<boolean>(false);
+  // State to track which stage is currently active/selected
+  const [activeStageId, setActiveStageId] = useState<string | null>(null);
 
   const handleProjectSelect = (name: string) => {
     setProjectName(name);
     setIsProjectSelected(true);
+    setActiveStageId(null); // Reset active stage when changing projects
   };
   
+  // Handler for Pipeline Stages clicking the Left Rail
+  const handleStageSelect = (stageId: string) => {
+      setActiveStageId(stageId);
+  }
+
   return (
     <div className="min-h-screen">
       {/* Initial Project Selection View */}
@@ -42,7 +49,12 @@ const App: React.FC = () => {
             </select>
             
             <button 
-                onClick={() => setProjectName('New Project:Untitled')} 
+                onClick={() => {
+                    const newName = 'New Project:Untitled';
+                    setProjectName(newName);
+                    setIsProjectSelected(true);
+                    setActiveStageId(null);
+                }} 
                 className="w-full py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition shadow-md"
             >
                 + Create New Project
@@ -55,7 +67,7 @@ const App: React.FC = () => {
       {isProjectSelected && (
         <ShellLayout 
             projectName={projectName} 
-            onProjectSelect={handleProjectSelect} 
+            activeStage={activeStageId ? activeStageId.replace('-', ' ') : null}
         />
       )}
     </div>
@@ -63,5 +75,4 @@ const App: React.FC = () => {
 };
 
 export default App;
-
 // --- End of file ---
