@@ -3,18 +3,22 @@
 import React from 'react';
 import { Stage, stages } from '../types/stages';
 
-const PipelineStages: React.FC = () => {
+interface PipelineStagesProps {
+    onStageSelect: (stageId: string) => void;
+}
+
+const PipelineStages: React.FC<PipelineStagesProps> = ({ onStageSelect }) => {
   return (
-    <div className="flex flex-col text-sm">
-      <div className="p-3 text-xs font-semibold uppercase bg-gray-100 text-gray-600 border-b">
+    <div className="flex flex-col text-sm h-full">
+      <div className="p-3 text-xs font-semibold uppercase bg-gray-100 text-gray-600 border-b sticky top-0 z-10">
         Pipeline Stages
-      </div>
+      </div >
       <div className="flex-grow overflow-y-auto custom-scrollbar">
         {stages.map((stage) => (
           <div 
             key={stage.id} 
-            className={`p-3 cursor-pointer hover:bg-blue-100 transition duration-150 border-b border-gray-100 ${stage.id === 'script' ? 'bg-blue-50/50' : ''}`}
-            onClick={() => console.log(`Selecting stage: ${stage.name}`)}
+            className="p-3 cursor-pointer hover:bg-blue-50 transition duration-150 border-b border-gray-100"
+            onClick={() => onStageSelect(stage.id)} // --- HANDLER USED HERE ---
           >
             <div className="flex items-center">
                 <span className="text-lg font-bold mr-2 text-blue-600">{stage.number}</span>

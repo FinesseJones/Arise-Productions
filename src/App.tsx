@@ -2,18 +2,19 @@
 
 import React, { useState } from 'react';
 import ShellLayout from './components/ShellLayout';
+import { stages } from './types/stages';
 
 const App: React.FC = () => {
   const [projectName, setProjectName] = useState<string | null>(null);
   const [isProjectSelected, setIsProjectSelected] = useState<boolean>(false);
-  // State to track which stage is currently active/selected
   const [activeStageId, setActiveStageId] = useState<string | null>(null);
 
+  // Handler for Project Selection
   const handleProjectSelect = (name: string) => {
     setProjectName(name);
     setIsProjectSelected(true);
     setActiveStageId(null); // Reset active stage when changing projects
-  };
+  }
   
   // Handler for Pipeline Stages clicking the Left Rail
   const handleStageSelect = (stageId: string) => {
@@ -68,6 +69,7 @@ const App: React.FC = () => {
         <ShellLayout 
             projectName={projectName} 
             activeStage={activeStageId ? activeStageId.replace('-', ' ') : null}
+            onStageSelect={handleStageSelect} // Passing the handler
         />
       )}
     </div>
