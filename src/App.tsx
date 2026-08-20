@@ -3,12 +3,12 @@
 import React, { useState } from 'react';
 import ShellLayout from './components/ShellLayout';
 import { getMockProjectState, ProjectStatus } from './types/types';
+import ToastProviderWrapper from './components/ToastProvider'; // Import the new provider
 
 const App: React.FC = () => {
   const [projectName, setProjectName] = useState<string | null>(null);
   const [isProjectSelected, setIsProjectSelected] = useState<boolean>(false);
   const [activeStageId, setActiveStageId] = useState<string | null>(null);
-  // State to manage the core project manifest (project.json)
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(getMockProjectState());
 
   // Handler for Project Selection
@@ -28,6 +28,7 @@ const App: React.FC = () => {
       {/* Initial Project Selection View */}
       {!isProjectSelected && (
         <div className="flex flex-col items-center justify-center min-h-screen p-8 space-y-6 bg-gray-100">
+          {/* ... (Kept unchanged for brevity) ... */}
           <h1 className="text-4xl font-extrabold text-gray-800">
             🎬 Wasserman Studio Shell
           </h1>
@@ -39,8 +40,7 @@ const App: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-700 border-b pb-2">
                 Select/Create Project
             </h2>
-            
-            <select
+             <select
                 onChange={(e) => handleProjectSelect(e.target.value)}
                 className="w-full p-3 border-2 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-lg appearance-none cursor-pointer"
                 defaultValue=""
@@ -68,14 +68,16 @@ const App: React.FC = () => {
       
       {/* Main Shell View */}
       {isProjectSelected && (
-        <ShellLayout 
-            projectName={projectName} 
-            activeStage={activeStageId ? activeStageId.replace('-', ' ') : null}
-            onStageSelect={handleStageSelect}
-            projectStatus={projectStatus}
-        />
+        <ToastProviderWrapper>
+            <ShellLayout 
+                projectName={projectName} 
+                activeStage={activeStageId ? activeStageId.replace('-', ' ') : null}
+                onStageSelect={handleStageSelect}
+                projectStatus={projectStatus}
+            />
+        </ToastProviderWrapper>
       )}
-    </div >
+    </div>
   );
 };
 

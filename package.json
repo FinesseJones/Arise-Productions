@@ -21,6 +21,7 @@
     "@stripe/stripe-js": "^7.9.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "react-hot-toast": "^2.6.0",
     "stripe": "^18.5.0"
   },
   "keywords": [
