@@ -3,93 +3,161 @@
 import React, { useState, useCallback } from 'react';
 import { Send } from 'lucide-react';
 import { ProjectStatus, updateShotStatus } from '../types/types';
-import { stages } from '../types/stages';
 import toast from 'react-hot-toast';
 
 interface DirectorAgentProps {
     setProjectStatus: React.Dispatch<React.SetStateAction<ProjectStatus>>;
 }
 
+const DIRECTOR_AGENT_MCP_SERVERS = [
+    { name: 'ScriptBreak', type: 'api', endpoint: '/mcp/script' },
+    { name: 'Cork Board', type: 'api', endpoint: '/mcp/structure' },
+    { name: 'Master Canvas', type: 'api', endpoint: '/mcp/plan' },
+    { name: 'Blockout', type: 'api', endpoint: '/mcp/previs' },
+    { name: 'Motion Previs Studio', type: 'api', endpoint: '/mcp/motion' },
+    { name: 'Storyboard Reference Studio', type: 'api', endpoint: '/mcp/boards' },
+    { name: 'Slate', type: 'api', endpoint: '/mcp/prompt' },
+    { name: 'Circle Take', type: 'api', endpoint: '/mcp/dailies' },
+    { name: 'Stem Studio', type: 'api', endpoint: '/mcp/sound' },
+    { name: 'DaVinci MCP', type: 'api', endpoint: '/mcp/edit' },
+];
+
 const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
   const [command, setCommand] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Action to simulate a successful status update
-  const simulateStatusSuccess = useCallback((shotIndex: number, stageIndex: number) => {
+  // Utility function to simulate sequential status updates after a multi-stage process
+  const simulateProcessSuccess = useCallback((shotIndex: number, stageIndex: number, stageName: string) => {
       setProjectStatus(prevStatus => {
-          // This logic relies on the status prop coming from the current state.
           const updatedShots = [...prevStatus.shots];
           const updatedShot = { ...updatedShots[shotIndex] };
           
-          // Change status at the specific stage index to Success (Green)
-          updatedShot.status = [...updatedShot.status];
-          updatedShot.status[stageIndex] = { statusChar: '🟢' };
-          
+          // Find the correct status key based on the stageName
+          let statusKey: keyof typeof updatedShot.status;
+          if (stageName.includes('Script')) statusKey = 'script';
+          else if (stageName.includes('Structure')) statusKey = 'structure';
+          else if (stageName.includes('Plan')) statusKey = 'plan';
+          else if (stageName.includes('Blockout')) statusKey = 'previs';
+          else if (stageName.includes('Circle')) statusKey = 'dailies';
+          else if (stageName.includes('Prompt')) statusKey = 'prompt';
+          else statusKey = 'script'; // Default fallback
+
+          // Update status at the specific stage index to Success (Green)
+          updatedShot.status = {
+              ...updatedShot.status,
+              [statusKey]: { statusChar: '🟢' }
+          };
           updatedShots[shotIndex] = updatedShot;
           return { ...prevStatus, shots: updatedShots };
       });
   }, [setProjectStatus]);
 
-
-  const handleCommandSubmit = useCallback((e: React.FormEvent) => {
+  // The core processing function (The Brain)
+  const handleCommandSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedCommand = command.trim();
     if (!trimmedCommand) {
         return;
     }
 
-    // --- Initial Processing Feedback ---
     setIsProcessing(true);
-    toast.loading("📡 Connecting to MCP Servers... Initiating command sequence.");
+    toast.loading("🟡 Director Agent Engaged. Checking all 10 MCP servers...");
     
-    let responseDetail = "";
-    let success = false;
-    
-    // --- PHASE 2 LOGIC: Command Processing ---
-    if (trimmedCommand.toLowerCase().includes("board scene 3")) {
-        const match = trimmedCommand.match(/board scene (\d+)/i);
-        if (match) {
-            const sceneNumber = match[1];
-            responseDetail = `Successfully triggered Blockout (MCP) for Scene ${sceneNumber}. Assets are now being compiled into the /04-previs stage.`;
-            success = true;
-             // Simulate status update: S-003 (index 2) in the PREVIS stage (index 3)
-            setTimeout(() => simulateStatusSuccess(2, 3), 800); 
-        } else {
-            responseDetail = `Error: Found 'board' command, but no scene number. Usage: board scene X`;
-            success = false;
-        }
-    } else if (trimmedCommand.toLowerCase().includes("compile prompts")) {
-        responseDetail = `Calling Slate (MCP) to compile all necessary media prompts for the entire project. Prompt pack generated and saved to /06-prompts.`;
-        success = true;
-        // Simulate status update: S-001 (index 0) in the BOARD (index 5)
-        setTimeout(() => simulateStatusSuccess(0, 5), 800);
-    } else if (trimmedCommand.toLowerCase().includes("circle winners")) {
-        responseDetail = `Triggering Circle Take (MCP) agent. Reviewing takes for 'winners'. The status board updates automatically as passes are confirmed.`;
-        success = true;
-        // Simulate status update: S-004 (index 3) in the DAILIES (index 7)
-        setTimeout(() => simulateStatusSuccess(3, 7), 800);
-    } else {
-        responseDetail = `Command understood: "${trimmedCommand}". The Agent is passing your request to the appropriate multi-stage sequence handlers.`;
-        success = true;
+    // 1. Initial Connectivity Check Simulation
+    if (!DIRECTOR_AGENT_MCP_SERVERS.every(server => server.type === 'api' && server.endpoint)) {
+      toast.error("Critical Failure: Cannot connect to all 10 required MCP servers. Check system stability.");
+      setIsProcessing(false);
+      return;
     }
-    
-    setTimeout(() => {
-        setIsProcessing(false);
-        if (success) {
-            toast.success(responseDetail, { duration: 5000 });
+
+    let executionSuccess = false;
+    let finalMessage = "";
+
+    try {
+        // --- COMPLEX WORKFLOW SIMULATION ---
+        if (trimmedCommand.toLowerCase().includes("board scene")) {
+            // Workflow: Script -> Cork Board -> Master Canvas -> Blockout (Multi-stage handoff)
+            const match = trimmedCommand.match(/board scene (\d+)/i);
+            if (!match) {
+                throw new Error("Invalid scene reference.");
+            }
+            
+            // Simulate running the handoff pipeline
+            finalMessage = `Initiating Pipeline Run for Scene ${match[1]}...`;
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Simulate Stage 1: Script -> Done
+            toast.success("✅ ScriptBreak (Scene Bible) completed. Handing data to Cork Board...").pause();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Simulate Stage 2: Cork Board -> Done
+            toast.success("✅ Cork Board (Scene Outline) generated. Exporting index cards...").pause();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Simulate Stage 3: Master Canvas -> Done
+            toast.success("✅ Master Canvas (Handoff Package) compiled. Preparing assets...").pause();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Simulate Stage 4: Blockout (Final Target)
+            finalMessage = `🎬 Blockout (MCP) successfully run for Scene ${match[1]}. Camera path solved, motion-reference exported, and project status updated.`;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            executionSuccess = true;
+            
+        } else if (trimmedCommand.toLowerCase().includes("compile prompts")) {
+            // Workflow: Blockout/Boards -> Slate -> Prompt
+            finalMessage = `Compiling all necessary prompts for the entire project (${DIRECTOR_AGENT_MCP_SERVERS[5].name} and ${DIRECTOR_AGENT_MCP_SERVERS[6].name} reports used).`;
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Simulate Stage 5: Storyboard Boards -> Done
+            toast.success("💾 Storyboard assets cataloged. Generating seed prompt descriptors...").pause();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Simulate Stage 6: Slate -> Done
+            finalMessage = `✨ Slate (MCP) Agent finished running. All continuity-locked prompts confirmed and saved to /06-prompts.`;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            executionSuccess = true;
+
+        } else if (trimmedCommand.toLowerCase().includes("circle winners")) {
+            // Workflow: Dailies -> Prompt (Selection/Review)
+            finalMessage = `🔬 Circle Take (MCP) agent activated. Reviewing shot-by-shot dailies, confirming 'best takes' are flagged, and updating reshoot lists back in Slate.`;
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Simulate Stage 7: Dailies -> Done
+            toast.success("🔎 Circle Take (MCP) completed. Dailies reviewed. Reshoot list compiled!").pause();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Simulate looping back to prompt status update
+            finalMessage = `✅ Workflow complete. The director's vision has been captured and passed back to the prompt system`;
+            executionSuccess = true;
+
         } else {
-            toast.error(responseDetail, { duration: 5000 });
+            // General unhandled command
+            finalMessage = `Agent received command. Passing "${trimmedCommand}" to the general queue. Awaiting response from a dedicated MCP server handshake.`;
+            executionSuccess = true;
         }
+
+        // Final Status Update (Always run this on success)
+        if (executionSuccess) {
+            simulateProcessSuccess(0, 0, 'script'); // Update the first shot status
+            setTimeout(() => {
+                toast.success(finalMessage, { duration: 6000 });
+            }, 100);
+        } else {
+            throw new Error("Unknown or unsupported workflow sequence.");
+        }
+
+    } catch (error) {
+        console.error("Agent Error:", error);
+        toast.error(`❌ Command Error: ${error instanceof Error ? error.message : "Unknown error during API communication."}`, { duration: 6000 });
+    } finally {
+        setIsProcessing(false);
         setCommand("");
-    }, 500); // Slight delay after command execution finishes
-  }, [command, setProjectStatus]);
+    }
+  }, [command, simulateProcessSuccess]);
 
   return (
     <div className="flex flex-col border-t border-gray-200 bg-white p-3 shadow-lg flex-shrink-0">
       
-      {/* Status/Log Message Area (Removed manual message display, reliance on Toast now) */}
-
-      {/* Command Input Form */}
       <form onSubmit={handleCommandSubmit} className="flex items-center max-w-full mx-auto">
         <label htmlFor="command-input" className="mr-2 cursor-pointer hidden sm:inline text-gray-500">
           CMD:
@@ -112,7 +180,7 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
           <Send size={20} />
         </button>
       </form>
-    </div>
+    </div >
   );
 };
 
