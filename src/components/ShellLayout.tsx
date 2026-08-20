@@ -16,19 +16,10 @@ interface ShellLayoutProps {
 
 const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onStageSelect, projectStatus }) => {
   
-  // Find the full stage object based on the active stage ID
-  const activeStageDetails = React.useMemo(() => {
-    // In a real app, we would cache this, but for now, we map it here.
-    // Note: Need to assume 'stages' is available or pass it down, let's assume the name match is enough for now.
-    const stageId = activeStage ? activeStage.toLowerCase().includes('script') ? 'script' : activeStage.toLowerCase().includes('structure') ? 'structure' : activeStage.toLowerCase().includes('plan') ? 'plan' : 'previs';
-    return { 
-        id: stageId, 
-        name: activeStage ? activeStage.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('') : 'Shell',
-        description: 'The unified studio shell architecture.'
-    };
-  }, [activeStage]);
-
-
+  // Determine the stage details for the workspace component
+  // Since we can't easily map the display name back to the component logic, 
+  // we rely on the fact that the activeStage name is passed correctly.
+  
   return (
     <div className="flex flex-col h-screen bg-gray-50 text-gray-800">
       {/* Main Content Area (Left + Center + Right) */}
@@ -41,10 +32,9 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onS
 
         {/* Center Area: Active Tool Workspace */}
         <div className="flex-grow p-0 overflow-y-auto bg-white">
-          {/* Use the new component */}
+          {/* Use the new dynamically rendered StageWorkspace component */}
           {activeStage ? (
-            <StageWorkspace stage={activeStage}> 
-            </StageWorkspace>
+            <StageWorkspace stage={activeStage} /> 
           ) : (
             <div className="p-8 text-center text-yellow-700">
                 <h3 className="text-xl font-semibold">💡 Welcome to the Studio Shell</h3>
