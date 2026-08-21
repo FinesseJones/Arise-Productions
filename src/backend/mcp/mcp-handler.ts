@@ -21,9 +21,10 @@ export const processMCPRequest = async (project: ProjectStatus, stageId: keyof P
 
     try {
         let updatedProject = { ...project };
-        let newGlobalStatus = project.globalStatus; // Assume status remains the same until failure
-        
-        // --- Dynamic Dispatching based on Stage ID ---
+        // Handle the case where the status might change due to process completion
+        let newGlobalStatus: 'GREEN' | 'YELLOW' | 'RED' = 'GREEN'; // Assume success unless proven otherwise
+
+        // --- (Existing stage handling logic remains here) ---
         switch (stageId) {
             case 'script':
                 return await handleScriptBreak(project, params);
@@ -58,76 +59,110 @@ export const processMCPRequest = async (project: ProjectStatus, stageId: keyof P
 
 // --- STUB HANDLERS FOR THE 10 MCP SERVICES ---
 
-// 1. ScriptBreak (Storyboarding & Narrative)
+// 1. ScriptBreak (Minimal changes here, function structure is the target)
 const handleScriptBreak = async (project: ProjectStatus, params: any) => {
     await nvidiaWrapperInstance.generateAsset("Analyze core narrative structure", "S001");
     console.log("ScriptBreak finished. Character bibles and story beats generated.");
     return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
 };
 
-// 2. Cork Board (Act Structure & Visual Storyboarding)
+// 2. Cork Board
 const handleCorkBoard = async (project: ProjectStatus, params: any) => {
     await nvidiaWrapperInstance.generateAsset("Generate 2D story board panels and transition maps", "S001");
     console.log("Cork Board finished. Act breaks and flow validated.");
     return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
 };
 
-// 3. Master Canvas (Handoff & Continuity Check)
+// 3. Master Canvas
 const handleMasterCanvas = async (project: ProjectStatus, params: any) => {
     await nvidiaWrapperInstance.generateAsset("Review all assets for continuity breaks and resolution requirements", "S001");
     console.log("Master Canvas finished. The Handoff Package is sealed and verified.");
     return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
 };
 
-// 4. Blockout (3D Spatial Blocking & Camera Pathing)
+// 4. Blockout
 const handleBlockout = async (project: ProjectStatus, params: any) => {
-    // This is the most resource-intensive stage, using the NVIDIA client heavily.
     await nvidiaWrapperInstance.generateAsset("Calculate full XYZ camera pathing and lighting data", "S001");
     console.log("Blockout finished. Pre-visualization and camera solver data locked.");
     return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
 };
 
-// 5. Motion Previs Studio (Character Choreography & Physics)
+// 5. Motion Previs Studio
 const handleMotionPrevisStudio = async (project: ProjectStatus, params: any) => {
-    // Use specific movement analysis models.
     await nvidiaWrapperInstance.generateAsset("Simulate character kinematics and physics for key moments", "S001");
     console.log("Motion Previs Studio finished. Choreography and physical passes locked.");
     return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
 };
 
-// 6. Storyboard Reference Studio (Asset Generation & Mood Boarding)
+// 6. Storyboard Reference Studio
 const handleStoryboardReferenceStudio = async (project: ProjectStatus, params: any) => {
-    // Focus on generating visual asset concepts.
     await nvidiaWrapperInstance.generateAsset("Generate mood board images and key art concepts", "S001");
     console.log("Storyboard Studio finished. Key visual assets and mood boards are compiled.");
     return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
 };
 
-// 7. Slate (Prompt Engineering & Text Finalization)
+// 7. Slate
 const handleSlate = async (project: ProjectStatus, params: any) => {
     await nvidiaWrapperInstance.generateAsset("Generate final, continuity-locked text prompts and dialogue trees", "S001");
     console.log("Slate finished. All LLM inputs and prompts are finalized and locked.");
     return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
 };
 
-// 8. Circle Take (Daily Review & QA)
+// 8. Circle Take
 const handleCircleTake = async (project: ProjectStatus, params: any) => {
     await nvidiaWrapperInstance.generateAsset("Analyze live dailies footage for missed moments and required reshoots", "S001");
-    console.log("Circle Take finished. QA report generated, flagging 3 shots for reshot.");
-    // Intentionally forcing a warning/failure for testing the resume loop
+    console.log("Circle Take finished. QA report generated, flagging 3 shots for reshoot.");
+    // Retaining the explicit YELLOW status to test the reshoot loop
     return { ...project, globalStatus: 'YELLOW', lastModified: new Date().toISOString() };
 };
 
-// 9. Stem Studio (Audio Engineering)
+// 9. Stem Studio
 const handleStemStudio = async (project: ProjectStatus, params: any) => {
     await nvidiaWrapperInstance.generateAsset("Separate dialogue, music, and SFX into clean stems", "S001");
     console.log("Stem Studio finished. Clean audio stems delivered and marked for locking.");
     return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
 };
 
-// 10. DaVinci MCP (Final Edit & Mastering)
+// 10. DaVinci MCP (Final Edit & Mastering) - Logic significantly updated.
 const handleDaVinciMCP = async (project: ProjectStatus, params: any) => {
     await nvidiaWrapperInstance.generateAsset("Run final color correction, color grading, and final mastering pass", "S001");
-    console.log("DaVinci MCP finished. Final Master Video Export complete and locked.");
-    return { ...project, globalStatus: 'GREEN', lastModified: new Date().toISOString() };
+    console.log("DaVinci MCP finished. Master Video Export pre-validation complete. Waiting for CI/CD Gate check...");
+    return { ...project, globalStatus: 'YELLOW', lastModified: new Date().toISOString() };
+};
+
+// NEW: The Infrastructure Gatekeeper Function
+/**
+ * Centralized function simulating the CI/CD pipeline job. 
+ * This simulates the mandatory quality gate run before the final 'edit' stage.
+ * @param status The current project state.
+ * @returns Promise<boolean> True if successful, False if artifacts fail quality checks.
+ */
+export const runCICDPipeline = async (status: ProjectStatus): Promise<boolean> => {
+    console.log("\n[CI/CD PIPELINE] ----------------------------------------------------");
+    console.log("[CI/CD PIPELINE] Starting mandatory build, asset integrity, and quality checks...");
+    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate long build time
+
+    // 1. Asset Integrity Check
+    if (!status.shots.length || status.shots[0].metadata.title.includes("Placeholder Shot")) {
+         console.error("[CI/CD] 🔴 CRITICAL FAILURE: Project manifest is incomplete. Must define shot details first.");
+         return false;
+    }
+    
+    // 2. Dependency Graph Check (The professional check)
+    const hasMotion = status.shots[0].status['motion']?.statusChar === '🟢';
+    const hasSound = status.shots[0].status['sound']?.statusChar === '🟢';
+    
+    if (hasMotion && !hasSound) {
+        console.error("[CI/CD] 🔴 FAILURE: Motion data exists without required Sound stems. Project cannot proceed to final edit.");
+        return false;
+    }
+
+    // 3. Runtime Quality Check (Simulation)
+    if (Math.random() < 0.1) { // 10% Chance of minor failure (Simulated)
+        console.error("[CI/CD] 🟠 WARNING: Minor pipeline code compilation error found. Requires human QC review.");
+        return false;
+    }
+
+    console.log("[CI/CD] ✅ BUILD SUCCESS: All quality gates passed. Artifacts locked and ready for mastering deployment.");
+    return true;
 };

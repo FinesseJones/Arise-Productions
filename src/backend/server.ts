@@ -1,13 +1,10 @@
 "use strict";
 
 import express, { Request, Response } from 'express';
-import { processMCPRequest } from "./mcp/mcp-handler";
+import { processMCPRequest, runCICDPipeline } from "./mcp/mcp-handler";
 import { ProjectStatus, createInitialProjectStatus } from "./types/project-status";
 
-const app = express();
-app.use(express.json());
-
-const PORT = process.env.PORT || 8080;
+// ... (Rest of the imports and setup remains the same)
 
 /**
  * Middleware function to simulate Auth/Auth flow.
@@ -20,14 +17,18 @@ const securityGate = (req: Request, res: Response, next: (err?: any) => void) =>
         return res.status(401).json({ status: 'error', message: 'Authentication required: Missing authentication tokens.' });
     }
 
-    // Simulated Role-Based Access Control (RBAC) check
+    // --- Authorization Rule Set ---
     const isManager = userRole === 'ADMIN' || userRole === 'DIRECTOR';
     
-    if (!isManager && ['previs', 'boards', 'edit'].includes(req.body.stageId)) {
-         return res.status(403).json({ status: 'error', message: `Authorization Denied: '${userRole}' role cannot execute ${req.body.stageId} MCP servers.` });
+    // Example of granular rights: Only ADMIN can trigger the final Master gate
+    if (req.body.stageId === 'edit' && userRole !== 'ADMIN') {
+         return res.status(403).json({ status: 'error', message: `Authorization Denied: '${userRole}' role lacks permissions to execute the final 'DaVinci MCP' stage.` });
+    }
+    // Example of general rights: Core roles can execute most stages
+    if (['scripts', 'structure', 'previs', 'boards'].includes(req.body.stageId) && !isManager) {
+         // We could add more granular permissions here if needed
     }
     
-    // Attach user context to the request object for downstream services
     (req as any).__user_role = userRole;
     (req as any).__user_id = authToken;
     next();
@@ -48,25 +49,28 @@ app.post("/api/v1/mcp", securityGate, async (req: Request, res: Response) => {
     // 2. (Mock) Load Project State
     let currentProjectState: ProjectStatus;
     try {
+        // Setup new project with user ID for tracking
         currentProjectState = createInitialProjectStatus("DEFAULT_PROJECT", 'S001', 1, userId); 
     } catch (e) {
         return res.status(500).json({ status: 'error', message: 'Failed to load project state.' });
     }
 
-    // 3. Dispatch the request through the core handler
+    // 3. Dispatch and Execute the Request
     try {
         let updatedStatus;
-        // We must ensure the requesting user is authorized for the action,
-        // which was already done in the securityGate middleware.
+        
+        // Core execution flow
         updatedStatus = await processMCPRequest(currentProjectState, stageId as keyof ProjectStatus, payload);
         
-        // --- NEW STEP: CI/CD GATE CHECK ---
+        // --- NEW STEP: CI/CD Gate Check ---
         if (stageId === 'edit') {
-            if (!await runCICDPipeline(updatedStatus)) {
-                console.error("CI/CD Gate Failed: Project cannot proceed to final Edit stage.");
+            // This is the mandatory final gate. It checks all preceding work.
+            const pipelinePassed = await runCICDPipeline(updatedStatus);
+            
+            if (!pipelinePassed) {
                 return res.status(412).json({ 
                     status: 'failure', 
-                    message: 'Pipeline blocked: One or more critical assets failed the automated CI/CD quality gate. Assets must be fixed.',
+                    message: 'Pipeline BLOCKED: Critical assets failed the automated CI/CD quality gate. Review the logs for failure points.',
                     updatedState: updatedStatus
                 });
             }
@@ -75,7 +79,7 @@ app.post("/api/v1/mcp", securityGate, async (req: Request, res: Response) => {
         // 4. Success Response
         res.json({ 
             status: 'success', 
-            message: `Successfully completed ${stageId} for project ${projectId}.`,
+            message: `Successfully completed ${stageId} for project ${userId}.`,
             updatedState: updatedStatus 
         });
 
@@ -90,48 +94,10 @@ app.post("/api/v1/mcp", securityGate, async (req: Request, res: Response) => {
 });
 
 
-// ========================================================================================
-// New Internal Functions for Infrastructure
-// ========================================================================================
-
-/**
- * Simulates the execution of the automated CI/CD Pipeline.
- * This function must be the gate before the final 'edit' stage.
- * @param status The current project state.
- * @returns Promise<boolean> True if successful, False if artifacts fail quality checks.
- */
-const runCICDPipeline = async (status: ProjectStatus): Promise<boolean> => {
-    console.log("\n[CI/CD PIPELINE] --- Running automated build and quality checks... ---");
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate long build time
-
-    // 1. Asset Integrity Check
-    if (status.shots.length === 0) {
-        console.warn("[CI/CD] WARNING: No shots defined.");
-    }
-    
-    // 2. Conflict Check: Example: If Motion Previs exists but Sound is missing.
-    const hasMotion = status.shots[0].status['motion']?.statusChar === '🟢';
-    const hasSound = status.shots[0].status['sound']?.statusChar === '🟢';
-    
-    if (hasMotion && !hasSound) {
-        console.error("[CI/CD] 🔴 FAILURE: Motion data exists without required Sound stems. Blocking release.");
-        return false;
-    }
-
-    // 3. Code Compilation Check (Final Polish)
-    if (Math.random() < 0.1) { // 10% Chance of minor failure
-        console.error("[CI/CD] 🟠 FAILURE: Minor pipeline code compilation error found. Requires human QC.");
-        return false;
-    }
-
-    console.log("[CI/CD] ✅ BUILD SUCCESS: All quality gates passed. Artifacts locked and ready for mastering.");
-    return true;
-};
-
 // Start the server
 app.listen(PORT, () => {
     console.log(`\n============================================================`);
     console.log(`🚀 CENTRAL API BRIDGE Running on http://localhost:${PORT}`);
     console.log(`============================================================`);
-    console.log("Backend infrastructure ready for: Auth/Auth, File Watcher, and CI/CD.");
+    console.log("Backend infrastructure now includes: Authentication/Authorization, File Watching, and CI/CD Quality Gate.");
 });
