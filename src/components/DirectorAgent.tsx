@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { Send } from 'lucide-react';
-import { ProjectStatus, updateShotStatus } from '../types/types';
+import { ProjectStatus } from '../types/types';
 import toast from 'react-hot-toast';
 
 interface DirectorAgentProps {
@@ -32,15 +32,18 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
           const updatedShots = [...prevStatus.shots];
           const updatedShot = { ...updatedShots[shotIndex] };
           
-          // Find the correct status key based on the stageName
+          // Determine the correct status key based on the stageName
           let statusKey: keyof typeof updatedShot.status;
           if (stageName.includes('Script')) statusKey = 'script';
           else if (stageName.includes('Structure')) statusKey = 'structure';
           else if (stageName.includes('Plan')) statusKey = 'plan';
           else if (stageName.includes('Blockout')) statusKey = 'previs';
-          else if (stageName.includes('Circle')) statusKey = 'dailies';
+          else if (stageName.includes('Motion')) statusKey = 'motion';
+          else if (stageName.includes('Board')) statusKey = 'boards';
           else if (stageName.includes('Prompt')) statusKey = 'prompt';
-          else statusKey = 'script'; // Default fallback
+          else if (stageName.includes('Circle')) statusKey = 'dailies';
+          else if (stageName.includes('Stem')) statusKey = 'sound';
+          else statusKey = 'edit';
 
           // Update status at the specific stage index to Success (Green)
           updatedShot.status = {
@@ -61,94 +64,92 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
     }
 
     setIsProcessing(true);
-    toast.loading("🟡 Director Agent Engaged. Checking all 10 MCP servers...");
+    toast.loading("🟡 Director Agent Engaged. Analyzing required workflow...");
     
-    // 1. Initial Connectivity Check Simulation
-    if (!DIRECTOR_AGENT_MCP_SERVERS.every(server => server.type === 'api' && server.endpoint)) {
-      toast.error("Critical Failure: Cannot connect to all 10 required MCP servers. Check system stability.");
-      setIsProcessing(false);
-      return;
-    }
-
-    let executionSuccess = false;
     let finalMessage = "";
 
     try {
-        // --- COMPLEX WORKFLOW SIMULATION ---
+        // --- 1. WORKFLOW: PIPELINE START (Script -> Blockout) ---
         if (trimmedCommand.toLowerCase().includes("board scene")) {
-            // Workflow: Script -> Cork Board -> Master Canvas -> Blockout (Multi-stage handoff)
             const match = trimmedCommand.match(/board scene (\d+)/i);
             if (!match) {
                 throw new Error("Invalid scene reference.");
             }
             
-            // Simulate running the handoff pipeline
-            finalMessage = `Initiating Pipeline Run for Scene ${match[1]}...`;
+            finalMessage = `Initiating Full Pipeline Run for Scene ${match[1]}. (Script $\rightarrow$ Cork $\rightarrow$ Master $\rightarrow$ Blockout)`;
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Simulate Stage 1: Script -> Done
-            toast.success("✅ ScriptBreak (Scene Bible) completed. Handing data to Cork Board...").pause();
+            // Stage 1: Script
+            toast.success("✅ ScriptBreak (Scene Bible) completed. Exporting character/shot bibles...").pause();
             await new Promise(resolve => setTimeout(resolve, 1000));
             
-            // Simulate Stage 2: Cork Board -> Done
-            toast.success("✅ Cork Board (Scene Outline) generated. Exporting index cards...").pause();
+            // Stage 2: Cork Board
+            toast.success("✅ Cork Board (Scene Outline) generated. Index-card wall compiled...").pause();
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            // Simulate Stage 3: Master Canvas -> Done
-            toast.success("✅ Master Canvas (Handoff Package) compiled. Preparing assets...").pause();
+            // Stage 3: Master Canvas
+            toast.success("✅ Master Canvas (Total Handoff Package) compiled. Ensuring continuity...").pause();
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            // Simulate Stage 4: Blockout (Final Target)
-            finalMessage = `🎬 Blockout (MCP) successfully run for Scene ${match[1]}. Camera path solved, motion-reference exported, and project status updated.`;
+            // Stage 4: Blockout (Final Target)
+            finalMessage = `🎬 SUCCESS: Blockout (MCP) run for Scene ${match[1]}. All required camera paths and choreography are solved and exported.`;
             await new Promise(resolve => setTimeout(resolve, 1000));
-            executionSuccess = true;
             
-        } else if (trimmedCommand.toLowerCase().includes("compile prompts")) {
-            // Workflow: Blockout/Boards -> Slate -> Prompt
-            finalMessage = `Compiling all necessary prompts for the entire project (${DIRECTOR_AGENT_MCP_SERVERS[5].name} and ${DIRECTOR_AGENT_MCP_SERVERS[6].name} reports used).`;
+            // Update status after the full chain completes
+            simulateProcessSuccess(0, 0, 'Blockout'); 
+            
+        } 
+        
+        // --- 2. WORKFLOW: PROMPT GENERATION (Boards -> Slate) ---
+        else if (trimmedCommand.toLowerCase().includes("compile prompts")) {
+            finalMessage = `Compiling all necessary text and media prompts for the entire project. (Focus: Storyboards $\rightarrow$ Slate).`;
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Simulate Stage 5: Storyboard Boards -> Done
-            toast.success("💾 Storyboard assets cataloged. Generating seed prompt descriptors...").pause();
+            // Stage 5: Storyboard Boards
+            toast.success("💾 Storyboard Boards analyzed. Generating core concept descriptors...").pause();
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            // Simulate Stage 6: Slate -> Done
-            finalMessage = `✨ Slate (MCP) Agent finished running. All continuity-locked prompts confirmed and saved to /06-prompts.`;
+            // Stage 6: Slate 
+            finalMessage = `✨ SUCCESS: Slate (MCP) Agent finished running. All continuity-locked prompts confirmed and saved to /06-prompts.`;
             await new Promise(resolve => setTimeout(resolve, 1000));
-            executionSuccess = true;
+            simulateProcessSuccess(0, 0, 'Slate');
 
-        } else if (trimmedCommand.toLowerCase().includes("circle winners")) {
-            // Workflow: Dailies -> Prompt (Selection/Review)
-            finalMessage = `🔬 Circle Take (MCP) agent activated. Reviewing shot-by-shot dailies, confirming 'best takes' are flagged, and updating reshoot lists back in Slate.`;
+        } 
+        
+        // --- 3. WORKFLOW: RESHOOT LOOP (Dailies -> Prompting) ---
+        else if (trimmedCommand.toLowerCase().includes("review reshoots")) {
+            finalMessage = `🔄 Initiating Reshoot Loop! Checking for failures from Circle Take and automatically flagging required prompt updates.`;
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Simulate Stage 7: Dailies -> Done
-            toast.success("🔎 Circle Take (MCP) completed. Dailies reviewed. Reshoot list compiled!").pause();
+            // Stage 7: Dailies
+            toast.success("🔎 Circle Take (MCP) completed. Dailies reviewed. Reshoot list compiled: shot 2 failed on lighting.").pause();
             await new Promise(resolve => setTimeout(resolve, 1000));
             
-            // Simulate looping back to prompt status update
-            finalMessage = `✅ Workflow complete. The director's vision has been captured and passed back to the prompt system`;
-            executionSuccess = true;
+            // Critical handoff simulation
+            toast.warn("⚠️ Critical Flag Detected: Missing lighting data for Shot 2. Auto-triggering Slate/Blockout correction.").pause();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Simulate failure feeding back into prompt/previs
+            simulateProcessSuccess(1, 0, 'Blockout'); 
+            simulateProcessSuccess(1, 0, 'Slate'); 
 
-        } else {
-            // General unhandled command
-            finalMessage = `Agent received command. Passing "${trimmedCommand}" to the general queue. Awaiting response from a dedicated MCP server handshake.`;
-            executionSuccess = true;
+            finalMessage = `✅ Reshoot Loop complete. Failures were identified (Shot 2) and the system auto-updated the Blockout and Prompt requirements.`;
+
+        }
+        
+        // --- 4. GENERIC / FALLBACK COMMANDS ---
+        else {
+            finalMessage = `Agent accepted command: "${trimmedCommand}". Passing request to the appropriate queue.`;
         }
 
-        // Final Status Update (Always run this on success)
-        if (executionSuccess) {
-            simulateProcessSuccess(0, 0, 'script'); // Update the first shot status
-            setTimeout(() => {
-                toast.success(finalMessage, { duration: 6000 });
-            }, 100);
-        } else {
-            throw new Error("Unknown or unsupported workflow sequence.");
+        // Final Status Update
+        if (finalMessage) {
+            toast.success(finalMessage, { duration: 6000 });
         }
-
+        
     } catch (error) {
         console.error("Agent Error:", error);
-        toast.error(`❌ Command Error: ${error instanceof Error ? error.message : "Unknown error during API communication."}`, { duration: 6000 });
+        toast.error(`❌ Command Failure: ${error instanceof Error ? error.message : "An unknown error occurred during the workflow."}`, { duration: 6000 });
     } finally {
         setIsProcessing(false);
         setCommand("");
@@ -165,7 +166,7 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
         <input
           id="command-input"
           type="text"
-          placeholder="e.g., board scene 3 or compile prompts"
+          placeholder="e.g., board scene 3 | compile prompts | review reshoots"
           className="flex-grow p-2 border border-gray-300 rounded-l-md focus:ring-blue-500 focus:border-blue-500 outline-none"
           value={command}
           onChange={(e) => setCommand(e.target.value)}
