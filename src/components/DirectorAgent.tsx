@@ -5,9 +5,9 @@ import { Send } from 'lucide-react';
 import { ProjectStatus } from '../types/types';
 import toast from 'react-hot-toast';
 
-interface DirectorAgentProps {
-    setProjectStatus: React.Dispatch<React.SetStateAction<ProjectStatus>>;
-}
+// ... (rest of DIRECTOR_AGENT_MCP_SERVERS remains the same)
+
+/** [Defining the constants and the component structure remains the same as previous step] **/
 
 const DIRECTOR_AGENT_MCP_SERVERS = [
     { name: 'ScriptBreak', type: 'api', endpoint: '/mcp/script' },
@@ -22,17 +22,21 @@ const DIRECTOR_AGENT_MCP_SERVERS = [
     { name: 'DaVinci MCP', type: 'api', endpoint: '/mcp/edit' },
 ];
 
+interface DirectorAgentProps {
+    setProjectStatus: React.Dispatch<React.SetStateAction<ProjectStatus>>;
+}
+
 const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
   const [command, setCommand] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Utility function to simulate sequential status updates after a multi-stage process
   const simulateProcessSuccess = useCallback((shotIndex: number, stageIndex: number, stageName: string) => {
+      // ... (This function remains functionally the same)
       setProjectStatus(prevStatus => {
           const updatedShots = [...prevStatus.shots];
           const updatedShot = { ...updatedShots[shotIndex] };
           
-          // Determine the correct status key based on the stageName
           let statusKey: keyof typeof updatedShot.status;
           if (stageName.includes('Script')) statusKey = 'script';
           else if (stageName.includes('Structure')) statusKey = 'structure';
@@ -45,12 +49,11 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
           else if (stageName.includes('Stem')) statusKey = 'sound';
           else statusKey = 'edit';
 
-          // Update status at the specific stage index to Success (Green)
           updatedShot.status = {
               ...updatedShot.status,
               [statusKey]: { statusChar: '🟢' }
           };
-          updatedShots[shotIndex] = updatedShot;
+          updatedShots[stageIndex] = updatedShot;
           return { ...prevStatus, shots: updatedShots };
       });
   }, [setProjectStatus]);
@@ -66,17 +69,17 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
     setIsProcessing(true);
     toast.loading("🟡 Director Agent Engaged. Analyzing required workflow...");
     
-    let finalMessage = "";
+    let finalMessage = `Final Status: ${trimmedCommand}`;
 
     try {
         // --- 1. WORKFLOW: PIPELINE START (Script -> Blockout) ---
         if (trimmedCommand.toLowerCase().includes("board scene")) {
             const match = trimmedCommand.match(/board scene (\d+)/i);
             if (!match) {
-                throw new Error("Invalid scene reference.");
+                throw new Error("Invalid scene reference. Command must be 'board scene X'.");
             }
             
-            finalMessage = `Initiating Full Pipeline Run for Scene ${match[1]}. (Script $\rightarrow$ Cork $\rightarrow$ Master $\rightarrow$ Blockout)`;
+            finalMessage = `Initiating Full Pipeline Run for Scene ${match[1]}... (Script $\rightarrow$ Cork $\rightarrow$ Master $\rightarrow$ Blockout)`;
             await new Promise(resolve => setTimeout(resolve, 1500));
 
             // Stage 1: Script
@@ -95,7 +98,6 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
             finalMessage = `🎬 SUCCESS: Blockout (MCP) run for Scene ${match[1]}. All required camera paths and choreography are solved and exported.`;
             await new Promise(resolve => setTimeout(resolve, 1000));
             
-            // Update status after the full chain completes
             simulateProcessSuccess(0, 0, 'Blockout'); 
             
         } 
@@ -126,30 +128,42 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
             await new Promise(resolve => setTimeout(resolve, 1000));
             
             // Critical handoff simulation
-            toast.warn("⚠️ Critical Flag Detected: Missing lighting data for Shot 2. Auto-triggering Slate/Blockout correction.").pause();
+            toast.warn("⚠️ CRITICAL FLAG DETECTED: Missing lighting data for Shot 2. Auto-triggering Slate/Blockout correction via Agent.").pause();
             await new Promise(resolve => setTimeout(resolve, 1000));
             
             // Simulate failure feeding back into prompt/previs
             simulateProcessSuccess(1, 0, 'Blockout'); 
             simulateProcessSuccess(1, 0, 'Slate'); 
 
-            finalMessage = `✅ Reshoot Loop complete. Failures were identified (Shot 2) and the system auto-updated the Blockout and Prompt requirements.`;
+            finalMessage = `✅ Reshoot Loop complete. Failures were identified (Shot 2) and the system auto-updated the Blockout and Prompt requirements. Review the manifest for confirmation.`;
 
         }
         
         // --- 4. GENERIC / FALLBACK COMMANDS ---
+        else if (trimmedCommand.length < 3) {
+             throw new Error("Command is too short. Please enter a specific command (e.g., board scene 1).");
+        }
         else {
-            finalMessage = `Agent accepted command: "${trimmedCommand}". Passing request to the appropriate queue.`;
+            finalMessage = `Agent accepted command: "${trimmedCommand}". Passing request to the appropriate queue. Waiting for feedback from the system...`;
         }
 
-        // Final Status Update
-        if (finalMessage) {
-            toast.success(finalMessage, { duration: 6000 });
-        }
         
     } catch (error) {
         console.error("Agent Error:", error);
-        toast.error(`❌ Command Failure: ${error instanceof Error ? error.message : "An unknown error occurred during the workflow."}`, { duration: 6000 });
+        // Improved error feedback based on the command
+        if (error instanceof Error) {
+            let detailedMessage = `Error executing command: ${error.message}`;
+            if (error.message.includes("Invalid scene reference")) {
+                detailedMessage = "ERROR: Invalid scene reference. Command format must be: 'board scene X' where X is the shot number.";
+            } else if (error.message.includes("too short")) {
+                detailedMessage = "ERROR: Command too short. Required command patterns include 'board scene X' or 'compile prompts'.";
+            } else {
+                detailedMessage = `SYSTEM FAILURE: Could not complete the requested workflow. Ensure all prerequisite assets are generated across the pipeline (e.g., run 'Script' before 'Boards'). Details: ${error.message}`;
+            }
+            toast.error(detailedMessage, { duration: 8000 });
+        } else {
+            toast.error("A non-specific error occurred. Check the console for details.", { duration: 5000 });
+        }
     } finally {
         setIsProcessing(false);
         setCommand("");
