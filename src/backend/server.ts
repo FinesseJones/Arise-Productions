@@ -4,62 +4,78 @@ import express, { Request, Response } from 'express';
 import { processMCPRequest } from "./mcp/mcp-handler";
 import { ProjectStatus, createInitialProjectStatus } from "./types/project-status";
 
-// Initialize the Express application
 const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
 
 /**
- * Middleware to authenticate and validate the Project ID across all endpoints.
- * This ensures no random request can hit the MCP servers.
+ * Middleware function to simulate Auth/Auth flow.
+ * Checks for a valid user token and role before allowing the request to proceed.
  */
-const projectIdValidator = (req: Request, res: Response, next: (err?: any) => void) => {
-    const projectId = req.params.projectId;
-    if (!projectId) {
-        return res.status(400).json({ error: "Project ID is missing in the request parameters." });
+const securityGate = (req: Request, res: Response, next: (err?: any) => void) => {
+    const { authToken, userRole } = req.headers;
+
+    if (!authToken || !userRole) {
+        return res.status(401).json({ status: 'error', message: 'Authentication required: Missing authentication tokens.' });
     }
-    // In a real system, this would hit the database to validate if the project ID exists.
-    (req as any).__project_id = projectId;
+
+    // Simulated Role-Based Access Control (RBAC) check
+    const isManager = userRole === 'ADMIN' || userRole === 'DIRECTOR';
+    
+    if (!isManager && ['previs', 'boards', 'edit'].includes(req.body.stageId)) {
+         return res.status(403).json({ status: 'error', message: `Authorization Denied: '${userRole}' role cannot execute ${req.body.stageId} MCP servers.` });
+    }
+    
+    // Attach user context to the request object for downstream services
+    (req as any).__user_role = userRole;
+    (req as any).__user_id = authToken;
     next();
 };
 
 
-// ========================================================================================
-// Central API Bridge Endpoint
-// All client commands MUST hit this single endpoint.
-// ========================================================================================
-app.post("/api/v1/mcp", projectIdValidator, async (req: Request, res: Response) => {
-    const projectId = (req as any).__project_id;
-    
-    // 1. Validate payload structure
+app.post("/api/v1/mcp", securityGate, async (req: Request, res: Response) => {
     const { stageId, payload } = req.body;
-    if (!stageId || !payload) {
-        return res.status(400).json({ status: 'error', message: 'Invalid payload: stageId and payload are required.' });
-    }
+    
+    // 1. Simulate Authentication and Authorization Success
+    const userRole = (req as any).__user_role;
+    const userId = (req as any).__user_id;
+    
+    const errorMessage = `Attempted access by user ${userId} (${userRole}) to stage ${stageId}.`;
+    console.log(`\n[API Bridge Security] Authorization pre-check complete. ${errorMessage}`);
 
-    console.log(`\n[API Bridge] Request received for Stage: ${stageId}.`);
 
-    // 2. (Mock) Load Project State: In production, run a database query here.
-    // For simulation, we create a dummy project state.
+    // 2. (Mock) Load Project State
     let currentProjectState: ProjectStatus;
     try {
-        // This would fetch the actual project state from Postgres/DB
-        currentProjectState = createInitialProjectStatus(projectId, 'S001', 1); 
-        console.log(`[API Bridge] Successfully loaded project state for ${projectId}.`);
-
+        currentProjectState = createInitialProjectStatus("DEFAULT_PROJECT", 'S001', 1, userId); 
     } catch (e) {
-        return res.status(500).json({ status: 'error', message: 'Failed to load project state from persistence layer.' });
+        return res.status(500).json({ status: 'error', message: 'Failed to load project state.' });
     }
 
-    // 3. Dispatch and Execute the Request
+    // 3. Dispatch the request through the core handler
     try {
-        const updatedStatus = await processMCPRequest(currentProjectState, stageId as keyof ProjectStatus, payload);
+        let updatedStatus;
+        // We must ensure the requesting user is authorized for the action,
+        // which was already done in the securityGate middleware.
+        updatedStatus = await processMCPRequest(currentProjectState, stageId as keyof ProjectStatus, payload);
         
-        // 4. Acknowledge and Respond (The final state is saved by calling this function)
+        // --- NEW STEP: CI/CD GATE CHECK ---
+        if (stageId === 'edit') {
+            if (!await runCICDPipeline(updatedStatus)) {
+                console.error("CI/CD Gate Failed: Project cannot proceed to final Edit stage.");
+                return res.status(412).json({ 
+                    status: 'failure', 
+                    message: 'Pipeline blocked: One or more critical assets failed the automated CI/CD quality gate. Assets must be fixed.',
+                    updatedState: updatedStatus
+                });
+            }
+        }
+
+        // 4. Success Response
         res.json({ 
             status: 'success', 
-            message: `Successfully completed ${stageId} for project ${projectId}. New global status: ${updatedStatus.globalStatus}`,
+            message: `Successfully completed ${stageId} for project ${projectId}.`,
             updatedState: updatedStatus 
         });
 
@@ -67,16 +83,55 @@ app.post("/api/v1/mcp", projectIdValidator, async (req: Request, res: Response) 
         console.error("[API Bridge] Fatal Error During Processing:", e);
         res.status(500).json({ 
             status: 'error', 
-            message: `A critical error occurred in the pipeline processing: ${(e as Error).message}` 
+            message: `A critical error occurred. Check logs.`,
+            updatedState: { ...currentProjectState, globalStatus: 'RED' }
         });
     }
 });
 
+
+// ========================================================================================
+// New Internal Functions for Infrastructure
+// ========================================================================================
+
+/**
+ * Simulates the execution of the automated CI/CD Pipeline.
+ * This function must be the gate before the final 'edit' stage.
+ * @param status The current project state.
+ * @returns Promise<boolean> True if successful, False if artifacts fail quality checks.
+ */
+const runCICDPipeline = async (status: ProjectStatus): Promise<boolean> => {
+    console.log("\n[CI/CD PIPELINE] --- Running automated build and quality checks... ---");
+    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate long build time
+
+    // 1. Asset Integrity Check
+    if (status.shots.length === 0) {
+        console.warn("[CI/CD] WARNING: No shots defined.");
+    }
+    
+    // 2. Conflict Check: Example: If Motion Previs exists but Sound is missing.
+    const hasMotion = status.shots[0].status['motion']?.statusChar === '🟢';
+    const hasSound = status.shots[0].status['sound']?.statusChar === '🟢';
+    
+    if (hasMotion && !hasSound) {
+        console.error("[CI/CD] 🔴 FAILURE: Motion data exists without required Sound stems. Blocking release.");
+        return false;
+    }
+
+    // 3. Code Compilation Check (Final Polish)
+    if (Math.random() < 0.1) { // 10% Chance of minor failure
+        console.error("[CI/CD] 🟠 FAILURE: Minor pipeline code compilation error found. Requires human QC.");
+        return false;
+    }
+
+    console.log("[CI/CD] ✅ BUILD SUCCESS: All quality gates passed. Artifacts locked and ready for mastering.");
+    return true;
+};
 
 // Start the server
 app.listen(PORT, () => {
     console.log(`\n============================================================`);
     console.log(`🚀 CENTRAL API BRIDGE Running on http://localhost:${PORT}`);
     console.log(`============================================================`);
-    console.log("NOTE: All MCP servers are currently running as asynchronous web workers behind this bridge.");
+    console.log("Backend infrastructure ready for: Auth/Auth, File Watcher, and CI/CD.");
 });
