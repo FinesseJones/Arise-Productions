@@ -1,166 +1,129 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
-import { Send } from 'lucide-react';
-import { ProjectStatus } from '../types/types';
+import React, { useState } from 'react';
+import { Send, Terminal, Sparkles, RefreshCw, Layers } from 'lucide-react';
 import toast from 'react-hot-toast';
-
-// ... (CONSTANTS remain the same)
-
-const DIRECTOR_AGENT_MCP_SERVERS = [
-    { name: 'ScriptBreak', type: 'api', endpoint: '/mcp/script' },
-    { name: 'Cork Board', type: 'api', endpoint: '/mcp/structure' },
-    { name: 'Master Canvas', type: 'api', endpoint: '/mcp/plan' },
-    { name: 'Blockout', type: 'api', endpoint: '/mcp/previs' },
-    { name: 'Motion Previs Studio', type: 'api', endpoint: '/mcp/motion' },
-    { name: 'Storyboard Reference Studio', type: 'api', endpoint: '/mcp/boards' },
-    { name: 'Slate', type: 'api', endpoint: '/mcp/prompt' },
-    { name: 'Circle Take', type: 'api', endpoint: '/mcp/dailies'' },
-    { name: 'Stem Studio', type: 'api', endpoint: '/mcp/sound' },
-    { name: 'DaVinci MCP', type: 'api', endpoint: '/mcp/edit' },
-];
+import { WorkerTelemetry } from '../hooks/useStudioSocket';
 
 interface DirectorAgentProps {
-    setProjectStatus: React.Dispatch<React.SetStateAction<ProjectStatus>>;
+  activeStage: string | null;
+  onSendCommand: (command: string, activeStage?: string | null, shotNumber?: number) => Promise<void>;
+  telemetry: WorkerTelemetry | null;
 }
 
-const DirectorAgent: React.FC<DirectorAgentProps> = ({ setProjectStatus }) => {
+const DirectorAgent: React.FC<DirectorAgentProps> = ({
+  activeStage,
+  onSendCommand,
+  telemetry,
+}) => {
   const [command, setCommand] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-// ... (rest of the component remains the same)
 
-
-  // ... (handleCommandSubmit function implementation remains the same, but we ensure the language changes)
-  const handleCommandSubmit = useCallback(async (e: React.FormEvent) => {
+  const handleCommandSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedCommand = command.trim();
-    if (!trimmedCommand) {
-        return;
+    const trimmed = command.trim();
+    if (!trimmed) return;
+
+    if (trimmed.length < 3) {
+      toast.error("ERROR: Command too short. Required command patterns include 'board scene X' or 'compile prompts'.");
+      return;
     }
 
     setIsProcessing(true);
-    toast.loading("🟡 Director Agent Engaged. Validating workflow through the Central API Bridge...");
-    
-    let commandPassedToCore = false;
-    let finalMessage = `Final Status: ${trimmedCommand}`;
+    const toastId = toast.loading(`🟡 Arise AI Director: Dispatching "${trimmed}" through Central API Bridge...`);
 
     try {
-        // --- 1. WORKFLOW: PIPELINE START (Script -> Blockout) ---
-        if (trimmedCommand.toLowerCase().includes("board scene")) {
-            // ... (rest of the logic remains the same, but focus on the API bridge)
-            const match = trimmedCommand.match(/board scene (\d+)/i);
-            if (!match) {
-                throw new Error("Invalid scene reference. Command must be 'board scene X'.");
-            }
-            
-            finalMessage = `Initiating Full Pipeline Run for Scene ${match[1]}... (Script $\rightarrow$ Cork $\rightarrow$ Master $\rightarrow$ Blockout) via Central API Bridge.`;
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // Stage 1: Script
-            toast.success("✅ ScriptBreak (Scene Bible) completed. Transmitting data via API Bridge...").pause();
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Stage 2: Cork Board
-            toast.success("✅ Cork Board (Scene Outline) generated. Transmitting index cards via API Bridge...").pause();
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Stage 3: Master Canvas
-            toast.success("✅ Master Canvas (Total Handoff Package) compiled. All data passed through the Central API Bridge...").pause();
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Stage 4: Blockout (Final Target)
-            finalMessage = `🎬 SUCCESS: Blockout (MCP) run for Scene ${match[1]}. All camera paths and choreography are solved via the Central API Bridge.`;
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            simulateProcessSuccess(0, 0, 'Blockout'); 
-            commandPassedToCore = true;
-            
-        } 
-        
-        // --- 2. WORKFLOW: PROMPT GENERATION (Boards -> Slate) ---
-        else if (trimmedCommand.toLowerCase().includes("compile prompts")) {
-            finalMessage = `Compiling all necessary text and media prompts for the entire project via Central API Bridge.`;
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // Stage 5: Storyboard Boards
-            toast.success("💾 Storyboard Boards analyzed. Transmitting descriptors via API Bridge...").pause();
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Stage 6: Slate 
-            finalMessage = `✨ SUCCESS: Slate (MCP) Agent finished running. All continuous prompts confirmed and saved via the API Bridge.`;
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            simulateProcessSuccess(0, 0, 'Slate');
-            commandPassedToCore = true;
-
-        } 
-        
-        // --- 3. WORKFLOW: RESHOOT LOOP (Dailies -> Prompting) ---
-        else if (trimmedCommand.toLowerCase().includes("review reshoots")) {
-           // ... (logic remains largely the same, emphasizing the automated data feedback loop)
-            finalMessage = `🔄 Initiating Reshoot Loop via Central API Bridge! Checking for failures and automatically updating upstream stages.`;
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Status updates (unchanged)
-            simulateProcessSuccess(1, 0, 'Blockout'); 
-            simulateProcessSuccess(1, 0, 'Slate'); 
-            commandPassedToCore = true;
-        }
-        
-        // --- 4. GENERIC / FALLBACK COMMANDS ---
-        else if (trimmedCommand.length < 3) {
-             throw new Error("Command is too short. Please enter a specific command (e.g., board scene 1).");
-        }
-        else {
-            finalMessage = `Agent accepting general command: "${trimmedCommand}". Routing request through the Central API Bridge now.`;
-            commandPassedToCore = true;
-        }
-
-
-    } catch (error) {
-        // Updated error handling language
-        let detailedMessage = `Error executing command via Central API Bridge: ${error instanceof Error ? error.message : "Unknown system error."}`;
-        if (error instanceof Error) {
-            if (error.message.includes("Invalid scene reference")) {
-                detailedMessage = "ERROR: Invalid scene reference. Command must be 'board scene X'.";
-            } else if (error.message.includes("too short")) {
-                detailedMessage = "ERROR: Command too short. Required command patterns include 'board scene X' or 'compile prompts'.";
-            } else if (!commandPassedToCore) {
-                 detailedMessage = `SYSTEM FAILURE: The requested workflow could not be executed. Ensure prerequisite steps have completed, or manually run a specific workflow (e.g., 'board scene 1')`;
-            }
-        }
-        toast.error(detailedMessage, { duration: 8000 });
+      await onSendCommand(trimmed, activeStage, 1);
+      toast.success(`🎬 SUCCESS: Arise Production workflow executed across worker services.`, { id: toastId });
+      setCommand("");
+    } catch (err: any) {
+      toast.error(`ERROR: ${err.message || 'Workflow execution failure'}`, { id: toastId });
     } finally {
-        setIsProcessing(false);
-        setCommand("");
+      setIsProcessing(false);
     }
-  }, [command, simulateProcessSuccess]);
+  };
+
+  const handleQuickCommand = (cmd: string) => {
+    setCommand(cmd);
+  };
 
   return (
-    <div className="flex flex-col border-t border-gray-200 bg-white p-3 shadow-lg flex-shrink-0">
-      
-      <form onSubmit={handleCommandSubmit} className="flex items-center max-w-full mx-auto">
-        <label htmlFor="command-input" className="mr-2 cursor-pointer hidden sm:inline text-gray-500">
-          CMD:
-        </label>
-        <input
-          id="command-input"
-          type="text"
-          placeholder="e.g., board scene 3 | compile prompts | review reshoots"
-          className="flex-grow p-2 border border-gray-300 rounded-l-md focus:ring-blue-500 focus:border-blue-500 outline-none"
-          value={command}
-          onChange={(e) => setCommand(e.target.value)}
+    <div className="flex flex-col p-3 space-y-2">
+      {/* Quick Action Suggestion Pills */}
+      <div className="flex items-center justify-between text-xs px-1">
+        <div className="flex items-center space-x-2 text-slate-400">
+          <Terminal size={14} className="text-amber-400" />
+          <span className="font-mono font-semibold uppercase text-slate-300">
+            ARISE DIRECTOR AGENT PROMPT:
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-2 overflow-x-auto">
+          <span className="text-[11px] text-slate-500 hidden sm:inline font-mono">Workflows:</span>
+          <button
+            type="button"
+            onClick={() => handleQuickCommand("board scene 1")}
+            className="flex items-center space-x-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-[11px] transition"
+          >
+            <Layers size={11} />
+            <span>board scene 1</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleQuickCommand("compile prompts")}
+            className="flex items-center space-x-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-[11px] transition"
+          >
+            <Sparkles size={11} />
+            <span>compile prompts</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleQuickCommand("review reshoots")}
+            className="flex items-center space-x-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700 text-[11px] transition"
+          >
+            <RefreshCw size={11} />
+            <span>review reshoots</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main Command Input Box */}
+      <form onSubmit={handleCommandSubmit} className="flex items-center max-w-full">
+        <div className="relative flex-grow">
+          <input
+            id="command-input"
+            type="text"
+            placeholder="e.g., board scene 1 | compile prompts | review reshoots | run script"
+            className="w-full pl-3 pr-24 py-2.5 bg-slate-950 border border-slate-700 rounded-l-lg text-slate-100 placeholder-slate-500 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none font-mono"
+            value={command}
+            onChange={(e) => setCommand(e.target.value)}
+            disabled={isProcessing}
+          />
+          {telemetry?.progress !== undefined && isProcessing && (
+            <div className="absolute right-3 top-2.5 text-xs text-amber-400 font-mono flex items-center gap-1.5">
+              <span className="animate-spin">⚙️</span>
+              <span>{telemetry.progress}%</span>
+            </div>
+          )}
+        </div>
+
+        <button
+          type="submit"
           disabled={isProcessing}
-        />
-        <button 
-          type="submit" 
-          className={`flex items-center rounded-r-md p-2 text-white transition ${isProcessing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className={`flex items-center space-x-1.5 px-5 py-2.5 rounded-r-lg font-semibold text-sm transition shadow-md ${
+            isProcessing
+              ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+              : 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-amber-500/10'
+          }`}
           title="Run Agent Command"
-          disabled={isProcessing}
         >
-          <Send size={20} />
+          <Send size={15} />
+          <span>Execute</span>
         </button>
       </form>
-    </div >
+    </div>
   );
 };
 

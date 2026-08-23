@@ -1,7 +1,7 @@
 {
-  "name": "unified-3d-production-studio",
+  "name": "arise-productions",
   "version": "1.0.0",
-  "description": "Unified 3D Production Studio - Modern React-based content creation platform",
+  "description": "Arise Production - A Product of THE AI CONTENT FOUNDRY, LLC",
   "type": "module",
   "packageManager": "npm",
   "workspaces": [
@@ -12,7 +12,9 @@
     "dev": "npm run --prefix frontend dev",
     "build": "npm run --prefix frontend build",
     "preview": "npm run --prefix frontend preview",
-    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend",
+    "desktop": "npm start --prefix desktop",
+    "desktop:build": "npm run build --prefix frontend && npm run build:mac --prefix desktop",
+    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend && npm install --prefix desktop",
     "clean": "rm -rf frontend/node_modules backend/node_modules frontend/dist",
     "typecheck": "npm run --prefix frontend typecheck"
   },
@@ -25,15 +27,16 @@
     "stripe": "^18.5.0"
   },
   "keywords": [
+    "arise-production",
     "3d",
-    "production",
-    "studio",
+    "production-studio",
+    "ai-content-foundry",
+    "mcp",
     "react",
     "typescript",
     "three.js",
-    "content-creation",
     "unreal-engine-ready"
   ],
-  "author": "Finesse Jones Content Foundry Studios",
+  "author": "THE AI CONTENT FOUNDRY, LLC",
   "license": "MIT"
 }

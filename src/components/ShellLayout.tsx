@@ -1,110 +1,203 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import PipelineStages from './PipelineStages';
 import StatusBoard from './StatusBoard';
 import DirectorAgent from './DirectorAgent';
 import StageWorkspace from './StageWorkspace';
-import { ProjectStatus } from '../types/types';
+import StudioArchitecturalView from './StudioArchitecturalView';
+import { useStudioSocket } from '../hooks/useStudioSocket';
+import { stages } from '../types/stages';
+import { Building2, LayoutGrid, ShieldCheck } from 'lucide-react';
 
 interface ShellLayoutProps {
   projectName: string;
-  activeStage: string | null; 
+  activeStage: string | null;
   onStageSelect: (stageId: string) => void;
-  projectStatus: ProjectStatus;
-  setProjectStatus: React.Dispatch<React.SetStateAction<ProjectStatus>>; 
+  onChangeProject?: () => void;
 }
 
-const ShellLayout: React.FC<ShellLayoutProps> = ({ projectName, activeStage, onStageSelect, projectStatus, setProjectStatus }) => {
+const ShellLayout: React.FC<ShellLayoutProps> = ({
+  projectName,
+  activeStage,
+  onStageSelect,
+  onChangeProject,
+}) => {
+  const [mainView, setMainView] = useState<'stage' | 'architecture'>('stage');
 
-  // Use state to manage the local storage key
-  const storageKey = `wss_project_manifest_${projectName.toLowerCase().replace(/\s/g, '-')}`;
+  // Map project slug
+  const projectSlug = projectName.toLowerCase().includes('alien')
+    ? 'proj-alien'
+    : projectName.toLowerCase().includes('space')
+    ? 'proj-space'
+    : 'proj-titanic';
 
-  // --- 1. Persistence Hooks (Load/Save) ---
-  useEffect(() => {
-    const saveStatus = () => {
-        try {
-          const statusToSave = JSON.stringify(projectStatus);
-          localStorage.setItem(storageKey, statusToSave);
-          console.log(`[Persistence] Project status saved successfully.`);
-        } catch (error) {
-          console.error("[Persistence] Failed to save project status:", error);
-        }
-    };
-    // Dependency array includes projectStatus and projectName to save on key changes
-    saveStatus(); 
-    // Optional: Add an interval save for true data loss prevention
-    const saveInterval = setInterval(saveStatus, 10000); // Save every 10 seconds
+  // Live WebSocket Connection to Central API Bridge
+  const { projectStatus, isConnected, telemetry, sendCommand } = useStudioSocket({
+    projectId: projectSlug,
+  });
 
-    return () => clearInterval(saveInterval);
-  }, [projectStatus, storageKey]);
+  // Find active stage metadata
+  const currentStageObj = stages.find((s) => s.id === activeStage) || stages[3]; // Default to Blockout
 
-
-  // --- 2. File System Watcher Simulation Hook ---
-  useEffect(() => {
-    // Set up an interval to simulate polling a file system directory (the 'Project Manifest')
-    const intervalId = setInterval(() => {
-        console.log("[System Monitor] Running File System Watcher Check...");
-        // *** SIMULATION LOGIC: Here is where the actual file system access simulation would happen ***
-
-        // For demonstration, we simulate a random status update for Shot 2 (index 1)
-        // simulating that an automated process (e.g., Audio processing) just completed.
-        setProjectStatus(prevStatus => {
-            const updatedShots = [...prevStatus.shots];
-            const updatedShot = { ...updatedShots[1] };
-
-            // Assume some random change happened to the Sound status (Stage 8)
-            // We simulate an update that shifts the status from Yellow (🟡) to Green (🟢)
-            const newAudioStatus = { statusChar: '🟢' };
-            updatedShot.status = {
-                ...updatedShot.status,
-                'sound': newAudioStatus
-            };
-            updatedShots[1] = updatedShot;
-            
-            console.log("[System Monitor] Simulated automatic update: Shot 2 sound assets found and locked.");
-            return { ...prevStatus, shots: updatedShots };
-        });
-
-    }, 15000); // Check every 15 seconds
-
-    // Cleanup function
-    return () => clearInterval(intervalId);
-  }, [setProjectStatus]);
-
+  const handleSelectFromArchitect = (stageId: string) => {
+    onStageSelect(stageId);
+    setMainView('stage');
+  };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 text-gray-800">
-      {/* Main Content Area (Left + Center + Right) */}
-      <div className="flex flex-grow overflow-hidden">
-        
-        {/* Left Rail: Pipeline Stages */}
-        <div className="w-1/5 xl:w-1/6 flex-shrink-0 border-r border-gray-200 bg-white">
-          <PipelineStages onStageSelect={onStageSelect} />
+    <div className="flex flex-col h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+      {/* Top Studio Header & Telemetry Bar */}
+      <header className="flex items-center justify-between px-5 py-2.5 bg-slate-900 border-b border-slate-800/80 select-none flex-shrink-0">
+        <div className="flex items-center space-x-3.5">
+          {/* Official Arise Productions Logo Badge */}
+          <div className="w-9 h-9 rounded-lg overflow-hidden border border-amber-500/40 bg-black flex-shrink-0 shadow-md shadow-amber-500/10">
+            <img
+              src="/arise_productions_logo.jpg"
+              alt="Arise Productions"
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm font-black tracking-widest text-slate-100 uppercase font-serif">
+                ARISE PRODUCTION
+              </h1>
+              <span className="text-[9px] uppercase px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 font-mono font-bold">
+                STUDIO v1.0
+              </span>
+            </div>
+            <p className="text-[10px] text-amber-400/80 font-mono tracking-wider uppercase">
+              A PRODUCT OF THE AI CONTENT FOUNDRY, LLC
+            </p>
+          </div>
         </div>
 
-        {/* Center Area: Active Tool Workspace */}
-        <div className="flex-grow p-0 overflow-y-auto bg-white">
-          {/* Use the new dynamically rendered StageWorkspace component */}
-          {activeStage ? (
-            <StageWorkspace stage={activeStage} /> 
-          ) : (
-            <div className="p-8 text-center text-yellow-700">
-                <h3 className="text-xl font-semibold">💡 Welcome to the Studio Shell</h3>
-                <p className="mt-2">Please select a pipeline stage on the left to activate its workspace view and begin development. </p>
+        {/* Center Mode Switcher (Stage Workspace vs 3D Architectural Campus) */}
+        <div className="flex items-center space-x-3">
+          <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+            <button
+              onClick={() => setMainView('stage')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+                mainView === 'stage'
+                  ? 'bg-amber-500 text-slate-950 font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <LayoutGrid size={13} />
+              <span>Active Stage Workspace</span>
+            </button>
+
+            <button
+              onClick={() => setMainView('architecture')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+                mainView === 'architecture'
+                  ? 'bg-amber-500 text-slate-950 font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Building2 size={13} />
+              <span>3D Studio Architecture</span>
+            </button>
+          </div>
+
+          <div className="hidden lg:flex items-center space-x-1.5 text-xs text-slate-400 border-l border-slate-800 pl-3">
+            <span className="text-slate-500">Project:</span>
+            <span className="text-slate-200 font-semibold truncate max-w-[140px]">{projectStatus.projectName}</span>
+            {onChangeProject && (
+              <button
+                onClick={onChangeProject}
+                className="text-amber-400 hover:text-amber-300 text-[11px] underline ml-1"
+              >
+                Switch
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Live Bridge Connection Indicator & Telemetry */}
+        <div className="flex items-center space-x-4 text-xs">
+          {telemetry && (
+            <div className="hidden md:flex items-center space-x-2 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700">
+              <span className="animate-pulse text-amber-400">⚡</span>
+              <span className="text-slate-300 font-mono text-[11px]">{telemetry.message}</span>
             </div>
           )}
-        </div>
 
-        {/* Right Rail: Shot Board Status */}
-        <div className="w-1/5 xl:w-1/6 flex-shrink-0 border-l border-gray-200 bg-gray-50 overflow-y-auto">
-          <StatusBoard projectStatus={projectStatus} />
+          <div className="flex items-center space-x-2 bg-slate-800 px-3 py-1 rounded-md border border-slate-700">
+            <span
+              className={`w-2.5 h-2.5 rounded-full ${
+                isConnected ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse' : 'bg-rose-500'
+              }`}
+            />
+            <span className="font-mono text-slate-300 text-[11px]">
+              {isConnected ? 'BRIDGE ONLINE' : 'RECONNECTING...'}
+            </span>
+          </div>
         </div>
+      </header>
+
+      {/* Main Studio Tri-Pane Body */}
+      <div className="flex flex-grow overflow-hidden">
+        {/* Left Rail: 10 Pipeline Stages */}
+        <aside className="w-64 xl:w-72 flex-shrink-0 border-r border-slate-800 bg-slate-900/60 overflow-y-auto">
+          <PipelineStages
+            activeStageId={activeStage}
+            projectStatus={projectStatus}
+            onStageSelect={(id) => {
+              onStageSelect(id);
+              setMainView('stage');
+            }}
+          />
+        </aside>
+
+        {/* Center Workspace: Stage Workspace OR 3D Architectural Department Campus */}
+        <main className="flex-grow p-0 overflow-y-auto bg-slate-950 flex flex-col">
+          {mainView === 'stage' ? (
+            <StageWorkspace
+              stage={currentStageObj}
+              projectStatus={projectStatus}
+              onExecuteStage={(stageId) => sendCommand(`run stage ${stageId}`, stageId)}
+            />
+          ) : (
+            <StudioArchitecturalView
+              projectStatus={projectStatus}
+              activeStageId={activeStage}
+              onSelectStage={handleSelectFromArchitect}
+            />
+          )}
+        </main>
+
+        {/* Right Rail: Shot Manifest & Live Status Board */}
+        <aside className="w-80 xl:w-96 flex-shrink-0 border-l border-slate-800 bg-slate-900/60 overflow-y-auto">
+          <StatusBoard projectStatus={projectStatus} />
+        </aside>
       </div>
 
-      {/* Bottom Director Agent Bar */}
-      <DirectorAgent setProjectStatus={setProjectStatus} />
-    </div >
+      {/* Bottom Director Agent Bar & Legal Copyright Footer */}
+      <footer className="flex-shrink-0 border-t border-slate-800 bg-slate-900/95 backdrop-blur-md flex flex-col">
+        <DirectorAgent
+          activeStage={activeStage}
+          onSendCommand={sendCommand}
+          telemetry={telemetry}
+        />
+        
+        {/* Bottom Attribution & Copyright Bar */}
+        <div className="flex items-center justify-between px-4 py-1.5 bg-slate-950 border-t border-slate-800/60 text-[10px] text-slate-500 font-mono select-none">
+          <div className="flex items-center space-x-2">
+            <ShieldCheck size={12} className="text-amber-400/80" />
+            <span className="text-slate-400">
+              © 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.
+            </span>
+          </div>
+          <div className="hidden sm:flex items-center space-x-3 text-slate-500">
+            <span>Watermark Locked: ARISE PRODUCTIONS</span>
+            <span>NVIDIA NIM AI: Active</span>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 

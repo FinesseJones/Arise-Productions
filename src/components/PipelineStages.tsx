@@ -1,109 +1,95 @@
 "use client";
 
 import React from 'react';
-import { ProjectStatus } from '../types/types';
+import { ProjectStatus, StageKey } from '../types/types';
+import { stages } from '../types/stages';
 
 interface PipelineStagesProps {
-    projectStatus: ProjectStatus;
-    onStageSelect: (stageId: string) => void;
+  projectStatus: ProjectStatus;
+  activeStageId: string | null;
+  onStageSelect: (stageId: string) => void;
 }
 
-// Map of Stage IDs to display names
-const STAGE_MAP = [
-    { key: 'ScriptBreak', label: '1. Script' },
-    { key: 'Cork Board', label: '2. Structure' },
-    { key: 'Master Canvas', label: '3. Plan' },
-    { key: 'Blockout', label: '4. Previs' },
-    { key: 'Storybook Reference Studio', label: '5. Boards' },
-    { key: 'Slate', label: '6. Prompt' },
-    { key: 'Circle Take', label: '7. Dailies' },
-    { key: 'Stem Studio', label: '8. Sound' },
-    { key: 'DaVinci MCP', label: '9. Edit' },
-    { key: 'Shell', label: '10. Edit/Finish' },
-];
-
-const PipelineStages: React.FC<PipelineStagesProps> = ({ projectStatus, onStageSelect }) => {
-
-    // Determine the overall status color/state for a given stage ID
-    const getStageState = (stageId: keyof ProjectStatus) => {
-        const firstShotStatus = projectStatus.shots[0]?.status[stageId];
-        if (!firstShotStatus) {
-            return 'gray'; // Never started
-        }
-
-        // Check all shots to determine overall stage health
-        let hasSuccess = false;
-        let hasFailure = false;
-        
-        projectStatus.shots.forEach(shot => {
-            const status = shot.status[stageId];
-            if (status?.statusChar === '🟢') {
-                hasSuccess = true;
-            }
-            if (status?.statusChar === '🔴') {
-                hasFailure = true;
-            }
-        });
-
-        if (hasFailure) return 'fail';
-        if (hasSuccess) return 'success';
-        return 'progress'; // At least started (🟡)
-    };
-
-    const getStageClasses = (stageId: keyof ProjectStatus) => {
-        const state = getStageState(stageId);
-        let ring = 'ring-gray-200';
-        let titleColor = 'text-gray-600';
-
-        switch (state) {
-            case 'success':
-                ring = 'ring-green-500';
-                titleColor = 'text-green-600';
-                break;
-            case 'fail':
-                ring = 'ring-red-500';
-                titleColor = 'text-red-600';
-                break;
-            case 'progress':
-                ring = 'ring-yellow-500';
-                titleColor = 'text-yellow-600';
-                break;
-            case 'gray':
-            default:
-                ring = 'ring-gray-300';
-                titleColor = 'text-gray-500';
-                break;
-        }
-        return `${ring} ${titleColor}`;
+const PipelineStages: React.FC<PipelineStagesProps> = ({
+  projectStatus,
+  activeStageId,
+  onStageSelect,
+}) => {
+  // Determine overall health for a stage across all shots
+  const getStageHealth = (stageId: StageKey) => {
+    if (!projectStatus.shots || projectStatus.shots.length === 0) {
+      return { statusChar: '?', color: 'text-slate-500', bg: 'bg-slate-800', border: 'border-slate-800' };
     }
 
-    return (
-        <div className="flex flex-col space-y-2 p-4">
-            <h2 className="text-lg font-bold text-gray-800 mb-4">Pipeline Stages</h2>
-            {STAGE_MAP.map(stage => {
-                const stageId = stage.key as keyof ProjectStatus;
-                const stateClass = getStageClasses(stageId);
-                
-                return (
-                    <button 
-                        key={stage.key} 
-                        onClick={() => onStageSelect(stage.key)}
-                        className={`w-full text-left p-3 rounded-lg transition-all duration-150 border-l-4 ${stateClass} hover:bg-blue-50/50`}
-                        style={{ 
-                            backgroundColor: 'white', 
-                            borderColor: 
-                                stateId === 'Blockout' ? 
-                                    '#3b82f6' : // Blue-500 border for the current blue background simulation
-                                    'transparent'
-                        }}
-                    >
-                         <span className="mr-2">{stage.label}</span>
-                         {/* Optional: Add a small status indicator dot here if needed */}
-                    </button>
-                );
-            })}
-        </div>
-    );
+    let hasSuccess = false;
+    let hasProgress = false;
+    let hasFailure = false;
+
+    projectStatus.shots.forEach((shot) => {
+      const record = shot.status[stageId];
+      if (record?.statusChar === '🟢') hasSuccess = true;
+      if (record?.statusChar === '🟡') hasProgress = true;
+      if (record?.statusChar === '🔴') hasFailure = true;
+    });
+
+    if (hasFailure) {
+      return { statusChar: '🔴', color: 'text-rose-400', bg: 'bg-rose-950/30', border: 'border-rose-500/40' };
+    }
+    if (hasSuccess && !hasProgress) {
+      return { statusChar: '🟢', color: 'text-emerald-400', bg: 'bg-emerald-950/30', border: 'border-emerald-500/40' };
+    }
+    if (hasProgress || hasSuccess) {
+      return { statusChar: '🟡', color: 'text-amber-400', bg: 'bg-amber-950/30', border: 'border-amber-500/40' };
+    }
+    return { statusChar: '⚪', color: 'text-slate-500', bg: 'bg-slate-900', border: 'border-slate-800' };
+  };
+
+  return (
+    <div className="flex flex-col p-3 space-y-1.5">
+      <div className="px-2 py-2 mb-1">
+        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          Production Pipeline
+        </h2>
+        <p className="text-[11px] text-slate-500">10 MCP Core Stages</p>
+      </div>
+
+      {stages.map((stg) => {
+        const stageKey = stg.id as StageKey;
+        const health = getStageHealth(stageKey);
+        const isActive = activeStageId === stg.id;
+
+        return (
+          <button
+            key={stg.id}
+            onClick={() => onStageSelect(stg.id)}
+            className={`w-full text-left px-3 py-2.5 rounded-lg transition-all duration-150 flex items-center justify-between border ${
+              isActive
+                ? 'bg-slate-800 border-amber-500/80 shadow-md shadow-amber-500/5'
+                : 'hover:bg-slate-850 border-transparent text-slate-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2.5 truncate">
+              <span
+                className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
+                  isActive ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                {stg.number}
+              </span>
+              <span className={`text-xs font-medium truncate ${isActive ? 'text-amber-300 font-semibold' : ''}`}>
+                {stg.name}
+              </span>
+            </div>
+
+            {/* Stage Status Character */}
+            <span className="text-sm select-none" title={`Stage Health: ${health.statusChar}`}>
+              {health.statusChar}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
 };
 
 export default PipelineStages;

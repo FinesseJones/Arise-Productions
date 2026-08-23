@@ -1,198 +1,81 @@
-# Unified 3D Production Studio
+# 🎬 Arise Production Studio
 
-**Vision-Driven | Creator-Led | Built To Empower Bold**
+**A Product of THE AI CONTENT FOUNDRY, LLC**  
+*© 2026 Arise Production. All rights reserved.*
 
-A comprehensive digital production studio powered by AI and Unreal Engine 5, designed for modern content creators.
-
-## 🎬 Features
-
-### Production Modules
-- **🎭 AI-Powered Casting Room** - Generate casting profiles, budget analysis, and production schedules
-- **📝 Script Analysis** - AI-powered script breakdown and analysis
-- **🎨 Visual Effects Suite** - Professional VFX compositing
-- **🎵 Sound Design Studio** - Multi-track audio editing and mixing
-- **📊 Production Budget** - Comprehensive budget planning and tracking
-- **📅 Scheduling** - AI-optimized production timelines
-- **🎨 Color Grading** - Professional color correction tools
-- **📈 Analytics** - Data-driven production insights
-
-### Technology Stack
-- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Vite
-- **Backend**: Encore.dev, Node.js, TypeScript
-- **AI**: Claude (Anthropic), ready for OpenAI integration
-- **3D Engine**: Unreal Engine 5 integration framework
-- **Database**: PostgreSQL (via Encore.dev)
-- **Real-time**: WebSocket support for UE5 communication
-
-### Design System
-- Navy Blue (#0066FF) - Primary brand color
-- Gold (#FFD700) - Accent and highlights  
-- Purple (#9966FF) - Secondary accents
-- Glassmorphism UI with modern animations
-
-## 🚀 Quick Start
-
-### 📖 **[Complete Installation Guide →](./INSTALLATION.md)**
-
-**Step-by-step instructions for:**
-- ✅ Mac Installation
-- ✅ Windows Installation
-- ✅ Linux Installation
-- ✅ Unreal Engine 5 Integration
-- ✅ Troubleshooting Guide
-
-### 🌐 Live Demo
-
-**Frontend:** https://frontend-a0s11lix5-finesse-jones-projects-287f926d.vercel.app
-**Backend API:** https://staging-unified3dproduction-dazi.encr.app
-
-### Quick Local Setup (TL;DR)
-
-```bash
-# 1. Install prerequisites
-# - Node.js 18+
-# - Encore CLI: https://encore.dev/docs/install
-
-# 2. Clone repository
-git clone https://github.com/PARPUBLISHING/Unified-3D-Production-Studio.git
-cd Unified-3D-Production-Studio
-
-# 3. Install dependencies
-cd backend && npm install && cd ..
-cd frontend && npm install && cd ..
-
-# 4. Set up environment (see INSTALLATION.md for details)
-
-# 5. Run (in two separate terminals)
-cd backend && encore run        # Terminal 1
-cd frontend && npm run dev      # Terminal 2
-```
-
-**Visit:** http://localhost:5000
-
-## 📁 Project Structure
-
-```
-Unified-3D-Production-Studio/
-├── frontend/                 # React application
-│   ├── src/
-│   │   ├── pages/           # Page components
-│   │   ├── components/      # Reusable components
-│   │   ├── modules/         # Feature modules
-│   │   ├── lib/             # Utilities and API
-│   │   └── types/           # TypeScript definitions
-│   └── package.json
-├── backend/                  # Encore.dev backend
-│   ├── ai/                  # AI services
-│   ├── studio/              # Studio services
-│   └── frontend/            # Frontend service
-├── docs/                    # Documentation
-└── README.md
-```
-
-## 🎯 Roadmap
-
-### Phase 1: Core Features ✅
-- [x] Unified application architecture
-- [x] Casting Room module
-- [x] Navigation and routing
-- [x] Mock AI integration
-- [x] 10 production page placeholders
-
-### Phase 2: AI Integration (In Progress)
-- [ ] Real Claude API integration
-- [ ] Script analysis AI
-- [ ] Budget forecasting AI
-- [ ] Schedule optimization AI
-
-### Phase 3: Database & Storage
-- [ ] PostgreSQL integration
-- [ ] Asset storage (S3/R2)
-- [ ] User authentication
-- [ ] Project management
-
-### Phase 4: Advanced Features
-- [ ] Real-time collaboration
-- [ ] PDF export functionality
-- [ ] Calendar integration
-- [ ] Video conferencing for auditions
-- [ ] Analytics dashboard
-
-### Phase 5: Unreal Engine Integration
-- [ ] UE5 WebSocket server
-- [ ] Character spawning
-- [ ] Virtual camera integration
-- [ ] Real-time preview streaming
-
-## 🛠️ Available Modules
-
-### Currently Active
-- **Casting Room** (`/casting`) - AI-powered casting with budget and schedule analysis
-- **Asset Library** (`/assets`) - Digital asset management
-- **Dashboard** (`/dashboard`) - Client portal and project overview
-
-### Coming Soon
-- Production Budget (`/production-budget`)
-- Sound Design (`/sound-design`)
-- Marketing & Distribution (`/marketing`)
-- Visual Effects (`/visual-effects`)
-- Color Grading (`/color-grading`)
-- Scheduling (`/scheduling`)
-- Asset Management (`/asset-management`)
-- Analytics (`/analytics`)
-- Settings (`/settings`)
-
-## 🔑 Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Frontend API URL
-VITE_API_URL=http://localhost:4000
-
-# AI API Keys
-ANTHROPIC_API_KEY=your_claude_api_key_here
-OPENAI_API_KEY=your_openai_api_key_here
-
-# Database (handled by Encore)
-# Encore automatically manages database connections
-
-# Optional: Unreal Engine
-UNREAL_WEBSOCKET_URL=ws://localhost:8080
-```
-
-## 📚 Documentation
-
-- **[Complete Installation Guide](./INSTALLATION.md)** - Mac, Windows, Linux, Unreal Engine
-- **[Features Guide](./FEATURES.md)** - All features and what's clickable
-- **[Deployment Session](./DEPLOYMENT_SESSION.md)** - Production deployment details
-- [Integration Guide](./INTEGRATION_COMPLETE.md)
-- [API Documentation](./docs/api.md) (Coming Soon)
-- [Component Library](./docs/components.md) (Coming Soon)
-
-## 🤝 Contributing
-
-This is a proprietary project for Finesse Jones Digital Studio. For inquiries, please contact the development team.
-
-## 📄 License
-
-Proprietary - All rights reserved © Finesse Jones
-
-## 🎨 Credits
-
-**Built by Finesse Jones**
-- Vision-Driven Production
-- Creator-Led Innovation  
-- Built To Empower Bold Creators
+A next-generation virtual production studio and single pane of glass powered by 10 Model Context Protocol (MCP) microservices, NVIDIA NIM AI models, real-time WebSocket orchestration, and Unreal Engine 5 / Three.js 3D blockout.
 
 ---
 
-**Powered by:**
-- React 19
-- TypeScript
-- Encore.dev
-- Claude AI (Anthropic)
-- Unreal Engine 5
-- Tailwind CSS v4
+## 🌟 Supported Production Formats
 
-*Transforming digital production through AI and cutting-edge technology.*
+Arise Production Studio natively supports multi-format creation:
+1. **🎬 Feature Films (Long-Form):** 90–150 min multi-act structures, full multi-shot manifests, and scene continuity.
+2. **📱 Short-Form Content (9:16 Vertical):** TikToks, YouTube Shorts, and Instagram Reels with rapid hook-to-punchline pacing.
+3. **📺 Episodic TV Series:** Multi-season and episodic arc tracking, cold opens, act breaks, and cross-episode bibles.
+
+### 🔗 Media Ingestion Engine
+* **YouTube Ingestion:** Paste any YouTube link to auto-extract scene beats, character dialogues, and 3D camera paths.
+* **Social Media Ingestion:** Ingest TikTok, Instagram Reels, and Twitter/X videos.
+* **Direct Script / Media Upload:** Ingest `.mp4`, `.mov`, `.wav`, `.fountain`, `.fdx`, and `.pdf` files.
+
+---
+
+## 🏛️ The 10 Core MCP Stages
+
+1. **ScriptBreak (`/mcp/script`):** Screenplay parsing, scene bibles, character extraction.
+2. **Cork Board (`/mcp/structure`):** 3-Act narrative index cards and emotional intensity arcs.
+3. **Master Canvas (`/mcp/plan`):** Art department moodboards and color palettes.
+4. **Blockout 3D (`/mcp/previs`):** 3D camera choreography, focal lengths (18mm–85mm), Three.js/UE5 viewports.
+5. **Motion Previs Studio (`/mcp/motion`):** 52-point skeletal tracking and optical motion solve.
+6. **Storyboard Reference Studio (`/mcp/boards`):** Shot-by-shot PDF animatics and framing guides.
+7. **Slate Prompt (`/mcp/prompt`):** Continuity-locked generative prompt packs.
+8. **Circle Take (`/mcp/dailies`):** Dailies review, take scoring, and automated reshoot loops.
+9. **Stem Studio (`/mcp/sound`):** Dialogue, Foley, Music, and SFX stem separation at -24 LKFS.
+10. **DaVinci MCP (`/mcp/edit`):** EDL cuts, ACEScc color decision lists, and broadcast mastering.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Install & Launch Full Stack
+```bash
+# Clone repository
+git clone https://github.com/FinesseJones/Unified-3D-Production-Studio.git
+cd Unified-3D-Production-Studio
+
+# Install dependencies
+npm run install:all
+
+# Start Backend API & WebSocket Gateway (:4000)
+node server.js
+
+# Start Frontend Studio (:5002)
+npm run dev
+```
+
+### 2. Run as Native Desktop App
+```bash
+npm run desktop
+```
+
+### 3. Build Permanent macOS `.dmg` Installer
+```bash
+npm run desktop:build
+```
+
+---
+
+## 🤖 NVIDIA Free NIM AI Models
+
+Set your free NVIDIA API Key in `.env`:
+```bash
+NVIDIA_API_KEY=nvapi-your-key-here
+```
+Powered by `meta/llama-3.1-70b-instruct`, `meta/llama-3.3-70b-instruct`, and `nvidia/nemotron-4-340b-instruct`.
+
+---
+
+## ⚖️ Legal & Copyright
+**© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.**  
+All produced 3D blockouts, scripts, prompt slates, and audio stems are copywritten under Arise Productions.
