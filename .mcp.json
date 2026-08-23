@@ -5,6 +5,28 @@
       "env": {
         "COMFY_BIN": "/Users/finessejones1/dyad-apps/unified-3-d-production-studio/backend/comfy-mcp-env/bin/comfy"
       }
+    },
+    "openmontage-mcp": {
+      "command": "/Users/finessejones1/OpenMontage/.venv/bin/python",
+      "args": ["-m", "lib.hyperframes_style_bridge"],
+      "env": {
+        "PYTHONPATH": "/Users/finessejones1/OpenMontage"
+      }
+    },
+    "unreal-engine-mcp": {
+      "command": "node",
+      "args": ["./backend/services/unreal-connector.js"],
+      "env": {
+        "UNREAL_EDITOR_PATH": "/Applications/Film Making/UnrealEditor.app",
+        "UNREAL_PORT": "30010"
+      }
+    },
+    "hyperframes-mcp": {
+      "command": "node",
+      "args": ["./backend/services/hyperframes-connector.js"],
+      "env": {
+        "HYPERFRAMES_CACHE": "/Users/finessejones1/.hyperframes"
+      }
     }
   }
 }
