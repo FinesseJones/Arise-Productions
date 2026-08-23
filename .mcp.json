@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "comfy-mcp": {
+      "command": "/Users/finessejones1/dyad-apps/unified-3-d-production-studio/backend/comfy-mcp-env/bin/comfy-mcp",
+      "env": {
+        "COMFY_BIN": "/Users/finessejones1/dyad-apps/unified-3-d-production-studio/backend/comfy-mcp-env/bin/comfy"
+      }
+    }
+  }
+}
