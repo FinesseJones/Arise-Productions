@@ -12,6 +12,7 @@ import { fileWatcher } from './backend/services/file-watcher.js';
 import { CICDQualityGate } from './backend/services/cicd-gate.js';
 import { mcpWorkers } from './backend/workers/mcp-workers.js';
 import { MediaIngestionEngine } from './backend/services/media-ingest.js';
+import { nvidia } from './backend/ai/nvidia-client.js';
 
 const app = express();
 const PORT = 4000;
@@ -32,6 +33,23 @@ fileWatcher.start();
 // ==============================================================================
 // 1. CENTRAL API BRIDGE & MANIFEST REST ENDPOINTS
 // ==============================================================================
+
+// POST /api/v1/nvidia/chat - Specialized Room AI Co-Pilot Assistant
+app.post('/api/v1/nvidia/chat', async (req, res) => {
+  try {
+    const { message, roomName = 'Studio Department', role = 'AI Specialist', stageId = 'script', context = '' } = req.body;
+    const systemPrompt = `You are the ${role} inside the 3D "${roomName}" of Arise Production (A product of THE AI CONTENT FOUNDRY, LLC). Provide top-tier, creative, and highly specific technical direction for ${stageId}. Current production context: ${context}`;
+    const result = await nvidia.generateCompletion({
+      prompt: message,
+      systemPrompt,
+      temperature: 0.7,
+      maxTokens: 1200,
+    });
+    res.json({ success: true, text: result.text, model: result.model });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // POST /api/v1/projects/create - Create Long, Short, or Episodic TV production
 app.post('/api/v1/projects/create', async (req, res) => {
