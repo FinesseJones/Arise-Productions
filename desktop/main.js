@@ -5,6 +5,7 @@
 
 import { app, BrowserWindow, Menu, shell, ipcMain, dialog } from 'electron';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 
@@ -15,25 +16,37 @@ let mainWindow = null;
 let backendProcess = null;
 
 const PORT = 4000;
-const FRONTEND_DEV_URL = 'http://localhost:5002';
 
 // 1. Launch local backend service in background
 function startBackendServer() {
-  const serverPath = path.resolve(__dirname, '../server.js');
-  console.log('[AriseDesktop] Spawning local backend server:', serverPath);
+  let serverPath = path.resolve(__dirname, '../server.js');
+  let cwd = path.resolve(__dirname, '..');
 
-  backendProcess = spawn('node', [serverPath], {
-    cwd: path.resolve(__dirname, '..'),
-    stdio: 'inherit',
-  });
+  if (!fs.existsSync(serverPath)) {
+    serverPath = path.resolve(app.getAppPath(), 'server.js');
+    cwd = app.getAppPath();
+  }
 
-  backendProcess.on('error', (err) => {
-    console.error('[AriseDesktop] Failed to start backend server:', err);
-  });
+  console.log('[AriseDesktop] Spawning Arise Production backend server:', serverPath);
+
+  try {
+    backendProcess = spawn('node', [serverPath], {
+      cwd,
+      stdio: 'inherit',
+    });
+
+    backendProcess.on('error', (err) => {
+      console.error('[AriseDesktop] Failed to start backend server:', err);
+    });
+  } catch (err) {
+    console.warn('[AriseDesktop] Backend launch warning:', err);
+  }
 }
 
 // 2. Create Native Application Window
 function createMainWindow() {
+  const iconPath = path.join(__dirname, 'build/icon.png');
+
   mainWindow = new BrowserWindow({
     width: 1440,
     height: 900,
@@ -42,6 +55,7 @@ function createMainWindow() {
     title: 'Arise Production - A Product of THE AI CONTENT FOUNDRY, LLC',
     titleBarStyle: 'hiddenInset', // macOS native titlebar styling
     backgroundColor: '#020617', // slate-950
+    icon: fs.existsSync(iconPath) ? iconPath : undefined,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -51,13 +65,20 @@ function createMainWindow() {
     },
   });
 
-  // Load compiled production dist or live dev server
-  const distIndex = path.resolve(__dirname, '../frontend/dist/index.html');
-  
-  // Try connecting to live server, otherwise load built dist file
-  mainWindow.loadURL(FRONTEND_DEV_URL).catch(() => {
+  // Resolve compiled Arise Production Studio index.html
+  let distIndex = path.resolve(__dirname, '../frontend/dist/index.html');
+  if (!fs.existsSync(distIndex)) {
+    distIndex = path.resolve(app.getAppPath(), 'frontend/dist/index.html');
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.loadURL('http://localhost:5055').catch(() => {
+      mainWindow.loadFile(distIndex);
+    });
+  } else {
+    console.log('[AriseDesktop] Loading Arise Production UI from:', distIndex);
     mainWindow.loadFile(distIndex);
-  });
+  }
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();

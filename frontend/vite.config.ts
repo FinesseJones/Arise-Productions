@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig(({ mode }) => ({
+  base: './',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -18,9 +19,10 @@ export default defineConfig(({ mode }) => ({
   build: {
     minify: mode === 'production',
     sourcemap: mode === 'development',
+    outDir: 'dist',
   },
   server: {
-    port: 5000,
+    port: 5055,
     host: true,
     allowedHosts: true
   }
