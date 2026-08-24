@@ -51,7 +51,7 @@ export class StudioWebSocketGateway extends EventEmitter {
     const client = {
       id: `client-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       socket,
-      subscribedProject: 'proj-titanic',
+      subscribedProject: 'proj-fatherless-child',
       send: (data) => {
         try {
           const payload = typeof data === 'string' ? data : JSON.stringify(data);
@@ -186,7 +186,7 @@ export class StudioWebSocketGateway extends EventEmitter {
 
       switch (data.type) {
         case 'SUBSCRIBE_PROJECT':
-          client.subscribedProject = data.projectId || 'proj-titanic';
+          client.subscribedProject = data.projectId || 'proj-fatherless-child';
           const manifest = await db.getProjectManifest(client.subscribedProject);
           client.send({ type: 'MANIFEST_SYNC', manifest });
           break;

@@ -14,7 +14,7 @@ export class CentralAPIRouter {
    * Main router entry point for Director Agent and API Bridge requests
    */
   async processMCPRequest(request, onProgressCallback = null) {
-    const { projectId = 'proj-titanic', command = '', activeStage = null, shotNumber = 1 } = request;
+    const { projectId = 'proj-fatherless-child', command = '', activeStage = null, shotNumber = 1 } = request;
     const trimmed = command.trim();
 
     console.log(`[CentralAPIRouter] Routing request: "${trimmed}" for project "${projectId}"`);

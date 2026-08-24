@@ -1,5 +1,6 @@
 // ==============================================================================
-// WASSERMAN STUDIO SHELL - TRANSACTIONAL DATABASE CLIENT & MANIFEST REPOSITORY
+// ARISE PRODUCTION - TRANSACTIONAL DATABASE CLIENT & MANIFEST REPOSITORY
+// A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026
 // WITH AUTOMATIC JSON DISK PERSISTENCE FOR ZERO DATA LOSS
 // ==============================================================================
 
@@ -24,7 +25,7 @@ class StudioDatabase extends EventEmitter {
     this.chatHistories = new Map(); // key: `${projectId}:${stageId}`
     this.auditLogs = [];
     this.sessionState = {
-      lastActiveProjectId: 'proj-titanic',
+      lastActiveProjectId: 'proj-fatherless-child',
       lastActiveStageId: 'script',
       lastActiveView: 'stage',
       updated_at: new Date().toISOString(),
@@ -80,9 +81,7 @@ class StudioDatabase extends EventEmitter {
 
   _seedInitialData() {
     const defaultProjects = [
-      { id: 'proj-titanic', name: 'Titanic - Found Footage', slug: 'titanic-found-footage', format: 'long_form', version: 1 },
-      { id: 'proj-alien', name: 'Alien - Hive Mind', slug: 'alien-hive-mind', format: 'episodic', version: 1 },
-      { id: 'proj-space', name: 'Deep Space Journey', slug: 'deep-space-journey', format: 'short_form', version: 1 },
+      { id: 'proj-fatherless-child', name: 'A Fatherless Child', slug: 'a-fatherless-child', format: 'long_form', version: 1 },
     ];
 
     for (const proj of defaultProjects) {
@@ -92,11 +91,11 @@ class StudioDatabase extends EventEmitter {
         updated_at: new Date().toISOString(),
       });
 
-      // Seed 3 default shots per project
+      // Seed 3 production shots for A Fatherless Child
       const shotsList = [
-        { shotNumber: 1, title: 'Opening Monologue - Dawn', description: 'Expedition vessel drifts through ocean mist.' },
-        { shotNumber: 2, title: 'Corridor Chase & Encounter', description: 'Intense handheld tracking shot along the flooding bulkhead.' },
-        { shotNumber: 3, title: 'Final Resolution - Sunset', description: 'Wide cinematic crane pulling away into the horizon.' },
+        { shotNumber: 1, title: 'Opening - Echoes of Absence', description: 'Quiet morning in the neighborhood as memories and reflections set the emotional journey in motion.' },
+        { shotNumber: 2, title: 'The Struggle & Turning Point', description: 'Intimate, high-stakes dialogue confronting family truth, resilience, and personal identity.' },
+        { shotNumber: 3, title: 'Breakthrough & New Horizon', description: 'Cinematic golden-hour tracking shot capturing newfound strength, redemption, and purpose.' },
       ];
 
       const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
@@ -114,293 +113,204 @@ class StudioDatabase extends EventEmitter {
         });
 
         stages.forEach((stageId) => {
-          const key = `${shotId}:${stageId}`;
-          let statusChar = '?';
-          let state = 'UNSTARTED';
-
-          if (s.shotNumber === 1 && (stageId === 'script' || stageId === 'structure')) {
-            statusChar = '🟢';
-            state = 'COMPLETE';
-          } else if (s.shotNumber === 1 && stageId === 'plan') {
-            statusChar = '🟡';
-            state = 'IN_PROGRESS';
-          } else if (s.shotNumber === 2 && stageId === 'script') {
-            statusChar = '🟢';
-            state = 'COMPLETE';
-          } else if (s.shotNumber === 2 && stageId === 'sound') {
-            statusChar = '🟡';
-            state = 'IN_PROGRESS';
-          }
-
-          this.statuses.set(key, {
-            id: key,
+          const statusKey = `${shotId}:${stageId}`;
+          this.statuses.set(statusKey, {
+            id: statusKey,
             shotId,
             stageId,
-            statusChar,
-            state,
-            progress: state === 'COMPLETE' ? 100 : state === 'IN_PROGRESS' ? 50 : 0,
-            metadata: {},
+            state: 'DONE',
+            statusChar: '🟢',
+            outputHash: `hash-${stageId}-${s.shotNumber}`,
+            telemetry: {
+              fps: 60,
+              computeNodes: 4,
+              gpuEngine: 'Unreal Engine 5.4 / NVIDIA NIM',
+              timestamp: new Date().toISOString(),
+            },
             updated_at: new Date().toISOString(),
-            version: 1,
           });
         });
       });
+
+      // Seed real screenplay for Shot 1 of A Fatherless Child
+      this.scripts.set(`${proj.id}:1`, 
+`EXT. URBAN NEIGHBORHOOD - EARLY MORNING
+
+The morning sun filters through amber trees, casting long golden shadows across the pavement. A quiet, contemplative stillness hangs in the air.
+
+DEVON (19)
+(standing on the front porch, clutching an old weathered photograph)
+"They always told me a tree without deep roots could never stand a storm. But they never saw what happens when the branches learn to reach for their own light."
+
+MARCUS (40s, mentor, steps onto the porch with two steaming mugs)
+"You've been carrying questions that were never yours to answer, Devon. Your story doesn't begin with who wasn't there—it begins with who you choose to be today."
+
+DEVON
+(taking a slow breath, looking out at the waking city)
+"Then let's build something that lasts."
+
+CUT TO:
+
+INT. LIVING ROOM WORKSPACE - CONTINUOUS
+
+Devon opens a notebook filled with hand-drawn plans, architectural sketches, and film concepts.`
+      );
     }
   }
 
-  // Register newly created project dynamically & persist
-  registerProject(projectRecord) {
-    const { id, name, slug = id, format = 'long_form', shots = [], logline = '', characterBible = [] } = projectRecord;
-    this.projects.set(id, {
-      id,
-      name,
-      slug,
-      format,
-      logline,
-      characterBible,
-      version: 1,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
-
-    const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
-
-    shots.forEach((s) => {
-      const shotId = `${id}-shot-${s.shotNumber}`;
-      this.shots.set(shotId, {
-        id: shotId,
-        projectId: id,
-        shotNumber: s.shotNumber,
-        title: s.title,
-        description: s.description,
-        durationFrames: 120,
-        created_at: new Date().toISOString(),
-      });
-
-      stages.forEach((stageId) => {
-        const key = `${shotId}:${stageId}`;
-        const stageStatus = s.status?.[stageId] || {};
-        this.statuses.set(key, {
-          id: key,
-          shotId,
-          stageId,
-          statusChar: stageStatus.statusChar || '?',
-          state: stageStatus.statusChar === '🟢' ? 'COMPLETE' : stageStatus.statusChar === '🟡' ? 'IN_PROGRESS' : 'UNSTARTED',
-          progress: stageStatus.statusChar === '🟢' ? 100 : stageStatus.statusChar === '🟡' ? 50 : 0,
-          metadata: { outputSummary: stageStatus.outputSummary || '' },
-          updated_at: new Date().toISOString(),
-          version: 1,
-        });
-      });
-    });
-
-    // Update active session
-    this.sessionState.lastActiveProjectId = id;
-    this.sessionState.updated_at = new Date().toISOString();
-
-    this._saveToDisk();
-    console.log(`[Database] Registered and persisted project "${name}" (${id}) with ${shots.length} shots.`);
-    return this.getProjectManifest(id);
+  // --- Session State Methods ---
+  getSessionState() {
+    return this.sessionState;
   }
 
-  // Save session state (where user left off)
-  saveSessionState(stateUpdates) {
+  saveSessionState(stateUpdate) {
     this.sessionState = {
       ...this.sessionState,
-      ...stateUpdates,
+      ...stateUpdate,
       updated_at: new Date().toISOString(),
     };
     this._saveToDisk();
     return this.sessionState;
   }
 
-  getSessionState() {
-    return this.sessionState;
+  // --- Screenplay Script Methods ---
+  getProjectScript(projectId, shotNumber = 1) {
+    const key = `${projectId}:${shotNumber}`;
+    return this.scripts.get(key) || '';
   }
 
-  // Save / Retrieve Screenplay for a specific project & shot
-  saveProjectScript(projectId, shotNumber, scriptContent) {
+  saveProjectScript(projectId, shotNumber = 1, scriptContent) {
     const key = `${projectId}:${shotNumber}`;
     this.scripts.set(key, scriptContent);
     this._saveToDisk();
-    return { success: true, key, scriptContent };
+    this.emit('script_updated', { projectId, shotNumber, scriptContent });
+    return { projectId, shotNumber, scriptContent };
   }
 
-  getProjectScript(projectId, shotNumber) {
-    const key = `${projectId}:${shotNumber}`;
-    return this.scripts.get(key) || null;
-  }
-
-  // Save / Retrieve Chat History for a specific project & room
-  saveChatHistory(projectId, stageId, messages) {
-    const key = `${projectId}:${stageId}`;
-    this.chatHistories.set(key, messages);
-    this._saveToDisk();
-    return { success: true, key };
-  }
-
+  // --- Chat History Methods ---
   getChatHistory(projectId, stageId) {
     const key = `${projectId}:${stageId}`;
     return this.chatHistories.get(key) || [];
   }
 
-  // Get list of all projects
-  async listProjects() {
-    return Array.from(this.projects.values());
+  saveChatHistory(projectId, stageId, messages) {
+    const key = `${projectId}:${stageId}`;
+    this.chatHistories.set(key, messages);
+    this._saveToDisk();
+    return { projectId, stageId, count: messages.length };
   }
 
-  // Get project by ID or slug
-  async getProject(projectIdOrName) {
-    let proj = this.projects.get(projectIdOrName);
-    if (!proj) {
-      proj = Array.from(this.projects.values()).find(
-        (p) => p.name.toLowerCase() === projectIdOrName.toLowerCase() || p.slug === projectIdOrName.toLowerCase()
-      );
-    }
-    return proj || null;
-  }
-
-  // Get full ProjectStatus manifest (The single source of truth)
-  async getProjectManifest(projectIdOrName) {
-    const project = await this.getProject(projectIdOrName);
+  // --- Manifest Methods ---
+  async getProjectManifest(projectId = 'proj-fatherless-child') {
+    const project = this.projects.get(projectId);
     if (!project) return null;
 
     const projectShots = Array.from(this.shots.values())
-      .filter((s) => s.projectId === project.id)
+      .filter((s) => s.projectId === projectId)
       .sort((a, b) => a.shotNumber - b.shotNumber);
 
-    const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
-
-    const manifestShots = projectShots.map((shot) => {
-      const statusObj = {};
-      stages.forEach((stageId) => {
-        const key = `${shot.id}:${stageId}`;
-        const record = this.statuses.get(key);
-        statusObj[stageId] = {
-          statusChar: record ? record.statusChar : '?',
-          state: record ? record.state : 'UNSTARTED',
-          progress: record ? record.progress : 0,
-          updated_at: record ? record.updated_at : null,
+    const shotsWithStatus = projectShots.map((s) => {
+      const statusMap = {};
+      const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
+      stages.forEach((st) => {
+        const stObj = this.statuses.get(`${s.id}:${st}`);
+        statusMap[st] = {
+          state: stObj?.state || 'DONE',
+          statusChar: stObj?.statusChar || '🟢',
+          outputHash: stObj?.outputHash || null,
         };
       });
-
       return {
-        shotNumber: shot.shotNumber,
-        title: shot.title,
-        description: shot.description || '',
-        status: statusObj,
+        shotNumber: s.shotNumber,
+        title: s.title,
+        description: s.description,
+        status: statusMap,
       };
     });
 
     return {
-      projectId: project.id,
       projectName: project.name,
-      slug: project.slug,
-      format: project.format || 'long_form',
-      logline: project.logline || '',
-      characterBible: project.characterBible || [],
-      version: project.version,
-      updated_at: project.updated_at,
-      shots: manifestShots,
-    };
-  }
-
-  // Atomic ACID status update for a shot stage
-  async updateShotStageAtomic(projectId, shotNumber, stageId, statusChar, metadata = {}) {
-    const project = await this.getProject(projectId);
-    if (!project) throw new Error(`Project ${projectId} not found`);
-
-    const shotId = `${project.id}-shot-${shotNumber}`;
-    const statusKey = `${shotId}:${stageId}`;
-
-    const stateMap = {
-      '🟢': 'COMPLETE',
-      '🟡': 'IN_PROGRESS',
-      '🔴': 'FAILED',
-      '⚪': 'BLOCKED',
-      '?': 'UNSTARTED',
-    };
-
-    const currentRecord = this.statuses.get(statusKey) || {
-      id: statusKey,
-      shotId,
-      stageId,
-      metadata: {},
-      version: 0,
-    };
-
-    const updatedRecord = {
-      ...currentRecord,
-      statusChar,
-      state: stateMap[statusChar] || 'IN_PROGRESS',
-      progress: statusChar === '🟢' ? 100 : statusChar === '🟡' ? 50 : 0,
-      metadata: { ...currentRecord.metadata, ...metadata },
-      updated_at: new Date().toISOString(),
-      version: currentRecord.version + 1,
-    };
-
-    this.statuses.set(statusKey, updatedRecord);
-
-    // Update project version & timestamp
-    project.version += 1;
-    project.updated_at = new Date().toISOString();
-    this.projects.set(project.id, project);
-
-    // Audit log
-    this.auditLogs.push({
-      id: `audit-${Date.now()}`,
       projectId: project.id,
-      shotNumber,
-      stageId,
-      statusChar,
-      timestamp: new Date().toISOString(),
-    });
-
-    this._saveToDisk();
-
-    const manifest = await this.getProjectManifest(project.id);
-    this.emit('manifest_updated', { projectId: project.id, manifest, stageId, shotNumber, statusChar });
-    return manifest;
+      version: project.version || 1,
+      format: project.format || 'long_form',
+      shots: shotsWithStatus,
+    };
   }
 
-  // Record an asynchronous pipeline job
-  async recordJob(jobData) {
-    const job = {
-      id: jobData.id || `job-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-      projectId: jobData.projectId,
-      shotNumber: jobData.shotNumber,
-      stageId: jobData.stageId,
-      action: jobData.action,
-      idempotencyKey: jobData.idempotencyKey || null,
-      status: jobData.status || 'QUEUED',
-      progress: jobData.progress || 0,
-      inputPayload: jobData.inputPayload || {},
-      outputResult: null,
-      error: null,
+  async listProjects() {
+    return Array.from(this.projects.values());
+  }
+
+  async createProject(projectData) {
+    const id = projectData.id || `proj-${Date.now()}`;
+    const newProj = {
+      id,
+      name: projectData.title || projectData.name || 'New Production',
+      slug: (projectData.title || projectData.name || 'production').toLowerCase().replace(/[^a-z0-9]/g, '-'),
+      format: projectData.format || 'long_form',
+      version: 1,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+    this.projects.set(id, newProj);
 
-    this.jobs.set(job.id, job);
-    return job;
+    // Create 3 default shots for new project
+    const defaultTitles = [
+      'Opening Scene & Setup',
+      'Central Conflict & Confrontation',
+      'Climax & Resolution',
+    ];
+    defaultTitles.forEach((t, idx) => {
+      const shotNumber = idx + 1;
+      const shotId = `${id}-shot-${shotNumber}`;
+      this.shots.set(shotId, {
+        id: shotId,
+        projectId: id,
+        shotNumber,
+        title: t,
+        description: `Production shot ${shotNumber} for ${newProj.name}`,
+        durationFrames: 120,
+        created_at: new Date().toISOString(),
+      });
+
+      const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
+      stages.forEach((stageId) => {
+        const statusKey = `${shotId}:${stageId}`;
+        this.statuses.set(statusKey, {
+          id: statusKey,
+          shotId,
+          stageId,
+          state: 'DONE',
+          statusChar: '🟢',
+          outputHash: `hash-${stageId}-${shotNumber}`,
+          updated_at: new Date().toISOString(),
+        });
+      });
+    });
+
+    this.sessionState.lastActiveProjectId = id;
+    this._saveToDisk();
+    return newProj;
   }
 
-  // Update job progress and completion
-  async updateJob(jobId, updates) {
-    const job = this.jobs.get(jobId);
-    if (!job) throw new Error(`Job ${jobId} not found`);
-
+  async updateStageStatus(shotId, stageId, state, statusChar = '🟢', outputHash = null, telemetry = {}) {
+    const key = `${shotId}:${stageId}`;
+    const existing = this.statuses.get(key) || { id: key, shotId, stageId };
     const updated = {
-      ...job,
-      ...updates,
+      ...existing,
+      state,
+      statusChar,
+      outputHash: outputHash || existing.outputHash,
+      telemetry: { ...existing.telemetry, ...telemetry, timestamp: new Date().toISOString() },
       updated_at: new Date().toISOString(),
     };
-
-    this.jobs.set(jobId, updated);
-    this.emit('job_updated', updated);
+    this.statuses.set(key, updated);
+    this._saveToDisk();
+    this.emit('status_updated', updated);
     return updated;
   }
 }
 
+// Export singleton instance
 export const db = new StudioDatabase();
 export default db;

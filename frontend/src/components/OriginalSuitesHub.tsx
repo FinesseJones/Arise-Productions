@@ -227,7 +227,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                   <span className="text-emerald-400 text-[10px]">● AUTO-SAVED</span>
                 </div>
                 <div className="whitespace-pre-wrap leading-relaxed">
-                  {importedScript || `EXT. ${projectStatus.projectName.toUpperCase()} - SCENE 1 - NIGHT\n\nThe opening world of ${projectStatus.projectName} unfolds under dramatic atmospheric lighting.\n\n${projectStatus.shots?.[0]?.description || 'A wide cinematic tracking shot establishes the environment with high visual fidelity.'}\n\nLEAD CHARACTER\n(looking into the distance)\n"Telemetry is locked. We are initiating sequence right now."\n\nCUT TO:\n\nINT. CONTROL BRIDGE - CONTINUOUS\n\nFlickering holographic telemetry glows across instrument panels.`}
+                  {importedScript || `EXT. URBAN NEIGHBORHOOD - EARLY MORNING\n\nThe morning sun filters through amber trees, casting long golden shadows across the pavement.\n\nDEVON (19)\n(standing on the front porch, clutching an old weathered photograph)\n"They always told me a tree without deep roots could never stand a storm. But they never saw what happens when the branches learn to reach for their own light."\n\nMARCUS (40s, mentor, steps onto the porch with two steaming mugs)\n"You've been carrying questions that were never yours to answer, Devon. Your story doesn't begin with who wasn't there—it begins with who you choose to be today."\n\nDEVON\n(taking a slow breath, looking out at the waking city)\n"Then let's build something that lasts."\n\nCUT TO:\n\nINT. LIVING ROOM WORKSPACE - CONTINUOUS\n\nDevon opens a notebook filled with hand-drawn plans and film concepts.`}
                 </div>
               </div>
             </div>
@@ -266,9 +266,9 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
               <div className="p-5 rounded-2xl bg-[#0e0922] border border-purple-900/60 space-y-4 shadow-xl">
                 <div className="h-24 bg-black/60 rounded-xl border border-purple-900/60 p-2 flex items-center gap-2 overflow-x-auto">
                   {(projectStatus.shots && projectStatus.shots.length > 0 ? projectStatus.shots : [
-                    { shotNumber: 1, title: 'Opening Sequence' },
-                    { shotNumber: 2, title: 'Core Encounter' },
-                    { shotNumber: 3, title: 'Climax' },
+                    { shotNumber: 1, title: 'Opening - Echoes of Absence' },
+                    { shotNumber: 2, title: 'The Struggle & Turning Point' },
+                    { shotNumber: 3, title: 'Breakthrough & New Horizon' },
                   ]).map((s, idx) => (
                     <div
                       key={s.shotNumber}
@@ -335,7 +335,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-5 rounded-2xl bg-[#0e0922] border border-purple-900/60 space-y-3 font-mono text-xs shadow-xl">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-rose-300">LEAD PROTAGONIST</span>
+                    <span className="font-bold text-rose-300">DEVON — LEAD PROTAGONIST (19)</span>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">LIKENESS LOCKED</span>
                   </div>
 
@@ -348,16 +348,16 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                       )}
                     </div>
                     <div className="space-y-1 text-[11px] text-purple-300/80">
-                      <p><strong>Voice Model:</strong> ElevenLabs Heroic Baritone</p>
-                      <p><strong>IP-Adapter Token:</strong> @lead_hero_v1</p>
-                      <p><strong>Wardrobe:</strong> Sub-Orbital Flight Jacket</p>
+                      <p><strong>Voice Model:</strong> ElevenLabs Resilient Warm Baritone</p>
+                      <p><strong>IP-Adapter Token:</strong> @devon_lead_v1</p>
+                      <p><strong>Wardrobe:</strong> Vintage Denim & Canvas Field Jacket</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="p-5 rounded-2xl bg-[#0e0922] border border-purple-900/60 space-y-3 font-mono text-xs shadow-xl">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-rose-300">SUPPORTING OFFICER</span>
+                    <span className="font-bold text-rose-300">MARCUS — COMMUNITY MENTOR (40s)</span>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">LIKENESS LOCKED</span>
                   </div>
 
@@ -366,9 +366,9 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                       <Users size={32} className="text-purple-400" />
                     </div>
                     <div className="space-y-1 text-[11px] text-purple-300/80">
-                      <p><strong>Voice Model:</strong> ElevenLabs Analytical Crisp</p>
-                      <p><strong>IP-Adapter Token:</strong> @officer_sarah_v1</p>
-                      <p><strong>Wardrobe:</strong> Tactical Sensor Harness</p>
+                      <p><strong>Voice Model:</strong> ElevenLabs Deep Soulful Baritone</p>
+                      <p><strong>IP-Adapter Token:</strong> @marcus_mentor_v1</p>
+                      <p><strong>Wardrobe:</strong> Workwear Utility Over-shirt & Leather Boots</p>
                     </div>
                   </div>
                 </div>

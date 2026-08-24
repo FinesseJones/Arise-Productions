@@ -9,10 +9,10 @@ import { ARISE_LOGO_BASE64 } from './constants/branding';
 
 const App: React.FC = () => {
   const [projectName, setProjectName] = useState<string>(() => {
-    return localStorage.getItem('arise_last_project_name') || 'Titanic - Found Footage';
+    return localStorage.getItem('arise_last_project_name') || 'A Fatherless Child';
   });
   const [projectId, setProjectId] = useState<string>(() => {
-    return localStorage.getItem('arise_last_project_id') || 'proj-titanic';
+    return localStorage.getItem('arise_last_project_id') || 'proj-fatherless-child';
   });
   const [activeStageId, setActiveStageId] = useState<string | null>(() => {
     return localStorage.getItem('arise_last_stage_id') || 'script';
@@ -21,6 +21,9 @@ const App: React.FC = () => {
     return localStorage.getItem('arise_session_active') === 'true';
   });
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [availableProjects, setAvailableProjects] = useState<Array<{ id: string; name: string; format?: string }>>([
+    { id: 'proj-fatherless-child', name: 'A Fatherless Child', format: 'long_form' },
+  ]);
 
   // New Project Form State
   const [newTitle, setNewTitle] = useState<string>('');
@@ -30,8 +33,17 @@ const App: React.FC = () => {
   const [episode, setEpisode] = useState<number>(1);
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
-  // Sync session state from backend on startup
+  // Sync session state & projects from backend on startup
   React.useEffect(() => {
+    fetch('http://localhost:4000/api/v1/projects')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
+          setAvailableProjects(data.projects);
+        }
+      })
+      .catch(() => {});
+
     fetch('http://localhost:4000/api/v1/session/state')
       .then((r) => r.json())
       .then((data) => {
@@ -168,18 +180,22 @@ const App: React.FC = () => {
               <select
                 value={projectName}
                 onChange={(e) => {
+                  const selectedObj = availableProjects.find((p) => p.name === e.target.value);
                   const name = e.target.value;
                   setProjectName(name);
-                  if (name.includes('Titanic')) setProjectId('proj-titanic');
-                  else if (name.includes('Alien')) setProjectId('proj-alien');
-                  else if (name.includes('Deep Space')) setProjectId('proj-space');
-                  else setProjectId(`proj-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`);
+                  if (selectedObj) {
+                    setProjectId(selectedObj.id);
+                  } else {
+                    setProjectId(`proj-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`);
+                  }
                 }}
                 className="w-full p-3.5 bg-[#060508] border border-amber-500/40 rounded-xl text-amber-100 focus:ring-2 focus:ring-amber-500 focus:outline-none font-mono text-xs"
               >
-                <option value="Titanic - Found Footage">🎬 Titanic - Found Footage (Feature Film / Long-Form)</option>
-                <option value="Alien - Hive Mind">📺 Alien - Hive Mind (Episodic TV Series - S1 E1)</option>
-                <option value="Deep Space Journey">📱 Deep Space Journey (Short-Form / Reel 9:16)</option>
+                {availableProjects.map((p) => (
+                  <option key={p.id} value={p.name}>
+                    🎬 {p.name} ({p.format === 'short_form' ? 'Short / Reel 9:16' : p.format === 'episodic_tv' ? 'Episodic TV' : 'Feature Film Drama'})
+                  </option>
+                ))}
               </select>
             </div>
 

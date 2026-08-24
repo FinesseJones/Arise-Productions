@@ -1,1109 +1,502 @@
 {
   "projects": [
     {
-      "id": "proj-titanic",
-      "name": "Titanic - Found Footage",
-      "slug": "titanic-found-footage",
+      "id": "proj-fatherless-child",
+      "name": "A Fatherless Child",
+      "slug": "a-fatherless-child",
       "format": "long_form",
       "version": 1,
-      "created_at": "2026-08-24T05:06:41.290Z",
-      "updated_at": "2026-08-24T05:06:41.290Z"
-    },
-    {
-      "id": "proj-alien",
-      "name": "Alien - Hive Mind",
-      "slug": "alien-hive-mind",
-      "format": "episodic",
-      "version": 1,
-      "created_at": "2026-08-24T05:06:41.290Z",
-      "updated_at": "2026-08-24T05:06:41.290Z"
-    },
-    {
-      "id": "proj-space",
-      "name": "Deep Space Journey",
-      "slug": "deep-space-journey",
-      "format": "short_form",
-      "version": 1,
-      "created_at": "2026-08-24T05:06:41.290Z",
-      "updated_at": "2026-08-24T05:06:41.290Z"
+      "created_at": "2026-08-24T05:19:22.859Z",
+      "updated_at": "2026-08-24T05:19:22.859Z"
     }
   ],
   "shots": [
     {
-      "id": "proj-titanic-shot-1",
-      "projectId": "proj-titanic",
+      "id": "proj-fatherless-child-shot-1",
+      "projectId": "proj-fatherless-child",
       "shotNumber": 1,
-      "title": "Opening Monologue - Dawn",
-      "description": "Expedition vessel drifts through ocean mist.",
+      "title": "Opening - Echoes of Absence",
+      "description": "Quiet morning in the neighborhood as memories and reflections set the emotional journey in motion.",
       "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
+      "created_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-2",
-      "projectId": "proj-titanic",
+      "id": "proj-fatherless-child-shot-2",
+      "projectId": "proj-fatherless-child",
       "shotNumber": 2,
-      "title": "Corridor Chase & Encounter",
-      "description": "Intense handheld tracking shot along the flooding bulkhead.",
+      "title": "The Struggle & Turning Point",
+      "description": "Intimate, high-stakes dialogue confronting family truth, resilience, and personal identity.",
       "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
+      "created_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-3",
-      "projectId": "proj-titanic",
+      "id": "proj-fatherless-child-shot-3",
+      "projectId": "proj-fatherless-child",
       "shotNumber": 3,
-      "title": "Final Resolution - Sunset",
-      "description": "Wide cinematic crane pulling away into the horizon.",
+      "title": "Breakthrough & New Horizon",
+      "description": "Cinematic golden-hour tracking shot capturing newfound strength, redemption, and purpose.",
       "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
-    },
-    {
-      "id": "proj-alien-shot-1",
-      "projectId": "proj-alien",
-      "shotNumber": 1,
-      "title": "Opening Monologue - Dawn",
-      "description": "Expedition vessel drifts through ocean mist.",
-      "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
-    },
-    {
-      "id": "proj-alien-shot-2",
-      "projectId": "proj-alien",
-      "shotNumber": 2,
-      "title": "Corridor Chase & Encounter",
-      "description": "Intense handheld tracking shot along the flooding bulkhead.",
-      "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
-    },
-    {
-      "id": "proj-alien-shot-3",
-      "projectId": "proj-alien",
-      "shotNumber": 3,
-      "title": "Final Resolution - Sunset",
-      "description": "Wide cinematic crane pulling away into the horizon.",
-      "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
-    },
-    {
-      "id": "proj-space-shot-1",
-      "projectId": "proj-space",
-      "shotNumber": 1,
-      "title": "Opening Monologue - Dawn",
-      "description": "Expedition vessel drifts through ocean mist.",
-      "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
-    },
-    {
-      "id": "proj-space-shot-2",
-      "projectId": "proj-space",
-      "shotNumber": 2,
-      "title": "Corridor Chase & Encounter",
-      "description": "Intense handheld tracking shot along the flooding bulkhead.",
-      "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
-    },
-    {
-      "id": "proj-space-shot-3",
-      "projectId": "proj-space",
-      "shotNumber": 3,
-      "title": "Final Resolution - Sunset",
-      "description": "Wide cinematic crane pulling away into the horizon.",
-      "durationFrames": 120,
-      "created_at": "2026-08-24T05:06:41.290Z"
+      "created_at": "2026-08-24T05:19:22.859Z"
     }
   ],
   "statuses": [
     {
-      "id": "proj-titanic-shot-1:script",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:script",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "script",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-script-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:structure",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:structure",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "structure",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-structure-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:plan",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:plan",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "plan",
-      "statusChar": "🟡",
-      "state": "IN_PROGRESS",
-      "progress": 50,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:previs",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:previs",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:motion",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:motion",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:boards",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:boards",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:prompt",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:prompt",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:dailies",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:dailies",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:sound",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:sound",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "sound",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-1:edit",
-      "shotId": "proj-titanic-shot-1",
+      "id": "proj-fatherless-child-shot-1:edit",
+      "shotId": "proj-fatherless-child-shot-1",
       "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-2:script",
-      "shotId": "proj-titanic-shot-2",
+      "id": "proj-fatherless-child-shot-2:script",
+      "shotId": "proj-fatherless-child-shot-2",
       "stageId": "script",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-script-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-titanic-shot-2:structure",
-      "shotId": "proj-titanic-shot-2",
+      "id": "proj-fatherless-child-shot-2:structure",
+      "shotId": "proj-fatherless-child-shot-2",
       "stageId": "structure",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-2:plan",
-      "shotId": "proj-titanic-shot-2",
-      "stageId": "plan",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-2:previs",
-      "shotId": "proj-titanic-shot-2",
-      "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-2:motion",
-      "shotId": "proj-titanic-shot-2",
-      "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-2:boards",
-      "shotId": "proj-titanic-shot-2",
-      "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-2:prompt",
-      "shotId": "proj-titanic-shot-2",
-      "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-2:dailies",
-      "shotId": "proj-titanic-shot-2",
-      "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-2:sound",
-      "shotId": "proj-titanic-shot-2",
-      "stageId": "sound",
-      "statusChar": "🟡",
-      "state": "IN_PROGRESS",
-      "progress": 50,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-2:edit",
-      "shotId": "proj-titanic-shot-2",
-      "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:script",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "script",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:structure",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "structure",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:plan",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "plan",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:previs",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:motion",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:boards",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:prompt",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:dailies",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:sound",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "sound",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-titanic-shot-3:edit",
-      "shotId": "proj-titanic-shot-3",
-      "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-1:script",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "script",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-structure-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-alien-shot-1:structure",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "structure",
+      "id": "proj-fatherless-child-shot-2:plan",
+      "shotId": "proj-fatherless-child-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-plan-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-alien-shot-1:plan",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "plan",
-      "statusChar": "🟡",
-      "state": "IN_PROGRESS",
-      "progress": 50,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-1:previs",
-      "shotId": "proj-alien-shot-1",
+      "id": "proj-fatherless-child-shot-2:previs",
+      "shotId": "proj-fatherless-child-shot-2",
       "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-1:motion",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-1:boards",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-1:prompt",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-1:dailies",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-1:sound",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "sound",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-1:edit",
-      "shotId": "proj-alien-shot-1",
-      "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:script",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "script",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-previs-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-alien-shot-2:structure",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "structure",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:plan",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "plan",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:previs",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:motion",
-      "shotId": "proj-alien-shot-2",
+      "id": "proj-fatherless-child-shot-2:motion",
+      "shotId": "proj-fatherless-child-shot-2",
       "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:boards",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:prompt",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:dailies",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:sound",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "sound",
-      "statusChar": "🟡",
-      "state": "IN_PROGRESS",
-      "progress": 50,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-2:edit",
-      "shotId": "proj-alien-shot-2",
-      "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:script",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "script",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:structure",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "structure",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:plan",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "plan",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:previs",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:motion",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:boards",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:prompt",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:dailies",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:sound",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "sound",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-alien-shot-3:edit",
-      "shotId": "proj-alien-shot-3",
-      "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-1:script",
-      "shotId": "proj-space-shot-1",
-      "stageId": "script",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-motion-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-1:structure",
-      "shotId": "proj-space-shot-1",
-      "stageId": "structure",
+      "id": "proj-fatherless-child-shot-2:boards",
+      "shotId": "proj-fatherless-child-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-boards-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-1:plan",
-      "shotId": "proj-space-shot-1",
-      "stageId": "plan",
-      "statusChar": "🟡",
-      "state": "IN_PROGRESS",
-      "progress": 50,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-1:previs",
-      "shotId": "proj-space-shot-1",
-      "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-1:motion",
-      "shotId": "proj-space-shot-1",
-      "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-1:boards",
-      "shotId": "proj-space-shot-1",
-      "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-1:prompt",
-      "shotId": "proj-space-shot-1",
+      "id": "proj-fatherless-child-shot-2:prompt",
+      "shotId": "proj-fatherless-child-shot-2",
       "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-1:dailies",
-      "shotId": "proj-space-shot-1",
-      "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-1:sound",
-      "shotId": "proj-space-shot-1",
-      "stageId": "sound",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-1:edit",
-      "shotId": "proj-space-shot-1",
-      "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-2:script",
-      "shotId": "proj-space-shot-2",
-      "stageId": "script",
+      "state": "DONE",
       "statusChar": "🟢",
-      "state": "COMPLETE",
-      "progress": 100,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "outputHash": "hash-prompt-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-2:structure",
-      "shotId": "proj-space-shot-2",
-      "stageId": "structure",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-2:plan",
-      "shotId": "proj-space-shot-2",
-      "stageId": "plan",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-2:previs",
-      "shotId": "proj-space-shot-2",
-      "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-2:motion",
-      "shotId": "proj-space-shot-2",
-      "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-2:boards",
-      "shotId": "proj-space-shot-2",
-      "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-2:prompt",
-      "shotId": "proj-space-shot-2",
-      "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
-    },
-    {
-      "id": "proj-space-shot-2:dailies",
-      "shotId": "proj-space-shot-2",
+      "id": "proj-fatherless-child-shot-2:dailies",
+      "shotId": "proj-fatherless-child-shot-2",
       "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-2:sound",
-      "shotId": "proj-space-shot-2",
+      "id": "proj-fatherless-child-shot-2:sound",
+      "shotId": "proj-fatherless-child-shot-2",
       "stageId": "sound",
-      "statusChar": "🟡",
-      "state": "IN_PROGRESS",
-      "progress": 50,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-2:edit",
-      "shotId": "proj-space-shot-2",
+      "id": "proj-fatherless-child-shot-2:edit",
+      "shotId": "proj-fatherless-child-shot-2",
       "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:script",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:script",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "script",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:structure",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:structure",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "structure",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:plan",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:plan",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "plan",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:previs",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:previs",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "previs",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:motion",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:motion",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "motion",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:boards",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:boards",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "boards",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:prompt",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:prompt",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "prompt",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:dailies",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:dailies",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "dailies",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:sound",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:sound",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "sound",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     },
     {
-      "id": "proj-space-shot-3:edit",
-      "shotId": "proj-space-shot-3",
+      "id": "proj-fatherless-child-shot-3:edit",
+      "shotId": "proj-fatherless-child-shot-3",
       "stageId": "edit",
-      "statusChar": "?",
-      "state": "UNSTARTED",
-      "progress": 0,
-      "metadata": {},
-      "updated_at": "2026-08-24T05:06:41.290Z",
-      "version": 1
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "telemetry": {
+        "fps": 60,
+        "computeNodes": 4,
+        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
+        "timestamp": "2026-08-24T05:19:22.859Z"
+      },
+      "updated_at": "2026-08-24T05:19:22.859Z"
     }
   ],
-  "scripts": [],
+  "scripts": [
+    {
+      "id": "proj-fatherless-child:1",
+      "content": "EXT. URBAN NEIGHBORHOOD - EARLY MORNING\n\nThe morning sun filters through amber trees, casting long golden shadows across the pavement. A quiet, contemplative stillness hangs in the air.\n\nDEVON (19)\n(standing on the front porch, clutching an old weathered photograph)\n\"They always told me a tree without deep roots could never stand a storm. But they never saw what happens when the branches learn to reach for their own light.\"\n\nMARCUS (40s, mentor, steps onto the porch with two steaming mugs)\n\"You've been carrying questions that were never yours to answer, Devon. Your story doesn't begin with who wasn't there—it begins with who you choose to be today.\"\n\nDEVON\n(taking a slow breath, looking out at the waking city)\n\"Then let's build something that lasts.\"\n\nCUT TO:\n\nINT. LIVING ROOM WORKSPACE - CONTINUOUS\n\nDevon opens a notebook filled with hand-drawn plans, architectural sketches, and film concepts."
+    }
+  ],
   "chatHistories": [],
   "sessionState": {
     "lastActiveProjectId": "proj-titanic",
@@ -1112,5 +505,5 @@
     "updated_at": "2026-08-24T05:06:41.288Z"
   },
   "auditLogs": [],
-  "saved_at": "2026-08-24T05:06:41.290Z"
+  "saved_at": "2026-08-24T05:19:22.859Z"
 }

@@ -194,7 +194,7 @@ export class NvidiaNIMClient {
     if (systemPrompt.includes('Screenwriter') || systemPrompt.includes('script')) {
       return {
         success: true,
-        text: `Here is the revised screenplay sequence optimized for virtual production:\n\nEXT. TITANIC HORIZON - DUSK\n\nA piercing golden amber glow crests across the icy Atlantic expanse.\n\nLEAD OFFICER\n(adjusting the brass scope)\n"Hold position on the perimeter. The navigational telemetry has just locked."\n\nSECOND OFFICER\n(into the radio)\n"Beacon verified. Initiating full 3D soundstage capture."\n\nCUT TO:\n\nINT. NAVIGATION DECK - CONTINUOUS\n\nFlickering dials and holographic instruments illuminate the crew's faces with crisp anamorphic rim light.`,
+        text: `Here is the revised screenplay sequence optimized for virtual production:\n\nEXT. URBAN NEIGHBORHOOD PORCH - EARLY MORNING\n\nGolden morning light breaks through the amber trees, catching the dust motes in the brisk autumn air.\n\nDEVON (19)\n(clutching a worn photograph)\n"Every time I look in the mirror, I keep trying to find a face I never met. But how do you carry the weight of a shadow?"\n\nMARCUS (40s, mentor)\n"Because you're not his ghost, Devon. You're the man who gets to decide what this family's name means from here on out."\n\nDEVON\n(taking a slow breath)\n"Then let's make sure they remember what we build today."\n\nCUT TO:\n\nINT. LIVING ROOM WORKSPACE - CONTINUOUS\n\nDevon opens a notebook filled with hand-drawn plans and film concepts.`,
         model: `${model} (Neural Co-Pilot)`,
         ai_powered: true,
       };

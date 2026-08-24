@@ -158,19 +158,18 @@ function generateDynamicAssistantResponse(prompt: string, stageId: string, proje
   if (stageId === 'script') {
     if (p.includes('dialogue') || p.includes('scene') || p.includes('script') || p.includes('write')) {
       return `Here is a cinematic scene tailored for **${projectName}** (Shot ${shotNumber}):\n\n` +
-        `EXT. ${projectName.toUpperCase()} PERIMETER - NIGHT\n\n` +
-        `A howling wind sweeps across the steel observation deck. The horizon glows with a sharp amber flare.\n\n` +
-        `SARAH\n` +
-        `(gripping the railing tightly)\n` +
-        `"If we don't initiate the sequence in the next thirty seconds, the entire corridor will collapse."\n\n` +
-        `MARCUS\n` +
-        `(checking the holographic telemetry pad)\n` +
-        `"The coordinates are locked, Sarah. But once we cross that threshold, there's no turning back."\n\n` +
-        `SARAH\n` +
-        `"Then let's make sure we don't look back. Power up the primary core."\n\n` +
-        `Marcus nods, sliding his thumb across the ignition console. A deep, sub-audible hum resonates through the hull.\n\n` +
+        `EXT. URBAN NEIGHBORHOOD PORCH - EARLY MORNING\n\n` +
+        `Golden morning light breaks through the amber trees, catching the dust motes in the brisk autumn air. A heavy silence settles over the quiet street.\n\n` +
+        `DEVON (19)\n` +
+        `(clutching a worn, faded photograph of a man he never knew)\n` +
+        `"Every time I look in the mirror, I keep trying to find a face I never met. People tell me I move like him, talk like him... but how do you carry the weight of a shadow?"\n\n` +
+        `MARCUS (40s, mentor, placing a warm hand on Devon's shoulder)\n` +
+        `"Because you're not his ghost, Devon. You're the man who gets to decide what this family's name means from here on out. The absence didn't define you—your perseverance did."\n\n` +
+        `Devon stares out at the waking city horizon, letting the words sink in. He slowly lowers the photograph.\n\n` +
+        `DEVON\n` +
+        `"Then let's make sure they remember what we build today."\n\n` +
         `CUT TO:\n\n` +
-        `*Would you like me to develop the next beat, heighten the dialogue subtext, or introduce a character twist?*`;
+        `*Would you like me to develop the next dialogue exchange, explore Devon's backstory beat, or structure the following scene?*`;
     }
     return `As your Lead Screenwriter for **${projectName}**, here are my creative recommendations for Shot ${shotNumber}:\n\n` +
       `1. **Core Conflict & Stakes:** Ensure every character entering this scene has an opposing immediate goal to generate instant tension.\n` +
