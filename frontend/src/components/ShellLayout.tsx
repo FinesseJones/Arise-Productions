@@ -338,8 +338,27 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                   placeholder="nvapi-..."
                   value={apiKeyInput}
                   onChange={(e) => setApiKeyInput(e.target.value)}
-                  className="flex-grow px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-slate-200 text-xs font-mono focus:border-emerald-500 focus:outline-none"
+                  className="flex-grow px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-slate-200 text-xs font-mono focus:border-emerald-500 focus:outline-none select-text"
                 />
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const text = await navigator.clipboard.readText();
+                      if (text && text.trim()) {
+                        setApiKeyInput(text.trim());
+                        toast.success('📋 Pasted API Key from clipboard!');
+                      } else {
+                        toast.error('Clipboard is empty. Copy your key first.');
+                      }
+                    } catch (e) {
+                      toast('Please use Cmd+V to paste into the field.', { icon: '⌨️' });
+                    }
+                  }}
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded-xl text-xs font-mono transition flex items-center gap-1"
+                >
+                  <span>📋 Paste</span>
+                </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs uppercase tracking-wider transition"

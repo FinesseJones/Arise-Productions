@@ -11,17 +11,28 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Helper to auto-read .env if present
+// Helper to auto-read .env from multiple search locations
 function loadEnvKey() {
   if (process.env.NVIDIA_API_KEY) return process.env.NVIDIA_API_KEY.trim();
-  try {
-    const envPath = path.resolve(__dirname, '../../.env');
-    if (fs.existsSync(envPath)) {
-      const content = fs.readFileSync(envPath, 'utf8');
-      const match = content.match(/NVIDIA_API_KEY=(.+)/);
-      if (match && match[1]) return match[1].trim();
-    }
-  } catch (e) {}
+  const searchPaths = [
+    path.resolve(process.cwd(), '.env'),
+    path.resolve(__dirname, '../../.env'),
+    path.resolve(__dirname, '../.env'),
+    path.join(process.env.HOME || '', '.arise.env'),
+    path.join(process.env.HOME || '', '.env'),
+  ];
+
+  for (const p of searchPaths) {
+    try {
+      if (fs.existsSync(p)) {
+        const content = fs.readFileSync(p, 'utf8');
+        const match = content.match(/NVIDIA_API_KEY=([^\r\n#]+)/);
+        if (match && match[1] && match[1].trim()) {
+          return match[1].trim();
+        }
+      }
+    } catch (e) {}
+  }
   return '';
 }
 
@@ -40,24 +51,29 @@ export class NvidiaNIMClient {
 
   setApiKey(key) {
     this.apiKey = key.trim();
-    // Save to .env
-    try {
-      const envPath = path.resolve(__dirname, '../../.env');
-      let content = '';
-      if (fs.existsSync(envPath)) {
-        content = fs.readFileSync(envPath, 'utf8');
-        if (content.includes('NVIDIA_API_KEY=')) {
-          content = content.replace(/NVIDIA_API_KEY=.*/, `NVIDIA_API_KEY=${this.apiKey}`);
+    // Save to .env files across project and user home
+    const targets = [
+      path.resolve(process.cwd(), '.env'),
+      path.resolve(__dirname, '../../.env'),
+      path.join(process.env.HOME || '', '.arise.env'),
+    ];
+
+    for (const envPath of targets) {
+      try {
+        let content = '';
+        if (fs.existsSync(envPath)) {
+          content = fs.readFileSync(envPath, 'utf8');
+          if (content.includes('NVIDIA_API_KEY=')) {
+            content = content.replace(/NVIDIA_API_KEY=.*/, `NVIDIA_API_KEY=${this.apiKey}`);
+          } else {
+            content += `\nNVIDIA_API_KEY=${this.apiKey}\n`;
+          }
         } else {
-          content += `\nNVIDIA_API_KEY=${this.apiKey}\n`;
+          content = `NVIDIA_API_KEY=${this.apiKey}\nNVIDIA_DEFAULT_MODEL=${this.defaultModel}\n`;
         }
-      } else {
-        content = `NVIDIA_API_KEY=${this.apiKey}\nNVIDIA_DEFAULT_MODEL=${this.defaultModel}\n`;
-      }
-      fs.writeFileSync(envPath, content, 'utf8');
-      console.log('[NvidiaNIM] Saved NVIDIA_API_KEY to .env successfully.');
-    } catch (e) {
-      console.warn('[NvidiaNIM] Failed to write .env:', e.message);
+        fs.writeFileSync(envPath, content, 'utf8');
+        console.log(`[NvidiaNIM] Saved NVIDIA_API_KEY to ${envPath}`);
+      } catch (e) {}
     }
   }
 
