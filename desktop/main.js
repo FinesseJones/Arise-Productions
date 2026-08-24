@@ -66,6 +66,9 @@ function createMainWindow() {
     },
   });
 
+  // Clear any cached assets to ensure fresh UI renders
+  mainWindow.webContents.session.clearCache();
+
   // Resolve compiled Arise Production Studio index.html
   let distIndex = path.join(__dirname, 'ui/index.html');
   if (!fs.existsSync(distIndex)) {

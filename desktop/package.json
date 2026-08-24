@@ -28,6 +28,14 @@
   "build": {
     "appId": "llc.aicontentfoundry.ariseproduction",
     "productName": "Arise Production",
+    "files": [
+      "**/*",
+      "ui/**/*",
+      "backend/**/*",
+      "server.js",
+      "main.js",
+      "preload.cjs"
+    ],
     "directories": {
       "buildResources": "build",
       "output": "dist"
