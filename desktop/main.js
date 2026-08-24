@@ -19,8 +19,9 @@ const PORT = 4000;
 
 // 1. Launch local backend service in background
 function startBackendServer() {
-  let serverPath = path.join(__dirname, 'server.js');
-  let cwd = __dirname;
+  let unpackedDir = __dirname.replace('app.asar', 'app.asar.unpacked');
+  let serverPath = path.join(unpackedDir, 'server.js');
+  let cwd = unpackedDir;
 
   if (!fs.existsSync(serverPath)) {
     serverPath = path.resolve(__dirname, '../server.js');

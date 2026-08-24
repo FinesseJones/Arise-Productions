@@ -13,6 +13,13 @@
     "build:win": "npm run prebuild && electron-builder --win",
     "build:linux": "npm run prebuild && electron-builder --linux"
   },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ws": "^8.18.0",
+    "dotenv": "^16.4.7",
+    "cors": "^2.8.5",
+    "chokidar": "^4.0.3"
+  },
   "devDependencies": {
     "electron": "^34.0.0",
     "electron-builder": "^25.1.8"
@@ -24,6 +31,11 @@
       "buildResources": "build",
       "output": "dist"
     },
+    "asarUnpack": [
+      "server.js",
+      "backend/**/*",
+      "node_modules/**/*"
+    ],
     "mac": {
       "icon": "build/icon.icns",
       "category": "public.app-category.video",
