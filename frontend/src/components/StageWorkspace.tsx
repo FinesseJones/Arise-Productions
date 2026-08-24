@@ -12,19 +12,29 @@ interface StageWorkspaceProps {
   stage: Stage;
   projectStatus: ProjectStatus;
   onExecuteStage?: (stageId: string) => void;
+  selectedShot?: number;
+  onSelectShot?: (shotNumber: number) => void;
 }
 
 const StageWorkspace: React.FC<StageWorkspaceProps> = ({
   stage,
   projectStatus,
   onExecuteStage,
+  selectedShot,
+  onSelectShot,
 }) => {
-  const [selectedShot, setSelectedShot] = useState<number>(1);
+  const [internalShot, setInternalShot] = useState<number>(1);
+  const activeShot = selectedShot !== undefined ? selectedShot : internalShot;
   const [layoutMode, setLayoutMode] = useState<'split' | 'canvas-focus' | 'chat-focus'>('split');
 
   const stageKey = stage.id as StageKey;
-  const currentShot = projectStatus.shots?.find((s) => s.shotNumber === selectedShot) || projectStatus.shots?.[0];
+  const currentShot = projectStatus.shots?.find((s) => s.shotNumber === activeShot) || projectStatus.shots?.[0];
   const shotStageStatus = currentShot?.status?.[stageKey]?.statusChar || '?';
+
+  const handleShotChange = (shotNum: number) => {
+    if (onSelectShot) onSelectShot(shotNum);
+    else setInternalShot(shotNum);
+  };
 
   const handleRunStage = () => {
     if (onExecuteStage) {
@@ -78,8 +88,8 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
 
           {/* Shot Selector */}
           <select
-            value={selectedShot}
-            onChange={(e) => setSelectedShot(Number(e.target.value))}
+            value={activeShot}
+            onChange={(e) => handleShotChange(Number(e.target.value))}
             className="px-3 py-2 bg-[#140e2e] border border-purple-800/60 rounded-xl text-purple-100 text-xs font-mono focus:outline-none focus:border-rose-500 shadow-sm"
           >
             {projectStatus.shots?.map((s) => (
@@ -116,7 +126,7 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
             stageId={stageKey}
             roomName={stage.name}
             projectName={projectStatus.projectName}
-            shotNumber={selectedShot}
+            shotNumber={activeShot}
             shotTitle={currentShot?.title}
             shotDescription={currentShot?.description}
           />
@@ -136,7 +146,7 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
             stageId={stageKey}
             roomName={stage.name}
             projectName={projectStatus.projectName}
-            shotNumber={selectedShot}
+            shotNumber={activeShot}
           />
         </div>
       </div>

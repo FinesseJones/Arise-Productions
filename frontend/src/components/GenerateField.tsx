@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Sparkles, Info, AlertCircle, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAPIBaseURL } from '../lib/api';

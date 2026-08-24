@@ -11,6 +11,9 @@ import DataVaultAndHistory from './DataVaultAndHistory';
 import OriginalSuitesHub from './OriginalSuitesHub';
 import ProductionPitchDeckModal from './ProductionPitchDeckModal';
 import PlotRoom from '../pages/PlotRoom';
+import ActsRoom from '../pages/ActsRoom';
+import BeatsRoom from '../pages/BeatsRoom';
+import CharactersRoom from '../pages/CharactersRoom';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
 import {
@@ -26,6 +29,9 @@ import {
   Sliders,
   FileText,
   BookOpen,
+  Layers,
+  Activity,
+  Users,
 } from 'lucide-react';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { getAPIBaseURL } from '../lib/api';
@@ -47,7 +53,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   onChangeProject,
 }) => {
   const apiBase = getAPIBaseURL();
-  const [mainView, setMainView] = useState<'stage' | 'plot' | 'architecture' | 'screening' | 'suites' | 'vault'>('stage');
+  const [mainView, setMainView] = useState<
+    'stage' | 'plot' | 'acts' | 'beats' | 'characters' | 'architecture' | 'screening' | 'suites' | 'vault'
+  >('stage');
+  const [activeShotNumber, setActiveShotNumber] = useState<number>(1);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
   const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
   const [apiKeyInput, setApiKeyInput] = useState<string>('');
@@ -137,6 +146,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
     setMainView('stage');
   };
 
+  const handleSelectShotStage = (shotNumber: number, stageId: string) => {
+    onStageSelect(stageId);
+    setActiveShotNumber(shotNumber);
+    setMainView('stage');
+  };
+
   return (
     <div className="flex flex-col h-screen bg-[#080512] text-slate-100 overflow-hidden font-sans">
       {/* Top Studio Header & Telemetry Bar */}
@@ -192,7 +207,49 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               }`}
             >
               <BookOpen size={13} />
-              <span>Plot Room</span>
+              <span>Plot</span>
+            </button>
+
+            {/* 2b. Acts & Arcs Writing Room */}
+            <button
+              onClick={() => setMainView('acts')}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg transition ${
+                mainView === 'acts'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+              }`}
+            >
+              <Layers size={13} />
+              <span>Acts</span>
+              <span className="text-[8px] bg-amber-400 text-black px-1 rounded font-bold">NEW</span>
+            </button>
+
+            {/* 2c. Beats Sheet Writing Room */}
+            <button
+              onClick={() => setMainView('beats')}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg transition ${
+                mainView === 'beats'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+              }`}
+            >
+              <Activity size={13} />
+              <span>Beats</span>
+              <span className="text-[8px] bg-amber-400 text-black px-1 rounded font-bold">NEW</span>
+            </button>
+
+            {/* 2d. Cast & Characters Writing Room */}
+            <button
+              onClick={() => setMainView('characters')}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg transition ${
+                mainView === 'characters'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+              }`}
+            >
+              <Users size={13} />
+              <span>Cast</span>
+              <span className="text-[8px] bg-amber-400 text-black px-1 rounded font-bold">NEW</span>
             </button>
 
             {/* 3. 3D Campus / Architectural Studio View */}
@@ -433,12 +490,26 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             <StageWorkspace
               stage={currentStageObj}
               projectStatus={projectStatus}
+              selectedShot={activeShotNumber}
+              onSelectShot={setActiveShotNumber}
               onExecuteStage={(stageId) => sendCommand(`run stage ${stageId}`, stageId)}
             />
           )}
 
           {mainView === 'plot' && (
             <PlotRoom projectName={projectStatus.projectName} />
+          )}
+
+          {mainView === 'acts' && (
+            <ActsRoom projectName={projectStatus.projectName} />
+          )}
+
+          {mainView === 'beats' && (
+            <BeatsRoom projectName={projectStatus.projectName} />
+          )}
+
+          {mainView === 'characters' && (
+            <CharactersRoom projectName={projectStatus.projectName} />
           )}
 
           {mainView === 'architecture' && (
@@ -465,7 +536,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         {/* Right Rail: Shot Manifest & Live Status Board (Visible in stage view) */}
         {mainView === 'stage' && (
           <aside className="w-80 xl:w-96 flex-shrink-0 border-l border-slate-800 bg-slate-900/60 overflow-y-auto">
-            <StatusBoard projectStatus={projectStatus} />
+            <StatusBoard
+              projectStatus={projectStatus}
+              activeStageId={activeStage}
+              activeShotNumber={activeShotNumber}
+              onSelectShotStage={handleSelectShotStage}
+            />
           </aside>
         )}
       </div>
@@ -475,6 +551,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         <DirectorAgent
           onSendCommand={(cmd) => sendCommand(cmd, activeStage || 'script')}
           activeStage={activeStage}
+          telemetry={telemetry}
         />
 
         {/* Copyright Notice */}
