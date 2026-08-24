@@ -548,7 +548,9 @@ app.post('/equipment/book', (req, res) => {
 // 4. SPA CATCH-ALL ROUTE (SERVES CLIENT-SIDE ROUTING WITHOUT 404s)
 // ==============================================================================
 
-app.get('*', (req, res, next) => {
+app.use((req, res, next) => {
+  if (req.method !== 'GET') return next();
+
   // If requesting API or MCP routes, let next() handle 404
   if (
     req.path.startsWith('/api/') ||

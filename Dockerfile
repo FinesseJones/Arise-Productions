@@ -7,11 +7,12 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copy root & frontend package files
+# Copy package files
 COPY package*.json ./
 COPY frontend/package*.json ./frontend/
 
 # Install dependencies
+RUN npm install
 RUN npm install --prefix frontend
 
 # Copy frontend source code & build
