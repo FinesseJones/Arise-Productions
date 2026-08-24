@@ -34,14 +34,36 @@ fileWatcher.start();
 // 1. CENTRAL API BRIDGE & MANIFEST REST ENDPOINTS
 // ==============================================================================
 
+// GET /api/v1/nvidia/status - Check active NVIDIA NIM AI model & key status
+app.get('/api/v1/nvidia/status', (req, res) => {
+  res.json({ success: true, ...nvidia.getStatus() });
+});
+
+// POST /api/v1/nvidia/set-key - Set user NVIDIA NIM API Key
+app.post('/api/v1/nvidia/set-key', (req, res) => {
+  const { apiKey } = req.body;
+  if (!apiKey) return res.status(400).json({ success: false, error: 'API Key is required' });
+  nvidia.setApiKey(apiKey);
+  res.json({ success: true, message: 'NVIDIA API Key saved successfully', ...nvidia.getStatus() });
+});
+
+// POST /api/v1/nvidia/set-model - Switch default NVIDIA NIM model
+app.post('/api/v1/nvidia/set-model', (req, res) => {
+  const { modelId } = req.body;
+  if (!modelId) return res.status(400).json({ success: false, error: 'modelId is required' });
+  nvidia.setDefaultModel(modelId);
+  res.json({ success: true, message: `Default model switched to ${modelId}`, ...nvidia.getStatus() });
+});
+
 // POST /api/v1/nvidia/chat - Specialized Room AI Co-Pilot Assistant
 app.post('/api/v1/nvidia/chat', async (req, res) => {
   try {
-    const { message, roomName = 'Studio Department', role = 'AI Specialist', stageId = 'script', context = '' } = req.body;
+    const { message, roomName = 'Studio Department', role = 'AI Specialist', stageId = 'script', context = '', model } = req.body;
     const systemPrompt = `You are the ${role} inside the 3D "${roomName}" of Arise Production (A product of THE AI CONTENT FOUNDRY, LLC). Provide top-tier, creative, and highly specific technical direction for ${stageId}. Current production context: ${context}`;
     const result = await nvidia.generateCompletion({
       prompt: message,
       systemPrompt,
+      model: model || nvidia.defaultModel,
       temperature: 0.7,
       maxTokens: 1200,
     });
