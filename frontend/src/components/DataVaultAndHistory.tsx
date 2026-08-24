@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ProjectStatus } from '../types/types';
 import {
   FolderArchive,
@@ -17,7 +17,13 @@ import {
   Sparkles,
   Layers,
   Eye,
-  CheckCircle2
+  CheckCircle2,
+  UploadCloud,
+  FileUp,
+  File,
+  Plus,
+  Trash2,
+  Zap,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
@@ -26,15 +32,29 @@ interface DataVaultProps {
   projectStatus: ProjectStatus;
 }
 
+interface VaultItem {
+  id: string;
+  name: string;
+  department: string;
+  type: string;
+  size: string;
+  timestamp: string;
+  author: string;
+  status: string;
+  preview: string;
+}
+
 export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus }) => {
   const [selectedDept, setSelectedDept] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'files' | 'history' | 'database'>('files');
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const cleanSlug = (projectStatus.projectName || 'Arise_Production').replace(/[^a-zA-Z0-9]/g, '_');
 
-  // Comprehensive cross-department artifacts ledger
-  const vaultItems = [
+  // Initial cross-department artifacts ledger
+  const [vaultItems, setVaultItems] = useState<VaultItem[]>([
     {
       id: 'art-001',
       name: `${cleanSlug}_Screenplay_Master_Draft.fountain`,
@@ -101,28 +121,122 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
       status: 'Graded',
       preview: `Target: Rec.709 Gamma 2.4 | Film Space: ACEScg | Highlights: Warm Tungsten Roll-off | Graded for: ${projectStatus.projectName}`,
     },
-    {
-      id: 'art-007',
-      name: `${cleanSlug}_Vertical_9x16_Reel_Cut.mp4`,
-      department: 'Platform & Social',
-      type: 'H.265 Master (4K)',
-      size: '48.6 MB',
-      timestamp: 'Today, 5:50 PM',
-      author: 'Platform Optimizer AI',
-      status: 'Ready',
-      preview: `Format: 9:16 Vertical (1080x1920) | Safe Zone: Center 80% | Auto-Captions: Synchronized | Source: ${projectStatus.projectName}`,
-    },
-  ];
+  ]);
 
   // Live generation action log history
-  const historyLogs = [
+  const [historyLogs, setHistoryLogs] = useState([
     { time: '19:33:11', dept: 'System', text: 'WebSocket connected to Central API Bridge (:4000/ws)' },
     { time: '19:33:10', dept: 'System', text: 'Live File Watcher initialized on storage/watch_folder' },
     { time: '19:31:14', dept: 'NVIDIA NIM', text: 'Model meta/llama-3.1-70b-instruct loaded for 10-department co-pilots' },
     { time: '19:28:50', dept: 'Editorial', text: 'Timeline compiled with 12 cut points via OpenMontage connector' },
     { time: '19:22:45', dept: 'Virtual DP', text: 'Unreal CineCameraActor exported 60 FPS trajectory track' },
     { time: '19:15:30', dept: 'Screenplay', text: 'Scene breakdown generated 8 shots and 14 dialogue beats' },
-  ];
+  ]);
+
+  // Universal Document Ingestion Handler
+  const handleFilesIngested = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach((file) => {
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      let dept = 'General Production';
+      let docType = 'Production Artifact';
+
+      if (['fountain', 'fdx', 'pdf', 'txt'].includes(ext)) {
+        dept = 'Screenwriting';
+        docType = ext === 'fountain' ? 'Screenplay (.fountain)' : 'Script Document';
+      } else if (['edl', 'xml', 'fcpxml'].includes(ext)) {
+        dept = 'Editorial & Conform';
+        docType = 'DaVinci Timeline EDL';
+      } else if (['cube', 'look'].includes(ext)) {
+        dept = 'Color & Mastering';
+        docType = '3D 33-point Color LUT';
+      } else if (['wav', 'mp3', 'flac', 'aac'].includes(ext)) {
+        dept = 'Sound & Scoring';
+        docType = 'Audio Stem Track';
+      } else if (['png', 'jpg', 'jpeg', 'webp', 'exr'].includes(ext)) {
+        dept = 'Generative Prompt & Style';
+        docType = 'Visual Reference Texture';
+      } else if (['json', 'fbx', 'obj', 'usd', 'usda'].includes(ext)) {
+        dept = 'Virtual Cinematography';
+        docType = '3D Spatial Camera Manifest';
+      }
+
+      const sizeStr = file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+
+      // Read text if it's a screenplay / data file
+      if (['fountain', 'txt', 'json', 'edl'].includes(ext)) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const text = e.target?.result as string;
+          if (text) {
+            // If screenplay, save to script cache & backend
+            if (ext === 'fountain' || ext === 'txt') {
+              try {
+                localStorage.setItem(`arise_script_${cleanSlug}_shot_1`, text);
+                fetch('http://localhost:4000/api/v1/projects/script', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    projectId: cleanSlug,
+                    shotNumber: 1,
+                    scriptContent: text,
+                  }),
+                }).catch(() => {});
+              } catch {}
+            }
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      const newItem: VaultItem = {
+        id: `ingest-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        name: file.name,
+        department: dept,
+        type: docType,
+        size: sizeStr,
+        timestamp: 'Just now',
+        author: 'User Ingested (Master Vault)',
+        status: 'Synchronized',
+        preview: `Ingested document: ${file.name} | Calibrated for ${dept} pipeline in production ${projectStatus.projectName}.`,
+      };
+
+      setVaultItems((prev) => [newItem, ...prev]);
+
+      // Add to action history
+      setHistoryLogs((prev) => [
+        {
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          dept: dept.split(' ')[0],
+          text: `Ingested & Synchronized "${file.name}" to ${dept}`,
+        },
+        ...prev,
+      ]);
+
+      toast.success(`✨ INGESTED: "${file.name}" synced with ${dept}!`, { duration: 4000 });
+    });
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files) {
+      handleFilesIngested(e.dataTransfer.files);
+    }
+  };
 
   const filteredItems = vaultItems.filter((item) => {
     const matchesDept = selectedDept === 'all' || item.department.toLowerCase().includes(selectedDept.toLowerCase());
@@ -140,7 +254,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
   return (
     <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans">
       {/* Vault Header */}
-      <div className="p-6 border-b border-slate-800/80 bg-slate-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-6 border-b border-purple-900/50 bg-slate-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/20 p-0 flex items-center justify-center">
             <img
@@ -152,45 +266,107 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
           <div>
             <div className="flex items-center space-x-2">
               <h2 className="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif">
-                Studio Data Vault & Production History
+                Studio Data Vault & Document Ingestion
               </h2>
               <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
                 Live Synced
               </span>
             </div>
             <p className="text-xs text-[#E2BA86] font-mono mt-0.5">
-              Centralized ledger, camera paths, audio stems, EDL conforms, and AI logs for <strong className="text-amber-300">{projectStatus.projectName}</strong>.
+              Drag & drop scripts (.fountain), timelines (.edl), color LUTs (.cube), audio stems (.wav), or 3D camera tracks (.json) for <strong className="text-amber-300">{projectStatus.projectName}</strong>.
             </p>
           </div>
         </div>
 
-        {/* Tab switcher */}
-        <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+        {/* Tab switcher & Ingest Action */}
+        <div className="flex items-center space-x-3">
           <button
-            onClick={() => setActiveTab('files')}
-            className={`px-3 py-1.5 rounded transition flex items-center gap-1.5 ${
-              activeTab === 'files' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
-            }`}
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-black text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/20"
           >
-            <Layers size={13} />
-            <span>Vault Files ({vaultItems.length})</span>
+            <UploadCloud size={15} />
+            <span>Upload Document</span>
           </button>
-          <button
-            onClick={() => setActiveTab('history')}
-            className={`px-3 py-1.5 rounded transition flex items-center gap-1.5 ${
-              activeTab === 'history' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Clock size={13} />
-            <span>Action History ({historyLogs.length})</span>
-          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            onChange={(e) => handleFilesIngested(e.target.files)}
+            className="hidden"
+            accept=".fountain,.fdx,.pdf,.json,.wav,.mp3,.cube,.edl,.xml,.png,.jpg,.jpeg,.txt"
+          />
+
+          <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
+            <button
+              onClick={() => setActiveTab('files')}
+              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
+                activeTab === 'files' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Layers size={13} />
+              <span>Vault Files ({vaultItems.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('history')}
+              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
+                activeTab === 'history' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Clock size={13} />
+              <span>Action History ({historyLogs.length})</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {activeTab === 'files' ? (
-          <div className="space-y-4">
+          <div className="space-y-5">
+            {/* 🌟 HERO DRAG & DROP INGESTION DROPZONE (METHOD 1) */}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-3xl p-6 sm:p-8 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-3 relative overflow-hidden backdrop-blur-md ${
+                isDragging
+                  ? 'border-amber-400 bg-amber-500/15 scale-[1.01] shadow-2xl shadow-amber-500/30'
+                  : 'border-purple-800/60 bg-[#140e2e]/60 hover:bg-[#140e2e]/90 hover:border-amber-500/50 shadow-xl'
+              }`}
+            >
+              <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-lg shadow-amber-500/20">
+                <FileUp size={30} className={isDragging ? 'animate-bounce' : 'animate-pulse'} />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-100 tracking-wide">
+                  Drag & Drop Any Production Document Here, or <span className="text-amber-400 underline">Browse Files</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 max-w-xl mx-auto">
+                  Automatically parses and synchronizes to your 10 AI departments. Supported formats:
+                </p>
+              </div>
+
+              {/* Supported Format Pills */}
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1 font-mono text-[10px]">
+                <span className="px-2.5 py-1 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60">
+                  📝 .fountain / .fdx (Screenplay)
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-800/60">
+                  🎬 .edl / .xml (Timeline Cuts)
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-rose-950/80 text-rose-300 border border-rose-800/60">
+                  🎨 .cube (3D Color LUT)
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-teal-950/80 text-teal-300 border border-teal-800/60">
+                  🎙️ .wav / .mp3 (Audio & Voice)
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
+                  🎥 .json / .fbx (Camera & 3D)
+                </span>
+              </div>
+            </div>
+
             {/* Search and Filters */}
             <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
               <div className="relative w-full sm:w-80">
@@ -199,72 +375,77 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
                   placeholder="Search files, scripts, prompts, stems..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 focus:outline-none focus:border-amber-500"
+                  className="w-full pl-9 pr-4 py-2.5 bg-[#0e0922] border border-purple-900/60 rounded-xl text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-amber-500 font-mono"
                 />
-                <Search size={14} className="absolute left-3 top-2.5 text-slate-500" />
+                <Search size={14} className="absolute left-3 top-3 text-slate-500" />
               </div>
 
-              {/* Department filter chips */}
-              <div className="flex flex-wrap gap-1.5 text-xs font-mono">
-                {['all', 'Screenwriting', 'Cinematography', 'Prompt', 'Sound', 'Editorial', 'Color'].map((d) => (
+              <div className="flex items-center space-x-2 w-full sm:w-auto overflow-x-auto pb-1 font-mono text-xs">
+                <Filter size={13} className="text-slate-500 flex-shrink-0 ml-1" />
+                {['all', 'Screenwriting', 'Virtual Cinematography', 'Generative Prompt & Style', 'Sound & Scoring', 'Editorial & Conform', 'Color & Mastering'].map((dept) => (
                   <button
-                    key={d}
-                    onClick={() => setSelectedDept(d)}
-                    className={`px-2.5 py-1 rounded-lg border transition ${
-                      selectedDept === d
+                    key={dept}
+                    onClick={() => setSelectedDept(dept)}
+                    className={`px-3 py-1.5 rounded-lg border transition whitespace-nowrap text-[11px] ${
+                      selectedDept === dept
                         ? 'bg-amber-500/20 border-amber-500 text-amber-300 font-bold'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                        : 'bg-[#0e0922] border-purple-900/40 text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    {d.charAt(0).toUpperCase() + d.slice(1)}
+                    {dept === 'all' ? 'All Departments' : dept}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Grid of Vault Items */}
+            {/* Files Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredItems.map((item) => (
                 <div
                   key={item.id}
-                  className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-amber-500/40 transition group flex flex-col justify-between space-y-3"
+                  className="p-5 rounded-2xl bg-[#0e0922] border border-purple-900/50 hover:border-amber-500/50 transition space-y-3 shadow-lg flex flex-col justify-between"
                 >
                   <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                          {item.type.includes('Script') ? <FileText size={16} /> : item.type.includes('Camera') ? <Camera size={16} /> : item.type.includes('Sound') || item.type.includes('WAV') ? <Music size={16} /> : item.type.includes('EDL') ? <Scissors size={16} /> : <Film size={16} />}
-                        </span>
-                        <div>
-                          <h4 className="text-xs font-bold text-slate-200 truncate max-w-[200px]" title={item.name}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-2.5">
+                        <div className="p-2 rounded-xl bg-purple-950 text-amber-400 border border-purple-800/60">
+                          {item.department.includes('Script') ? (
+                            <FileText size={16} />
+                          ) : item.department.includes('Camera') ? (
+                            <Camera size={16} />
+                          ) : item.department.includes('Sound') ? (
+                            <Music size={16} />
+                          ) : item.department.includes('Editorial') ? (
+                            <Scissors size={16} />
+                          ) : (
+                            <File size={16} />
+                          )}
+                        </div>
+                        <div className="overflow-hidden">
+                          <h4 className="text-xs font-bold text-slate-200 truncate" title={item.name}>
                             {item.name}
                           </h4>
-                          <span className="text-[10px] text-amber-400/80 font-mono block">
-                            {item.department}
-                          </span>
+                          <span className="text-[10px] font-mono text-purple-400 block">{item.department}</span>
                         </div>
                       </div>
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
-                        {item.size}
+                      <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                        {item.status}
                       </span>
                     </div>
 
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 text-[11px] font-mono text-slate-300 line-clamp-3 leading-relaxed">
+                    <div className="p-3 rounded-xl bg-black/40 border border-purple-950 font-mono text-[10px] text-slate-400 line-clamp-3 leading-relaxed">
                       {item.preview}
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                    <div className="flex items-center gap-1">
-                      <Bot size={11} className="text-emerald-400" />
-                      <span className="truncate max-w-[140px]">{item.author}</span>
-                    </div>
+                  <div className="pt-2 border-t border-purple-900/40 flex items-center justify-between text-[10px] font-mono text-slate-500">
+                    <span>{item.size} • {item.timestamp}</span>
                     <button
                       onClick={() => handleDownload(item.name)}
-                      className="flex items-center gap-1 text-amber-400 hover:text-amber-300 font-bold transition"
+                      className="p-1.5 rounded-lg bg-purple-950/60 hover:bg-amber-500/20 text-slate-400 hover:text-amber-300 transition"
+                      title="Export File"
                     >
-                      <Download size={11} />
-                      <span>Export</span>
+                      <Download size={13} />
                     </button>
                   </div>
                 </div>
@@ -272,21 +453,24 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
             </div>
           </div>
         ) : (
-          /* Live Department History Logs */
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-              <Clock size={15} className="text-amber-400" />
-              <span>Real-Time Action & Telemetry Ledger</span>
-            </h3>
-            <div className="divide-y divide-slate-800 font-mono text-xs">
+          /* Live Action History Log Tab */
+          <div className="p-6 rounded-2xl bg-[#0e0922] border border-purple-900/50 space-y-3 font-mono text-xs shadow-xl">
+            <div className="flex items-center justify-between border-b border-purple-900/50 pb-3">
+              <span className="text-amber-400 font-bold">LIVE TELEMETRY & GENERATION AUDIT LOG</span>
+              <span className="text-[10px] text-emerald-400 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                RECORDING ACTIVE
+              </span>
+            </div>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
               {historyLogs.map((log, idx) => (
-                <div key={idx} className="py-2.5 flex items-center justify-between gap-4">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-slate-500 text-[11px]">{log.time}</span>
-                    <span className="px-2 py-0.5 rounded bg-slate-950 text-amber-400 text-[10px] border border-slate-800 font-semibold">
+                <div key={idx} className="p-2.5 rounded-xl bg-black/40 border border-purple-950 flex items-center justify-between text-[11px]">
+                  <div className="flex items-center space-x-2.5">
+                    <span className="text-slate-500">[{log.time}]</span>
+                    <span className="text-rose-400 font-bold px-1.5 py-0.5 rounded bg-purple-950 border border-purple-800 text-[10px]">
                       {log.dept}
                     </span>
-                    <span className="text-slate-300">{log.text}</span>
+                    <span className="text-slate-200">{log.text}</span>
                   </div>
                   <CheckCircle2 size={13} className="text-emerald-400 flex-shrink-0" />
                 </div>
