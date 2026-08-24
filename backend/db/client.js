@@ -1,10 +1,18 @@
 // ==============================================================================
 // WASSERMAN STUDIO SHELL - TRANSACTIONAL DATABASE CLIENT & MANIFEST REPOSITORY
+// WITH AUTOMATIC JSON DISK PERSISTENCE FOR ZERO DATA LOSS
 // ==============================================================================
 
 import EventEmitter from 'events';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// In-Memory Transactional Store (Zero-config local mode & PostgreSQL replica)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const STATE_FILE_PATH = path.join(__dirname, 'studio_state.json');
+
+// Persistent Transactional Store with file-backed JSON autosave
 class StudioDatabase extends EventEmitter {
   constructor() {
     super();
@@ -12,17 +20,69 @@ class StudioDatabase extends EventEmitter {
     this.shots = new Map();
     this.statuses = new Map(); // key: `${shotId}:${stageId}`
     this.jobs = new Map();
+    this.scripts = new Map(); // key: `${projectId}:${shotNumber}`
+    this.chatHistories = new Map(); // key: `${projectId}:${stageId}`
     this.auditLogs = [];
-    
-    // Seed initial project data
-    this._seedInitialData();
+    this.sessionState = {
+      lastActiveProjectId: 'proj-titanic',
+      lastActiveStageId: 'script',
+      lastActiveView: 'stage',
+      updated_at: new Date().toISOString(),
+    };
+
+    // Load from disk or seed initial data
+    if (!this._loadFromDisk()) {
+      this._seedInitialData();
+      this._saveToDisk();
+    }
+  }
+
+  _loadFromDisk() {
+    try {
+      if (fs.existsSync(STATE_FILE_PATH)) {
+        const raw = fs.readFileSync(STATE_FILE_PATH, 'utf-8');
+        const data = JSON.parse(raw);
+        if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
+          data.projects.forEach((p) => this.projects.set(p.id, p));
+          if (data.shots) data.shots.forEach((s) => this.shots.set(s.id, s));
+          if (data.statuses) data.statuses.forEach((st) => this.statuses.set(st.id, st));
+          if (data.scripts) data.scripts.forEach((sc) => this.scripts.set(sc.id, sc.content));
+          if (data.chatHistories) data.chatHistories.forEach((ch) => this.chatHistories.set(ch.id, ch.messages));
+          if (data.sessionState) this.sessionState = { ...this.sessionState, ...data.sessionState };
+          if (data.auditLogs) this.auditLogs = data.auditLogs.slice(-100);
+          console.log(`[Database] Loaded ${this.projects.size} projects and session state from ${STATE_FILE_PATH}`);
+          return true;
+        }
+      }
+    } catch (err) {
+      console.warn(`[Database] Could not read disk state: ${err.message}. Initializing defaults.`);
+    }
+    return false;
+  }
+
+  _saveToDisk() {
+    try {
+      const data = {
+        projects: Array.from(this.projects.values()),
+        shots: Array.from(this.shots.values()),
+        statuses: Array.from(this.statuses.values()),
+        scripts: Array.from(this.scripts.entries()).map(([id, content]) => ({ id, content })),
+        chatHistories: Array.from(this.chatHistories.entries()).map(([id, messages]) => ({ id, messages })),
+        sessionState: this.sessionState,
+        auditLogs: this.auditLogs.slice(-100),
+        saved_at: new Date().toISOString(),
+      };
+      fs.writeFileSync(STATE_FILE_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (err) {
+      console.error(`[Database] Error saving state to disk: ${err.message}`);
+    }
   }
 
   _seedInitialData() {
     const defaultProjects = [
-      { id: 'proj-titanic', name: 'Titanic - Found Footage', slug: 'titanic-found-footage', version: 1 },
-      { id: 'proj-alien', name: 'Alien - Hive Mind', slug: 'alien-hive-mind', version: 1 },
-      { id: 'proj-space', name: 'Deep Space Journey', slug: 'deep-space-journey', version: 1 },
+      { id: 'proj-titanic', name: 'Titanic - Found Footage', slug: 'titanic-found-footage', format: 'long_form', version: 1 },
+      { id: 'proj-alien', name: 'Alien - Hive Mind', slug: 'alien-hive-mind', format: 'episodic', version: 1 },
+      { id: 'proj-space', name: 'Deep Space Journey', slug: 'deep-space-journey', format: 'short_form', version: 1 },
     ];
 
     for (const proj of defaultProjects) {
@@ -34,9 +94,9 @@ class StudioDatabase extends EventEmitter {
 
       // Seed 3 default shots per project
       const shotsList = [
-        { shotNumber: 1, title: 'Opening Monologue - Dawn' },
-        { shotNumber: 2, title: 'Corridor Chase & Encounter' },
-        { shotNumber: 3, title: 'Final Resolution - Sunset' },
+        { shotNumber: 1, title: 'Opening Monologue - Dawn', description: 'Expedition vessel drifts through ocean mist.' },
+        { shotNumber: 2, title: 'Corridor Chase & Encounter', description: 'Intense handheld tracking shot along the flooding bulkhead.' },
+        { shotNumber: 3, title: 'Final Resolution - Sunset', description: 'Wide cinematic crane pulling away into the horizon.' },
       ];
 
       const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
@@ -48,17 +108,16 @@ class StudioDatabase extends EventEmitter {
           projectId: proj.id,
           shotNumber: s.shotNumber,
           title: s.title,
+          description: s.description,
           durationFrames: 120,
           created_at: new Date().toISOString(),
         });
 
         stages.forEach((stageId) => {
           const key = `${shotId}:${stageId}`;
-          // Default initial state
           let statusChar = '?';
           let state = 'UNSTARTED';
 
-          // Pre-seed some realistic states for Shot 1 and Shot 2
           if (s.shotNumber === 1 && (stageId === 'script' || stageId === 'structure')) {
             statusChar = '🟢';
             state = 'COMPLETE';
@@ -89,7 +148,7 @@ class StudioDatabase extends EventEmitter {
     }
   }
 
-  // Register newly created project dynamically
+  // Register newly created project dynamically & persist
   registerProject(projectRecord) {
     const { id, name, slug = id, format = 'long_form', shots = [], logline = '', characterBible = [] } = projectRecord;
     this.projects.set(id, {
@@ -135,8 +194,54 @@ class StudioDatabase extends EventEmitter {
       });
     });
 
-    console.log(`[Database] Registered dynamic project "${name}" (${id}) with ${shots.length} shots.`);
+    // Update active session
+    this.sessionState.lastActiveProjectId = id;
+    this.sessionState.updated_at = new Date().toISOString();
+
+    this._saveToDisk();
+    console.log(`[Database] Registered and persisted project "${name}" (${id}) with ${shots.length} shots.`);
     return this.getProjectManifest(id);
+  }
+
+  // Save session state (where user left off)
+  saveSessionState(stateUpdates) {
+    this.sessionState = {
+      ...this.sessionState,
+      ...stateUpdates,
+      updated_at: new Date().toISOString(),
+    };
+    this._saveToDisk();
+    return this.sessionState;
+  }
+
+  getSessionState() {
+    return this.sessionState;
+  }
+
+  // Save / Retrieve Screenplay for a specific project & shot
+  saveProjectScript(projectId, shotNumber, scriptContent) {
+    const key = `${projectId}:${shotNumber}`;
+    this.scripts.set(key, scriptContent);
+    this._saveToDisk();
+    return { success: true, key, scriptContent };
+  }
+
+  getProjectScript(projectId, shotNumber) {
+    const key = `${projectId}:${shotNumber}`;
+    return this.scripts.get(key) || null;
+  }
+
+  // Save / Retrieve Chat History for a specific project & room
+  saveChatHistory(projectId, stageId, messages) {
+    const key = `${projectId}:${stageId}`;
+    this.chatHistories.set(key, messages);
+    this._saveToDisk();
+    return { success: true, key };
+  }
+
+  getChatHistory(projectId, stageId) {
+    const key = `${projectId}:${stageId}`;
+    return this.chatHistories.get(key) || [];
   }
 
   // Get list of all projects
@@ -182,6 +287,7 @@ class StudioDatabase extends EventEmitter {
       return {
         shotNumber: shot.shotNumber,
         title: shot.title,
+        description: shot.description || '',
         status: statusObj,
       };
     });
@@ -190,6 +296,9 @@ class StudioDatabase extends EventEmitter {
       projectId: project.id,
       projectName: project.name,
       slug: project.slug,
+      format: project.format || 'long_form',
+      logline: project.logline || '',
+      characterBible: project.characterBible || [],
       version: project.version,
       updated_at: project.updated_at,
       shots: manifestShots,
@@ -246,6 +355,8 @@ class StudioDatabase extends EventEmitter {
       statusChar,
       timestamp: new Date().toISOString(),
     });
+
+    this._saveToDisk();
 
     const manifest = await this.getProjectManifest(project.id);
     this.emit('manifest_updated', { projectId: project.id, manifest, stageId, shotNumber, statusChar });

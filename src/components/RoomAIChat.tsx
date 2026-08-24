@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, Sparkles, User, RefreshCw, Layers, ShieldCheck, Zap } from 'lucide-react';
+import { Send, Bot, Sparkles, User, RefreshCw, Zap, Trash2, ArrowUpRight } from 'lucide-react';
 import { StageKey } from '../types/types';
 
 interface RoomAIChatProps {
@@ -22,7 +22,7 @@ interface Message {
 const ROOM_ROLES: Record<StageKey, { role: string; intro: string; quickPrompts: string[] }> = {
   script: {
     role: 'Lead Screenwriter & Script Supervisor AI',
-    intro: 'Welcome to the 3D Writers Room. I am your Screenwriter AI Co-Pilot. I can write and refine screenplays, analyze character subtext, polish dialogue, and format Hollywood-standard scene headers.',
+    intro: 'Welcome to the 3D Writers Room. I am your Screenwriter AI Co-Pilot. I can write and refine screenplays, analyze character subtext, polish dialogue, and format Hollywood-standard scene headers in standard Fountain format.',
     quickPrompts: [
       'Write an intense opening cold open for this scene',
       'Analyze character subtext & emotional tension',
@@ -81,32 +81,32 @@ const ROOM_ROLES: Record<StageKey, { role: string; intro: string; quickPrompts: 
     ],
   },
   prompt: {
-    role: 'Generative Slate & Continuity Prompt Engineer AI',
-    intro: 'Welcome to the Continuity & Slate Lab. I engineer locked AI generative prompt packs with negative prompt filters and seed parameters.',
+    role: 'Lead Prompt Engineer & Model Tuner AI',
+    intro: 'Welcome to the Neural Style & Diffusion Lab. I construct IP-Adapter character likeness seeds, FLUX/SDXL prompt slates, and ControlNet depth weights.',
     quickPrompts: [
-      'Lock generative video prompt pack with seed 48291',
-      'Generate negative prompt block to eliminate artifacts',
-      'Create audio synthesis prompt for ambient score',
-      'Ensure photorealistic 8K anamorphic prompt consistency',
+      'Generate FLUX.1 Dev prompt with photorealistic lighting',
+      'Add negative prompt for zero artifact hands/faces',
+      'Configure ControlNet Depth pass weight (0.85)',
+      'Lock character facial consistency with IP-Adapter',
     ],
   },
   dailies: {
-    role: 'Circle Take Reviewer & QA Producer AI',
-    intro: 'Welcome to the Dailies Screening Theater. I critique raw takes, score performance fidelity, and generate the automated reshoot checklist.',
+    role: 'Dailies Supervisor & Quality QC AI',
+    intro: 'Welcome to the Screening & Circle Take Suite. I analyze generated render passes, flag continuity glitches, and automate reshoot loops.',
     quickPrompts: [
-      'Review daily takes and select Circle Winner',
-      'Flag continuity inconsistencies between takes',
-      'Compile automated reshoot instructions for DP',
-      'Generate quality assurance score breakdown',
+      'Score current take for framing & lighting quality',
+      'Flag spatial continuity inconsistencies with Shot 1',
+      'Approve Circle Take #1 for Editorial Conform',
+      'Queue automated reshoot with tighter camera framing',
     ],
   },
   sound: {
-    role: 'Sound Supervisor & Stem Mixing Engineer AI',
-    intro: 'Welcome to the Audio Stem Mixing Suite. I separate and balance Dialogue, Foley, Score, and SFX stems at broadcast-standard -24 LKFS.',
+    role: 'Sound Supervisor & Orchestral Composer AI',
+    intro: 'Welcome to the 5.1 Atmos Sound & Scoring Stage. I mix dialogue stems, design spatial Foley acoustics, and compose dynamic film scores.',
     quickPrompts: [
-      'Demux audio tracks into 4 discrete stems',
-      'Normalize master loudness to -24 LKFS',
-      'Add binaural spatial stereo pan to Foley track',
+      'Generate 5.1 spatial Foley mix for ambient room tone',
+      'Isolate & denoise dialogue center channel',
+      'Synthesize ElevenLabs vocal stem for Lead Character',
       'Generate orchestral tension score scratch track',
     ],
   },
@@ -129,21 +129,46 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
   shotNumber,
 }) => {
   const roleConfig = ROOM_ROLES[stageId] || ROOM_ROLES.script;
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'msg-1',
-      sender: 'ai',
-      text: roleConfig.intro,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      model: 'NVIDIA-Llama-3.1-70B',
-    },
-  ]);
+  const storageKey = `arise_chat_${projectName.replace(/[^a-zA-Z0-9]/g, '_')}_${stageId}`;
+
+  const [messages, setMessages] = useState<Message[]>(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [
+      {
+        id: 'msg-1',
+        sender: 'ai',
+        text: roleConfig.intro,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        model: 'NVIDIA-Llama-3.1-70B',
+      },
+    ];
+  });
+
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Reset chat when stage changes
+  // Load chat on stage or project change
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+          return;
+        }
+      }
+    } catch {}
+
+    // Fallback default message
     setMessages([
       {
         id: `msg-${Date.now()}`,
@@ -153,14 +178,31 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
         model: 'NVIDIA-Llama-3.1-70B',
       },
     ]);
-  }, [stageId]);
+  }, [stageId, projectName]);
+
+  // Persist messages whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(messages));
+      } catch {}
+    }
+  }, [messages, storageKey]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  const handleSendMessage = async (textToSend: string) => {
-    const text = textToSend || input.trim();
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 180)}px`;
+    }
+  }, [input]);
+
+  const handleSendMessage = async (textToSend?: string) => {
+    const text = (textToSend || input).trim();
     if (!text) return;
 
     const userMsg: Message = {
@@ -170,7 +212,8 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    const nextMessages = [...messages, userMsg];
+    setMessages(nextMessages);
     if (!textToSend) setInput('');
     setIsTyping(true);
 
@@ -190,8 +233,7 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
 
       let aiReplyText = response?.text;
       if (!aiReplyText) {
-        // High-fidelity fallback intelligent response
-        aiReplyText = `[${roleConfig.role}]: Processed request for Shot ${shotNumber} in "${roomName}". State locked with production continuity. Parameters calibrated for ${stageId.toUpperCase()}.`;
+        aiReplyText = `[${roleConfig.role}]: Processed request for Shot ${shotNumber} in "${roomName}". Parameters and screenplay directions updated live with production continuity for "${projectName}".`;
       }
 
       const aiMsg: Message = {
@@ -202,10 +244,10 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
         model: response?.model || 'meta/llama-3.1-70b-instruct',
       };
 
-      setMessages((prev) => [...prev, aiMsg]);
+      setMessages([...nextMessages, aiMsg]);
     } catch (err: any) {
-      setMessages((prev) => [
-        ...prev,
+      setMessages([
+        ...nextMessages,
         {
           id: `ai-err-${Date.now()}`,
           sender: 'ai',
@@ -218,12 +260,31 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleClearChat = () => {
+    const initialMsg: Message = {
+      id: `msg-${Date.now()}`,
+      sender: 'ai',
+      text: roleConfig.intro,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      model: 'NVIDIA-Llama-3.1-70B',
+    };
+    setMessages([initialMsg]);
+    localStorage.setItem(storageKey, JSON.stringify([initialMsg]));
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#0e0922] border border-purple-900/50 rounded-2xl overflow-hidden shadow-2xl">
       {/* Room AI Chat Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[#140e2e] border-b border-purple-900/50">
+      <div className="flex items-center justify-between px-4 py-3 bg-[#140e2e] border-b border-purple-900/50 flex-shrink-0">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 flex items-center justify-center text-white font-bold shadow-md shadow-purple-500/30">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 flex items-center justify-center text-white font-bold shadow-md shadow-purple-500/30 flex-shrink-0">
             <Bot size={18} />
           </div>
           <div>
@@ -239,15 +300,22 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center space-x-1.5">
+        <div className="flex items-center space-x-2">
           <span className="text-[9px] px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800/60 font-mono">
-            NVIDIA NIM AI
+            NVIDIA NIM
           </span>
+          <button
+            onClick={handleClearChat}
+            title="Clear & Reset Chat"
+            className="p-1.5 rounded-lg bg-purple-950/40 hover:bg-rose-950/60 text-purple-400 hover:text-rose-300 transition"
+          >
+            <Trash2 size={13} />
+          </button>
         </div>
       </div>
 
       {/* Messages Scroll Viewport */}
-      <div className="flex-grow p-4 overflow-y-auto space-y-3.5 text-xs font-sans">
+      <div className="flex-grow p-4 overflow-y-auto space-y-4 text-xs font-sans">
         {messages.map((m) => (
           <div
             key={m.id}
@@ -261,9 +329,9 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
             </div>
 
             <div
-              className={`p-3 rounded-2xl max-w-[90%] leading-relaxed ${
+              className={`p-3.5 rounded-2xl max-w-[92%] leading-relaxed shadow-md ${
                 m.sender === 'user'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-medium rounded-tr-none shadow-md shadow-purple-900/40'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-medium rounded-tr-none shadow-purple-900/40'
                   : 'bg-[#140e2e] text-purple-100 border border-purple-900/60 rounded-tl-none font-mono text-[11px]'
               }`}
             >
@@ -273,8 +341,8 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
         ))}
 
         {isTyping && (
-          <div className="flex items-center space-x-2 text-xs text-rose-400 font-mono bg-[#140e2e] p-2.5 rounded-xl border border-purple-800/50 w-fit">
-            <Sparkles size={13} className="animate-spin text-purple-400" />
+          <div className="flex items-center space-x-2 text-xs text-rose-400 font-mono bg-[#140e2e] p-3 rounded-xl border border-purple-800/50 w-fit">
+            <Sparkles size={14} className="animate-spin text-purple-400" />
             <span>{roleConfig.role} is thinking with NVIDIA NIM...</span>
           </div>
         )}
@@ -283,15 +351,15 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
       </div>
 
       {/* Quick Prompt Suggestion Chips */}
-      <div className="px-3 py-2 bg-[#140e2e]/80 border-t border-purple-900/50 overflow-x-auto">
+      <div className="px-3 py-2 bg-[#140e2e]/90 border-t border-purple-900/50 overflow-x-auto flex-shrink-0">
         <div className="flex items-center space-x-1.5 w-max">
-          <Zap size={11} className="text-rose-400 flex-shrink-0" />
+          <Zap size={12} className="text-rose-400 flex-shrink-0" />
           {roleConfig.quickPrompts.map((qp, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => handleSendMessage(qp)}
-              className="px-2.5 py-1 rounded-full bg-[#1a123a] hover:bg-purple-900/60 text-purple-200 hover:text-rose-300 border border-purple-800/60 text-[10px] font-mono transition flex-shrink-0"
+              className="px-3 py-1 rounded-full bg-[#1a123a] hover:bg-purple-900/60 text-purple-200 hover:text-rose-300 border border-purple-800/60 text-[10px] font-mono transition flex-shrink-0"
             >
               {qp}
             </button>
@@ -299,34 +367,37 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
         </div>
       </div>
 
-      {/* Input Form */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSendMessage(input);
-        }}
-        className="flex items-center p-2.5 bg-[#0e0922] border-t border-purple-900/50 gap-2"
-      >
-        <input
-          type="text"
-          placeholder={`Ask the ${roleConfig.role.split('&')[0]}...`}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={isTyping}
-          className="flex-grow px-3 py-2 bg-[#140e2e] border border-purple-800/60 rounded-xl text-purple-100 text-xs font-mono focus:border-rose-500 focus:outline-none placeholder:text-purple-400/50"
-        />
-        <button
-          type="submit"
-          disabled={isTyping || !input.trim()}
-          className={`p-2 rounded-xl text-white font-bold transition shadow-md ${
-            isTyping || !input.trim()
-              ? 'bg-purple-950 text-purple-700 cursor-not-allowed'
-              : 'bg-gradient-to-r from-purple-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 shadow-rose-600/20'
-          }`}
-        >
-          <Send size={14} />
-        </button>
-      </form>
+      {/* Multi-Line Spacious Input Form */}
+      <div className="p-3 bg-[#0e0922] border-t border-purple-900/50 flex-shrink-0">
+        <div className="flex items-end gap-2 bg-[#140e2e] border border-purple-800/60 rounded-2xl p-2 focus-within:border-rose-500 focus-within:ring-1 focus-within:ring-rose-500 transition">
+          <textarea
+            ref={textareaRef}
+            rows={1}
+            placeholder={`Ask the ${roleConfig.role.split('&')[0]}... (Press Enter to send, Shift+Enter for new line)`}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={isTyping}
+            className="flex-grow bg-transparent text-purple-100 text-xs font-mono resize-none focus:outline-none placeholder:text-purple-400/50 max-h-36 min-h-[38px] py-1.5 px-2"
+          />
+          <button
+            type="button"
+            onClick={() => handleSendMessage()}
+            disabled={isTyping || !input.trim()}
+            className={`p-2.5 rounded-xl text-white font-bold transition shadow-md flex-shrink-0 ${
+              isTyping || !input.trim()
+                ? 'bg-purple-950 text-purple-700 cursor-not-allowed'
+                : 'bg-gradient-to-r from-purple-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 shadow-rose-600/20'
+            }`}
+          >
+            <Send size={15} />
+          </button>
+        </div>
+        <div className="flex items-center justify-between text-[10px] text-purple-400/60 font-mono mt-1.5 px-1">
+          <span>{projectName} • Shot {shotNumber}</span>
+          <span>Shift + Enter for new line • Enter to send</span>
+        </div>
+      </div>
     </div>
   );
 };

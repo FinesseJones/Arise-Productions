@@ -113,6 +113,47 @@ app.get('/api/v1/projects', async (req, res) => {
   res.json({ success: true, projects });
 });
 
+// GET /api/v1/session/state - Retrieve last active project, stage, and view
+app.get('/api/v1/session/state', (req, res) => {
+  res.json({ success: true, sessionState: db.getSessionState() });
+});
+
+// POST /api/v1/session/state - Save last active project, stage, and view
+app.post('/api/v1/session/state', (req, res) => {
+  const sessionState = db.saveSessionState(req.body);
+  res.json({ success: true, sessionState });
+});
+
+// GET /api/v1/projects/script - Retrieve saved screenplay for project & shot
+app.get('/api/v1/projects/script', (req, res) => {
+  const { projectId = 'proj-titanic', shotNumber = 1 } = req.query;
+  const scriptContent = db.getProjectScript(projectId, Number(shotNumber));
+  res.json({ success: true, scriptContent });
+});
+
+// POST /api/v1/projects/script - Save custom edited screenplay for project & shot
+app.post('/api/v1/projects/script', (req, res) => {
+  const { projectId, shotNumber = 1, scriptContent } = req.body;
+  if (!projectId || !scriptContent) return res.status(400).json({ success: false, error: 'Missing projectId or scriptContent' });
+  const result = db.saveProjectScript(projectId, Number(shotNumber), scriptContent);
+  res.json({ success: true, ...result });
+});
+
+// GET /api/v1/projects/chat - Retrieve chat history for project & stage
+app.get('/api/v1/projects/chat', (req, res) => {
+  const { projectId = 'proj-titanic', stageId = 'script' } = req.query;
+  const messages = db.getChatHistory(projectId, stageId);
+  res.json({ success: true, messages });
+});
+
+// POST /api/v1/projects/chat - Save chat history for project & stage
+app.post('/api/v1/projects/chat', (req, res) => {
+  const { projectId, stageId, messages } = req.body;
+  if (!projectId || !stageId) return res.status(400).json({ success: false, error: 'Missing projectId or stageId' });
+  const result = db.saveChatHistory(projectId, stageId, messages);
+  res.json({ success: true, ...result });
+});
+
 // POST /api/v1/dispatch - Execute Director Agent Command
 app.post('/api/v1/dispatch', async (req, res) => {
   const { projectId = 'proj-titanic', command = '', activeStage, shotNumber } = req.body;

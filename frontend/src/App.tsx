@@ -7,10 +7,18 @@ import { Plus, Link2, Film, Smartphone, Tv, Sparkles, UploadCloud } from 'lucide
 import toast from 'react-hot-toast';
 
 const App: React.FC = () => {
-  const [projectName, setProjectName] = useState<string>('Titanic - Found Footage');
-  const [projectId, setProjectId] = useState<string>('proj-titanic');
-  const [activeStageId, setActiveStageId] = useState<string | null>('script');
-  const [isProjectSelected, setIsProjectSelected] = useState<boolean>(false);
+  const [projectName, setProjectName] = useState<string>(() => {
+    return localStorage.getItem('arise_last_project_name') || 'Titanic - Found Footage';
+  });
+  const [projectId, setProjectId] = useState<string>(() => {
+    return localStorage.getItem('arise_last_project_id') || 'proj-titanic';
+  });
+  const [activeStageId, setActiveStageId] = useState<string | null>(() => {
+    return localStorage.getItem('arise_last_stage_id') || 'script';
+  });
+  const [isProjectSelected, setIsProjectSelected] = useState<boolean>(() => {
+    return localStorage.getItem('arise_session_active') === 'true';
+  });
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   // New Project Form State
@@ -21,8 +29,49 @@ const App: React.FC = () => {
   const [episode, setEpisode] = useState<number>(1);
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
+  // Sync session state from backend on startup
+  React.useEffect(() => {
+    fetch('http://localhost:4000/api/v1/session/state')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.sessionState) {
+          const { lastActiveProjectId, lastActiveStageId } = data.sessionState;
+          if (lastActiveProjectId && !localStorage.getItem('arise_last_project_id')) {
+            setProjectId(lastActiveProjectId);
+          }
+          if (lastActiveStageId && !localStorage.getItem('arise_last_stage_id')) {
+            setActiveStageId(lastActiveStageId);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Save session state whenever user switches projects or stages
   const handleStageSelect = (stageId: string) => {
     setActiveStageId(stageId);
+    localStorage.setItem('arise_last_stage_id', stageId);
+    fetch('http://localhost:4000/api/v1/session/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lastActiveProjectId: projectId, lastActiveStageId: stageId }),
+    }).catch(() => {});
+  };
+
+  const handleLaunchProject = (pid?: string, pname?: string) => {
+    const finalId = pid || projectId;
+    const finalName = pname || projectName;
+    setProjectId(finalId);
+    setProjectName(finalName);
+    setIsProjectSelected(true);
+    localStorage.setItem('arise_last_project_id', finalId);
+    localStorage.setItem('arise_last_project_name', finalName);
+    localStorage.setItem('arise_session_active', 'true');
+    fetch('http://localhost:4000/api/v1/session/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lastActiveProjectId: finalId, lastActiveStageId: activeStageId }),
+    }).catch(() => {});
   };
 
   const handleCreateNewProject = async (e: React.FormEvent) => {
@@ -59,6 +108,11 @@ const App: React.FC = () => {
       setProjectId(idCreated);
       setIsProjectSelected(true);
       setShowCreateModal(false);
+
+      localStorage.setItem('arise_last_project_id', idCreated);
+      localStorage.setItem('arise_last_project_name', titleCreated);
+      localStorage.setItem('arise_session_active', 'true');
+
       toast.success(`✨ SUCCESS: Project "${titleCreated}" created with AI screenplay & shots!`, { id: toastId });
     } catch (err: any) {
       toast.error(`Ingestion error: ${err.message}`, { id: toastId });
@@ -130,7 +184,7 @@ const App: React.FC = () => {
 
             <div className="flex gap-3">
               <button
-                onClick={() => setIsProjectSelected(true)}
+                onClick={() => handleLaunchProject()}
                 className="flex-1 py-3.5 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 text-white font-extrabold rounded-xl transition shadow-lg shadow-rose-600/30 text-sm uppercase tracking-wider"
               >
                 🚀 Launch Studio
