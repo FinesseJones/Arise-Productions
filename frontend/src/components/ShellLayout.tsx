@@ -23,6 +23,7 @@ import {
   FolderArchive,
   Sliders
 } from 'lucide-react';
+import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import toast from 'react-hot-toast';
 
 interface ShellLayoutProps {
@@ -137,7 +138,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           {/* Official Arise Productions Logo Badge - Fits Entire Icon */}
           <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/25 p-0 flex items-center justify-center transition hover:scale-105">
             <img
-              src="/arise_productions_logo.jpg"
+              src={ARISE_LOGO_BASE64}
               alt="Arise Productions"
               className="w-full h-full object-cover rounded-xl"
             />

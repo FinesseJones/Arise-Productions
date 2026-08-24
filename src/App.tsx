@@ -5,6 +5,7 @@ import ShellLayout from './components/ShellLayout';
 import { Toaster } from 'react-hot-toast';
 import { Plus, Link2, Film, Smartphone, Tv, Sparkles, UploadCloud } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ARISE_LOGO_BASE64 } from './constants/branding';
 
 const App: React.FC = () => {
   const [projectName, setProjectName] = useState<string>(() => {
@@ -131,7 +132,7 @@ const App: React.FC = () => {
           <div className="flex flex-col items-center text-center space-y-4">
             <div className="w-52 h-52 sm:w-60 sm:h-60 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/35 border-2 border-amber-500/60 bg-black flex items-center justify-center p-0 transition duration-300 hover:scale-105 hover:shadow-amber-500/50">
               <img
-                src="/arise_productions_logo.jpg"
+                src={ARISE_LOGO_BASE64}
                 alt="Arise Productions"
                 className="w-full h-full object-cover rounded-3xl"
               />

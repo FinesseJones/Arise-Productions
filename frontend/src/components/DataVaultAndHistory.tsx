@@ -20,6 +20,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ARISE_LOGO_BASE64 } from '../constants/branding';
 
 interface DataVaultProps {
   projectStatus: ProjectStatus;
@@ -143,7 +144,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/20 p-0 flex items-center justify-center">
             <img
-              src="/arise_productions_logo.jpg"
+              src={ARISE_LOGO_BASE64}
               alt="Arise Productions"
               className="w-full h-full object-cover rounded-xl"
             />

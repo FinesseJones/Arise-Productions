@@ -26,6 +26,7 @@ import {
   Check,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ARISE_LOGO_BASE64 } from '../../constants/branding';
 
 interface Interactive3DRoomProps {
   stageId: StageKey;
@@ -177,7 +178,7 @@ SECOND OFFICER
         <div className="absolute top-3 right-3 z-20 flex items-center space-x-2.5 bg-black/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/50 shadow-xl shadow-amber-500/15">
           <div className="w-6 h-6 rounded-lg overflow-hidden bg-black border border-amber-500/60 flex-shrink-0">
             <img
-              src="/arise_productions_logo.jpg"
+              src={ARISE_LOGO_BASE64}
               alt="Arise Productions"
               className="w-full h-full object-cover"
             />

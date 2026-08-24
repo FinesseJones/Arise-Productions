@@ -20,6 +20,7 @@ import {
   Share2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ARISE_LOGO_BASE64 } from '../constants/branding';
 
 interface VideoScreeningRoomProps {
   projectStatus: ProjectStatus;
@@ -166,7 +167,7 @@ export const VideoScreeningRoom: React.FC<VideoScreeningRoomProps> = ({ projectS
             <div className="absolute bottom-4 right-4 z-20 flex items-center space-x-2 bg-black/85 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-amber-500/50 shadow-lg">
               <div className="w-5 h-5 rounded overflow-hidden bg-black border border-amber-500/60 flex-shrink-0">
                 <img
-                  src="/arise_productions_logo.jpg"
+                  src={ARISE_LOGO_BASE64}
                   alt="Arise Productions"
                   className="w-full h-full object-cover"
                 />

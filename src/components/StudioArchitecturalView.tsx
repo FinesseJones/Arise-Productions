@@ -21,6 +21,7 @@ import {
   Sliders,
   ShieldCheck,
 } from 'lucide-react';
+import { ARISE_LOGO_BASE64 } from '../constants/branding';
 
 interface StudioArchitecturalViewProps {
   projectStatus: ProjectStatus;
@@ -228,7 +229,7 @@ export const StudioArchitecturalView: React.FC<StudioArchitecturalViewProps> = (
         <div className="flex items-center space-x-4">
           <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-xl shadow-amber-500/25 p-0 flex items-center justify-center">
             <img
-              src="/arise_productions_logo.jpg"
+              src={ARISE_LOGO_BASE64}
               alt="Arise Productions"
               className="w-full h-full object-cover rounded-2xl"
             />
