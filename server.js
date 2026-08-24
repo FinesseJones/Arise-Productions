@@ -5,6 +5,9 @@
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { db } from './backend/db/client.js';
 import { wsGateway } from './backend/bridge/gateway.js';
 import { apiRouter } from './backend/bridge/router.js';
@@ -13,6 +16,9 @@ import { CICDQualityGate } from './backend/services/cicd-gate.js';
 import { mcpWorkers } from './backend/workers/mcp-workers.js';
 import { MediaIngestionEngine } from './backend/services/media-ingest.js';
 import { nvidia } from './backend/ai/nvidia-client.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 4000;
@@ -23,6 +29,10 @@ const server = http.createServer(app);
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
+
+// Serve compiled frontend
+const distPath = path.join(__dirname, 'frontend/dist');
+app.use(express.static(distPath));
 
 // Attach WebSocket Gateway
 wsGateway.attachToServer(server);
