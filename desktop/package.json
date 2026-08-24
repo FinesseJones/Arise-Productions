@@ -2,12 +2,13 @@
   "name": "arise-production-desktop",
   "version": "1.0.0",
   "description": "Arise Production - A Product of THE AI CONTENT FOUNDRY, LLC",
+  "author": "THE AI CONTENT FOUNDRY, LLC",
   "main": "main.js",
   "type": "module",
   "scripts": {
     "setup": "node download-electron.js",
     "start": "node download-electron.js && electron .",
-    "build:mac": "electron-builder --mac",
+    "build:mac": "electron-builder --mac dmg",
     "build:win": "electron-builder --win",
     "build:linux": "electron-builder --linux"
   },
@@ -18,14 +19,42 @@
   "build": {
     "appId": "llc.aicontentfoundry.ariseproduction",
     "productName": "Arise Production",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
     "mac": {
+      "icon": "build/icon.icns",
       "category": "public.app-category.video",
-      "target": ["dmg", "zip"]
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64", "x64"]
+        }
+      ]
+    },
+    "dmg": {
+      "title": "Arise Production Installer",
+      "icon": "build/icon.icns",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
     },
     "win": {
+      "icon": "build/icon.png",
       "target": ["nsis"]
     },
     "linux": {
+      "icon": "build/icon.png",
       "target": ["AppImage", "deb"]
     },
     "files": [
