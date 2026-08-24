@@ -59,7 +59,7 @@
     },
     "files": [
       "main.js",
-      "preload.js",
+      "preload.cjs",
       "../server.js",
       "../backend/**/*",
       "../frontend/dist/**/*"

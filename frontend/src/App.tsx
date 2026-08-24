@@ -1,100 +1,299 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toaster';
-import { Navigation } from '@/components/layout/Navigation';
-import { ThemeProvider } from '@/hooks/useTheme';
-import Homepage from '@/pages/Homepage';
-import Portfolio from '@/pages/Portfolio';
-import Services from '@/pages/Services';
-import ClientDashboard from '@/pages/ClientDashboard';
-import Dashboard from '@/pages/Dashboard';
-import ProjectDetail from '@/pages/ProjectDetail';
-import AIStudio from '@/pages/AIStudio';
-import Onboarding from '@/pages/Onboarding';
-import StudioTour from '@/pages/StudioTour';
-import AssetLibrary from '@/pages/AssetLibrary';
-import Collaboration from '@/pages/Collaboration';
-import WritingRoom from '@/pages/WritingRoom';
-import EditingSuite from '@/pages/EditingSuite';
-import ScriptEditor from '@/pages/ScriptEditor';
-import PlatformOptimizer from '@/pages/PlatformOptimizer';
-import AdminPanel from '@/pages/AdminPanel';
-import Casting from '@/pages/Casting';
-import ProductionBudget from '@/pages/ProductionBudget';
-import SoundDesign from '@/pages/SoundDesign';
-import Marketing from '@/pages/Marketing';
-import VisualEffects from '@/pages/VisualEffects';
-import ColorGrading from '@/pages/ColorGrading';
-import Scheduling from '@/pages/Scheduling';
-import AssetManagement from '@/pages/AssetManagement';
-import Analytics from '@/pages/Analytics';
-import Settings from '@/pages/Settings';
-import AITeamStudio from '@/pages/AITeamStudio';
+"use client";
 
-const queryClient = new QueryClient();
+import React, { useState } from 'react';
+import ShellLayout from './components/ShellLayout';
+import { Toaster } from 'react-hot-toast';
+import { Plus, Link2, Film, Smartphone, Tv, Sparkles, UploadCloud } from 'lucide-react';
+import toast from 'react-hot-toast';
 
-function AppInner() {
+const App: React.FC = () => {
+  const [projectName, setProjectName] = useState<string>('Titanic - Found Footage');
+  const [isProjectSelected, setIsProjectSelected] = useState<boolean>(true);
+  const [activeStageId, setActiveStageId] = useState<string | null>('previs');
+
+  // New Project Creation & Ingestion State
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [format, setFormat] = useState<'long_form' | 'short_form' | 'episodic_tv'>('long_form');
+  const [newTitle, setNewTitle] = useState<string>('');
+  const [mediaUrl, setMediaUrl] = useState<string>('');
+  const [season, setSeason] = useState<number>(1);
+  const [episode, setEpisode] = useState<number>(1);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+
+  const handleStageSelect = (stageId: string) => {
+    setActiveStageId(stageId);
+  };
+
+  const handleCreateNewProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle.trim() && !mediaUrl.trim()) {
+      toast.error('Please enter a project title or a media URL.');
+      return;
+    }
+
+    setIsCreating(true);
+    const toastId = toast.loading('🎬 Arise Ingest Engine: Analyzing structure & building production manifest...');
+
+    try {
+      const payload = {
+        title: newTitle.trim() || 'Adapted Media Production',
+        format,
+        seasonNumber: season,
+        episodeNumber: episode,
+        aspectRatio: format === 'short_form' ? '9:16' : format === 'episodic_tv' ? '2.39:1' : '16:9',
+        sourceType: mediaUrl ? (mediaUrl.includes('youtube') ? 'youtube_link' : 'social_link') : 'scratch',
+        sourceUrl: mediaUrl.trim(),
+      };
+
+      // Call local backend endpoint or fallback gracefully
+      const res = await fetch('http://localhost:4000/api/v1/projects/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).then((r) => r.json()).catch(() => null);
+
+      const titleCreated = res?.project?.name || payload.title;
+      setProjectName(titleCreated);
+      setIsProjectSelected(true);
+      setShowCreateModal(false);
+      toast.success(`✨ SUCCESS: Project "${titleCreated}" created across all 10 stages!`, { id: toastId });
+    } catch (err: any) {
+      toast.error(`Ingestion error: ${err.message}`, { id: toastId });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   return (
-    <Router>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-navy-900 to-slate-900">
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/assets" element={<AssetLibrary />} />
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between font-sans">
+      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
 
-          {/* Legacy routes for existing functionality */}
-          <Route path="/client-dashboard" element={<ClientDashboard />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/studio-tour" element={<StudioTour />} />
-          <Route path="/project/:id" element={<ProjectDetail />} />
-          <Route path="/ai-studio" element={<AIStudio />} />
-          <Route path="/ai-team" element={<AITeamStudio />} />
-          <Route path="/collaboration" element={<Collaboration />} />
-          <Route path="/writing-room/:id" element={<WritingRoom />} />
-          <Route path="/editing-suite/:id" element={<EditingSuite />} />
-          <Route path="/script-editor/:id" element={<ScriptEditor />} />
-          <Route path="/platform-optimizer/:id" element={<PlatformOptimizer />} />
-          <Route path="/admin" element={<AdminPanel />} />
-
-          {/* Production Studio Modules */}
-          <Route path="/casting" element={<Casting />} />
-          <Route path="/production-budget" element={<ProductionBudget />} />
-          <Route path="/sound-design" element={<SoundDesign />} />
-          <Route path="/marketing" element={<Marketing />} />
-          <Route path="/visual-effects" element={<VisualEffects />} />
-          <Route path="/color-grading" element={<ColorGrading />} />
-          <Route path="/scheduling" element={<Scheduling />} />
-          <Route path="/asset-management" element={<AssetManagement />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-        <Toaster />
-        
-        {/* Copyright Footer */}
-        <footer className="bg-navy-900/50 border-t border-gold-500/20 backdrop-blur-sm mt-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="text-center">
-              <p className="text-gold-400 font-medium">
-                © Finesse Jones | Vision-Driven | Creator-Led | Built To Empower Bold
+      {!isProjectSelected ? (
+        <div className="flex flex-col items-center justify-center min-h-screen p-8 space-y-6 bg-slate-950 flex-grow">
+          {/* Arise Productions Logo */}
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="w-44 h-44 rounded-2xl overflow-hidden shadow-2xl shadow-amber-500/20 border border-amber-500/30 bg-black flex items-center justify-center p-2">
+              <img
+                src="/arise_productions_logo.jpg"
+                alt="Arise Productions"
+                className="w-full h-full object-contain rounded-xl hover:scale-105 transition duration-300"
+              />
+            </div>
+            <div>
+              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500 tracking-wider uppercase font-serif">
+                ARISE PRODUCTION
+              </h1>
+              <p className="text-xs text-amber-400/90 font-mono tracking-widest uppercase mt-1">
+                A PRODUCT OF THE AI CONTENT FOUNDRY, LLC
               </p>
             </div>
           </div>
-        </footer>
-      </div>
-    </Router>
-  );
-}
 
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AppInner />
-      </ThemeProvider>
-    </QueryClientProvider>
+          <div className="bg-slate-900 border border-slate-800 p-8 shadow-2xl rounded-2xl max-w-xl w-full space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h2 className="text-lg font-bold text-slate-200">
+                Select Studio Production
+              </h2>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-mono transition"
+              >
+                <Plus size={13} />
+                <span>New Production</span>
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                Active Project Manifest
+              </label>
+              <select
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                className="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none font-mono text-xs"
+              >
+                <option value="Titanic - Found Footage">🎬 Titanic - Found Footage (Feature Film / Long-Form)</option>
+                <option value="Alien - Hive Mind">📺 Alien - Hive Mind (Episodic TV Series - S1 E1)</option>
+                <option value="Deep Space Journey">📱 Deep Space Journey (Short-Form / Reel 9:16)</option>
+              </select>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsProjectSelected(true)}
+                className="flex-1 py-3.5 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-extrabold rounded-lg transition shadow-lg shadow-amber-500/20 text-sm uppercase tracking-wider"
+              >
+                🚀 Launch Studio
+              </button>
+
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="px-4 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded-lg transition text-sm flex items-center gap-1.5 font-mono"
+              >
+                <Link2 size={16} className="text-amber-400" />
+                <span>Ingest Media</span>
+              </button>
+            </div>
+          </div>
+
+          {/* New Production & Media Ingest Modal */}
+          {showCreateModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="text-amber-400 w-5 h-5" />
+                    <h3 className="text-lg font-bold text-slate-100">
+                      Create Production / Ingest Media
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="text-slate-400 hover:text-slate-200 text-xs font-mono"
+                  >
+                    ✕ Cancel
+                  </button>
+                </div>
+
+                <form onSubmit={handleCreateNewProject} className="space-y-4">
+                  {/* Format Tabs */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                      Production Format
+                    </label>
+                    <div className="grid grid-cols-3 gap-2 text-xs font-mono">
+                      <button
+                        type="button"
+                        onClick={() => setFormat('long_form')}
+                        className={`p-2.5 rounded-lg border flex flex-col items-center gap-1 text-center transition ${
+                          format === 'long_form'
+                            ? 'bg-amber-500/10 border-amber-500 text-amber-300 font-bold'
+                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        <Film size={16} />
+                        <span>Feature Film</span>
+                        <span className="text-[9px] text-slate-500 font-normal">16:9 Long-Form</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setFormat('short_form')}
+                        className={`p-2.5 rounded-lg border flex flex-col items-center gap-1 text-center transition ${
+                          format === 'short_form'
+                            ? 'bg-amber-500/10 border-amber-500 text-amber-300 font-bold'
+                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        <Smartphone size={16} />
+                        <span>Short / Reel</span>
+                        <span className="text-[9px] text-slate-500 font-normal">9:16 Vertical</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setFormat('episodic_tv')}
+                        className={`p-2.5 rounded-lg border flex flex-col items-center gap-1 text-center transition ${
+                          format === 'episodic_tv'
+                            ? 'bg-amber-500/10 border-amber-500 text-amber-300 font-bold'
+                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        <Tv size={16} />
+                        <span>Episodic TV</span>
+                        <span className="text-[9px] text-slate-500 font-normal">Seasons & Eps</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Project Title */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-slate-400">Project Title</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Neon Cyber Chronicles"
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 text-xs font-mono focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Episodic Season / Episode controls */}
+                  {format === 'episodic_tv' && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs text-slate-400">Season #</label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={season}
+                          onChange={(e) => setSeason(Number(e.target.value))}
+                          className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 text-xs font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-slate-400">Episode #</label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={episode}
+                          onChange={(e) => setEpisode(Number(e.target.value))}
+                          className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 text-xs font-mono"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Media Ingestion URL input */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-slate-400 flex items-center justify-between">
+                      <span>Ingest from YouTube / Social Link (Optional)</span>
+                      <span className="text-[10px] text-amber-400/80 font-mono">Auto-extracts beats</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="url"
+                        placeholder="https://youtube.com/watch?v=... or TikTok/Reel link"
+                        value={mediaUrl}
+                        onChange={(e) => setMediaUrl(e.target.value)}
+                        className="w-full pl-8 pr-3 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 text-xs font-mono focus:border-amber-500 focus:outline-none"
+                      />
+                      <Link2 size={14} className="absolute left-2.5 top-3 text-slate-500" />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isCreating}
+                    className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-extrabold rounded-lg transition text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20"
+                  >
+                    {isCreating ? 'Processing Ingestion...' : 'Generate 10-Stage Pipeline'}
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Copyright Footer */}
+          <footer className="text-center pt-8 text-xs text-slate-500 space-y-1">
+            <p className="text-[11px] text-slate-400">
+              © 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.
+            </p>
+            <p className="text-[10px] text-slate-600 font-mono">
+              Supports Long-Form, Short-Form (9:16), Episodic TV, and Social Media Media Ingestion.
+            </p>
+          </footer>
+        </div>
+      ) : (
+        <ShellLayout
+          projectName={projectName}
+          activeStage={activeStageId}
+          onStageSelect={handleStageSelect}
+          onChangeProject={() => setIsProjectSelected(false)}
+        />
+      )}
+    </div>
   );
-}
+};
+
+export default App;

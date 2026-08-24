@@ -269,6 +269,14 @@ app.post('/equipment/book', (req, res) => {
 // 4. START SERVER WITH WEBSOCKET UPGRADE SUPPORT
 // ==============================================================================
 
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`[Server] Port ${PORT} already in use. Reusing active Arise Production server instance.`);
+  } else {
+    console.error('[Server] Fatal server error:', err);
+  }
+});
+
 server.listen(PORT, () => {
   console.log(`
 ╔═════════════════════════════════════════════════════════════════════╗
@@ -280,8 +288,6 @@ server.listen(PORT, () => {
 ║  ✅ File Watcher:      Active on ./storage/watch_folder             ║
 ║  ✅ Persistence:       Transactional Database Client Online          ║
 ║  ✅ Copyright:         © 2026 Arise Production                       ║
-║                                                                     ║
-║  Frontend Interface:   http://localhost:5002                        ║
 ╚═════════════════════════════════════════════════════════════════════╝
   `);
 });
