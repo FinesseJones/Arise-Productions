@@ -10,6 +10,7 @@ import VideoScreeningRoom from './VideoScreeningRoom';
 import DataVaultAndHistory from './DataVaultAndHistory';
 import OriginalSuitesHub from './OriginalSuitesHub';
 import ProductionPitchDeckModal from './ProductionPitchDeckModal';
+import StudioProUpgradeModal from './StudioProUpgradeModal';
 import PlotRoom from '../pages/PlotRoom';
 import ActsRoom from '../pages/ActsRoom';
 import BeatsRoom from '../pages/BeatsRoom';
@@ -32,6 +33,7 @@ import {
   Layers,
   Activity,
   Users,
+  Crown,
 } from 'lucide-react';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { getAPIBaseURL } from '../lib/api';
@@ -57,6 +59,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
     'stage' | 'plot' | 'acts' | 'beats' | 'characters' | 'architecture' | 'screening' | 'suites' | 'vault'
   >('stage');
   const [activeShotNumber, setActiveShotNumber] = useState<number>(1);
+  const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
   const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
   const [apiKeyInput, setApiKeyInput] = useState<string>('');
@@ -324,6 +327,15 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-sm shadow-rose-500" />
           </button>
 
+          {/* Stripe-Powered Studio Pro Upgrade Button */}
+          <button
+            onClick={() => setShowUpgradeModal(true)}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold border border-amber-300 text-xs font-mono transition shadow-md shadow-amber-500/25 cursor-pointer active:scale-95 flex-shrink-0"
+          >
+            <Crown size={13} fill="currentColor" />
+            <span>Studio Pro</span>
+          </button>
+
           <div className="hidden lg:flex items-center space-x-1.5 text-xs text-purple-300/70 border-l border-purple-900/60 pl-3">
             <span className="text-purple-400/60">Project:</span>
             <span className="text-rose-200 font-semibold truncate max-w-[140px]">{projectStatus.projectName}</span>
@@ -577,6 +589,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           onClose={() => setShowPitchBibleModal(false)}
         />
       )}
+
+      {/* Stripe-Powered Studio Pro Upgrade Modal */}
+      <StudioProUpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+      />
     </div>
   );
 };
