@@ -219,11 +219,11 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+    <div className="flex flex-col h-full bg-[#0e0922] border border-purple-900/50 rounded-2xl overflow-hidden shadow-2xl">
       {/* Room AI Chat Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-950 border-b border-slate-800">
+      <div className="flex items-center justify-between px-4 py-3 bg-[#140e2e] border-b border-purple-900/50">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 font-bold shadow-md shadow-amber-500/20">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 flex items-center justify-center text-white font-bold shadow-md shadow-purple-500/30">
             <Bot size={18} />
           </div>
           <div>
@@ -231,16 +231,16 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
               <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wide">
                 {roleConfig.role}
               </h4>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-sm shadow-rose-500" />
             </div>
-            <p className="text-[10px] text-amber-400/80 font-mono">
+            <p className="text-[10px] text-rose-400/90 font-mono">
               3D {roomName} • AI Co-Pilot
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-1.5">
-          <span className="text-[9px] px-2 py-0.5 rounded bg-slate-900 text-amber-300 border border-slate-800 font-mono">
+          <span className="text-[9px] px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800/60 font-mono">
             NVIDIA NIM AI
           </span>
         </div>
@@ -253,18 +253,18 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
             key={m.id}
             className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
           >
-            <div className="flex items-center space-x-1.5 mb-1 text-[10px] text-slate-500 font-mono">
+            <div className="flex items-center space-x-1.5 mb-1 text-[10px] text-purple-400/70 font-mono">
               <span>{m.sender === 'user' ? 'You' : roleConfig.role}</span>
               <span>•</span>
               <span>{m.timestamp}</span>
-              {m.model && <span className="text-amber-500/80">({m.model.split('/')[1] || m.model})</span>}
+              {m.model && <span className="text-rose-400/90">({m.model.split('/')[1] || m.model})</span>}
             </div>
 
             <div
               className={`p-3 rounded-2xl max-w-[90%] leading-relaxed ${
                 m.sender === 'user'
-                  ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none shadow-md shadow-amber-500/10'
-                  : 'bg-slate-950 text-slate-200 border border-slate-800/80 rounded-tl-none font-mono text-[11px]'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-medium rounded-tr-none shadow-md shadow-purple-900/40'
+                  : 'bg-[#140e2e] text-purple-100 border border-purple-900/60 rounded-tl-none font-mono text-[11px]'
               }`}
             >
               <div className="whitespace-pre-wrap">{m.text}</div>
@@ -273,8 +273,8 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
         ))}
 
         {isTyping && (
-          <div className="flex items-center space-x-2 text-xs text-amber-400 font-mono bg-slate-950 p-2.5 rounded-xl border border-slate-800 w-fit">
-            <Sparkles size={13} className="animate-spin" />
+          <div className="flex items-center space-x-2 text-xs text-rose-400 font-mono bg-[#140e2e] p-2.5 rounded-xl border border-purple-800/50 w-fit">
+            <Sparkles size={13} className="animate-spin text-purple-400" />
             <span>{roleConfig.role} is thinking with NVIDIA NIM...</span>
           </div>
         )}
@@ -283,15 +283,15 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
       </div>
 
       {/* Quick Prompt Suggestion Chips */}
-      <div className="px-3 py-2 bg-slate-950/60 border-t border-slate-800/80 overflow-x-auto">
+      <div className="px-3 py-2 bg-[#140e2e]/80 border-t border-purple-900/50 overflow-x-auto">
         <div className="flex items-center space-x-1.5 w-max">
-          <Zap size={11} className="text-amber-400 flex-shrink-0" />
+          <Zap size={11} className="text-rose-400 flex-shrink-0" />
           {roleConfig.quickPrompts.map((qp, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => handleSendMessage(qp)}
-              className="px-2.5 py-1 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-amber-300 border border-slate-800 text-[10px] font-mono transition flex-shrink-0"
+              className="px-2.5 py-1 rounded-full bg-[#1a123a] hover:bg-purple-900/60 text-purple-200 hover:text-rose-300 border border-purple-800/60 text-[10px] font-mono transition flex-shrink-0"
             >
               {qp}
             </button>
@@ -305,7 +305,7 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
           e.preventDefault();
           handleSendMessage(input);
         }}
-        className="flex items-center p-2.5 bg-slate-950 border-t border-slate-800 gap-2"
+        className="flex items-center p-2.5 bg-[#0e0922] border-t border-purple-900/50 gap-2"
       >
         <input
           type="text"
@@ -313,15 +313,15 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={isTyping}
-          className="flex-grow px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-xs font-mono focus:border-amber-500 focus:outline-none placeholder:text-slate-500"
+          className="flex-grow px-3 py-2 bg-[#140e2e] border border-purple-800/60 rounded-xl text-purple-100 text-xs font-mono focus:border-rose-500 focus:outline-none placeholder:text-purple-400/50"
         />
         <button
           type="submit"
           disabled={isTyping || !input.trim()}
-          className={`p-2 rounded-xl text-slate-950 font-bold transition shadow-md ${
+          className={`p-2 rounded-xl text-white font-bold transition shadow-md ${
             isTyping || !input.trim()
-              ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-              : 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-amber-500/10'
+              ? 'bg-purple-950 text-purple-700 cursor-not-allowed'
+              : 'bg-gradient-to-r from-purple-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 shadow-rose-600/20'
           }`}
         >
           <Send size={14} />

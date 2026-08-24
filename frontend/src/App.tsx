@@ -68,38 +68,38 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-[#080512] text-slate-100 flex flex-col justify-between font-sans">
       <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
 
       {!isProjectSelected ? (
-        <div className="flex flex-col items-center justify-center min-h-screen p-8 space-y-6 bg-slate-950 flex-grow">
+        <div className="flex flex-col items-center justify-center min-h-screen p-8 space-y-6 bg-gradient-to-b from-[#080512] via-[#0e0922] to-[#080512] flex-grow">
           {/* Arise Productions Logo */}
           <div className="flex flex-col items-center text-center space-y-3">
-            <div className="w-44 h-44 rounded-2xl overflow-hidden shadow-2xl shadow-amber-500/20 border border-amber-500/30 bg-black flex items-center justify-center p-2">
+            <div className="w-44 h-44 rounded-3xl overflow-hidden shadow-2xl shadow-purple-500/30 border border-purple-500/40 bg-black flex items-center justify-center p-2">
               <img
                 src="/arise_productions_logo.jpg"
                 alt="Arise Productions"
-                className="w-full h-full object-contain rounded-xl hover:scale-105 transition duration-300"
+                className="w-full h-full object-contain rounded-2xl hover:scale-105 transition duration-300"
               />
             </div>
             <div>
-              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500 tracking-wider uppercase font-serif">
+              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-rose-300 to-amber-200 tracking-wider uppercase font-serif">
                 ARISE PRODUCTION
               </h1>
-              <p className="text-xs text-amber-400/90 font-mono tracking-widest uppercase mt-1">
+              <p className="text-xs text-rose-400/90 font-mono tracking-widest uppercase mt-1">
                 A PRODUCT OF THE AI CONTENT FOUNDRY, LLC
               </p>
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-8 shadow-2xl rounded-2xl max-w-xl w-full space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h2 className="text-lg font-bold text-slate-200">
+          <div className="bg-[#0e0922]/90 border border-purple-900/60 p-8 shadow-2xl shadow-purple-950/60 rounded-3xl max-w-xl w-full space-y-6 backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-purple-900/50 pb-3">
+              <h2 className="text-lg font-bold text-purple-100">
                 Select Studio Production
               </h2>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-mono transition"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-rose-300 border border-purple-800/60 text-xs font-mono transition shadow-sm"
               >
                 <Plus size={13} />
                 <span>New Production</span>
@@ -107,13 +107,20 @@ const App: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-semibold text-purple-300/70 uppercase tracking-wider">
                 Active Project Manifest
               </label>
               <select
                 value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                className="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none font-mono text-xs"
+                onChange={(e) => {
+                  const name = e.target.value;
+                  setProjectName(name);
+                  if (name.includes('Titanic')) setProjectId('proj-titanic');
+                  else if (name.includes('Alien')) setProjectId('proj-alien');
+                  else if (name.includes('Deep Space')) setProjectId('proj-space');
+                  else setProjectId(`proj-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`);
+                }}
+                className="w-full p-3.5 bg-[#140e2e] border border-purple-800/60 rounded-xl text-purple-100 focus:ring-2 focus:ring-rose-500 focus:outline-none font-mono text-xs"
               >
                 <option value="Titanic - Found Footage">🎬 Titanic - Found Footage (Feature Film / Long-Form)</option>
                 <option value="Alien - Hive Mind">📺 Alien - Hive Mind (Episodic TV Series - S1 E1)</option>
@@ -124,16 +131,16 @@ const App: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsProjectSelected(true)}
-                className="flex-1 py-3.5 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-extrabold rounded-lg transition shadow-lg shadow-amber-500/20 text-sm uppercase tracking-wider"
+                className="flex-1 py-3.5 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 text-white font-extrabold rounded-xl transition shadow-lg shadow-rose-600/30 text-sm uppercase tracking-wider"
               >
                 🚀 Launch Studio
               </button>
 
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-4 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded-lg transition text-sm flex items-center gap-1.5 font-mono"
+                className="px-4 py-3.5 bg-[#140e2e] hover:bg-purple-900/40 text-purple-200 border border-purple-800/60 font-bold rounded-xl transition text-sm flex items-center gap-1.5 font-mono"
               >
-                <Link2 size={16} className="text-amber-400" />
+                <Link2 size={16} className="text-rose-400" />
                 <span>Ingest Media</span>
               </button>
             </div>

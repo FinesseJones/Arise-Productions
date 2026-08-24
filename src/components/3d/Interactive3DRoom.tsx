@@ -38,36 +38,36 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
 
   return (
-    <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative select-none">
+    <div className="flex flex-col h-full bg-[#0e0922] border border-purple-900/50 rounded-2xl overflow-hidden shadow-2xl relative select-none">
       {/* Top 3D Room Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-950 border-b border-slate-800 text-xs font-mono text-slate-400">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-[#140e2e] border-b border-purple-900/50 text-xs font-mono text-purple-300">
         <div className="flex items-center space-x-2.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-          <span className="text-slate-100 font-bold tracking-wide uppercase">
+          <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-sm shadow-rose-500" />
+          <span className="text-purple-100 font-bold tracking-wide uppercase">
             3D {roomName.toUpperCase()}
           </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/40">
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-950 text-rose-300 border border-purple-800/40">
             60 FPS SPATIAL
           </span>
         </div>
 
         <div className="flex items-center space-x-3 text-[11px]">
           <span>Shot {shotNumber}</span>
-          <span>Preset: <strong className="text-amber-300">{roomPreset}</strong></span>
+          <span>Preset: <strong className="text-rose-300">{roomPreset}</strong></span>
         </div>
       </div>
 
       {/* Main 3D Spatial Canvas */}
-      <div className="relative flex-grow min-h-[380px] bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-6 overflow-hidden">
-        {/* Holographic 3D Spatial Perspective Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-35" />
+      <div className="relative flex-grow min-h-[380px] bg-gradient-to-b from-[#080512] via-[#0e0922] to-[#080512] flex items-center justify-center p-6 overflow-hidden">
+        {/* Holographic 3D Spatial Perspective Grid (Royal Amethyst) */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b2d71_1px,transparent_1px),linear-gradient(to_bottom,#3b2d71_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-35" />
 
-        {/* Floating Glowing Neon Studio Ring */}
-        <div className="absolute w-96 h-96 rounded-full border border-amber-500/10 bg-amber-500/5 animate-pulse [animation-duration:4s]" />
+        {/* Floating Glowing Neon Studio Ring (Rose Gold / Amethyst Glow) */}
+        <div className="absolute w-96 h-96 rounded-full border border-purple-500/25 bg-gradient-to-tr from-purple-600/10 via-pink-600/5 to-rose-500/10 animate-pulse [animation-duration:4s]" />
 
         {/* Proof-of-Ownership Arise Productions Watermark */}
-        <div className="absolute top-4 right-4 z-20 flex items-center space-x-2 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/30 shadow-lg">
-          <div className="w-5 h-5 rounded overflow-hidden bg-black border border-amber-500/40 flex-shrink-0">
+        <div className="absolute top-4 right-4 z-20 flex items-center space-x-2 bg-[#140e2e]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-purple-500/40 shadow-xl shadow-purple-900/30">
+          <div className="w-5 h-5 rounded overflow-hidden bg-black border border-purple-500/40 flex-shrink-0">
             <img
               src="/arise_productions_logo.jpg"
               alt="Arise Productions"
@@ -75,10 +75,10 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
             />
           </div>
           <div className="flex flex-col text-left leading-tight">
-            <span className="text-[10px] font-extrabold text-amber-300 font-serif tracking-wider">
+            <span className="text-[10px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-rose-300 font-serif tracking-wider">
               ARISE PRODUCTIONS
             </span>
-            <span className="text-[8px] text-slate-400 font-mono">
+            <span className="text-[8px] text-purple-300/70 font-mono">
               © 2026 THE AI CONTENT FOUNDRY, LLC
             </span>
           </div>

@@ -1,168 +1,91 @@
 @import "tailwindcss";
 
 :root {
-  /* Base Layout */
-  --radius: 0.625rem;
-  
-  /* Light Theme - Professional Studio Colors */
-  --background: 210 20% 98%;
-  --foreground: 210 15% 10%;
-  --card: 210 20% 99%;
-  --card-foreground: 210 15% 10%;
-  --primary: 210 100% 50%;
-  --primary-foreground: 210 20% 98%;
-  --secondary: 210 30% 93%;
-  --secondary-foreground: 210 15% 20%;
-  --muted: 210 30% 93%;
-  --muted-foreground: 210 10% 40%;
-  --accent: 210 30% 93%;
-  --accent-foreground: 210 15% 20%;
-  --border: 210 30% 88%;
-  --input: 210 30% 88%;
-  
-  /* 3D Studio Brand Colors */
-  --studio-blue: 210 100% 50%;
-  --studio-purple: 270 100% 60%;
-  --studio-pink: 320 100% 70%;
-  --studio-cyan: 180 100% 50%;
-  --studio-amber: 45 100% 50%;
-}
+  --radius: 0.75rem;
 
-.dark {
-  /* Dark Theme - Cinematic Studio Colors */
-  --background: 210 15% 8%;
-  --foreground: 210 20% 95%;
-  --card: 210 15% 10%;
-  --card-foreground: 210 20% 95%;
-  --primary: 210 100% 60%;
-  --primary-foreground: 210 15% 8%;
-  --secondary: 210 15% 15%;
-  --secondary-foreground: 210 20% 90%;
-  --muted: 210 15% 15%;
-  --muted-foreground: 210 15% 60%;
-  --accent: 210 15% 15%;
-  --accent-foreground: 210 20% 90%;
-  --border: 210 15% 20%;
-  --input: 210 15% 20%;
+  /* Royal Amethyst & Rose Copper Theme Base */
+  --bg-nebula: #080512;
+  --bg-deep-indigo: #0e0922;
+  --bg-card: #140e2e;
+  --border-violet: #3b2d71;
+  --border-rose: #f43f5e;
   
-  /* 3D Studio Brand Colors - Dark Mode */
-  --studio-blue: 210 100% 60%;
-  --studio-purple: 270 100% 70%;
-  --studio-pink: 320 100% 75%;
-  --studio-cyan: 180 100% 60%;
-  --studio-amber: 45 100% 60%;
-}
-
-/* Base Styles */
-* {
-  border-color: hsl(var(--border));
+  /* Glowing Accents */
+  --amethyst: #8b5cf6;
+  --amethyst-bright: #a855f7;
+  --rose-gold: #fb7185;
+  --rose-copper: #f43f5e;
+  --sunset-copper: #e11d48;
+  --starlight-gold: #fde047;
 }
 
 body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-feature-settings: "rlig" 1, "calt" 1;
-  font-family: "Inter", system-ui, sans-serif;
+  background-color: #080512;
+  color: #f8fafc;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
 }
 
-/* 3D Studio specific utility classes */
-.studio-glass {
-  backdrop-filter: blur(12px);
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+/* Cosmic Glass & Glowing Cards */
+.amethyst-glass {
+  background: rgba(20, 14, 46, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(10, 5, 25, 0.5);
 }
 
-.studio-gradient {
-  background: linear-gradient(135deg, hsl(var(--studio-blue)) 0%, hsl(var(--studio-purple)) 50%, hsl(var(--studio-pink)) 100%);
+.rose-gold-glow {
+  box-shadow: 0 0 25px rgba(251, 113, 133, 0.35);
 }
 
-.studio-gradient-text {
-  background: linear-gradient(135deg, hsl(var(--studio-blue)) 0%, hsl(var(--studio-purple)) 50%, hsl(var(--studio-pink)) 100%);
+.amethyst-glow {
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.35);
+}
+
+.amethyst-gradient {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f43f5e 100%);
+}
+
+.amethyst-gradient-text {
+  background: linear-gradient(135deg, #c084fc 0%, #fb7185 50%, #fde047 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* 3D Container Styles */
-.scene-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 0.5rem;
-  perspective: 1000px;
-}
-
-/* Custom scrollbar for studio theme */
+/* Custom Cosmic Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--muted));
+  background: #080512;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
+  background: #2e1d5e;
   border-radius: 9999px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--accent));
+  background: #8b5cf6;
 }
 
-/* Animation utilities */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+/* Ambient Pulsing Animations */
+@keyframes nebula-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
 }
 
-@keyframes pulse-glow {
-  0% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-  100% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
-}
-
-@keyframes rotate-3d {
-  0% { transform: rotateX(0deg) rotateY(0deg); }
-  100% { transform: rotateX(360deg) rotateY(360deg); }
-}
-
-@keyframes fade-in {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@keyframes slide-up {
-  0% { transform: translateY(10px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite alternate;
-}
-
-.animate-rotate-3d {
-  animation: rotate-3d 20s linear infinite;
-}
-
-.animate-fade-in {
-  animation: fade-in 0.5s ease-out;
-}
-
-.animate-slide-up {
-  animation: slide-up 0.3s ease-out;
-}
-
-/* 3D utilities */
-.transform-3d {
-  transform-style: preserve-3d;
-}
-
-.backface-hidden {
-  backface-visibility: hidden;
+.animate-nebula {
+  animation: nebula-pulse 8s ease-in-out infinite;
 }

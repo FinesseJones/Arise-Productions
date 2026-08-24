@@ -62,29 +62,28 @@ const PipelineStages: React.FC<PipelineStagesProps> = ({
           <button
             key={stg.id}
             onClick={() => onStageSelect(stg.id)}
-            className={`w-full text-left px-3 py-2.5 rounded-lg transition-all duration-150 flex items-center justify-between border ${
+            className={`w-full text-left px-3 py-2.5 rounded-xl transition-all duration-150 flex items-center justify-between border ${
               isActive
-                ? 'bg-slate-800 border-amber-500/80 shadow-md shadow-amber-500/5'
-                : 'hover:bg-slate-850 border-transparent text-slate-300'
+                ? 'bg-gradient-to-r from-purple-900/50 via-[#1e1245] to-rose-950/40 border-purple-500 text-purple-100 shadow-md shadow-purple-500/15'
+                : 'hover:bg-purple-950/30 border-transparent text-slate-300'
             }`}
           >
-            <div className="flex items-center space-x-2.5 truncate">
-              <span
-                className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
-                  isActive ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'
-                }`}
-              >
+            <div className="flex items-center space-x-2.5 overflow-hidden">
+              <span className="font-mono text-[10px] text-rose-400 font-extrabold w-4 flex-shrink-0">
                 {stg.number}
               </span>
-              <span className={`text-xs font-medium truncate ${isActive ? 'text-amber-300 font-semibold' : ''}`}>
-                {stg.name}
-              </span>
+              <div className="flex flex-col overflow-hidden">
+                <span className="text-xs font-semibold truncate leading-tight">
+                  {stg.name}
+                </span>
+                <span className="text-[10px] text-purple-300/60 truncate">
+                  {stg.endpoint}
+                </span>
+              </div>
             </div>
-
-            {/* Stage Status Character */}
-            <span className="text-sm select-none" title={`Stage Health: ${health.statusChar}`}>
-              {health.statusChar}
-            </span>
+            <div className="flex items-center space-x-1.5 flex-shrink-0 ml-2">
+              <span className="text-xs select-none">{health.statusChar}</span>
+            </div>
           </button>
         );
       })}

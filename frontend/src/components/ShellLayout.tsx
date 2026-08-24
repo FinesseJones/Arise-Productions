@@ -130,12 +130,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div className="flex flex-col h-screen bg-[#080512] text-slate-100 overflow-hidden font-sans">
       {/* Top Studio Header & Telemetry Bar */}
-      <header className="flex items-center justify-between px-5 py-2.5 bg-slate-900 border-b border-slate-800/80 select-none flex-shrink-0">
+      <header className="flex items-center justify-between px-5 py-2.5 bg-[#0e0922]/95 border-b border-purple-900/50 select-none flex-shrink-0 backdrop-blur-md">
         <div className="flex items-center space-x-3.5">
           {/* Official Arise Productions Logo Badge */}
-          <div className="w-9 h-9 rounded-lg overflow-hidden border border-amber-500/40 bg-black flex-shrink-0 shadow-md shadow-amber-500/10">
+          <div className="w-9 h-9 rounded-lg overflow-hidden border border-purple-500/40 bg-black flex-shrink-0 shadow-lg shadow-purple-500/20">
             <img
               src="/arise_productions_logo.jpg"
               alt="Arise Productions"
@@ -145,14 +145,14 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-black tracking-widest text-slate-100 uppercase font-serif">
+              <h1 className="text-sm font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-rose-300 to-amber-200 uppercase font-serif">
                 ARISE PRODUCTION
               </h1>
-              <span className="text-[9px] uppercase px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 font-mono font-bold">
+              <span className="text-[9px] uppercase px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 font-mono font-bold">
                 STUDIO v1.0
               </span>
             </div>
-            <p className="text-[10px] text-amber-400/80 font-mono tracking-wider uppercase">
+            <p className="text-[10px] text-rose-400/90 font-mono tracking-wider uppercase">
               A PRODUCT OF THE AI CONTENT FOUNDRY, LLC
             </p>
           </div>
@@ -160,14 +160,14 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
         {/* Center Mode Switcher & NVIDIA Model Settings */}
         <div className="flex items-center space-x-3">
-          <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+          <div className="flex bg-[#140e2e] p-1 rounded-xl border border-purple-900/60 text-xs font-mono shadow-inner">
             {/* 1. Stage Workspace */}
             <button
               onClick={() => setMainView('stage')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
                 mainView === 'stage'
-                  ? 'bg-amber-500 text-slate-950 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
               }`}
             >
               <LayoutGrid size={13} />
@@ -177,10 +177,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             {/* 2. 3D Studio Architecture */}
             <button
               onClick={() => setMainView('architecture')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
                 mainView === 'architecture'
-                  ? 'bg-amber-500 text-slate-950 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
               }`}
             >
               <Building2 size={13} />
@@ -190,10 +190,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             {/* 3. 4K Video Screening Room */}
             <button
               onClick={() => setMainView('screening')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
                 mainView === 'screening'
-                  ? 'bg-amber-500 text-slate-950 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
               }`}
             >
               <Film size={13} />
@@ -203,10 +203,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             {/* 4. Deep-Dive Department Suites (Original Merged Studio) */}
             <button
               onClick={() => setMainView('suites')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
                 mainView === 'suites'
-                  ? 'bg-amber-500 text-slate-950 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
               }`}
             >
               <Sliders size={13} />
@@ -216,10 +216,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             {/* 5. Production Data Vault & History Ledger */}
             <button
               onClick={() => setMainView('vault')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
                 mainView === 'vault'
-                  ? 'bg-amber-500 text-slate-950 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
               }`}
             >
               <FolderArchive size={13} />
@@ -230,20 +230,20 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           {/* NVIDIA NIM Free Tier Button */}
           <button
             onClick={() => setShowNvidiaModal(true)}
-            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-300 border border-emerald-500/40 text-xs font-mono transition"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-xs font-mono transition shadow-sm"
           >
-            <Cpu size={13} className="text-emerald-400" />
+            <Cpu size={13} className="text-purple-400" />
             <span className="font-bold">{defaultModel.split('/')[1] || 'Llama 3.1 70B'}</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-sm shadow-rose-500" />
           </button>
 
-          <div className="hidden lg:flex items-center space-x-1.5 text-xs text-slate-400 border-l border-slate-800 pl-3">
-            <span className="text-slate-500">Project:</span>
-            <span className="text-slate-200 font-semibold truncate max-w-[140px]">{projectStatus.projectName}</span>
+          <div className="hidden lg:flex items-center space-x-1.5 text-xs text-purple-300/70 border-l border-purple-900/60 pl-3">
+            <span className="text-purple-400/60">Project:</span>
+            <span className="text-rose-200 font-semibold truncate max-w-[140px]">{projectStatus.projectName}</span>
             {onChangeProject && (
               <button
                 onClick={onChangeProject}
-                className="text-amber-400 hover:text-amber-300 text-[11px] underline ml-1"
+                className="text-rose-400 hover:text-rose-300 text-[11px] underline ml-1"
               >
                 Switch
               </button>
@@ -254,9 +254,9 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         {/* Live Bridge Connection Indicator & Telemetry */}
         <div className="flex items-center space-x-4 text-xs">
           {telemetry && (
-            <div className="hidden md:flex items-center space-x-2 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700">
-              <span className="animate-pulse text-amber-400">⚡</span>
-              <span className="text-slate-300 font-mono text-[11px]">{telemetry.message}</span>
+            <div className="hidden md:flex items-center space-x-2 bg-purple-950/80 px-3 py-1 rounded-full border border-purple-800/60">
+              <span className="animate-pulse text-rose-400">⚡</span>
+              <span className="text-purple-200 font-mono text-[11px]">{telemetry.message}</span>
             </div>
           )}
 
