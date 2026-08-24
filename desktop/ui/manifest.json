@@ -1,0 +1,17 @@
+{
+  "short_name": "Arise Studio",
+  "name": "Arise Production Studio - The AI Content Foundry",
+  "description": "Next-Generation 3D Virtual Production Studio with 10 MCP Departments and AI Co-Pilots",
+  "icons": [
+    {
+      "src": "/arise_productions_logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#020617",
+  "theme_color": "#f59e0b",
+  "display": "standalone",
+  "orientation": "any"
+}

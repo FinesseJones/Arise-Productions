@@ -19,12 +19,12 @@ const PORT = 4000;
 
 // 1. Launch local backend service in background
 function startBackendServer() {
-  let serverPath = path.resolve(__dirname, '../server.js');
-  let cwd = path.resolve(__dirname, '..');
+  let serverPath = path.join(__dirname, 'server.js');
+  let cwd = __dirname;
 
   if (!fs.existsSync(serverPath)) {
-    serverPath = path.resolve(app.getAppPath(), 'server.js');
-    cwd = app.getAppPath();
+    serverPath = path.resolve(__dirname, '../server.js');
+    cwd = path.resolve(__dirname, '..');
   }
 
   console.log('[AriseDesktop] Spawning Arise Production backend server:', serverPath);
@@ -66,19 +66,16 @@ function createMainWindow() {
   });
 
   // Resolve compiled Arise Production Studio index.html
-  let distIndex = path.resolve(__dirname, '../frontend/dist/index.html');
+  let distIndex = path.join(__dirname, 'ui/index.html');
   if (!fs.existsSync(distIndex)) {
-    distIndex = path.resolve(app.getAppPath(), 'frontend/dist/index.html');
+    distIndex = path.resolve(__dirname, '../frontend/dist/index.html');
+  }
+  if (!fs.existsSync(distIndex)) {
+    distIndex = path.join(app.getAppPath(), 'ui/index.html');
   }
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5055').catch(() => {
-      mainWindow.loadFile(distIndex);
-    });
-  } else {
-    console.log('[AriseDesktop] Loading Arise Production UI from:', distIndex);
-    mainWindow.loadFile(distIndex);
-  }
+  console.log('[AriseDesktop] 🎬 Loading Arise Production UI from:', distIndex);
+  mainWindow.loadFile(distIndex);
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();

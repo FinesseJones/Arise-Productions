@@ -7,10 +7,11 @@
   "type": "module",
   "scripts": {
     "setup": "node download-electron.js",
+    "prebuild": "rm -rf ui backend server.js && cp -R ../frontend/dist ./ui && cp -R ../backend ./backend && cp ../server.js ./server.js",
     "start": "node download-electron.js && electron .",
-    "build:mac": "electron-builder --mac dmg",
-    "build:win": "electron-builder --win",
-    "build:linux": "electron-builder --linux"
+    "build:mac": "npm run prebuild && electron-builder --mac dmg",
+    "build:win": "npm run prebuild && electron-builder --win",
+    "build:linux": "npm run prebuild && electron-builder --linux"
   },
   "devDependencies": {
     "electron": "^34.0.0",
@@ -60,9 +61,10 @@
     "files": [
       "main.js",
       "preload.cjs",
-      "../server.js",
-      "../backend/**/*",
-      "../frontend/dist/**/*"
+      "server.js",
+      "backend/**/*",
+      "ui/**/*",
+      "build/**/*"
     ]
   }
 }
