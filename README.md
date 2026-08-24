@@ -7,13 +7,11 @@ A next-generation virtual production studio and single pane of glass powered by 
 
 ---
 
-## 📖 **[Complete Multi-Platform Installation Guide →](./INSTALLATION.md)**
+## 📖 Documentation & Guides
 
-Detailed instructions for:
-* 💻 **MacBook & Mac Desktop (Native App)**
-* 🍏 **Apple Devices (iPhone & iPad Standalone App)**
-* 🤖 **Android Devices (Phones & Tablets PWA/APK)**
-* 🧠 **Verified AI Models & Engine Configurations**
+* 📘 **[Master Operational & Categorized Instructions Manual →](./INSTRUCTIONS.md)**  
+  *(Complete guide covering 10 MCP departments, document ingestion matrix, 5 studio modes, NVIDIA NIM setup, and autonomous director commands)*
+* 📱 **[Multi-Platform Installation Guide (Mac, iOS, Android) →](./INSTALLATION.md)**
 
 ---
 
