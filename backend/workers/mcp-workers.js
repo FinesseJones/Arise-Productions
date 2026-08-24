@@ -1,5 +1,6 @@
 // ==============================================================================
-// WASSERMAN STUDIO SHELL - 10 PRODUCTION MCP WORKERS (WITH NVIDIA NIM AI)
+// ARISE PRODUCTION - 10 PRODUCTION MCP WORKERS (WITH NVIDIA NIM AI)
+// A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026
 // ==============================================================================
 
 import { db } from '../db/client.js';

@@ -1,6 +1,7 @@
 {
   "name": "arise-production-frontend",
   "version": "1.0.0",
+  "license": "UNLICENSED",
   "type": "module",
   "packageManager": "npm",
   "scripts": {

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Arise Production - A Product of THE AI CONTENT FOUNDRY, LLC",
   "author": "THE AI CONTENT FOUNDRY, LLC",
+  "license": "UNLICENSED",
   "main": "main.js",
   "type": "module",
   "scripts": {
