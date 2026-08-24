@@ -6,9 +6,23 @@ import StatusBoard from './StatusBoard';
 import DirectorAgent from './DirectorAgent';
 import StageWorkspace from './StageWorkspace';
 import StudioArchitecturalView from './StudioArchitecturalView';
+import VideoScreeningRoom from './VideoScreeningRoom';
+import DataVaultAndHistory from './DataVaultAndHistory';
+import OriginalSuitesHub from './OriginalSuitesHub';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
-import { Building2, LayoutGrid, ShieldCheck, Cpu, Key, Check, Sparkles } from 'lucide-react';
+import {
+  Building2,
+  LayoutGrid,
+  ShieldCheck,
+  Cpu,
+  Key,
+  Check,
+  Sparkles,
+  Film,
+  FolderArchive,
+  Sliders
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ShellLayoutProps {
@@ -24,7 +38,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   onStageSelect,
   onChangeProject,
 }) => {
-  const [mainView, setMainView] = useState<'stage' | 'architecture'>('stage');
+  const [mainView, setMainView] = useState<'stage' | 'architecture' | 'screening' | 'suites' | 'vault'>('stage');
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
   const [apiKeyInput, setApiKeyInput] = useState<string>('');
   const [defaultModel, setDefaultModel] = useState<string>('meta/llama-3.1-70b-instruct');
@@ -140,6 +154,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         {/* Center Mode Switcher & NVIDIA Model Settings */}
         <div className="flex items-center space-x-3">
           <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+            {/* 1. Stage Workspace */}
             <button
               onClick={() => setMainView('stage')}
               className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
@@ -149,9 +164,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               }`}
             >
               <LayoutGrid size={13} />
-              <span>Active Stage Workspace</span>
+              <span>3D Soundstage</span>
             </button>
 
+            {/* 2. 3D Studio Architecture */}
             <button
               onClick={() => setMainView('architecture')}
               className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
@@ -161,7 +177,46 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               }`}
             >
               <Building2 size={13} />
-              <span>3D Studio Architecture</span>
+              <span>3D Campus</span>
+            </button>
+
+            {/* 3. 4K Video Screening Room */}
+            <button
+              onClick={() => setMainView('screening')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+                mainView === 'screening'
+                  ? 'bg-amber-500 text-slate-950 font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Film size={13} />
+              <span>Video Screening</span>
+            </button>
+
+            {/* 4. Deep-Dive Department Suites (Original Merged Studio) */}
+            <button
+              onClick={() => setMainView('suites')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+                mainView === 'suites'
+                  ? 'bg-amber-500 text-slate-950 font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Sliders size={13} />
+              <span>Studio Suites</span>
+            </button>
+
+            {/* 5. Production Data Vault & History Ledger */}
+            <button
+              onClick={() => setMainView('vault')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded transition ${
+                mainView === 'vault'
+                  ? 'bg-amber-500 text-slate-950 font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <FolderArchive size={13} />
+              <span>Data Vault & History</span>
             </button>
           </div>
 
@@ -300,41 +355,59 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         </div>
       )}
 
-      {/* Main Studio Tri-Pane Body */}
+      {/* Main Studio Body */}
       <div className="flex flex-grow overflow-hidden">
-        {/* Left Rail: 10 Pipeline Stages */}
-        <aside className="w-64 xl:w-72 flex-shrink-0 border-r border-slate-800 bg-slate-900/60 overflow-y-auto">
-          <PipelineStages
-            activeStageId={activeStage}
-            projectStatus={projectStatus}
-            onStageSelect={(id) => {
-              onStageSelect(id);
-              setMainView('stage');
-            }}
-          />
-        </aside>
+        {/* Left Rail: 10 Pipeline Stages (Visible in stage and architecture views) */}
+        {['stage', 'architecture'].includes(mainView) && (
+          <aside className="w-64 xl:w-72 flex-shrink-0 border-r border-slate-800 bg-slate-900/60 overflow-y-auto">
+            <PipelineStages
+              activeStageId={activeStage}
+              projectStatus={projectStatus}
+              onStageSelect={(id) => {
+                onStageSelect(id);
+                setMainView('stage');
+              }}
+            />
+          </aside>
+        )}
 
-        {/* Center Workspace: Stage Workspace OR 3D Architectural Department Campus */}
+        {/* Center Workspace: Dynamic based on MainView */}
         <main className="flex-grow p-0 overflow-y-auto bg-slate-950 flex flex-col">
-          {mainView === 'stage' ? (
+          {mainView === 'stage' && (
             <StageWorkspace
               stage={currentStageObj}
               projectStatus={projectStatus}
               onExecuteStage={(stageId) => sendCommand(`run stage ${stageId}`, stageId)}
             />
-          ) : (
+          )}
+
+          {mainView === 'architecture' && (
             <StudioArchitecturalView
               projectStatus={projectStatus}
               activeStageId={activeStage}
               onSelectStage={handleSelectFromArchitect}
             />
           )}
+
+          {mainView === 'screening' && (
+            <VideoScreeningRoom projectStatus={projectStatus} />
+          )}
+
+          {mainView === 'suites' && (
+            <OriginalSuitesHub projectStatus={projectStatus} />
+          )}
+
+          {mainView === 'vault' && (
+            <DataVaultAndHistory projectStatus={projectStatus} />
+          )}
         </main>
 
-        {/* Right Rail: Shot Manifest & Live Status Board */}
-        <aside className="w-80 xl:w-96 flex-shrink-0 border-l border-slate-800 bg-slate-900/60 overflow-y-auto">
-          <StatusBoard projectStatus={projectStatus} />
-        </aside>
+        {/* Right Rail: Shot Manifest & Live Status Board (Visible in stage view) */}
+        {mainView === 'stage' && (
+          <aside className="w-80 xl:w-96 flex-shrink-0 border-l border-slate-800 bg-slate-900/60 overflow-y-auto">
+            <StatusBoard projectStatus={projectStatus} />
+          </aside>
+        )}
       </div>
 
       {/* Bottom Director Agent Bar & Legal Copyright Footer */}
