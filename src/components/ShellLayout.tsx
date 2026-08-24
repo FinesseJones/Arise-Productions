@@ -9,6 +9,7 @@ import StudioArchitecturalView from './StudioArchitecturalView';
 import VideoScreeningRoom from './VideoScreeningRoom';
 import DataVaultAndHistory from './DataVaultAndHistory';
 import OriginalSuitesHub from './OriginalSuitesHub';
+import ProductionPitchDeckModal from './ProductionPitchDeckModal';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
 import {
@@ -21,7 +22,8 @@ import {
   Sparkles,
   Film,
   FolderArchive,
-  Sliders
+  Sliders,
+  FileText,
 } from 'lucide-react';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import toast from 'react-hot-toast';
@@ -43,6 +45,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 }) => {
   const [mainView, setMainView] = useState<'stage' | 'architecture' | 'screening' | 'suites' | 'vault'>('stage');
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
+  const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
   const [apiKeyInput, setApiKeyInput] = useState<string>('');
   const [defaultModel, setDefaultModel] = useState<string>('meta/llama-3.1-70b-instruct');
   const [hasKey, setHasKey] = useState<boolean>(false);
@@ -227,6 +230,15 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <span>Data Vault & History</span>
             </button>
           </div>
+
+          {/* Hollywood Pitch Bible & One-Pager Button */}
+          <button
+            onClick={() => setShowPitchBibleModal(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#F59E0B]/20 to-[#D97706]/20 hover:from-[#F59E0B]/35 hover:to-[#D97706]/35 text-amber-300 border border-amber-500/50 text-xs font-mono transition shadow-sm font-bold"
+          >
+            <FileText size={13} className="text-amber-400" />
+            <span>📑 Pitch Bible</span>
+          </button>
 
           {/* NVIDIA NIM Free Tier Button */}
           <button
@@ -459,6 +471,14 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           </div>
         </div>
       </footer>
+
+      {/* Hollywood Production Pitch Bible & One-Pager Modal */}
+      {showPitchBibleModal && (
+        <ProductionPitchDeckModal
+          projectStatus={projectStatus}
+          onClose={() => setShowPitchBibleModal(false)}
+        />
+      )}
     </div>
   );
 };

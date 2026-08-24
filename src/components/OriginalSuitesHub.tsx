@@ -200,10 +200,28 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                     <PenTool className="text-amber-400" size={18} />
                     <span>Screenwriting & Narrative Room</span>
                   </h3>
-                  <span className="text-xs font-mono text-slate-400">Act I • {projectStatus.shots?.length || 3} Shots Scripted</span>
+                  <div className="flex items-center gap-2 mt-0.5 text-xs font-mono text-slate-400">
+                    <span>Act I • {projectStatus.shots?.length || 3} Shots Scripted</span>
+                    <span>•</span>
+                    <span className="text-amber-400 font-bold">Page 1 of {Math.max(1, Math.ceil((importedScript || '').split(/\s+/).filter(Boolean).length / 200) || 1)}</span>
+                    <span>•</span>
+                    <span className="text-slate-400">~1m 15s Estimated Screen Time</span>
+                  </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      const sampleAddition = `\n\nDEVON\n(voice trembling with quiet resolve)\n"If we turn away from this now, we're choosing to let the silence win. I won't let another year pass living in the margins."\n\nMARCUS\n"Then stand your ground, Devon. But remember: courage isn't the absence of fear—it's knowing something else matters more."`;
+                      setImportedScript((prev) => (prev || '') + sampleAddition);
+                      toast.success('🔥 Raised emotional stakes with Llama 3.1 70B');
+                    }}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-mono transition font-bold"
+                  >
+                    <Sparkles size={13} className="text-amber-400 animate-spin" />
+                    <span>AI Script Doctor</span>
+                  </button>
+
                   <button
                     onClick={() => scriptInputRef.current?.click()}
                     className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 text-xs font-mono transition font-bold"
@@ -219,6 +237,41 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                     className="hidden"
                   />
                 </div>
+              </div>
+
+              {/* Formatting & Quick Action Toolstrip */}
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#160f33] rounded-xl border border-purple-900/50 overflow-x-auto text-[10px] font-mono">
+                <span className="text-amber-400 font-bold mr-1 flex-shrink-0">FORMAT:</span>
+                <button
+                  onClick={() => setImportedScript((prev) => (prev || '') + '\n\nEXT. LOCATION - DAY\n\n')}
+                  className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                >
+                  🎬 Scene Heading
+                </button>
+                <button
+                  onClick={() => setImportedScript((prev) => (prev || '') + '\nAction description goes here.\n\n')}
+                  className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                >
+                  ⚡ Action
+                </button>
+                <button
+                  onClick={() => setImportedScript((prev) => (prev || '') + '\n\nCHARACTER NAME\n')}
+                  className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                >
+                  🎭 Character
+                </button>
+                <button
+                  onClick={() => setImportedScript((prev) => (prev || '') + '"Dialogue line goes here."\n\n')}
+                  className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                >
+                  💬 Dialogue
+                </button>
+                <button
+                  onClick={() => setImportedScript((prev) => (prev || '') + '\n\nCUT TO:\n\n')}
+                  className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                >
+                  ✂️ Transition
+                </button>
               </div>
 
               <div className="p-5 rounded-2xl bg-[#0e0922] border border-purple-900/60 space-y-3 font-mono text-xs text-purple-100 shadow-xl">

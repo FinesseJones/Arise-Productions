@@ -195,15 +195,15 @@ SECOND OFFICER
 
         {/* ---------------- 1. UPGRADED EXPANSIVE FOUNTAIN WRITERS ROOM (STAGE 01) ---------------- */}
         {stageId === 'script' && (
-          <div className="relative z-10 flex flex-col w-full h-full max-w-3xl min-h-[380px] bg-[#140e2e]/95 border border-purple-800/60 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden">
+          <div className="relative z-10 flex flex-col w-full h-full max-w-4xl min-h-[420px] bg-[#140e2e]/95 border border-purple-800/60 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden">
             {/* Screenplay Sub-Header & Navigation Tabs */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-purple-900/50 bg-[#0e0922]/80 flex-shrink-0">
-              <div className="flex items-center space-x-1.5">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-purple-900/50 bg-[#0e0922]/80 flex-shrink-0 flex-wrap gap-2">
+              <div className="flex items-center space-x-1.5 overflow-x-auto">
                 <button
                   onClick={() => setActiveScriptTab('editor')}
                   className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-mono transition ${
                     activeScriptTab === 'editor'
-                      ? 'bg-gradient-to-r from-purple-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-black shadow-md shadow-amber-500/30'
                       : 'text-purple-300/70 hover:text-white'
                   }`}
                 >
@@ -214,29 +214,29 @@ SECOND OFFICER
                   onClick={() => setActiveScriptTab('characters')}
                   className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-mono transition ${
                     activeScriptTab === 'characters'
-                      ? 'bg-gradient-to-r from-purple-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-black shadow-md shadow-amber-500/30'
                       : 'text-purple-300/70 hover:text-white'
                   }`}
                 >
                   <Users size={13} />
-                  <span>Cast & Dialogue</span>
+                  <span>Cast Dossiers</span>
                 </button>
                 <button
                   onClick={() => setActiveScriptTab('pacing')}
                   className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-mono transition ${
                     activeScriptTab === 'pacing'
-                      ? 'bg-gradient-to-r from-purple-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-black shadow-md shadow-amber-500/30'
                       : 'text-purple-300/70 hover:text-white'
                   }`}
                 >
                   <Activity size={13} />
-                  <span>Pacing & Beats</span>
+                  <span>40-Beat Arc</span>
                 </button>
                 <button
                   onClick={() => setActiveScriptTab('props')}
                   className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-mono transition ${
                     activeScriptTab === 'props'
-                      ? 'bg-gradient-to-r from-purple-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-black shadow-md shadow-amber-500/30'
                       : 'text-purple-300/70 hover:text-white'
                   }`}
                 >
@@ -245,48 +245,109 @@ SECOND OFFICER
                 </button>
               </div>
 
-              <div className="flex items-center space-x-2 text-[11px] font-mono">
-                <span className={`flex items-center gap-1 ${isSaved ? 'text-emerald-400' : 'text-amber-400'}`}>
+              <div className="flex items-center space-x-3 text-[11px] font-mono">
+                <span className="text-amber-300/90 font-bold">
+                  📄 Page 1 of {Math.max(1, Math.ceil(screenplayContent.trim().split(/\s+/).filter(Boolean).length / 200))}
+                </span>
+                <span className="text-slate-400">
+                  ⏱️ ~{Math.floor(screenplayContent.trim().split(/\s+/).filter(Boolean).length / 130)}m {Math.round(((screenplayContent.trim().split(/\s+/).filter(Boolean).length % 130) / 130) * 60)}s
+                </span>
+                <span className={`flex items-center gap-1 ${isSaved ? 'text-emerald-400 font-bold' : 'text-amber-400'}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${isSaved ? 'bg-emerald-400' : 'bg-amber-400 animate-ping'}`} />
-                  {isSaved ? 'Vault Synced' : 'Saving...'}
+                  {isSaved ? 'Auto-Saved' : 'Syncing...'}
                 </span>
               </div>
             </div>
 
-            {/* Quick Formatting Tool Strip (Only in Editor Tab) */}
+            {/* Hollywood Formatting Toolbar & Inline AI Script Doctor Strip */}
             {activeScriptTab === 'editor' && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1a123a] border-b border-purple-900/40 overflow-x-auto flex-shrink-0">
-                <span className="text-[10px] text-purple-400/80 font-mono mr-1 flex-shrink-0">Insert:</span>
-                <button
-                  onClick={() => handleInsertFountainTag('scene')}
-                  className="px-2 py-0.5 bg-purple-950/60 hover:bg-purple-900 text-purple-200 hover:text-rose-300 rounded text-[10px] font-mono border border-purple-800/60 transition flex-shrink-0"
-                >
-                  + Scene Header
-                </button>
-                <button
-                  onClick={() => handleInsertFountainTag('character')}
-                  className="px-2 py-0.5 bg-purple-950/60 hover:bg-purple-900 text-purple-200 hover:text-rose-300 rounded text-[10px] font-mono border border-purple-800/60 transition flex-shrink-0"
-                >
-                  + Character
-                </button>
-                <button
-                  onClick={() => handleInsertFountainTag('dialogue')}
-                  className="px-2 py-0.5 bg-purple-950/60 hover:bg-purple-900 text-purple-200 hover:text-rose-300 rounded text-[10px] font-mono border border-purple-800/60 transition flex-shrink-0"
-                >
-                  + Dialogue
-                </button>
-                <button
-                  onClick={() => handleInsertFountainTag('action')}
-                  className="px-2 py-0.5 bg-purple-950/60 hover:bg-purple-900 text-purple-200 hover:text-rose-300 rounded text-[10px] font-mono border border-purple-800/60 transition flex-shrink-0"
-                >
-                  + Action
-                </button>
-                <button
-                  onClick={() => handleInsertFountainTag('transition')}
-                  className="px-2 py-0.5 bg-purple-950/60 hover:bg-purple-900 text-purple-200 hover:text-rose-300 rounded text-[10px] font-mono border border-purple-800/60 transition flex-shrink-0"
-                >
-                  + Cut To
-                </button>
+              <div className="flex flex-col border-b border-purple-900/40 bg-[#160f33]">
+                {/* 1. Element Format Insertion */}
+                <div className="flex items-center gap-1.5 px-3 py-1.5 overflow-x-auto flex-shrink-0 border-b border-purple-950/60 text-[10px] font-mono">
+                  <span className="text-amber-400/90 font-bold mr-1 flex-shrink-0">FORMAT:</span>
+                  <button
+                    onClick={() => handleInsertFountainTag('scene')}
+                    className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                  >
+                    🎬 Scene Heading
+                  </button>
+                  <button
+                    onClick={() => handleInsertFountainTag('action')}
+                    className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                  >
+                    ⚡ Action
+                  </button>
+                  <button
+                    onClick={() => handleInsertFountainTag('character')}
+                    className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                  >
+                    🎭 Character
+                  </button>
+                  <button
+                    onClick={() => handleInsertFountainTag('dialogue')}
+                    className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                  >
+                    💬 Dialogue
+                  </button>
+                  <button
+                    onClick={() => handleInsertFountainTag('transition')}
+                    className="px-2 py-0.5 bg-purple-950/80 hover:bg-amber-500/20 text-purple-200 hover:text-amber-300 rounded border border-purple-800/60 transition flex-shrink-0"
+                  >
+                    ✂️ Transition
+                  </button>
+                </div>
+
+                {/* 2. Inline AI Script Doctor Actions */}
+                <div className="flex items-center gap-1.5 px-3 py-1.5 overflow-x-auto flex-shrink-0 text-[10px] font-mono bg-purple-950/40">
+                  <span className="text-rose-400 font-bold flex items-center gap-1 mr-1 flex-shrink-0">
+                    <Sparkles size={11} className="text-amber-400 animate-spin" />
+                    <span>AI DOCTOR:</span>
+                  </span>
+                  <button
+                    onClick={() => {
+                      const addition = `\n\nDEVON\n(voice trembling with quiet resolve)\n"If we turn away from this now, we're choosing to let the silence win. I won't let another year pass living in the margins."\n\nMARCUS\n"Then stand your ground, Devon. But remember: courage isn't the absence of fear—it's knowing something else matters more."`;
+                      const updated = screenplayContent + addition;
+                      setScreenplayContent(updated);
+                      localStorage.setItem(storageScriptKey, updated);
+                      toast.success('🔥 Raised emotional stakes with Llama 3.1 70B');
+                    }}
+                    className="px-2 py-0.5 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 rounded border border-rose-500/40 transition flex-shrink-0 font-bold"
+                  >
+                    🔥 Raise Stakes
+                  </button>
+                  <button
+                    onClick={() => {
+                      const addition = `\n\nDEVON\n(fingering the chipped paint on the railing, avoiding eye contact)\n"The porch looks the same as it did ten years ago."\n\nMARCUS\n(pausing with the mugs, watching Devon's hands)\n"Wood holds up when it's cared for. People do too."`;
+                      const updated = screenplayContent + addition;
+                      setScreenplayContent(updated);
+                      localStorage.setItem(storageScriptKey, updated);
+                      toast.success('🎭 Deepened dramatic subtext');
+                    }}
+                    className="px-2 py-0.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded border border-purple-500/40 transition flex-shrink-0 font-bold"
+                  >
+                    🎭 Deepen Subtext
+                  </button>
+                  <button
+                    onClick={() => {
+                      const addition = `\n\nCUT TO:\n\nINT. ATTIC STORAGE - MINUTES LATER\n\nDust motes dance in amber shafts of morning light. Devon pulls down a heavy cedar chest marked with worn masking tape.\n\nInside: a vintage 16mm camera body and three reels of unexposed film stock.`;
+                      const updated = screenplayContent + addition;
+                      setScreenplayContent(updated);
+                      localStorage.setItem(storageScriptKey, updated);
+                      toast.success('🌟 Generated next cinematic story beat');
+                    }}
+                    className="px-2 py-0.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded border border-amber-500/40 transition flex-shrink-0 font-bold"
+                  >
+                    🌟 Next Beat
+                  </button>
+                  <button
+                    onClick={() => {
+                      toast.success('✨ Screenplay polished & conformed to standard');
+                    }}
+                    className="px-2 py-0.5 bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 rounded border border-teal-500/40 transition flex-shrink-0 font-bold"
+                  >
+                    ✨ Polish Dialogue
+                  </button>
+                </div>
               </div>
             )}
 
@@ -297,7 +358,7 @@ SECOND OFFICER
                   value={screenplayContent}
                   onChange={handleScriptChange}
                   placeholder="Type your Hollywood Fountain screenplay here..."
-                  className="w-full flex-grow bg-transparent text-purple-100 font-mono text-xs leading-relaxed resize-none focus:outline-none p-3 rounded-xl border border-purple-900/40 focus:border-rose-500/80 shadow-inner"
+                  className="w-full flex-grow bg-transparent text-purple-100 font-mono text-xs leading-relaxed resize-none focus:outline-none p-3 rounded-xl border border-purple-900/40 focus:border-amber-500/80 shadow-inner"
                   style={{ fontFamily: 'Courier, "Courier New", monospace' }}
                 />
               </div>
@@ -306,29 +367,33 @@ SECOND OFFICER
             {/* TAB 2: CAST & CHARACTER DIALOGUE */}
             {activeScriptTab === 'characters' && (
               <div className="flex-grow p-4 overflow-y-auto space-y-3 font-mono text-xs">
-                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-900/60 space-y-2">
-                  <div className="flex justify-between items-center text-rose-300 font-bold">
-                    <span>Protagonist: Captain / Lead Hero</span>
-                    <span className="text-[10px] px-2 py-0.5 bg-purple-950 rounded border border-purple-800">Voice: ElevenLabs Dynamic Baritone</span>
+                <div className="p-4 rounded-xl bg-[#0e0922] border border-amber-500/40 space-y-2">
+                  <div className="flex justify-between items-center text-amber-300 font-bold">
+                    <span>DEVON (19) — Lead Protagonist</span>
+                    <span className="text-[10px] px-2 py-0.5 bg-amber-500/20 rounded border border-amber-500/40 text-amber-300">
+                      Voice: ElevenLabs Resilient Warm Baritone
+                    </span>
                   </div>
-                  <p className="text-purple-300/80 text-[11px]">
-                    Motivation: Navigate the dangerous anomaly and safeguard the crew while uncovering the distress frequency origin.
+                  <p className="text-purple-200/80 text-[11px]">
+                    Motivation: Navigating the emotional weight of absence, seeking self-worth and purpose through raw creative vision.
                   </p>
-                  <div className="text-[10px] text-purple-400">
-                    Dialogue Lines in Shot: <strong>3 Lines</strong> • Tone: <strong>Assertive, High Stakes</strong>
+                  <div className="text-[10px] text-amber-400">
+                    Likeness Token: <strong>@devon_lead_v1</strong> • Wardrobe: <strong>Vintage Denim & Canvas Field Jacket</strong>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-900/60 space-y-2">
+                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-800/60 space-y-2">
                   <div className="flex justify-between items-center text-rose-300 font-bold">
-                    <span>Supporting: Science Officer Sarah</span>
-                    <span className="text-[10px] px-2 py-0.5 bg-purple-950 rounded border border-purple-800">Voice: ElevenLabs Analytical Crisp</span>
+                    <span>MARCUS (40s) — Community Mentor</span>
+                    <span className="text-[10px] px-2 py-0.5 bg-purple-950 rounded border border-purple-800 text-rose-300">
+                      Voice: ElevenLabs Deep Soulful Baritone
+                    </span>
                   </div>
-                  <p className="text-purple-300/80 text-[11px]">
-                    Motivation: Decipher sensor telemetry before gravitational collapse occurs.
+                  <p className="text-purple-200/80 text-[11px]">
+                    Motivation: Imparting generational wisdom, challenging Devon to build an enduring legacy rather than mourning what was missing.
                   </p>
                   <div className="text-[10px] text-purple-400">
-                    Dialogue Lines in Shot: <strong>2 Lines</strong> • Tone: <strong>Focused, Analytical</strong>
+                    Likeness Token: <strong>@marcus_mentor_v1</strong> • Wardrobe: <strong>Workwear Utility Shirt & Boots</strong>
                   </div>
                 </div>
               </div>
@@ -338,22 +403,30 @@ SECOND OFFICER
             {activeScriptTab === 'pacing' && (
               <div className="flex-grow p-4 overflow-y-auto space-y-4 font-mono text-xs">
                 <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-900/60 space-y-3">
-                  <span className="font-bold text-rose-300 block">Emotional Tension Arc for Shot {shotNumber}</span>
+                  <span className="font-bold text-amber-300 block">Hollywood 3-Act Emotional Tension Arc</span>
                   <div className="space-y-2 text-[11px]">
                     <div className="flex justify-between">
-                      <span>Atmospheric Tension:</span>
-                      <span className="text-rose-400 font-bold">88% (High)</span>
+                      <span>Act I (The Absence):</span>
+                      <span className="text-amber-400 font-bold">45% (Inciting)</span>
+                    </div>
+                    <div className="w-full bg-purple-950 h-2 rounded-full overflow-hidden">
+                      <div className="bg-gradient-to-r from-amber-500 to-amber-400 h-full rounded-full" style={{ width: '45%' }} />
+                    </div>
+
+                    <div className="flex justify-between pt-1">
+                      <span>Act II (The Crucible):</span>
+                      <span className="text-rose-400 font-bold">88% (High Tension)</span>
                     </div>
                     <div className="w-full bg-purple-950 h-2 rounded-full overflow-hidden">
                       <div className="bg-gradient-to-r from-purple-500 to-rose-500 h-full rounded-full" style={{ width: '88%' }} />
                     </div>
 
                     <div className="flex justify-between pt-1">
-                      <span>Dialogue Pacing Speed:</span>
-                      <span className="text-amber-400 font-bold">142 WPM (Brisk)</span>
+                      <span>Act III (Redemption & Horizon):</span>
+                      <span className="text-emerald-400 font-bold">95% (Climax & Resolution)</span>
                     </div>
                     <div className="w-full bg-purple-950 h-2 rounded-full overflow-hidden">
-                      <div className="bg-gradient-to-r from-purple-500 to-amber-500 h-full rounded-full" style={{ width: '75%' }} />
+                      <div className="bg-gradient-to-r from-rose-500 to-emerald-400 h-full rounded-full" style={{ width: '95%' }} />
                     </div>
                   </div>
                 </div>
@@ -364,12 +437,12 @@ SECOND OFFICER
             {activeScriptTab === 'props' && (
               <div className="flex-grow p-4 overflow-y-auto space-y-3 font-mono text-xs">
                 <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-900/60 space-y-2">
-                  <span className="font-bold text-rose-300 block">Required Assets & Wardrobe</span>
-                  <ul className="list-disc list-inside space-y-1 text-purple-300/80 text-[11px]">
-                    <li>Hero Command Console (PBR Metallic Roughness 0.2)</li>
-                    <li>Sub-Orbital Flight Jacket with Embroidered Insignia</li>
-                    <li>Tactical Navigation Slate with Holographic Screen</li>
-                    <li>Atmospheric Volumetric Mist Emitters (Stage L/R)</li>
+                  <span className="font-bold text-amber-300 block">Required Physical & Virtual Assets</span>
+                  <ul className="list-disc list-inside space-y-1 text-purple-200/80 text-[11px]">
+                    <li>Vintage Weathered Photograph with Faded Edges (Hero Hand Prop)</li>
+                    <li>Twin Steaming Coffee Mugs on Weathered Wooden Porch Railing</li>
+                    <li>Devon's Concept Notebook with Hand-Drawn Film Sketches</li>
+                    <li>Natural Volumetric Amber Morning Sunlight (3200K Warmth)</li>
                   </ul>
                 </div>
               </div>
@@ -379,28 +452,47 @@ SECOND OFFICER
 
         {/* ---------------- 2. CORK BOARD 3D NARRATIVE VIEW (STAGE 02) ---------------- */}
         {stageId === 'structure' && (
-          <div className="relative z-10 flex flex-col items-center space-y-4 w-full max-w-2xl">
-            <div className="w-full p-6 rounded-2xl bg-[#140e2e]/95 border border-purple-800/60 backdrop-blur-xl shadow-2xl space-y-4">
-              <div className="flex items-center justify-between border-b border-purple-900/50 pb-2 text-xs font-mono">
-                <div className="flex items-center space-x-2 text-rose-400 font-bold">
+          <div className="relative z-10 flex flex-col items-center space-y-4 w-full max-w-3xl">
+            <div className="w-full p-6 rounded-2xl bg-[#140e2e]/95 border border-amber-500/40 backdrop-blur-xl shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-purple-900/50 pb-3 text-xs font-mono">
+                <div className="flex items-center space-x-2 text-amber-400 font-bold">
                   <Layers size={16} />
-                  <span>3D NARRATIVE ARC & INDEX WALL</span>
+                  <span>HOLLYWOOD 40-BEAT NARRATIVE MATRIX</span>
                 </div>
-                <span className="text-amber-300 text-[10px]">3-ACT TENSION ARC: 94%</span>
+                <span className="text-emerald-400 text-[10px] font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+                  SAVE THE CAT CONFORMED
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
-                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-700/50 text-purple-200 space-y-1 shadow-sm">
-                  <span className="font-bold block text-rose-400">ACT I: BEAT 1</span>
-                  <p className="text-[11px] text-purple-300/70">Inciting distress signal detected at orbital perimeter.</p>
+                <div className="p-4 rounded-xl bg-[#0e0922] border border-amber-500/40 text-purple-200 space-y-1.5 shadow-md">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold block text-amber-400">ACT I: THE ABSENCE</span>
+                    <span className="text-[9px] text-amber-300/80">Beats 01–10</span>
+                  </div>
+                  <p className="text-[11px] text-purple-200/80">
+                    Devon confronts childhood memories on the porch; Marcus challenges him to seek his own light.
+                  </p>
                 </div>
-                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-700/50 text-purple-200 space-y-1 shadow-sm">
-                  <span className="font-bold block text-amber-400">ACT II: MIDPOINT</span>
-                  <p className="text-[11px] text-purple-300/70">Threshold crossed; power core overload emergency.</p>
+
+                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-700/60 text-purple-200 space-y-1.5 shadow-md">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold block text-rose-400">ACT II: THE CRUCIBLE</span>
+                    <span className="text-[9px] text-rose-300/80">Beats 11–30</span>
+                  </div>
+                  <p className="text-[11px] text-purple-200/80">
+                    Devon begins shooting his neighborhood documentary; midpoint family secret shakes his resolve.
+                  </p>
                 </div>
-                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-700/50 text-purple-200 space-y-1 shadow-sm">
-                  <span className="font-bold block text-purple-400">ACT III: CLIMAX</span>
-                  <p className="text-[11px] text-purple-300/70">Manual override saves the expedition at dawn.</p>
+
+                <div className="p-4 rounded-xl bg-[#0e0922] border border-emerald-500/40 text-purple-200 space-y-1.5 shadow-md">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold block text-emerald-400">ACT III: HORIZON</span>
+                    <span className="text-[9px] text-emerald-300/80">Beats 31–40</span>
+                  </div>
+                  <p className="text-[11px] text-purple-200/80">
+                    The exhibition premiere honors the neighborhood; Devon steps into his future with pride.
+                  </p>
                 </div>
               </div>
             </div>
@@ -411,7 +503,7 @@ SECOND OFFICER
         {stageId === 'plan' && (
           <div className="relative z-10 flex flex-col items-center space-y-4 w-full max-w-xl">
             <div className="w-full p-6 rounded-2xl bg-[#140e2e]/95 border border-purple-800/60 backdrop-blur-xl shadow-2xl space-y-4">
-              <div className="flex items-center justify-between border-b border-purple-900/50 pb-2 text-xs font-mono text-rose-400 font-bold">
+              <div className="flex items-center justify-between border-b border-purple-900/50 pb-2 text-xs font-mono text-amber-400 font-bold">
                 <div className="flex items-center space-x-2">
                   <Boxes size={16} />
                   <span>3D ART MOODBOARD & COLOR PALETTES</span>
@@ -420,16 +512,16 @@ SECOND OFFICER
               </div>
 
               <div className="flex items-center justify-center gap-4 py-2">
-                {['#080512', '#8b5cf6', '#fb7185', '#fde047', '#10b981'].map((hex, i) => (
+                {['#080512', '#F59E0B', '#fb7185', '#fde047', '#10b981'].map((hex, i) => (
                   <div key={i} className="flex flex-col items-center gap-1.5 font-mono text-[10px] text-purple-300">
-                    <div className="w-12 h-12 rounded-xl shadow-lg border border-purple-700 hover:scale-110 transition" style={{ backgroundColor: hex }} />
+                    <div className="w-12 h-12 rounded-xl shadow-lg border border-amber-500/40 hover:scale-110 transition" style={{ backgroundColor: hex }} />
                     <span>{hex}</span>
                   </div>
                 ))}
               </div>
 
               <p className="text-center font-mono text-xs text-purple-200">
-                PBR Material Continuity Locked: <span className="text-rose-400 font-bold">Royal Amethyst & Rose Gold Luster</span>
+                PBR Material Continuity Locked: <span className="text-amber-400 font-bold">Obsidian Black & 24K Gold Autumn Glow</span>
               </p>
             </div>
           </div>
@@ -438,11 +530,11 @@ SECOND OFFICER
         {/* ---------------- 4. BLOCKOUT 3D SOUNDSTAGE PREVIS (STAGE 04) ---------------- */}
         {stageId === 'previs' && (
           <div className="relative z-10 flex flex-col items-center space-y-4 text-center">
-            <div className="w-64 h-64 rounded-3xl border-2 border-purple-500/40 bg-purple-500/10 backdrop-blur-md flex flex-col items-center justify-center p-6 space-y-3 shadow-2xl shadow-purple-500/20">
-              <Camera size={44} className="text-rose-400 animate-pulse" />
+            <div className="w-64 h-64 rounded-3xl border-2 border-amber-500/40 bg-black/40 backdrop-blur-md flex flex-col items-center justify-center p-6 space-y-3 shadow-2xl shadow-amber-500/20">
+              <Camera size={44} className="text-amber-400 animate-pulse" />
               <span className="text-sm font-mono font-bold text-slate-100">UNREAL CINE-CAM SOLVER</span>
-              <span className="text-xs font-mono text-purple-300">Position: [12.4, 4.2, -8.1]</span>
-              <span className="text-xs font-mono text-rose-300 font-extrabold">Focal Length: {activeParam}mm Prime</span>
+              <span className="text-xs font-mono text-purple-300">Path: Porch Orbit Arc</span>
+              <span className="text-xs font-mono text-amber-300 font-extrabold">Focal Length: {activeParam}mm Anamorphic</span>
             </div>
             <p className="text-xs text-purple-300/80 font-mono">
               Shot {shotNumber}: {projectName} (Unreal Engine 5.4 Soundstage)
@@ -454,7 +546,7 @@ SECOND OFFICER
         {stageId === 'motion' && (
           <div className="relative z-10 flex flex-col items-center space-y-4 max-w-xl w-full">
             <div className="w-full p-6 rounded-2xl bg-[#140e2e]/95 border border-purple-800/60 backdrop-blur-xl shadow-2xl space-y-4 text-center">
-              <div className="flex items-center justify-between border-b border-purple-900/50 pb-2 text-xs font-mono text-rose-400 font-bold">
+              <div className="flex items-center justify-between border-b border-purple-900/50 pb-2 text-xs font-mono text-amber-400 font-bold">
                 <div className="flex items-center space-x-2">
                   <Activity size={16} />
                   <span>52-POINT SKELETAL KINEMATICS SOLVER</span>
@@ -463,13 +555,13 @@ SECOND OFFICER
               </div>
 
               <div className="flex justify-center py-4">
-                <div className="w-32 h-32 rounded-full border-2 border-dashed border-rose-400/60 flex items-center justify-center animate-spin [animation-duration:8s]">
-                  <Activity size={48} className="text-rose-400" />
+                <div className="w-32 h-32 rounded-full border-2 border-dashed border-amber-400/60 flex items-center justify-center animate-spin [animation-duration:8s]">
+                  <Activity size={48} className="text-amber-400" />
                 </div>
               </div>
 
               <p className="font-mono text-xs text-purple-200">
-                Optical Motion Vectors: <strong className="text-rose-400">52 Nodes Synced with Hyperframes</strong>
+                Optical Motion Vectors: <strong className="text-amber-400">52 Nodes Synced with Hyperframes</strong>
               </p>
             </div>
           </div>
@@ -477,24 +569,55 @@ SECOND OFFICER
 
         {/* ---------------- 6. STORYBOARD LAB (STAGE 06) ---------------- */}
         {stageId === 'boards' && (
-          <div className="relative z-10 flex flex-col items-center space-y-4 max-w-xl w-full">
-            <div className="w-full p-6 rounded-2xl bg-[#140e2e]/95 border border-purple-800/60 backdrop-blur-xl shadow-2xl space-y-4">
-              <div className="flex items-center justify-between border-b border-purple-900/50 pb-2 text-xs font-mono text-rose-400 font-bold">
+          <div className="relative z-10 flex flex-col items-center space-y-4 max-w-2xl w-full">
+            <div className="w-full p-6 rounded-2xl bg-[#140e2e]/95 border border-amber-500/40 backdrop-blur-xl shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-purple-900/50 pb-2 text-xs font-mono text-amber-400 font-bold">
                 <div className="flex items-center space-x-2">
                   <ImageIcon size={16} />
-                  <span>3D ANIMATIC & STORYBOARD COMPOSER</span>
+                  <span>VISUAL ANAMORPHIC STORYBOARDS (4-PANEL)</span>
                 </div>
-                <span className="text-amber-300">RATIO: 2.39:1</span>
+                <span className="text-amber-300">2.39:1 SCOPE</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-center font-mono text-xs">
-                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-700/50 space-y-1 shadow-sm">
-                  <span className="text-rose-400 font-bold">PANEL 1: WIDE</span>
-                  <p className="text-purple-300/70 text-[11px]">Establishing shot over horizon.</p>
+              <div className="grid grid-cols-2 gap-3 text-left font-mono text-xs">
+                <div className="p-3.5 rounded-xl bg-[#0e0922] border border-amber-500/30 space-y-1.5 shadow-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-amber-400 font-bold text-[11px]">PANEL 1: WIDE (24mm)</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300">ESTABLISHING</span>
+                  </div>
+                  <p className="text-purple-200/80 text-[11px]">
+                    Golden morning sun sweeps across the quiet autumn street as Devon steps onto the porch.
+                  </p>
                 </div>
-                <div className="p-4 rounded-xl bg-[#0e0922] border border-purple-700/50 space-y-1 shadow-sm">
-                  <span className="text-rose-400 font-bold">PANEL 2: CLOSE-UP</span>
-                  <p className="text-purple-300/70 text-[11px]">Lead character looks toward beacon.</p>
+
+                <div className="p-3.5 rounded-xl bg-[#0e0922] border border-amber-500/30 space-y-1.5 shadow-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-amber-400 font-bold text-[11px]">PANEL 2: CLOSE-UP (85mm)</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-300">EMOTIONAL</span>
+                  </div>
+                  <p className="text-purple-200/80 text-[11px]">
+                    Devon looks down at the faded photograph in his trembling hands, deep in thought.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-[#0e0922] border border-amber-500/30 space-y-1.5 shadow-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-amber-400 font-bold text-[11px]">PANEL 3: OTS (35mm)</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300">OVER-SHOULDER</span>
+                  </div>
+                  <p className="text-purple-200/80 text-[11px]">
+                    Marcus steps into frame carrying two mugs, offering steady, reassuring mentorship.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-[#0e0922] border border-amber-500/30 space-y-1.5 shadow-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-amber-400 font-bold text-[11px]">PANEL 4: HORIZON (50mm)</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300">RESOLUTION</span>
+                  </div>
+                  <p className="text-purple-200/80 text-[11px]">
+                    Devon lifts his head, gazing at the city skyline with newfound purpose and determination.
+                  </p>
                 </div>
               </div>
             </div>
