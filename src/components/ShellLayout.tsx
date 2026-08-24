@@ -10,6 +10,7 @@ import VideoScreeningRoom from './VideoScreeningRoom';
 import DataVaultAndHistory from './DataVaultAndHistory';
 import OriginalSuitesHub from './OriginalSuitesHub';
 import ProductionPitchDeckModal from './ProductionPitchDeckModal';
+import PlotRoom from '../pages/PlotRoom';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
 import {
@@ -24,6 +25,7 @@ import {
   FolderArchive,
   Sliders,
   FileText,
+  BookOpen,
 } from 'lucide-react';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import toast from 'react-hot-toast';
@@ -43,7 +45,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   onStageSelect,
   onChangeProject,
 }) => {
-  const [mainView, setMainView] = useState<'stage' | 'architecture' | 'screening' | 'suites' | 'vault'>('stage');
+  const [mainView, setMainView] = useState<'stage' | 'plot' | 'architecture' | 'screening' | 'suites' | 'vault'>('stage');
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
   const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
   const [apiKeyInput, setApiKeyInput] = useState<string>('');
@@ -165,7 +167,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         {/* Center Mode Switcher & NVIDIA Model Settings */}
         <div className="flex items-center space-x-3">
           <div className="flex bg-[#140e2e] p-1 rounded-xl border border-purple-900/60 text-xs font-mono shadow-inner">
-            {/* 1. Stage Workspace */}
+            {/* 1. 3D Soundstage (Interactive 3D Rooms) */}
             <button
               onClick={() => setMainView('stage')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
@@ -178,7 +180,20 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <span>3D Soundstage</span>
             </button>
 
-            {/* 2. 3D Studio Architecture */}
+            {/* 2. Plot Overview Room (Form-Driven Generative Studio) */}
+            <button
+              onClick={() => setMainView('plot')}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+                mainView === 'plot'
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+              }`}
+            >
+              <BookOpen size={13} />
+              <span>Plot Room</span>
+            </button>
+
+            {/* 3. 3D Campus / Architectural Studio View */}
             <button
               onClick={() => setMainView('architecture')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
@@ -191,7 +206,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <span>3D Campus</span>
             </button>
 
-            {/* 3. 4K Video Screening Room */}
+            {/* 4. 4K Video Screening Room */}
             <button
               onClick={() => setMainView('screening')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
@@ -204,7 +219,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <span>Video Screening</span>
             </button>
 
-            {/* 4. Deep-Dive Department Suites (Original Merged Studio) */}
+            {/* 5. Deep-Dive Department Suites (Original Merged Studio) */}
             <button
               onClick={() => setMainView('suites')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
@@ -217,7 +232,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <span>Studio Suites</span>
             </button>
 
-            {/* 5. Production Data Vault & History Ledger */}
+            {/* 6. Production Data Vault & History Ledger */}
             <button
               onClick={() => setMainView('vault')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
@@ -418,6 +433,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               projectStatus={projectStatus}
               onExecuteStage={(stageId) => sendCommand(`run stage ${stageId}`, stageId)}
             />
+          )}
+
+          {mainView === 'plot' && (
+            <PlotRoom projectName={projectStatus.projectName} />
           )}
 
           {mainView === 'architecture' && (
