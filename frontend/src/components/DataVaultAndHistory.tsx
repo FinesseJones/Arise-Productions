@@ -140,19 +140,27 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
     <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans">
       {/* Vault Header */}
       <div className="p-6 border-b border-slate-800/80 bg-slate-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2">
-            <FolderArchive className="text-amber-400 w-6 h-6" />
-            <h2 className="text-xl font-bold tracking-tight text-slate-100">
-              Studio Data Vault & Production History
-            </h2>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              Live Synchronized
-            </span>
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/20 p-0 flex items-center justify-center">
+            <img
+              src="/arise_productions_logo.jpg"
+              alt="Arise Productions"
+              className="w-full h-full object-cover rounded-xl"
+            />
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Centralized data ledger, asset manifests, camera paths, audio stems, EDL conform files, and AI action logs for <strong className="text-amber-300">{projectStatus.projectName}</strong>.
-          </p>
+          <div>
+            <div className="flex items-center space-x-2">
+              <h2 className="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif">
+                Studio Data Vault & Production History
+              </h2>
+              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
+                Live Synced
+              </span>
+            </div>
+            <p className="text-xs text-[#E2BA86] font-mono mt-0.5">
+              Centralized ledger, camera paths, audio stems, EDL conforms, and AI logs for <strong className="text-amber-300">{projectStatus.projectName}</strong>.
+            </p>
+          </div>
         </div>
 
         {/* Tab switcher */}

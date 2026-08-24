@@ -134,25 +134,25 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
       {/* Top Studio Header & Telemetry Bar */}
       <header className="flex items-center justify-between px-5 py-2.5 bg-[#0e0922]/95 border-b border-purple-900/50 select-none flex-shrink-0 backdrop-blur-md">
         <div className="flex items-center space-x-3.5">
-          {/* Official Arise Productions Logo Badge */}
-          <div className="w-9 h-9 rounded-lg overflow-hidden border border-purple-500/40 bg-black flex-shrink-0 shadow-lg shadow-purple-500/20">
+          {/* Official Arise Productions Logo Badge - Fits Entire Icon */}
+          <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/25 p-0 flex items-center justify-center transition hover:scale-105">
             <img
               src="/arise_productions_logo.jpg"
               alt="Arise Productions"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover rounded-xl"
             />
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-rose-300 to-amber-200 uppercase font-serif">
+              <h1 className="text-sm sm:text-base font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] via-[#F59E0B] to-[#D97706] uppercase font-serif drop-shadow-[0_0_12px_rgba(245,158,11,0.5)]">
                 ARISE PRODUCTION
               </h1>
-              <span className="text-[9px] uppercase px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 font-mono font-bold">
+              <span className="text-[9px] uppercase px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40 font-mono font-bold">
                 STUDIO v1.0
               </span>
             </div>
-            <p className="text-[10px] text-rose-400/90 font-mono tracking-wider uppercase">
+            <p className="text-[10px] text-[#E2BA86] font-mono tracking-wider uppercase font-semibold">
               A PRODUCT OF THE AI CONTENT FOUNDRY, LLC
             </p>
           </div>

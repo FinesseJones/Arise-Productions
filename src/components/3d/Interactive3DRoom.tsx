@@ -174,19 +174,19 @@ SECOND OFFICER
         <div className="absolute w-96 h-96 rounded-full border border-purple-500/20 bg-gradient-to-tr from-purple-600/10 via-pink-600/5 to-rose-500/10 animate-pulse [animation-duration:4s] pointer-events-none" />
 
         {/* Proof-of-Ownership Arise Productions Watermark */}
-        <div className="absolute top-3 right-3 z-20 flex items-center space-x-2 bg-[#140e2e]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-purple-500/40 shadow-xl shadow-purple-900/30">
-          <div className="w-5 h-5 rounded overflow-hidden bg-black border border-purple-500/40 flex-shrink-0">
+        <div className="absolute top-3 right-3 z-20 flex items-center space-x-2.5 bg-black/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/50 shadow-xl shadow-amber-500/15">
+          <div className="w-6 h-6 rounded-lg overflow-hidden bg-black border border-amber-500/60 flex-shrink-0">
             <img
               src="/arise_productions_logo.jpg"
               alt="Arise Productions"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
             />
           </div>
           <div className="flex flex-col text-left leading-tight">
-            <span className="text-[10px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-rose-300 font-serif tracking-wider">
+            <span className="text-[10px] font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] font-serif tracking-wider">
               ARISE PRODUCTIONS
             </span>
-            <span className="text-[8px] text-purple-300/70 font-mono">
+            <span className="text-[8px] text-[#E2BA86] font-mono font-medium">
               © 2026 THE AI CONTENT FOUNDRY, LLC
             </span>
           </div>

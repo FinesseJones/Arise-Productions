@@ -43,21 +43,29 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
 
   return (
     <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans">
-      {/* Top Header */}
-      <div className="p-5 border-b border-slate-800/80 bg-slate-900/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2">
-            <Sliders className="text-amber-400 w-6 h-6" />
-            <h2 className="text-xl font-bold tracking-tight text-slate-100">
-              Department Deep-Dive Suites
-            </h2>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold">
-              Unified 3D Studio Merged
-            </span>
+      {/* Suite Header with Arise Productions Logo */}
+      <div className="p-6 border-b border-purple-900/50 bg-slate-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/20 p-0 flex items-center justify-center">
+            <img
+              src="/arise_productions_logo.jpg"
+              alt="Arise Productions"
+              className="w-full h-full object-cover rounded-xl"
+            />
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Access your complete original department toolsets for <strong className="text-amber-300">{projectStatus.projectName}</strong>.
-          </p>
+          <div>
+            <div className="flex items-center space-x-2">
+              <h2 className="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif">
+                Department Deep-Dive Suites
+              </h2>
+              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40 font-bold">
+                Unified 3D Studio Merged
+              </span>
+            </div>
+            <p className="text-xs text-[#E2BA86] font-mono mt-0.5">
+              Access your complete original department toolsets for <strong className="text-amber-300">{projectStatus.projectName}</strong>.
+            </p>
+          </div>
         </div>
 
         {/* Quick action */}

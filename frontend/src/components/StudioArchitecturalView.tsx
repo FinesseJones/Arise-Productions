@@ -224,25 +224,25 @@ export const StudioArchitecturalView: React.FC<StudioArchitecturalViewProps> = (
   return (
     <div className="flex flex-col h-full bg-slate-950 text-slate-100 overflow-y-auto p-6 space-y-6 select-none font-sans">
       {/* Top Architectural Campus Banner with Arise Productions Branding */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-purple-900/50">
         <div className="flex items-center space-x-4">
-          <div className="w-14 h-14 rounded-xl overflow-hidden border border-amber-500/40 bg-black flex-shrink-0 shadow-lg shadow-amber-500/10">
+          <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-xl shadow-amber-500/25 p-0 flex items-center justify-center">
             <img
               src="/arise_productions_logo.jpg"
               alt="Arise Productions"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover rounded-2xl"
             />
           </div>
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <h2 className="text-xl font-black text-slate-100 tracking-wider uppercase font-serif">
+              <h2 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] via-[#F59E0B] to-[#D97706] tracking-wider uppercase font-serif drop-shadow-[0_0_15px_rgba(245,158,11,0.4)]">
                 ARISE PRODUCTION 3D FACILITY & CAMPUS
               </h2>
-              <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono text-[10px] border border-amber-500/30">
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-mono text-[10px] font-bold border border-amber-500/40">
                 10 DEPARTMENTS
               </span>
             </div>
-            <p className="text-xs text-amber-400/80 font-mono uppercase tracking-wider">
+            <p className="text-xs text-[#E2BA86] font-mono uppercase tracking-wider font-semibold">
               A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026
             </p>
           </div>

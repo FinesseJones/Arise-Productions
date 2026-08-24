@@ -162,6 +162,25 @@ export const VideoScreeningRoom: React.FC<VideoScreeningRoomProps> = ({ projectS
               Pass: <strong className="text-emerald-400">Master Dailies</strong>
             </div>
 
+            {/* Proof-of-Ownership Arise Productions Logo Watermark */}
+            <div className="absolute bottom-4 right-4 z-20 flex items-center space-x-2 bg-black/85 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-amber-500/50 shadow-lg">
+              <div className="w-5 h-5 rounded overflow-hidden bg-black border border-amber-500/60 flex-shrink-0">
+                <img
+                  src="/arise_productions_logo.jpg"
+                  alt="Arise Productions"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col text-left leading-tight">
+                <span className="text-[9px] font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] font-serif tracking-wider">
+                  ARISE PRODUCTIONS
+                </span>
+                <span className="text-[7px] text-[#E2BA86] font-mono">
+                  © 2026 THE AI CONTENT FOUNDRY, LLC
+                </span>
+              </div>
+            </div>
+
             {/* Center Big Play Button */}
             {!isPlaying && (
               <button
