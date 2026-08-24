@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { Sparkles, Info, AlertCircle, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getAPIBaseURL } from '../lib/api';
 
 export type GenerateFieldProps = {
   label: string;
@@ -15,9 +15,6 @@ export type GenerateFieldProps = {
   multiline?: boolean;
   rows?: number;
 };
-
-// Match this to whatever base URL var you already use in .env.development
-const API_BASE = (import.meta as any).env?.VITE_API_BASE ?? 'http://localhost:4000';
 
 export function GenerateField({
   label,
@@ -42,7 +39,8 @@ export function GenerateField({
     setLastGenerated(false);
 
     try {
-      const res = await fetch(`${API_BASE}/api/v1/nvidia/chat`, {
+      const apiBase = getAPIBaseURL();
+      const res = await fetch(`${apiBase}/api/v1/nvidia/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

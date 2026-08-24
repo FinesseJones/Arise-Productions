@@ -28,6 +28,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
+import { getAPIBaseURL } from '../lib/api';
 import toast from 'react-hot-toast';
 
 interface ShellLayoutProps {
@@ -45,6 +46,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   onStageSelect,
   onChangeProject,
 }) => {
+  const apiBase = getAPIBaseURL();
   const [mainView, setMainView] = useState<'stage' | 'plot' | 'architecture' | 'screening' | 'suites' | 'vault'>('stage');
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
   const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
@@ -73,7 +75,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   // Check NVIDIA NIM status from backend
   const fetchNvidiaStatus = async () => {
     try {
-      const res = await fetch('http://localhost:4000/api/v1/nvidia/status').then((r) => r.json()).catch(() => null);
+      const res = await fetch(`${apiBase}/api/v1/nvidia/status`).then((r) => r.json()).catch(() => null);
       if (res && res.success) {
         setHasKey(res.hasKey);
         setMaskedKey(res.maskedKey);
@@ -84,13 +86,13 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
   useEffect(() => {
     fetchNvidiaStatus();
-  }, []);
+  }, [apiBase]);
 
   const handleSaveApiKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!apiKeyInput.trim()) return;
     try {
-      const res = await fetch('http://localhost:4000/api/v1/nvidia/set-key', {
+      const res = await fetch(`${apiBase}/api/v1/nvidia/set-key`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ apiKey: apiKeyInput.trim() }),
@@ -103,19 +105,19 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         setApiKeyInput('');
         setShowNvidiaModal(false);
       } else {
-        toast.error(res.error || 'Failed to save key');
+        toast.error(res.error || 'Failed to save API key');
       }
     } catch (err: any) {
-      toast.error(`Error: ${err.message}`);
+      toast.error('Network error while saving API key');
     }
   };
 
   const handleSwitchModel = async (modelId: string) => {
     try {
-      const res = await fetch('http://localhost:4000/api/v1/nvidia/set-model', {
+      const res = await fetch(`${apiBase}/api/v1/nvidia/set-model`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ modelId }),
+        body: JSON.stringify({ model: modelId }),
       }).then((r) => r.json());
 
       if (res.success) {

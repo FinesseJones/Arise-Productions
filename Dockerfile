@@ -1,31 +1,47 @@
-# Multi-stage Dockerfile for Unified 3D Production Studio (Brand First App)
+# ==============================================================================
+# ARISE PRODUCTION STUDIO - PRODUCTION DOCKERFILE FOR VPS & CLOUD DEPLOYMENT
+# THE AI CONTENT FOUNDRY, LLC • © 2026 • ALL RIGHTS RESERVED
+# ==============================================================================
 
-# 1. Build Stage
+# Stage 1: Build Frontend SPA
 FROM node:20-alpine AS builder
-
 WORKDIR /app
 
-# Copy root and workspace package files
+# Copy root & frontend package files
 COPY package*.json ./
 COPY frontend/package*.json ./frontend/
 
 # Install dependencies
-RUN npm ci || npm install
+RUN npm install --prefix frontend
 
-# Copy source files
-COPY . .
+# Copy frontend source code & build
+COPY frontend ./frontend
+RUN npm run build --prefix frontend
 
-# Build the frontend production bundle
-RUN cd frontend && npm run build
+# Stage 2: Production Runtime
+FROM node:20-alpine AS runner
+WORKDIR /app
 
-# 2. Production Stage (NGINX)
-FROM nginx:alpine
+ENV NODE_ENV=production
+ENV PORT=4000
 
-# Copy built frontend assets to NGINX web root
-COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+# Install production dependencies
+COPY package*.json ./
+RUN npm install --omit=dev
 
-# Expose port 80
-EXPOSE 80
+# Copy backend server and services
+COPY server.js ./
+COPY backend ./backend
 
-# Run NGINX in foreground
-CMD ["nginx", "-g", "daemon off;"]
+# Copy compiled frontend from builder stage
+COPY --from=builder /app/frontend/dist ./frontend/dist
+
+# Expose HTTP & WebSocket port
+EXPOSE 4000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:4000/api/v1/projects || exit 1
+
+# Launch Arise Production Unified Studio Server
+CMD ["node", "server.js"]

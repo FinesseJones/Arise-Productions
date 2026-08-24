@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
+import { getAPIBaseURL } from '../lib/api';
 
 interface DataVaultProps {
   projectStatus: ProjectStatus;
@@ -176,7 +177,8 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
             if (ext === 'fountain' || ext === 'txt') {
               try {
                 localStorage.setItem(`arise_script_${cleanSlug}_shot_1`, text);
-                fetch('http://localhost:4000/api/v1/projects/script', {
+                const apiBase = getAPIBaseURL();
+                fetch(`${apiBase}/api/v1/projects/script`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({

@@ -35,12 +35,14 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
+import { getAPIBaseURL } from '../lib/api';
 
 interface OriginalSuitesHubProps {
   projectStatus: ProjectStatus;
 }
 
 export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectStatus }) => {
+  const apiBase = getAPIBaseURL();
   const [selectedSuite, setSelectedSuite] = useState<string>('writing');
   const [selectedLut, setSelectedLut] = useState<string>('Kodak 2383 Film Print');
   const [importedScript, setImportedScript] = useState<string>('');
@@ -88,19 +90,19 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
 
   // Initial fetch of inventory
   useEffect(() => {
-    fetch('http://localhost:4000/equipment/inventory')
+    fetch(`${apiBase}/equipment/inventory`)
       .then((r) => r.json())
       .then((res) => {
         if (res.success && res.data) setInventory(res.data);
       })
       .catch(() => {});
-  }, []);
+  }, [apiBase]);
 
   // 1. Trigger AI Script Coverage Analysis
   const handleRunScriptAnalysis = async () => {
     setIsAnalyzingScript(true);
     try {
-      const res = await fetch('http://localhost:4000/script/analyze', {
+      const res = await fetch(`${apiBase}/script/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -124,7 +126,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
   const handleRunCastingAnalysis = async () => {
     setIsAnalyzingCasting(true);
     try {
-      const res = await fetch('http://localhost:4000/casting/analyze', {
+      const res = await fetch(`${apiBase}/casting/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -150,7 +152,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
   const handleRunLocationScouting = async () => {
     setIsSearchingLocations(true);
     try {
-      const res = await fetch('http://localhost:4000/locations/search', {
+      const res = await fetch(`${apiBase}/locations/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -174,7 +176,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
   const handleRunStoryboardGeneration = async () => {
     setIsGeneratingStoryboard(true);
     try {
-      const res = await fetch('http://localhost:4000/storyboard/generate', {
+      const res = await fetch(`${apiBase}/storyboard/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -198,7 +200,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
   const handleRunCallSheetGeneration = async () => {
     setIsGeneratingCallSheet(true);
     try {
-      const res = await fetch('http://localhost:4000/callsheet/generate', {
+      const res = await fetch(`${apiBase}/callsheet/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -221,7 +223,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
   // 6. Book Equipment Item
   const handleBookEquipment = async (item: any) => {
     try {
-      const res = await fetch('http://localhost:4000/equipment/book', {
+      const res = await fetch(`${apiBase}/equipment/book`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ item_id: item.id, item_name: item.name }),

@@ -6,8 +6,10 @@ import { Toaster } from 'react-hot-toast';
 import { Plus, Link2, Film, Smartphone, Tv, Sparkles, UploadCloud } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from './constants/branding';
+import { getAPIBaseURL } from './lib/api';
 
 const App: React.FC = () => {
+  const apiBase = getAPIBaseURL();
   const [projectName, setProjectName] = useState<string>(() => {
     return localStorage.getItem('arise_last_project_name') || 'A Fatherless Child';
   });
@@ -35,7 +37,7 @@ const App: React.FC = () => {
 
   // Sync session state & projects from backend on startup
   React.useEffect(() => {
-    fetch('http://localhost:4000/api/v1/projects')
+    fetch(`${apiBase}/api/v1/projects`)
       .then((r) => r.json())
       .then((data) => {
         if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
@@ -44,7 +46,7 @@ const App: React.FC = () => {
       })
       .catch(() => {});
 
-    fetch('http://localhost:4000/api/v1/session/state')
+    fetch(`${apiBase}/api/v1/session/state`)
       .then((r) => r.json())
       .then((data) => {
         if (data && data.sessionState) {
@@ -58,13 +60,13 @@ const App: React.FC = () => {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [apiBase]);
 
   // Save session state whenever user switches projects or stages
   const handleStageSelect = (stageId: string) => {
     setActiveStageId(stageId);
     localStorage.setItem('arise_last_stage_id', stageId);
-    fetch('http://localhost:4000/api/v1/session/state', {
+    fetch(`${apiBase}/api/v1/session/state`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lastActiveProjectId: projectId, lastActiveStageId: stageId }),
@@ -80,7 +82,7 @@ const App: React.FC = () => {
     localStorage.setItem('arise_last_project_id', finalId);
     localStorage.setItem('arise_last_project_name', finalName);
     localStorage.setItem('arise_session_active', 'true');
-    fetch('http://localhost:4000/api/v1/session/state', {
+    fetch(`${apiBase}/api/v1/session/state`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lastActiveProjectId: finalId, lastActiveStageId: activeStageId }),
@@ -109,7 +111,7 @@ const App: React.FC = () => {
       };
 
       // Call local backend endpoint or fallback gracefully
-      const res = await fetch('http://localhost:4000/api/v1/projects/create', {
+      const res = await fetch(`${apiBase}/api/v1/projects/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

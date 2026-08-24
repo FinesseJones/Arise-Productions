@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ProjectStatus, getMockProjectState } from '../types/types';
+import { getAPIBaseURL, getWSBaseURL } from '../lib/api';
 
 interface UseStudioSocketOptions {
   projectId?: string;
@@ -20,8 +21,13 @@ export interface WorkerTelemetry {
 }
 
 export function useStudioSocket(options: UseStudioSocketOptions = {}) {
-  const { projectId = 'proj-custom', projectName = 'Arise Production', serverUrl = 'ws://localhost:4000/ws' } = options;
+  const {
+    projectId = 'proj-custom',
+    projectName = 'Arise Production',
+    serverUrl = getWSBaseURL(),
+  } = options;
 
+  const apiBase = getAPIBaseURL();
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(getMockProjectState(projectName));
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [telemetry, setTelemetry] = useState<WorkerTelemetry | null>(null);
@@ -33,7 +39,7 @@ export function useStudioSocket(options: UseStudioSocketOptions = {}) {
   // Fetch REST manifest sync on project change
   useEffect(() => {
     setProjectStatus(getMockProjectState(projectName));
-    fetch(`http://localhost:4000/api/v1/manifest?projectId=${encodeURIComponent(projectId)}`)
+    fetch(`${apiBase}/api/v1/manifest?projectId=${encodeURIComponent(projectId)}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.success && data.manifest) {
@@ -41,7 +47,7 @@ export function useStudioSocket(options: UseStudioSocketOptions = {}) {
         }
       })
       .catch(() => {});
-  }, [projectId, projectName]);
+  }, [projectId, projectName, apiBase]);
 
   // Connect to WebSocket Server
   const connect = useCallback(() => {
@@ -161,7 +167,7 @@ export function useStudioSocket(options: UseStudioSocketOptions = {}) {
       } else {
         // 2. HTTP Fallback Dispatch
         try {
-          const res = await fetch('http://localhost:4000/api/v1/dispatch', {
+          const res = await fetch(`${apiBase}/api/v1/dispatch`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ projectId, command: trimmed, activeStage, shotNumber }),

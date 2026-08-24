@@ -40,6 +40,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../../constants/branding';
+import { getAPIBaseURL } from '../../lib/api';
 
 interface Interactive3DRoomProps {
   stageId: StageKey;
@@ -280,7 +281,8 @@ Devon opens a notebook filled with hand-drawn plans and film concepts.`;
     toast.loading(`🤖 Generating ${item.title} via Llama 3.1 70B...`, { id: `gen-${item.id}` });
 
     try {
-      const res = await fetch('http://localhost:4000/api/v1/nvidia/chat', {
+      const apiBase = getAPIBaseURL();
+      const res = await fetch(`${apiBase}/api/v1/nvidia/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
