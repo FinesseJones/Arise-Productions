@@ -146,12 +146,75 @@ app.get('/api/v1/projects/chat', (req, res) => {
   res.json({ success: true, messages });
 });
 
-// POST /api/v1/projects/chat - Save chat history for project & stage
-app.post('/api/v1/projects/chat', (req, res) => {
-  const { projectId, stageId, messages } = req.body;
-  if (!projectId || !stageId) return res.status(400).json({ success: false, error: 'Missing projectId or stageId' });
-  const result = db.saveChatHistory(projectId, stageId, messages);
-  res.json({ success: true, ...result });
+// POST /api/v1/projects/chat - Live AI Co-Pilot Generation & Message Persistence
+app.post('/api/v1/projects/chat', async (req, res) => {
+  const {
+    projectId = 'proj-titanic',
+    stageId = 'script',
+    projectName = 'Arise Production',
+    shotNumber = 1,
+    departmentRole = 'AI Production Specialist',
+    model = nvidia.defaultModel,
+    messages = [],
+  } = req.body;
+
+  try {
+    const lastUserMessage = messages[messages.length - 1];
+    const userPrompt = lastUserMessage?.content || lastUserMessage?.text || 'Proceed with department workflow.';
+
+    // Construct specialized departmental system prompt
+    const departmentSystemPrompts = {
+      script: `You are the Lead Hollywood Screenwriter & Narrative Architect AI for Arise Production. Format output in professional Hollywood Fountain screenplay syntax with uppercase SLUGLINES (e.g. EXT. LOCATION - TIME), character names, dialogue, parentheticals, and action description. Keep tone cinematic and high stakes. Current Project: "${projectName}", Shot ${shotNumber}.`,
+      structure: `You are the Showrunner & 3-Act Structure Supervisor AI for Arise Production. Analyze 3-act narrative tension, beat sheets, midpoint reversals, and climax pacing for "${projectName}", Shot ${shotNumber}.`,
+      plan: `You are the Production Designer & 3D Art Director AI for Arise Production. Specialize in ACEScg color palettes, PBR material roughness (0.2-0.8), architectural spatial aesthetics, and volumetric lighting for "${projectName}", Shot ${shotNumber}.`,
+      previs: `You are the Virtual Cinematographer & DP AI for Arise Production. Solve Unreal Engine 5.4 CineCamera parameters (e.g., 24mm/35mm/50mm primes, aperture f-stops, sensor 36x24mm, orbit dolly tracks, and 3-point key/fill/rim lighting) for "${projectName}", Shot ${shotNumber}.`,
+      motion: `You are the Mocap Specialist & Kinematics AI for Arise Production. Solve 52-point skeletal tracking, optical motion vectors, 60 FPS keyframe curves, secondary cloth/hair physics, and camera dolly sync for "${projectName}", Shot ${shotNumber}.`,
+      boards: `You are the Lead Storyboard Artist & Animatic Director AI for Arise Production. Compose 2.39:1 anamorphic storyboard panels, wide establishing shots, tight close-up angles, and visual story beats for "${projectName}", Shot ${shotNumber}.`,
+      prompt: `You are the Lead Prompt Engineer & Diffusion Model Tuner AI for Arise Production. Compile photorealistic FLUX.1 Dev and SDXL prompt matrices with positive prompts, negative embeddings, ControlNet Depth weights (0.85), and IP-Adapter character likeness tokens (@lead_hero_v1) for "${projectName}", Shot ${shotNumber}.`,
+      dailies: `You are the Dailies Supervisor & Quality Assurance QC AI for Arise Production. Score render takes (0.0 - 10.0), evaluate spatial continuity, framing balance, and flag automated reshoot parameters for "${projectName}", Shot ${shotNumber}.`,
+      sound: `You are the Sound Supervisor & Orchestral Composer AI for Arise Production. Mix 4-track audio stems (Dialogue, Spatial Foley, Orchestral Score, SFX) at -24 LKFS broadcast loudness and configure ElevenLabs voice profiles for "${projectName}", Shot ${shotNumber}.`,
+      edit: `You are the Master Colorist & Finishing Editor AI for Arise Production. Assemble DaVinci Resolve EDL conform timelines at 24.000 FPS, ACEScc CDL color grading, and ProRes 4444 XQ master export matrices for "${projectName}", Shot ${shotNumber}.`,
+    };
+
+    const systemPrompt = departmentSystemPrompts[stageId] ||
+      `You are the ${departmentRole} in Arise Production (A product of THE AI CONTENT FOUNDRY, LLC). Provide top-tier cinematic production direction for "${projectName}", Shot ${shotNumber}.`;
+
+    // Invoke NVIDIA NIM Client (or internal expert neural engine fallback)
+    const result = await nvidia.generateCompletion({
+      prompt: userPrompt,
+      systemPrompt,
+      messages,
+      model,
+      temperature: 0.7,
+      maxTokens: 1500,
+    });
+
+    const reply = result.text;
+
+    // Persist conversation to database
+    const finalMessages = [
+      ...messages,
+      {
+        role: 'assistant',
+        content: reply,
+        model: result.model || model,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+    ];
+    db.saveChatHistory(projectId, stageId, finalMessages);
+
+    res.json({
+      success: true,
+      reply,
+      text: reply,
+      model: result.model || model,
+      ai_powered: result.ai_powered ?? true,
+      usage: result.usage,
+    });
+  } catch (err) {
+    console.error('[ServerChat] Chat generation error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // POST /api/v1/dispatch - Execute Director Agent Command

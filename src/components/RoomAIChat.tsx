@@ -277,7 +277,7 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
       let replyText = '';
       if (response.ok) {
         const data = await response.json();
-        replyText = data.reply || data.response || 'Telemetry confirmed. Department calibrated.';
+        replyText = data.reply || data.text || data.response || 'Telemetry confirmed. Department calibrated.';
       } else {
         replyText = `Understood. I have ingested "${attachedFile ? attachedFile.name : 'your directive'}" and updated the ${roomName} parameters for ${projectName}.`;
       }
