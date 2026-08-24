@@ -235,3 +235,5 @@ export class NvidiaNIMClient {
 
 // Export singleton instance
 export const nvidiaNIM = new NvidiaNIMClient();
+export const nvidia = nvidiaNIM;
+export default nvidiaNIM;

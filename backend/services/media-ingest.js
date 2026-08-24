@@ -4,7 +4,7 @@
 // ==============================================================================
 
 import { db } from '../db/client.js';
-import { nvidia } from '../ai/nvidia-client.js';
+import { nvidiaNIM } from '../ai/nvidia-client.js';
 
 export class MediaIngestionEngine {
   /**
@@ -32,7 +32,7 @@ export class MediaIngestionEngine {
     let logline = '';
 
     if (sourceType === 'youtube_link' || sourceType === 'social_link') {
-      const parsedData = await this.parseExternalMediaLink(sourceUrl, format);
+      const parsedData = await this.parseExternalMediaLink(sourceUrl, format, title);
       ingestedBeats = parsedData.beats;
       characterBible = parsedData.characters;
       logline = parsedData.logline;
@@ -42,7 +42,22 @@ export class MediaIngestionEngine {
       characterBible = parsedData.characters;
       logline = parsedData.logline;
     } else {
-      // Default structure based on format
+      // Use NVIDIA NIM AI to generate dynamic story beats based on project title
+      if (nvidiaNIM.hasApiKey()) {
+        try {
+          const aiData = await this.generateAIStoryForTitle(title, format, seasonNumber, episodeNumber);
+          ingestedBeats = aiData.beats;
+          characterBible = aiData.characters;
+          logline = aiData.logline;
+        } catch (e) {
+          ingestedBeats = this.getDefaultBeatsForFormat(format, title);
+        }
+      } else {
+        ingestedBeats = this.getDefaultBeatsForFormat(format, title);
+      }
+    }
+
+    if (!ingestedBeats || ingestedBeats.length === 0) {
       ingestedBeats = this.getDefaultBeatsForFormat(format, title);
     }
 
@@ -67,10 +82,11 @@ export class MediaIngestionEngine {
       },
     }));
 
-    // Register into Database
+    // Register into Database Map
     const newProjectRecord = {
       id: projectId,
       name: title,
+      slug: projectId,
       format,
       seasonNumber: format === 'episodic_tv' ? seasonNumber : undefined,
       episodeNumber: format === 'episodic_tv' ? episodeNumber : undefined,
@@ -78,28 +94,108 @@ export class MediaIngestionEngine {
       targetPlatform,
       sourceType,
       sourceUrl,
-      logline,
-      characterBible,
+      logline: logline || `An original ${format} production titled "${title}".`,
+      characterBible: characterBible.length > 0 ? characterBible : ['Lead Hero', 'Allied Companion', 'Central Antagonist'],
       shots,
       createdAt: new Date().toISOString(),
     };
 
-    db.projects[projectId] = newProjectRecord;
-    return newProjectRecord;
+    const manifest = db.registerProject(newProjectRecord);
+    return { ...newProjectRecord, manifest };
+  }
+
+  /**
+   * Generate bespoke AI story beats for a brand new production title using NVIDIA NIM
+   */
+  static async generateAIStoryForTitle(title, format, seasonNumber, episodeNumber) {
+    console.log(`[MediaIngest] Calling NVIDIA NIM Llama 3.1 70B to generate bespoke story for: "${title}"...`);
+    const prompt = `You are the Hollywood AI Showrunner for Arise Production.
+Create a rich, bespoke 10-department production plan for a brand new project:
+Title: "${title}"
+Format: ${format} ${format === 'episodic_tv' ? `(Season ${seasonNumber}, Episode ${episodeNumber})` : ''}
+
+Generate a valid JSON object strictly matching this schema:
+{
+  "logline": "1-2 sentence dramatic and compelling cinematic premise for this exact title",
+  "characters": ["3-4 specific character names with brief 1-line descriptions matching this world"],
+  "beats": [
+    {
+      "title": "Scene 1: Specific Beat Title",
+      "description": "2-sentence cinematic visual description of this shot",
+      "act": 1,
+      "cameraPreset": "e.g. 35mm Low-Angle Tracking Shot",
+      "scriptSnippet": "SLUGLINE - DAY/NIGHT. Dialogue or action line."
+    },
+    {
+      "title": "Scene 2: Specific Beat Title",
+      "description": "2-sentence cinematic visual description of this shot",
+      "act": 2,
+      "cameraPreset": "e.g. 50mm Anamorphic Two-Shot",
+      "scriptSnippet": "SLUGLINE - DAY/NIGHT. Dialogue or action line."
+    },
+    {
+      "title": "Scene 3: Specific Beat Title",
+      "description": "2-sentence cinematic visual description of this shot",
+      "act": 2,
+      "cameraPreset": "e.g. Drone Fly-Through / Steadicam",
+      "scriptSnippet": "SLUGLINE - DAY/NIGHT. Dialogue or action line."
+    },
+    {
+      "title": "Scene 4: Specific Beat Title",
+      "description": "2-sentence cinematic visual description of this shot",
+      "act": 3,
+      "cameraPreset": "e.g. 85mm Portrait Close-Up / Climax",
+      "scriptSnippet": "SLUGLINE - DAY/NIGHT. Dialogue or action line."
+    }
+  ]
+}`;
+
+    const aiRes = await nvidiaNIM.generateCompletion({
+      prompt,
+      systemPrompt: 'You are an award-winning Hollywood writer and virtual production supervisor. Output only valid JSON without markdown fences.',
+      temperature: 0.7,
+      maxTokens: 1500,
+    });
+
+    if (aiRes.success && aiRes.text) {
+      try {
+        const jsonMatch = aiRes.text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          if (parsed.beats && Array.isArray(parsed.beats) && parsed.beats.length > 0) {
+            console.log(`[MediaIngest] ✨ Generated ${parsed.beats.length} bespoke AI beats for "${title}"!`);
+            return {
+              beats: parsed.beats,
+              logline: parsed.logline || `Production plan for ${title}`,
+              characters: parsed.characters || [],
+            };
+          }
+        }
+      } catch (e) {
+        console.warn('[MediaIngest] AI JSON parse error:', e.message);
+      }
+    }
+
+    return {
+      beats: this.getDefaultBeatsForFormat(format, title),
+      logline: `Production for "${title}"`,
+      characters: ['Protagonist', 'Antagonist'],
+    };
   }
 
   /**
    * Parse YouTube / TikTok / Social media links into narrative structure & 3D shots
    */
-  static async parseExternalMediaLink(url, format) {
+  static async parseExternalMediaLink(url, format, title) {
     console.log(`[MediaIngest] Ingesting media from URL: ${url} (Format: ${format})`);
 
     let beats = [];
     let logline = `Media adaptation of ingested source: ${url}`;
     let characters = ['Protagonist', 'Antagonist', 'Supporting'];
 
-    if (nvidia.hasApiKey()) {
+    if (nvidiaNIM.hasApiKey()) {
       const prompt = `We are converting this external media video/link into a professional production pipeline:
+Title: "${title}"
 URL/Context: "${url}"
 Target Format: ${format}
 
@@ -108,7 +204,7 @@ Generate a JSON object with:
 2. "characters": list of 3-5 character names and roles
 3. "beats": array of 4-6 scene beats, each with: "title", "description", "act", "cameraPreset", "scriptSnippet"`;
 
-      const aiResponse = await nvidia.generateCompletion({ prompt });
+      const aiResponse = await nvidiaNIM.generateCompletion({ prompt });
       if (aiResponse.success && aiResponse.text) {
         try {
           const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
@@ -125,7 +221,7 @@ Generate a JSON object with:
     }
 
     if (beats.length === 0) {
-      beats = this.getDefaultBeatsForFormat(format, 'Adapted Production');
+      beats = this.getDefaultBeatsForFormat(format, title || 'Adapted Production');
     }
 
     return { beats, logline, characters };
@@ -139,9 +235,9 @@ Generate a JSON object with:
     let logline = 'Original screenplay adaptation';
     let characters = ['Lead', 'Companion'];
 
-    if (nvidia.hasApiKey()) {
+    if (nvidiaNIM.hasApiKey()) {
       const prompt = `Analyze this screenplay content for a ${format} production:\n\n${text.slice(0, 2000)}\n\nExtract 4-6 shot beats (title, description, cameraPreset, scriptSnippet), logline, and character list. Format as JSON.`;
-      const aiResponse = await nvidia.generateCompletion({ prompt });
+      const aiResponse = await nvidiaNIM.generateCompletion({ prompt });
       if (aiResponse.success) {
         try {
           const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
@@ -167,99 +263,96 @@ Generate a JSON object with:
    */
   static getDefaultBeatsForFormat(format, title) {
     if (format === 'short_form') {
-      // 9:16 Vertical Short-Form (TikTok / Reel / YouTube Short)
       return [
         {
-          title: '0-3s: High-Energy Hook',
+          title: `0-3s: ${title} Opening Hook`,
           description: 'Instant visual shock, rapid camera push-in, punchy voiceover hook.',
           act: 1,
           cameraPreset: '9:16 Vertical Fast Dolly Zoom',
-          scriptSnippet: 'NARRATOR: "You have 3 seconds to look at this..."',
+          scriptSnippet: `NARRATOR: "You won't believe what happened in ${title}..."`,
         },
         {
-          title: '3-15s: Core Escalation & Demonstration',
+          title: '3-15s: Core Escalation & Action',
           description: 'Fast-paced rhythmic cuts showcasing the central conflict or premise.',
           act: 2,
           cameraPreset: '9:16 Orbit Tracking Shot',
-          scriptSnippet: 'Quick montage with kinetic visual effects.',
+          scriptSnippet: 'Dynamic motion sequence with kinetic visual effects.',
         },
         {
-          title: '15-45s: Climax & Punchline',
-          description: 'Dramatic revelation or unexpected comedic twist with sound riser.',
+          title: '15-45s: Dramatic Twist',
+          description: 'High-stakes revelation with sound riser and macro focus pull.',
           act: 2,
           cameraPreset: '9:16 Extreme Close-Up',
           scriptSnippet: 'Protagonist turns to camera with final realization.',
         },
         {
-          title: '45-60s: Call to Action Loop',
+          title: '45-60s: Climax & Loop',
           description: 'Seamless loop transition back to opening hook.',
           act: 3,
           cameraPreset: '9:16 Seamless Match Cut',
-          scriptSnippet: 'NARRATOR: "And that is why..."',
+          scriptSnippet: 'NARRATOR: "And that changes everything."',
         },
       ];
     } else if (format === 'episodic_tv') {
-      // Episodic TV Series Episode
       return [
         {
-          title: 'Cold Open: Inciting Mystery',
-          description: 'High-stakes opening sequence establishing the episode dilemma before title cards.',
+          title: `Cold Open: ${title} Inciting Incident`,
+          description: 'High-stakes opening sequence establishing the dilemma before title cards.',
           act: 1,
           cameraPreset: '2.39:1 Wide Anamorphic Crane Down',
-          scriptSnippet: 'EXT. CITY SKYLINE - NIGHT. An unexpected alarm echoes across the district.',
+          scriptSnippet: `EXT. ${title.toUpperCase()} LOCATION - NIGHT. An unexpected alarm echoes.`,
         },
         {
-          title: 'Act I: Main Plot & B-Story Intersection',
+          title: 'Act I: Main Plot & Character Convening',
           description: 'Ensemble characters convene; interpersonal stakes introduced.',
           act: 1,
           cameraPreset: '35mm Two-Shot Medium',
-          scriptSnippet: 'INT. COMMAND CENTER - DAY. Sarah and Marcus review incoming telemetry.',
+          scriptSnippet: 'INT. HEADQUARTERS - DAY. The team reviews incoming telemetry.',
         },
         {
           title: 'Act II: Midpoint Reversal',
           description: 'A critical discovery changes the objective of the mission.',
           act: 2,
           cameraPreset: 'Steadicam Follow Shot',
-          scriptSnippet: 'Marcus realizes the signal was sent from inside their own facility.',
+          scriptSnippet: 'A secret is uncovered that alters the entire plan.',
         },
         {
-          title: 'Act III: Climax & Cliffhanger',
+          title: 'Act III: Episode Climax & Cliffhanger',
           description: 'Episode climax resolved with an overarching season arc cliffhanger.',
           act: 3,
           cameraPreset: 'Dramatic Dutch Angle Push-In',
-          scriptSnippet: 'The final screen flashes red. CUT TO BLACK.',
+          scriptSnippet: 'The final warning beacon flashes. CUT TO BLACK.',
         },
       ];
     } else {
-      // Default: Long-Form Feature Film
       return [
         {
-          title: 'Act I: Establishing World & Status Quo',
-          description: 'Cinematic world-building, hero introduction, and catalyst event.',
+          title: `Act I: ${title} - World Establishment`,
+          description: `Cinematic world-building and introduction to the world of "${title}".`,
           act: 1,
           cameraPreset: 'Wide Horizon Crane Shot',
-          scriptSnippet: 'EXT. EXPEDITION VESSEL - DAWN. The ship cuts through icy fog.',
+          scriptSnippet: `EXT. ${title.toUpperCase()} WORLD - DAWN. The horizon opens up.`,
         },
         {
-          title: 'Act II-A: Entering Special World',
-          description: 'Rising stakes, trials, new allies, and threshold crossing.',
+          title: 'Act II-A: Rising Stakes & Threshold Crossing',
+          description: 'Rising stakes, trials, new allies, and entering the danger zone.',
           act: 2,
           cameraPreset: 'Dynamic Drone Fly-Through',
-          scriptSnippet: 'The submarine dives past the continental shelf into uncharted depths.',
+          scriptSnippet: 'The team crosses the perimeter into uncharted territory.',
         },
         {
-          title: 'Act II-B: All Hope Lost / Dark Night of the Soul',
-          description: 'Major crisis, personal sacrifice, and dramatic epiphany.',
+          title: 'Act II-B: Crisis & The Dark Night',
+          description: 'Major obstacle, personal sacrifice, and dramatic turning point.',
           act: 2,
           cameraPreset: 'Low-Key Noir Macro Lens',
-          scriptSnippet: 'Power cuts out. Emergency amber beacons pulse in the dark.',
+          scriptSnippet: 'Emergency power fails. Tension reaches a boiling point.',
         },
         {
           title: 'Act III: Final Climax & Resolution',
-          description: 'Hero masterstroke, emotional resolution, and triumphant finish.',
+          description: 'Epic confrontation, emotional resolution, and triumphant finish.',
           act: 3,
           cameraPreset: 'Golden Hour Sweeping Orbit',
-          scriptSnippet: 'The artifact surfaces into the morning sun.',
+          scriptSnippet: 'The final objective is secured as the new dawn breaks.',
         },
       ];
     }

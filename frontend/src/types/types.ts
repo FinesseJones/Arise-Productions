@@ -49,21 +49,21 @@ export interface ProjectStatus {
   shots: ShotEntry[];
 }
 
-export function getMockProjectState(): ProjectStatus {
+export function createFreshProjectState(title = 'Arise Production', format = 'long_form'): ProjectStatus {
   return {
-    projectId: 'proj-titanic',
-    projectName: 'Titanic - Found Footage',
-    slug: 'titanic-found-footage',
+    projectId: `proj-${title.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+    projectName: title,
+    slug: title.toLowerCase().replace(/[^a-z0-9]/g, '-'),
     version: 1,
     shots: [
       {
         shotNumber: 1,
-        title: 'Opening Monologue - Dawn',
+        title: `${title} - Scene 1: Inciting Sequence`,
         status: {
           script: { statusChar: '🟢', state: 'COMPLETE' },
           structure: { statusChar: '🟢', state: 'COMPLETE' },
           plan: { statusChar: '🟡', state: 'IN_PROGRESS' },
-          previs: { statusChar: '?', state: 'UNSTARTED' },
+          previs: { statusChar: '🟡', state: 'IN_PROGRESS' },
           motion: { statusChar: '?', state: 'UNSTARTED' },
           boards: { statusChar: '?', state: 'UNSTARTED' },
           prompt: { statusChar: '?', state: 'UNSTARTED' },
@@ -74,23 +74,23 @@ export function getMockProjectState(): ProjectStatus {
       },
       {
         shotNumber: 2,
-        title: 'Corridor Chase & Encounter',
+        title: `${title} - Scene 2: Core Narrative Tension`,
         status: {
           script: { statusChar: '🟢', state: 'COMPLETE' },
-          structure: { statusChar: '?', state: 'UNSTARTED' },
+          structure: { statusChar: '🟡', state: 'IN_PROGRESS' },
           plan: { statusChar: '?', state: 'UNSTARTED' },
           previs: { statusChar: '?', state: 'UNSTARTED' },
           motion: { statusChar: '?', state: 'UNSTARTED' },
           boards: { statusChar: '?', state: 'UNSTARTED' },
           prompt: { statusChar: '?', state: 'UNSTARTED' },
           dailies: { statusChar: '?', state: 'UNSTARTED' },
-          sound: { statusChar: '🟡', state: 'IN_PROGRESS' },
+          sound: { statusChar: '?', state: 'UNSTARTED' },
           edit: { statusChar: '?', state: 'UNSTARTED' },
         },
       },
       {
         shotNumber: 3,
-        title: 'Final Resolution - Sunset',
+        title: `${title} - Scene 3: Climax & Resolution`,
         status: {
           script: { statusChar: '?', state: 'UNSTARTED' },
           structure: { statusChar: '?', state: 'UNSTARTED' },
@@ -106,4 +106,8 @@ export function getMockProjectState(): ProjectStatus {
       },
     ],
   };
+}
+
+export function getMockProjectState(title = 'Arise Production'): ProjectStatus {
+  return createFreshProjectState(title);
 }

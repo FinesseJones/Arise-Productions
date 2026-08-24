@@ -7,6 +7,7 @@ import { ProjectStatus, getMockProjectState } from '../types/types';
 
 interface UseStudioSocketOptions {
   projectId?: string;
+  projectName?: string;
   serverUrl?: string;
 }
 
@@ -19,15 +20,28 @@ export interface WorkerTelemetry {
 }
 
 export function useStudioSocket(options: UseStudioSocketOptions = {}) {
-  const { projectId = 'proj-titanic', serverUrl = 'ws://localhost:4000/ws' } = options;
+  const { projectId = 'proj-custom', projectName = 'Arise Production', serverUrl = 'ws://localhost:4000/ws' } = options;
 
-  const [projectStatus, setProjectStatus] = useState<ProjectStatus>(getMockProjectState());
+  const [projectStatus, setProjectStatus] = useState<ProjectStatus>(getMockProjectState(projectName));
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [telemetry, setTelemetry] = useState<WorkerTelemetry | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
 
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<any>(null);
+
+  // Fetch REST manifest sync on project change
+  useEffect(() => {
+    setProjectStatus(getMockProjectState(projectName));
+    fetch(`http://localhost:4000/api/v1/manifest?projectId=${encodeURIComponent(projectId)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.manifest) {
+          setProjectStatus(data.manifest);
+        }
+      })
+      .catch(() => {});
+  }, [projectId, projectName]);
 
   // Connect to WebSocket Server
   const connect = useCallback(() => {

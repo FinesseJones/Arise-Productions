@@ -108,14 +108,20 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                   <PenTool className="text-amber-400" size={18} />
                   <span>Screenwriting & Narrative Room</span>
                 </h3>
-                <span className="text-xs font-mono text-slate-400">Act I • Scene 1 of 8</span>
+                <span className="text-xs font-mono text-slate-400">Act I • {projectStatus.shots?.length || 3} Shots Scripted</span>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 font-mono text-xs text-slate-300">
-                <p className="text-amber-400 font-bold">EXT. NORTH ATLANTIC - NIGHT</p>
-                <p>The vast black ocean stretches to the freezing horizon. Below, the iron mammoth surges forward.</p>
-                <p className="text-center font-bold text-amber-300">CAPTAIN SMITH</p>
-                <p className="text-center italic text-slate-400">(peering into the fog)</p>
-                <p className="max-w-md mx-auto text-center">Full steam ahead. Keep a sharp lookout on the starboard bow.</p>
+                <p className="text-amber-400 font-bold">
+                  {projectStatus.shots?.[0]?.status?.script?.outputSummary || `EXT. ${projectStatus.projectName.toUpperCase()} - SCENE 1 - DAY`}
+                </p>
+                <p>
+                  {projectStatus.shots?.[0]?.description || `The opening sequence of "${projectStatus.projectName}" establishes the cinematic universe, spatial geography, and principal characters.`}
+                </p>
+                <p className="text-center font-bold text-amber-300">PROTAGONIST</p>
+                <p className="text-center italic text-slate-400">(focusing on the horizon)</p>
+                <p className="max-w-md mx-auto text-center">
+                  "{projectStatus.shots?.[0]?.title ? `Ready for ${projectStatus.shots[0].title}. Initiating virtual production.` : 'All production units in position. Action.'}"
+                </p>
               </div>
             </div>
           )}
@@ -131,23 +137,30 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
               </div>
               <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
                 <div className="h-24 bg-slate-950 rounded-xl border border-slate-800 p-2 flex items-center gap-2 overflow-x-auto">
-                  <div className="h-full w-48 bg-amber-500/20 border border-amber-500 rounded-lg p-2 text-[10px] font-mono flex flex-col justify-between">
-                    <span className="font-bold text-amber-300">V1: Shot_01_Wide</span>
-                    <span className="text-slate-400">00:00:00 - 00:00:08</span>
-                  </div>
-                  <div className="h-full w-56 bg-indigo-500/20 border border-indigo-500 rounded-lg p-2 text-[10px] font-mono flex flex-col justify-between">
-                    <span className="font-bold text-indigo-300">V1: Shot_02_CloseUp</span>
-                    <span className="text-slate-400">00:00:08 - 00:00:18</span>
-                  </div>
-                  <div className="h-full w-40 bg-emerald-500/20 border border-emerald-500 rounded-lg p-2 text-[10px] font-mono flex flex-col justify-between">
-                    <span className="font-bold text-emerald-300">V1: Shot_03_CameraRoll</span>
-                    <span className="text-slate-400">00:00:18 - 00:00:26</span>
-                  </div>
+                  {(projectStatus.shots && projectStatus.shots.length > 0 ? projectStatus.shots : [
+                    { shotNumber: 1, title: 'Opening Sequence' },
+                    { shotNumber: 2, title: 'Core Encounter' },
+                    { shotNumber: 3, title: 'Climax' },
+                  ]).map((s, idx) => (
+                    <div
+                      key={s.shotNumber}
+                      className={`h-full flex-shrink-0 w-52 rounded-lg p-2 text-[10px] font-mono flex flex-col justify-between border ${
+                        idx % 3 === 0
+                          ? 'bg-amber-500/20 border-amber-500 text-amber-300'
+                          : idx % 3 === 1
+                          ? 'bg-indigo-500/20 border-indigo-500 text-indigo-300'
+                          : 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
+                      }`}
+                    >
+                      <span className="font-bold truncate">V1: Shot_{s.shotNumber}_{s.title.slice(0, 18)}</span>
+                      <span className="text-slate-400">00:00:{idx * 8 < 10 ? '0' + idx * 8 : idx * 8} - 00:00:{(idx + 1) * 8}</span>
+                    </div>
+                  ))}
                 </div>
                 <div className="h-12 bg-slate-950 rounded-xl border border-slate-800 p-2 flex items-center gap-2">
                   <div className="h-full w-full bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 flex items-center justify-between text-[11px] font-mono text-emerald-400">
-                    <span>A1: Dialogue Master Stem (Smith / Lookout)</span>
-                    <span>48 kHz / 24-bit</span>
+                    <span>A1: Dialogue Master Stem ({projectStatus.projectName})</span>
+                    <span>48 kHz / 24-bit 5.1 Mix</span>
                   </div>
                 </div>
               </div>
@@ -187,16 +200,21 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                   <Users className="text-amber-400" size={18} />
                   <span>Casting & Talent Hub</span>
                 </h3>
-                <span className="text-xs font-mono text-slate-400">3 Characters Cast</span>
+                <span className="text-xs font-mono text-slate-400">3 Principal Roles Cast</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {['Captain Edward Smith', 'First Officer Murdoch', 'Lookout Fleet'].map((c, i) => (
+                {[
+                  { role: 'Lead Protagonist', voice: 'ElevenLabs Dynamic Heroic' },
+                  { role: 'Allied Companion', voice: 'ElevenLabs Nuanced Naturalist' },
+                  { role: 'Central Antagonist / Force', voice: 'ElevenLabs Deep Cinematic' },
+                ].map((c, i) => (
                   <div key={i} className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
                     <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center font-bold text-amber-400">
-                      {c.charAt(0)}
+                      {c.role.charAt(0)}
                     </div>
-                    <h4 className="text-xs font-bold text-slate-200">{c}</h4>
-                    <p className="text-[10px] text-slate-500 font-mono">Status: Voice Matched • 3D Mesh Bound</p>
+                    <h4 className="text-xs font-bold text-slate-200">{c.role}</h4>
+                    <p className="text-[10px] text-slate-400 font-mono">{c.voice}</p>
+                    <p className="text-[10px] text-emerald-400/80 font-mono">● Attached to {projectStatus.projectName}</p>
                   </div>
                 ))}
               </div>
@@ -213,17 +231,17 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                 <span className="text-xs font-mono text-slate-400">Surround Master</span>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 font-mono text-xs">
-                <div className="flex justify-between py-2 border-b border-slate-800">
-                  <span className="text-slate-400">Track 1: Ocean Gale & Wind Bed</span>
-                  <span className="text-emerald-400">-12 dB (Surround L/R)</span>
+                <div className="flex justify-between text-slate-300">
+                  <span>Master Bed:</span>
+                  <span className="text-amber-400">{projectStatus.projectName} Atmos Submix (48kHz/24-bit)</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-slate-800">
-                  <span className="text-slate-400">Track 2: Hull Vibration Foley</span>
-                  <span className="text-emerald-400">-18 dB (LFE Sub)</span>
+                <div className="flex justify-between text-slate-300">
+                  <span>Dialogue Track:</span>
+                  <span className="text-emerald-400">Center Channel Isolator (0.0 dB)</span>
                 </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-slate-400">Track 3: Dialogue Center Channel</span>
-                  <span className="text-emerald-400">-6 dB (Center Prime)</span>
+                <div className="flex justify-between text-slate-300">
+                  <span>Foley Stems:</span>
+                  <span className="text-indigo-400">Spatial Acoustic Reverb (LFE -6.0 dB)</span>
                 </div>
               </div>
             </div>

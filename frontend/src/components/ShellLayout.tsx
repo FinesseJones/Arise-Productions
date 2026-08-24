@@ -26,6 +26,7 @@ import {
 import toast from 'react-hot-toast';
 
 interface ShellLayoutProps {
+  projectId?: string;
   projectName: string;
   activeStage: string | null;
   onStageSelect: (stageId: string) => void;
@@ -33,6 +34,7 @@ interface ShellLayoutProps {
 }
 
 const ShellLayout: React.FC<ShellLayoutProps> = ({
+  projectId,
   projectName,
   activeStage,
   onStageSelect,
@@ -45,16 +47,21 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   const [hasKey, setHasKey] = useState<boolean>(false);
   const [maskedKey, setMaskedKey] = useState<string>('None');
 
-  // Map project slug
-  const projectSlug = projectName.toLowerCase().includes('alien')
-    ? 'proj-alien'
-    : projectName.toLowerCase().includes('space')
-    ? 'proj-space'
-    : 'proj-titanic';
+  // Dynamic project ID computation
+  const effectiveProjectId = projectId || (
+    projectName.toLowerCase().includes('alien')
+      ? 'proj-alien'
+      : projectName.toLowerCase().includes('space')
+      ? 'proj-space'
+      : projectName.toLowerCase().includes('titanic')
+      ? 'proj-titanic'
+      : `proj-${projectName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`
+  );
 
   // Live WebSocket Connection to Central API Bridge
   const { projectStatus, isConnected, telemetry, sendCommand } = useStudioSocket({
-    projectId: projectSlug,
+    projectId: effectiveProjectId,
+    projectName,
   });
 
   // Check NVIDIA NIM status from backend

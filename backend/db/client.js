@@ -89,6 +89,56 @@ class StudioDatabase extends EventEmitter {
     }
   }
 
+  // Register newly created project dynamically
+  registerProject(projectRecord) {
+    const { id, name, slug = id, format = 'long_form', shots = [], logline = '', characterBible = [] } = projectRecord;
+    this.projects.set(id, {
+      id,
+      name,
+      slug,
+      format,
+      logline,
+      characterBible,
+      version: 1,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+
+    const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
+
+    shots.forEach((s) => {
+      const shotId = `${id}-shot-${s.shotNumber}`;
+      this.shots.set(shotId, {
+        id: shotId,
+        projectId: id,
+        shotNumber: s.shotNumber,
+        title: s.title,
+        description: s.description,
+        durationFrames: 120,
+        created_at: new Date().toISOString(),
+      });
+
+      stages.forEach((stageId) => {
+        const key = `${shotId}:${stageId}`;
+        const stageStatus = s.status?.[stageId] || {};
+        this.statuses.set(key, {
+          id: key,
+          shotId,
+          stageId,
+          statusChar: stageStatus.statusChar || '?',
+          state: stageStatus.statusChar === '🟢' ? 'COMPLETE' : stageStatus.statusChar === '🟡' ? 'IN_PROGRESS' : 'UNSTARTED',
+          progress: stageStatus.statusChar === '🟢' ? 100 : stageStatus.statusChar === '🟡' ? 50 : 0,
+          metadata: { outputSummary: stageStatus.outputSummary || '' },
+          updated_at: new Date().toISOString(),
+          version: 1,
+        });
+      });
+    });
+
+    console.log(`[Database] Registered dynamic project "${name}" (${id}) with ${shots.length} shots.`);
+    return this.getProjectManifest(id);
+  }
+
   // Get list of all projects
   async listProjects() {
     return Array.from(this.projects.values());

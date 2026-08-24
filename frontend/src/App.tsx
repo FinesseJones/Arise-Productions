@@ -8,13 +8,14 @@ import toast from 'react-hot-toast';
 
 const App: React.FC = () => {
   const [projectName, setProjectName] = useState<string>('Titanic - Found Footage');
-  const [isProjectSelected, setIsProjectSelected] = useState<boolean>(true);
-  const [activeStageId, setActiveStageId] = useState<string | null>('previs');
-
-  // New Project Creation & Ingestion State
+  const [projectId, setProjectId] = useState<string>('proj-titanic');
+  const [activeStageId, setActiveStageId] = useState<string | null>('script');
+  const [isProjectSelected, setIsProjectSelected] = useState<boolean>(false);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
-  const [format, setFormat] = useState<'long_form' | 'short_form' | 'episodic_tv'>('long_form');
+
+  // New Project Form State
   const [newTitle, setNewTitle] = useState<string>('');
+  const [format, setFormat] = useState<'long_form' | 'short_form' | 'episodic_tv'>('long_form');
   const [mediaUrl, setMediaUrl] = useState<string>('');
   const [season, setSeason] = useState<number>(1);
   const [episode, setEpisode] = useState<number>(1);
@@ -32,7 +33,7 @@ const App: React.FC = () => {
     }
 
     setIsCreating(true);
-    const toastId = toast.loading('🎬 Arise Ingest Engine: Analyzing structure & building production manifest...');
+    const toastId = toast.loading('🎬 Arise Ingest Engine: Generating bespoke screenplay & 10-stage manifest...');
 
     try {
       const payload = {
@@ -53,10 +54,12 @@ const App: React.FC = () => {
       }).then((r) => r.json()).catch(() => null);
 
       const titleCreated = res?.project?.name || payload.title;
+      const idCreated = res?.project?.id || res?.project?.slug || `proj-${titleCreated.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
       setProjectName(titleCreated);
+      setProjectId(idCreated);
       setIsProjectSelected(true);
       setShowCreateModal(false);
-      toast.success(`✨ SUCCESS: Project "${titleCreated}" created across all 10 stages!`, { id: toastId });
+      toast.success(`✨ SUCCESS: Project "${titleCreated}" created with AI screenplay & shots!`, { id: toastId });
     } catch (err: any) {
       toast.error(`Ingestion error: ${err.message}`, { id: toastId });
     } finally {
@@ -286,6 +289,7 @@ const App: React.FC = () => {
         </div>
       ) : (
         <ShellLayout
+          projectId={projectId}
           projectName={projectName}
           activeStage={activeStageId}
           onStageSelect={handleStageSelect}
