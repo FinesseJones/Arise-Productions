@@ -9,10 +9,12 @@ set -e
 
 MSG="${1:-Update Arise Production Studio across GitHub, Desktop and VPS}"
 VPS_HOST="root@2.25.113.26"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "🎬 ======================================================================"
 echo "🎬 ARISE PRODUCTION STUDIO: 3-WAY SYNCHRONIZATION & DEPLOYMENT"
 echo "🎬 Commit Message: $MSG"
+echo "🎬 Working Directory: $DIR"
 echo "🎬 ======================================================================"
 
 # ------------------------------------------------------------------------------
@@ -20,6 +22,7 @@ echo "🎬 =====================================================================
 # ------------------------------------------------------------------------------
 echo ""
 echo "📦 [1/3] SYNCING GITHUB REPOSITORY (https://github.com/FinesseJones/Arise-Productions)..."
+cd "$DIR"
 git add -A
 if git diff --cached --quiet; then
     echo "ℹ️ No uncommitted changes. Pushing current state..."
@@ -35,32 +38,48 @@ echo "✅ [1/3] GitHub Repository up-to-date!"
 # ------------------------------------------------------------------------------
 echo ""
 echo "🖥️ [2/3] COMPILING & DEPLOYING LOCAL DESKTOP APP..."
-cd frontend && node ../node_modules/vite/bin/vite.js build
-cp -R dist ../desktop/ui
-cd ../desktop
-npm run prebuild
+cd "$DIR/frontend"
+node ../node_modules/vite/bin/vite.js build
+
+cd "$DIR/desktop"
+rm -rf ui backend server.js
+cp -R ../frontend/dist ./ui
+cp -R ../backend ./backend
+cp ../server.js ./server.js
+
 npx electron-builder --mac dmg --arm64
+
+# Terminate existing running instance if open so memory cache clears
+killall "Arise Production" 2>/dev/null || true
+pkill -f "Arise Production.app" 2>/dev/null || true
 
 rm -rf "/Applications/Arise Production.app"
 cp -R "dist/mac-arm64/Arise Production.app" /Applications/
 cp "dist/Arise Production-1.0.0-arm64.dmg" "/Users/finessejones1/Desktop/Arise Production Installer.dmg"
-cd ..
 echo "✅ [2/3] Desktop App refreshed at /Applications/ and DMG updated on Desktop!"
 
 # ------------------------------------------------------------------------------
 # TARGET 3: REMOTE VPS (root@2.25.113.26)
 # ------------------------------------------------------------------------------
 echo ""
-echo "🌐 [3/3] DEPLOYING TO VPS ($VPS_HOST)..."
+echo "🌐 [3/3] MIRRORING & DEPLOYING TO VPS ($VPS_HOST)..."
+cd "$DIR"
 if ssh -o BatchMode=yes -o ConnectTimeout=5 "$VPS_HOST" "echo 1" &>/dev/null; then
+    echo "📤 Syncing exact workspace files to $VPS_HOST:/root/Arise-Productions..."
+    rsync -avz --delete \
+      --exclude='node_modules' \
+      --exclude='frontend/node_modules' \
+      --exclude='desktop/dist' \
+      --exclude='desktop/ui' \
+      --exclude='.git' \
+      "$DIR/" "$VPS_HOST:/root/Arise-Productions/"
+
+    echo "🐳 Rebuilding Docker container on VPS..."
     ssh "$VPS_HOST" "
-        if [ ! -d 'Arise-Productions' ]; then
-            git clone https://github.com/FinesseJones/Arise-Productions.git
-        fi
-        cd Arise-Productions
-        git pull origin main
-        chmod +x deploy.sh
-        ./deploy.sh
+        cd /root/Arise-Productions
+        docker compose down || true
+        docker compose build --no-cache
+        docker compose up -d
     "
     echo "✅ [3/3] VPS updated and live at http://2.25.113.26:4000!"
 else
