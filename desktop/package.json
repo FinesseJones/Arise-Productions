@@ -15,26 +15,26 @@
     "build:linux": "npm run prebuild && electron-builder --linux"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "ws": "^8.18.0",
-    "dotenv": "^16.4.7",
+    "chokidar": "^4.0.3",
     "cors": "^2.8.5",
-    "chokidar": "^4.0.3"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
-    "electron": "^34.0.0",
-    "electron-builder": "^25.1.8"
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "llc.aicontentfoundry.ariseproduction",
     "productName": "Arise Production",
     "files": [
-      "**/*",
-      "ui/**/*",
-      "backend/**/*",
-      "server.js",
       "main.js",
-      "preload.cjs"
+      "preload.cjs",
+      "server.js",
+      "backend/**/*",
+      "ui/**/*",
+      "build/**/*"
     ],
     "directories": {
       "buildResources": "build",
@@ -51,7 +51,10 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["arm64", "x64"]
+          "arch": [
+            "arm64",
+            "x64"
+          ]
         }
       ]
     },
@@ -73,19 +76,16 @@
     },
     "win": {
       "icon": "build/icon.png",
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "linux": {
       "icon": "build/icon.png",
-      "target": ["AppImage", "deb"]
-    },
-    "files": [
-      "main.js",
-      "preload.cjs",
-      "server.js",
-      "backend/**/*",
-      "ui/**/*",
-      "build/**/*"
-    ]
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    }
   }
 }

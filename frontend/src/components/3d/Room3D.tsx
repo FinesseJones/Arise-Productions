@@ -84,7 +84,7 @@ const CineCameraController: React.FC<{
   ) : null;
 };
 
-// Soundstage Architectural Floor Grid with Ambient Glow
+// 4K Soundstage Architectural Floor Grid with Ambient Glow
 const SoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
   const gridColor = useMemo(() => {
     switch (stageId) {
@@ -105,28 +105,32 @@ const SoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
     <group position={[0, -2.2, 0]}>
       {/* Reflective Dark Stage Floor Plane */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[60, 60]} />
+        <planeGeometry args={[80, 80]} />
         <meshStandardMaterial
-          color="#04020a"
-          roughness={0.4}
-          metalness={0.8}
+          color="#030108"
+          roughness={0.25}
+          metalness={0.85}
         />
       </mesh>
 
       {/* Cyber Grid Lines */}
       <gridHelper
-        args={[50, 50, gridColor, '#1f1342']}
+        args={[60, 60, gridColor, '#180d38']}
         position={[0, 0.01, 0]}
       />
 
-      {/* Center Soundstage Ring */}
+      {/* Center Soundstage Multi-Rings */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
         <ringGeometry args={[3.8, 3.9, 64]} />
-        <meshBasicMaterial color={gridColor} transparent opacity={0.4} />
+        <meshBasicMaterial color={gridColor} transparent opacity={0.5} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
         <ringGeometry args={[7.8, 7.9, 64]} />
-        <meshBasicMaterial color="#a855f7" transparent opacity={0.2} />
+        <meshBasicMaterial color="#a855f7" transparent opacity={0.3} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[11.8, 11.9, 64]} />
+        <meshBasicMaterial color="#ec4899" transparent opacity={0.2} />
       </mesh>
     </group>
   );
@@ -135,14 +139,14 @@ const SoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
 // Atmospheric Volumetric Dust & Floating Studio Nodes
 const StudioAtmosphere: React.FC = () => {
   const particlesRef = useRef<THREE.Points>(null);
-  const particleCount = 120;
+  const particleCount = 180;
 
   const [positions] = useState(() => {
     const pos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 22;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 12;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 22;
+      pos[i * 3] = (Math.random() - 0.5) * 26;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 14;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 26;
     }
     return pos;
   });
@@ -166,26 +170,26 @@ const StudioAtmosphere: React.FC = () => {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.03}
+        size={0.035}
         color="#fbbf24"
         transparent
-        opacity={0.5}
+        opacity={0.6}
         blending={THREE.AdditiveBlending}
       />
     </points>
   );
 };
 
-// 3D Spatial Soundstage Markers & Trussing
+// 3D Spatial Soundstage Markers & Overhead Trussing
 const SoundstageTrussing: React.FC<{ stageId: string; roomName: string }> = ({
   stageId,
   roomName,
 }) => {
   return (
-    <group position={[0, 4.2, -4]}>
+    <group position={[0, 4.4, -4]}>
       {/* Overhead Lighting Truss Beam */}
       <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[16, 0.25, 0.25]} />
+        <boxGeometry args={[18, 0.25, 0.25]} />
         <meshStandardMaterial color="#1a1433" metalness={0.9} roughness={0.2} />
       </mesh>
 
@@ -202,12 +206,12 @@ const SoundstageTrussing: React.FC<{ stageId: string; roomName: string }> = ({
         </Text>
         <Text
           position={[0, -1.0, 0]}
-          fontSize={0.2}
+          fontSize={0.18}
           color="#c084fc"
           anchorX="center"
           anchorY="middle"
         >
-          ARISE 3D SOUNDSTAGE • 60 FPS SPATIAL ENVIRONMENT
+          ARISE 4K 3D SOUNDSTAGE • 60 FPS PBR SPATIAL SUITE
         </Text>
       </Float>
     </group>
@@ -223,41 +227,53 @@ export const Room3D: React.FC<Room3DProps> = ({
   allowOrbit = false,
 }) => {
   return (
-    <div className="relative w-full h-full min-h-[380px] bg-[#05030a] overflow-hidden select-none rounded-2xl">
+    <div className="relative w-full h-full min-h-[380px] bg-[#04020a] overflow-hidden select-none rounded-2xl">
       <Canvas
         shadows
         dpr={[1, 2]}
-        gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+        gl={{
+          antialias: true,
+          alpha: false,
+          powerPreference: 'high-performance',
+        }}
+        onCreated={({ gl }) => {
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.15;
+          gl.shadowMap.enabled = true;
+          gl.shadowMap.type = THREE.PCFSoftShadowMap;
+        }}
         camera={{ position: [0, 1.2, 5.8], fov: 50 }}
         className="w-full h-full"
       >
         {/* Background Depth Fog */}
-        <color attach="background" args={['#060410']} />
-        <fog attach="fog" args={['#060410', 8, 26]} />
+        <color attach="background" args={['#05030e']} />
+        <fog attach="fog" args={['#05030e', 7, 28]} />
 
-        {/* 3-Point Hollywood Studio Lighting */}
+        {/* 3-Point Hollywood 4K Studio Lighting */}
         <ambientLight intensity={0.45} color="#e9d5ff" />
         
         {/* Key Light (3200K Golden Amber) */}
         <directionalLight
-          position={[6, 8, 6]}
-          intensity={1.6}
+          position={[7, 9, 7]}
+          intensity={1.8}
           color="#fef08a"
           castShadow
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          shadow-bias={-0.0001}
         />
 
         {/* Fill Light (Deep Purple Soft Fill) */}
-        <pointLight position={[-6, 4, 4]} intensity={1.2} color="#a855f7" />
+        <pointLight position={[-7, 5, 5]} intensity={1.3} color="#a855f7" />
 
         {/* Rim / Back Light (Electric Rose / Cyan Edge) */}
         <spotLight
-          position={[0, 7, -6]}
-          intensity={2.2}
+          position={[0, 8, -7]}
+          intensity={2.4}
           color="#ec4899"
-          angle={0.6}
+          angle={0.65}
           penumbra={0.8}
+          castShadow
         />
 
         {/* Camera Fly-to Navigation Controller */}
@@ -275,6 +291,12 @@ export const Room3D: React.FC<Room3DProps> = ({
         {/* Bespoke 3D Stage Elements or Children */}
         {children}
       </Canvas>
+
+      {/* 4K 60FPS Spatial Soundstage Watermark */}
+      <div className="absolute bottom-3 left-3 z-10 pointer-events-none flex items-center space-x-2 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-purple-900/50 text-[9px] font-mono text-purple-300">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+        <span>4K UHD • 60 FPS PBR SPATIAL SOUNDSTAGE</span>
+      </div>
     </div>
   );
 };

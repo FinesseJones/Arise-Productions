@@ -17,6 +17,7 @@ import { CICDQualityGate } from './backend/services/cicd-gate.js';
 import { mcpWorkers } from './backend/workers/mcp-workers.js';
 import { MediaIngestionEngine } from './backend/services/media-ingest.js';
 import { nvidia } from './backend/ai/nvidia-client.js';
+import { agentMemory } from './backend/db/agent-memory.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -117,6 +118,127 @@ app.post('/api/v1/nvidia/chat', async (req, res) => {
       maxTokens: 1200,
     });
     res.json({ success: true, text: result.text, model: result.model });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==============================================================================
+// 1B. PERSISTENT MULTI-AGENT BOARDROOM & STUDIO MEMORY ENDPOINTS
+// ==============================================================================
+
+// GET /api/v1/agents/history/:agentId - Get persistent chat history for an agent
+app.get('/api/v1/agents/history/:agentId', async (req, res) => {
+  try {
+    const { agentId } = req.params;
+    const projectId = await resolveProjectId(req.query.projectId);
+    const history = agentMemory.getHistory(agentId, projectId);
+    res.json({ success: true, history });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/agents/chat - Talk to a specialized Department Agent with persistent memory
+app.post('/api/v1/agents/chat', async (req, res) => {
+  try {
+    const { agentId, agentName, role, message, systemPrompt, model } = req.body;
+    const projectId = await resolveProjectId(req.body.projectId);
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({ success: false, error: 'Message is required' });
+    }
+
+    // 1. Record User Message
+    const userMsg = agentMemory.addMessage(agentId, {
+      role: 'user',
+      content: message.trim(),
+      agentName: 'Producer (User)'
+    }, projectId);
+
+    // 2. Fetch Relevant Memories & Recent Chat History
+    const history = agentMemory.getHistory(agentId, projectId);
+    const relevantMemories = agentMemory.searchRelevantMemories(message);
+    const memoriesContext = relevantMemories.length > 0
+      ? `\n\nPERMANENT STUDIO MEMORY & CONTEXT:\n${relevantMemories.map(m => `- [${m.category}] ${m.title}: ${m.content}`).join('\n')}`
+      : '';
+
+    // Format recent chat turns into conversation context
+    const recentTurns = history.slice(-8).map(h => `${h.role === 'user' ? 'User' : (h.agentName || 'Agent')}: ${h.content}`).join('\n\n');
+
+    const fullSystemPrompt = `${systemPrompt || `You are the ${role || 'Department Lead'} of Arise Production Studio.`}\n\nSTUDIO ARCHITECTURE & ROLES:\nArise Production Studio is a unified 4K 3D Virtual Production suite by THE AI CONTENT FOUNDRY, LLC. It features a 4K 3D Lit Soundstage, Writing Rooms (Plot, Acts, Beats, Characters), and 10 Production Stages (Script, Structure, Plan, Previs with UE5, Motion Kinematics, Storyboards, Neural Prompt Slate, Dailies Screening, 5.1 Sound Stem Studio, and DaVinci MCP Color Grading). You are an expert assistant directly collaborating with the creator.${memoriesContext}`;
+
+    const promptWithHistory = `CONVERSATION HISTORY:\n${recentTurns}\n\nPlease respond directly to the user's latest message with high-caliber technical, creative, and production precision as the ${role || 'Department Lead'}.`;
+
+    // 3. Call NVIDIA NIM
+    const result = await nvidia.generateCompletion({
+      prompt: promptWithHistory,
+      systemPrompt: fullSystemPrompt,
+      model: model || nvidia.defaultModel,
+      temperature: 0.7,
+      maxTokens: 1500,
+    });
+
+    // 4. Record Assistant Response in Persistent Memory
+    const assistantMsg = agentMemory.addMessage(agentId, {
+      role: 'assistant',
+      content: result.text,
+      agentName: agentName || role || agentId,
+      metadata: { model: result.model }
+    }, projectId);
+
+    res.json({
+      success: true,
+      userMessage: userMsg,
+      assistantMessage: assistantMsg,
+      model: result.model
+    });
+  } catch (err) {
+    console.error('Agent chat error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/v1/agents/history/:agentId - Clear history for an agent
+app.delete('/api/v1/agents/history/:agentId', async (req, res) => {
+  try {
+    const { agentId } = req.params;
+    const projectId = await resolveProjectId(req.query.projectId);
+    agentMemory.clearHistory(agentId, projectId);
+    res.json({ success: true, message: `Chat history cleared for agent ${agentId}` });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/studio/memory - Get all studio memories
+app.get('/api/v1/studio/memory', (req, res) => {
+  try {
+    const memories = agentMemory.getStudioMemories();
+    res.json({ success: true, memories });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/studio/memory - Add a new studio memory
+app.post('/api/v1/studio/memory', (req, res) => {
+  try {
+    const { category, title, content } = req.body;
+    if (!content) return res.status(400).json({ success: false, error: 'Content is required' });
+    const memory = agentMemory.addStudioMemory({ category, title, content });
+    res.json({ success: true, memory });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/v1/studio/memory/:id - Delete a studio memory
+app.delete('/api/v1/studio/memory/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    agentMemory.deleteStudioMemory(id);
+    res.json({ success: true, message: 'Memory deleted' });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

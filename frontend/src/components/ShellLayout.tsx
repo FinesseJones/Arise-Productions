@@ -15,6 +15,7 @@ import PlotRoom from '../pages/PlotRoom';
 import ActsRoom from '../pages/ActsRoom';
 import BeatsRoom from '../pages/BeatsRoom';
 import CharactersRoom from '../pages/CharactersRoom';
+import DepartmentAgentsHub from './agents/DepartmentAgentsHub';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
 import {
@@ -56,8 +57,8 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 }) => {
   const apiBase = getAPIBaseURL();
   const [mainView, setMainView] = useState<
-    'stage' | 'plot' | 'acts' | 'beats' | 'characters' | 'architecture' | 'screening' | 'suites' | 'vault'
-  >('stage');
+    'agents' | 'stage' | 'plot' | 'acts' | 'beats' | 'characters' | 'architecture' | 'screening' | 'suites' | 'vault'
+  >('agents');
   const [activeShotNumber, setActiveShotNumber] = useState<number>(1);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
@@ -187,6 +188,20 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         {/* Center Mode Switcher & NVIDIA Model Settings */}
         <div className="flex items-center space-x-3">
           <div className="flex bg-[#140e2e] p-1 rounded-xl border border-purple-900/60 text-xs font-mono shadow-inner">
+            {/* 0. Studio Executive Boardroom & Agents Hub */}
+            <button
+              onClick={() => setMainView('agents')}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+                mainView === 'agents'
+                  ? 'bg-gradient-to-r from-amber-500 via-purple-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
+                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+              }`}
+            >
+              <span>🏛️</span>
+              <span>Agents Hub</span>
+              <span className="text-[8px] bg-amber-400 text-black px-1 rounded font-bold">10 LEADS</span>
+            </button>
+
             {/* 1. 3D Soundstage (Interactive 3D Rooms) */}
             <button
               onClick={() => setMainView('stage')}
@@ -498,6 +513,17 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
         {/* Center Workspace: Dynamic based on MainView */}
         <main className="flex-grow p-0 overflow-y-auto bg-slate-950 flex flex-col">
+          {mainView === 'agents' && (
+            <DepartmentAgentsHub
+              projectName={projectStatus.projectName}
+              projectId={effectiveProjectId}
+              onNavigateToRoom={(roomKey) => {
+                setMainView('stage');
+                onStageSelect(roomKey);
+              }}
+            />
+          )}
+
           {mainView === 'stage' && (
             <StageWorkspace
               stage={currentStageObj}
