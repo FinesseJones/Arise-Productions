@@ -252,12 +252,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           </div>
         </div>
 
-        {/* Center Mode Switcher & Navigation with Left/Right Scroll Arrows */}
-        <div className="flex items-center space-x-1 flex-1 min-w-0 max-w-4xl px-1">
+        {/* Center Mode Switcher & Navigation with Left/Right Scroll Arrows & Luxury Scrollbar */}
+        <div className="flex items-center space-x-1.5 flex-1 min-w-0 px-1.5">
           <button
             type="button"
             onClick={() => scrollNav('left')}
-            className="p-1 rounded-lg bg-[#140e2e] hover:bg-[#201548] text-amber-400 border border-amber-500/30 flex-shrink-0 transition cursor-pointer"
+            className="p-1.5 rounded-xl bg-[#140e2e] hover:bg-[#201548] text-amber-400 border border-amber-500/30 flex-shrink-0 transition shadow-sm hover:border-amber-400 cursor-pointer active:scale-95"
             title="Scroll Navigation Left"
           >
             <ChevronLeft size={14} />
@@ -265,9 +265,9 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
           <div
             ref={navScrollRef}
-            className="flex items-center space-x-1 overflow-x-auto no-scrollbar scroll-smooth flex-1 py-0.5"
+            className="flex items-center space-x-1 enterprise-nav-scrollbar scroll-smooth flex-1 pb-1 pt-0.5"
           >
-            <div className="flex bg-[#140e2e] p-0.5 rounded-xl border border-amber-500/30 text-[11px] font-mono shadow-inner space-x-0.5 flex-shrink-0">
+            <div className="flex bg-[#140e2e] p-1 rounded-xl border border-amber-500/30 text-[11px] font-mono shadow-inner space-x-0.5 flex-shrink-0">
               {/* 0. Executive Department Agents Hub */}
               <button
                 onClick={() => setMainView('agents')}
@@ -429,7 +429,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           <button
             type="button"
             onClick={() => scrollNav('right')}
-            className="p-1 rounded-lg bg-[#140e2e] hover:bg-[#201548] text-amber-400 border border-amber-500/30 flex-shrink-0 transition cursor-pointer"
+            className="p-1.5 rounded-xl bg-[#140e2e] hover:bg-[#201548] text-amber-400 border border-amber-500/30 flex-shrink-0 transition shadow-sm hover:border-amber-400 cursor-pointer active:scale-95"
             title="Scroll Navigation Right"
           >
             <ChevronRight size={14} />

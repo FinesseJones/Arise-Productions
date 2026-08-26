@@ -106,8 +106,8 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          script_text: importedScript || 'EXT. URBAN NEIGHBORHOOD PORCH - MORNING. Devon (19) confronts Marcus (40s).',
-          project_title: projectStatus.projectName || 'A Fatherless Child',
+          script_text: importedScript || 'EXT. CITY LOCATION - MORNING. Lead hero confronts the mentor regarding the mission.',
+          project_title: projectStatus.projectName || 'Arise Production',
         }),
       });
       const data = await res.json();
@@ -204,7 +204,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          production_name: projectStatus.projectName || 'A Fatherless Child',
+          production_name: projectStatus.projectName || 'Arise Production',
           shoot_day: 1,
         }),
       });

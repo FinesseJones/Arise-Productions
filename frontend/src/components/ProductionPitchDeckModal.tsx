@@ -5,6 +5,7 @@ import { Sparkles, FileText, Download, X, Copy, Check, Film, Users, Layers, Came
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { ProjectStatus } from '../types/types';
+import { getProjectPlot, getProjectCharacters, getProjectActs, getProjectBeats } from '../lib/projectData';
 
 interface ProductionPitchDeckModalProps {
   projectStatus: ProjectStatus;
@@ -15,8 +16,17 @@ export const ProductionPitchDeckModal: React.FC<ProductionPitchDeckModalProps> =
   const [copied, setCopied] = useState<boolean>(false);
   const [activeView, setActiveView] = useState<'bible' | 'beats' | 'characters' | 'technical'>('bible');
 
-  const projectName = projectStatus.projectName || 'A Fatherless Child';
+  const projectName = projectStatus.projectName || 'Arise Production';
   const cleanSlug = projectName.replace(/[^a-zA-Z0-9]/g, '_');
+
+  const plot = getProjectPlot(projectName);
+  const characters = getProjectCharacters(projectName);
+  const acts = getProjectActs(projectName);
+  const beats = getProjectBeats(projectName);
+
+  const act1Beats = beats.filter(b => b.act === 'Act I');
+  const act2Beats = beats.filter(b => b.act === 'Act II');
+  const act3Beats = beats.filter(b => b.act === 'Act III');
 
   const handleCopyText = () => {
     const pitchText = `
@@ -25,60 +35,38 @@ export const ProductionPitchDeckModal: React.FC<ProductionPitchDeckModalProps> =
                    © 2026 THE AI CONTENT FOUNDRY, LLC. ALL RIGHTS RESERVED.
 ================================================================================
 
-TITLE: ${projectName}
+TITLE: ${plot.title}
+GENRE: ${plot.genres.join(' / ')} (${plot.tone})
+AUDIENCE: ${plot.audience}
 FORMAT: Feature Film / Theatrical Long-Form (2.39:1 CinemaScope & 16:9 UHD)
 STUDIO: Arise Production Studio
 STATUS: Pre-Production & 3D Virtual Production Conformed
 
 LOGLINE:
-In the wake of an unresolved family legacy, Devon (19), a gifted young artist, must navigate the quiet weight of absence and generational trauma. Guided by Marcus (40s), a grounded neighborhood mentor, Devon discovers that his identity isn't defined by who was missing, but by the legacy he chooses to build.
+${plot.logline}
 
 THEMATIC CORE:
-• Resilience over resentment
-• Identity forged through purpose, not absence
-• Community mentorship as a catalyst for creative transformation
+${plot.themes}
 
 --------------------------------------------------------------------------------
 1. HOLLYWOOD 3-ACT BEAT SHEET SUMMARY
 --------------------------------------------------------------------------------
-ACT I: THE ABSENCE (Beats 01–10)
-• Opening Image: Golden autumn morning on the porch; Devon clutches a weathered photo.
-• Theme Stated: "A tree without deep roots must reach for its own light."
-• Catalyst: Devon uncovers his father's forgotten artistic journals.
-• Debate: Should he confront the past or forge ahead alone?
+ACT I: THE SETUP
+${act1Beats.map(b => `• ${b.title}: ${b.description}`).join('\n')}
 
-ACT II: THE CRUCIBLE & STRUGGLE (Beats 11–30)
-• Break Into Two: Devon enrolls in the regional film & arts collective.
-• Midpoint Reversal: An emotional falling-out with his mother Evelyn reveals hidden sacrifices.
-• All Is Lost: Devon's showcase portfolio is threatened by self-doubt and financial strain.
-• Dark Night of the Soul: Marcus shares his own story of loss, reigniting Devon's drive.
+ACT II: THE CRUCIBLE & CONFLICT
+${act2Beats.map(b => `• ${b.title}: ${b.description}`).join('\n')}
 
-ACT III: REDEMPTION & HORIZON (Beats 31–40)
-• Break Into Three: Devon gathers the community to produce a transformative short film.
-• Climax: The exhibition premiere where Devon honors his mother and mentor.
-• Final Image: Devon standing on the porch at sunset, looking forward without the weight of the shadow.
+ACT III: THE CLIMAX & RESOLUTION
+${act3Beats.map(b => `• ${b.title}: ${b.description}`).join('\n')}
 
 --------------------------------------------------------------------------------
 2. PRINCIPAL CHARACTER DOSSIERS
 --------------------------------------------------------------------------------
-1. DEVON (19) — LEAD PROTAGONIST
-   • Archetype: The Wounded Visionary
-   • Core Need: To discover self-worth independent of paternal validation.
-   • Voice Persona: ElevenLabs Resilient Warm Baritone
-   • IP-Adapter Token: @devon_lead_v1 (Likeness Locked)
-   • Wardrobe: Vintage Denim & Canvas Field Jacket
-
-2. MARCUS (40s) — COMMUNITY MENTOR
-   • Archetype: The Grounded Guide
-   • Core Need: To pay forward the support he received in his youth.
-   • Voice Persona: ElevenLabs Deep Soulful Baritone
-   • IP-Adapter Token: @marcus_mentor_v1
-   • Wardrobe: Workwear Utility Shirt & Leather Boots
-
-3. EVELYN (40s) — DEVOTED MOTHER
-   • Archetype: The Resilient Anchor
-   • Core Need: To protect Devon while learning to let him embrace his own path.
-   • Voice Persona: ElevenLabs Gentle Emotional Alto
+${characters.map((c, i) => `${i + 1}. ${c.name.toUpperCase()} — ${c.role.toUpperCase()}
+   • Archetype: ${c.archetypes.join(', ')} (${c.arcType})
+   • Personality: ${c.personality}
+   • IP-Adapter Token: @${c.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_v1 (Likeness Locked)`).join('\n\n')}
 
 --------------------------------------------------------------------------------
 3. VIRTUAL PRODUCTION & TECHNICAL CONFORM SPECS
@@ -100,23 +88,23 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
     const element = document.createElement('a');
     const file = new Blob([
       `# 🎬 ARISE PRODUCTION PITCH BIBLE & PRODUCTION MANIFEST\n\n` +
-      `**Project:** ${projectName}\n` +
+      `**Project:** ${plot.title}\n` +
+      `**Genre:** ${plot.genres.join(', ')} | **Tone:** ${plot.tone}\n` +
       `**Studio:** Arise Productions (A product of THE AI CONTENT FOUNDRY, LLC)\n` +
       `**Copyright:** © 2026 THE AI CONTENT FOUNDRY, LLC. All Rights Reserved.\n\n` +
       `---\n\n` +
       `## 📖 Logline & Dramatic Vision\n` +
-      `In the wake of an unresolved family legacy, Devon (19), a gifted young artist, must navigate the quiet weight of absence and generational trauma. Guided by Marcus (40s), a grounded neighborhood mentor, Devon discovers that his identity isn't defined by who was missing, but by the legacy he chooses to build.\n\n` +
+      `${plot.logline}\n\n` +
+      `**Themes:** ${plot.themes}\n\n` +
       `---\n\n` +
-      `## 🏛️ Hollywood 40-Beat Sheet & 3-Act Structure\n` +
-      `* **Act I (Beats 01–10):** Opening Image on the porch, Theme Stated, Inciting Journal Discovery, Debate.\n` +
-      `* **Act II (Beats 11–30):** The Creative Crucible, Midpoint Mother-Son Revelation, All Is Lost, Dark Night of the Soul.\n` +
-      `* **Act III (Beats 31–40):** The Community Film Shoot, Exhibition Climax, Emotional Resolution, Final Horizon Image.\n\n` +
+      `## 🏛️ Hollywood 40-Beat Sheet & 3-Act Structure\n\n` +
+      `### Act I\n${act1Beats.map(b => `* **${b.title}:** ${b.description}`).join('\n')}\n\n` +
+      `### Act II\n${act2Beats.map(b => `* **${b.title}:** ${b.description}`).join('\n')}\n\n` +
+      `### Act III\n${act3Beats.map(b => `* **${b.title}:** ${b.description}`).join('\n')}\n\n` +
       `---\n\n` +
-      `## 🎭 Character Manifest\n` +
-      `* **Devon (19):** Lead Protagonist • ElevenLabs Resilient Warm Baritone • @devon_lead_v1\n` +
-      `* **Marcus (40s):** Community Mentor • ElevenLabs Deep Soulful Baritone • @marcus_mentor_v1\n` +
-      `* **Evelyn (40s):** Devoted Mother • ElevenLabs Gentle Emotional Alto • @evelyn_matriarch_v1\n\n` +
-      `---\n\n` +
+      `## 🎭 Character Manifest\n\n` +
+      characters.map(c => `* **${c.name} (${c.role}):** ${c.archetypes.join(', ')} • ${c.personality} • @${c.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_v1`).join('\n') +
+      `\n\n---\n\n` +
       `## 🎥 Technical & Virtual Production Conform\n` +
       `* **CineCamera:** 35mm Anamorphic Prime (T1.8) • Full-Frame 36x24mm\n` +
       `* **Color Grading:** ACEScc with Kodak 2383 33-point 3D LUT\n` +
@@ -143,7 +131,7 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase tracking-wider font-serif">
-                  {projectName} — Pitch Bible & One-Pager
+                  {plot.title} — Pitch Bible & One-Pager
                 </h2>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
                   STUDIO LOCKED
@@ -158,21 +146,21 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
           <div className="flex items-center space-x-2">
             <button
               onClick={handleCopyText}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-mono transition"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-mono transition cursor-pointer"
             >
               {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
               <span>{copied ? 'Copied' : 'Copy Bible'}</span>
             </button>
             <button
               onClick={handleDownloadBible}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-bold text-xs font-mono transition shadow-md"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-bold text-xs font-mono transition shadow-md cursor-pointer"
             >
               <Download size={14} />
               <span>Export PDF / MD</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-white bg-slate-800/40 hover:bg-slate-800 transition ml-2"
+              className="p-1.5 rounded-xl text-slate-400 hover:text-white bg-slate-800/40 hover:bg-slate-800 transition ml-2 cursor-pointer"
             >
               <X size={18} />
             </button>
@@ -183,7 +171,7 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
         <div className="flex items-center gap-2 px-6 py-2.5 bg-[#0a0712] border-b border-purple-900/40 text-xs font-mono">
           <button
             onClick={() => setActiveView('bible')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition cursor-pointer ${
               activeView === 'bible'
                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 font-bold'
                 : 'text-slate-400 hover:text-amber-200'
@@ -195,7 +183,7 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
 
           <button
             onClick={() => setActiveView('beats')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition cursor-pointer ${
               activeView === 'beats'
                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 font-bold'
                 : 'text-slate-400 hover:text-amber-200'
@@ -207,7 +195,7 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
 
           <button
             onClick={() => setActiveView('characters')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition cursor-pointer ${
               activeView === 'characters'
                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 font-bold'
                 : 'text-slate-400 hover:text-amber-200'
@@ -219,7 +207,7 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
 
           <button
             onClick={() => setActiveView('technical')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition cursor-pointer ${
               activeView === 'technical'
                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 font-bold'
                 : 'text-slate-400 hover:text-amber-200'
@@ -242,33 +230,33 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
                     <span className="text-xs font-mono text-amber-400 uppercase tracking-widest block font-bold">
                       Feature Film Pitch One-Pager
                     </span>
-                    <h3 className="text-2xl font-black text-slate-100 font-serif mt-0.5">{projectName}</h3>
+                    <h3 className="text-2xl font-black text-slate-100 font-serif mt-0.5">{plot.title}</h3>
                   </div>
                   <div className="text-right font-mono text-xs text-amber-300/80">
                     <p>Format: <strong>16:9 / 2.39:1 Scope</strong></p>
-                    <p>Runtime Target: <strong>105 Mins</strong></p>
+                    <p>Target Audience: <strong>{plot.audience}</strong></p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <h4 className="text-xs font-bold font-mono text-amber-300 uppercase tracking-wider">Logline</h4>
                   <p className="text-sm text-slate-200 leading-relaxed font-serif italic bg-black/40 p-3.5 rounded-xl border border-purple-900/60">
-                    "In the wake of an unresolved family legacy, Devon (19), a gifted young artist, must navigate the quiet weight of absence and generational trauma. Guided by Marcus (40s), a grounded neighborhood mentor, Devon discovers that his identity isn't defined by who was missing, but by the legacy he chooses to build."
+                    "{plot.logline}"
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                   <div className="p-3.5 rounded-xl bg-black/50 border border-purple-900/50 space-y-1">
                     <span className="text-[10px] font-mono text-amber-400 uppercase font-bold">Genre & Tone</span>
-                    <p className="text-xs text-slate-200 font-medium">Grounded Drama / Coming of Age</p>
+                    <p className="text-xs text-slate-200 font-medium">{plot.genres.join(', ')} • {plot.tone}</p>
                   </div>
                   <div className="p-3.5 rounded-xl bg-black/50 border border-purple-900/50 space-y-1">
                     <span className="text-[10px] font-mono text-amber-400 uppercase font-bold">Visual Language</span>
-                    <p className="text-xs text-slate-200 font-medium">35mm Anamorphic • Golden Hour Warmth</p>
+                    <p className="text-xs text-slate-200 font-medium">35mm Anamorphic • ACEScc Rec.709 Grade</p>
                   </div>
                   <div className="p-3.5 rounded-xl bg-black/50 border border-purple-900/50 space-y-1">
                     <span className="text-[10px] font-mono text-amber-400 uppercase font-bold">Core Theme</span>
-                    <p className="text-xs text-slate-200 font-medium">Identity • Mentorship • Resilience</p>
+                    <p className="text-xs text-slate-200 font-medium">{plot.themes}</p>
                   </div>
                 </div>
               </div>
@@ -277,7 +265,7 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
               <div className="p-6 rounded-2xl bg-[#140e2e]/90 border border-purple-900/60 space-y-3 font-mono text-xs">
                 <span className="font-bold text-amber-300 uppercase tracking-wider block">Production Synopsis</span>
                 <p className="text-purple-200/90 leading-relaxed text-xs">
-                  Set against the vibrant, textured backdrop of an urban neighborhood in autumn, *A Fatherless Child* explores the nuanced emotional landscape of a young man on the precipice of adulthood. Armed with raw artistic ambition and an old box of camera equipment, Devon seeks answers in shadows until a community elder challenges him to create his own light. Through intimate visual storytelling, high-contrast anamorphic cinematography, and an emotionally textured Dolby Atmos score, the film captures the triumph of self-definition.
+                  Set against the high-stakes narrative landscape of <em>{plot.title}</em>, this production explores the collision between individual agency and overwhelming systemic pressure. Through intimate character arcs, high-contrast anamorphic cinematography, and a broadcast-calibrated Dolby Atmos score, the project delivers a definitive cinematic experience.
                 </p>
               </div>
             </div>
@@ -288,39 +276,37 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
             <div className="space-y-4">
               <div className="p-5 rounded-2xl bg-[#140e2e]/90 border border-amber-500/40 space-y-3">
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-amber-400 font-bold uppercase">Act I: The Absence (Beats 01–10)</span>
+                  <span className="text-amber-400 font-bold uppercase">Act I: The Setup & Catalyst ({act1Beats.length} Beats)</span>
                   <span className="text-emerald-400">Tension: 35% &rarr; 60%</span>
                 </div>
                 <div className="space-y-2 text-xs font-mono text-purple-200/90">
-                  <p>• <strong>Beat 01 - Opening Image:</strong> Devon stands on the porch holding the weathered photograph under golden dawn light.</p>
-                  <p>• <strong>Beat 04 - Theme Stated:</strong> Marcus explains that branches grow toward whatever sun they can find.</p>
-                  <p>• <strong>Beat 07 - Inciting Incident:</strong> Devon finds an old portfolio of architectural sketches in the attic.</p>
-                  <p>• <strong>Beat 10 - Break Into Act II:</strong> Devon resolves to shoot a documentary honoring the neighborhood's untold stories.</p>
+                  {act1Beats.map(b => (
+                    <p key={b.id}>• <strong>{b.title}:</strong> {b.description}</p>
+                  ))}
                 </div>
               </div>
 
               <div className="p-5 rounded-2xl bg-[#140e2e]/90 border border-purple-800/60 space-y-3">
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-rose-400 font-bold uppercase">Act II: The Crucible & Trials (Beats 11–30)</span>
+                  <span className="text-rose-400 font-bold uppercase">Act II: The Crucible & Trials ({act2Beats.length} Beats)</span>
                   <span className="text-amber-400">Tension: 65% &rarr; 95%</span>
                 </div>
                 <div className="space-y-2 text-xs font-mono text-purple-200/90">
-                  <p>• <strong>Beat 15 - First Success:</strong> Devon captures breathtaking interview footage of local community pillars.</p>
-                  <p>• <strong>Beat 20 - Midpoint Reversal:</strong> Evelyn reveals why the past was kept quiet, challenging Devon's preconceptions.</p>
-                  <p>• <strong>Beat 26 - All Is Lost:</strong> A storm damages Devon's primary camera rig the night before the deadline.</p>
-                  <p>• <strong>Beat 29 - Dark Night of the Soul:</strong> Devon considers giving up until Marcus lends him his father's vintage lens.</p>
+                  {act2Beats.map(b => (
+                    <p key={b.id}>• <strong>{b.title}:</strong> {b.description}</p>
+                  ))}
                 </div>
               </div>
 
               <div className="p-5 rounded-2xl bg-[#140e2e]/90 border border-emerald-500/40 space-y-3">
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-emerald-400 font-bold uppercase">Act III: Redemption & New Horizon (Beats 31–40)</span>
+                  <span className="text-emerald-400 font-bold uppercase">Act III: Redemption & Horizon ({act3Beats.length} Beats)</span>
                   <span className="text-amber-300">Tension: 95% &rarr; Resolution</span>
                 </div>
                 <div className="space-y-2 text-xs font-mono text-purple-200/90">
-                  <p>• <strong>Beat 33 - The Rebuild:</strong> The neighborhood rallies to help Devon complete editing and sound conform.</p>
-                  <p>• <strong>Beat 37 - The Premiere:</strong> The community gathers in the local hall to witness Devon's masterwork.</p>
-                  <p>• <strong>Beat 40 - Final Image:</strong> Devon stands on the porch at sunset, looking forward without the weight of the shadow.</p>
+                  {act3Beats.map(b => (
+                    <p key={b.id}>• <strong>{b.title}:</strong> {b.description}</p>
+                  ))}
                 </div>
               </div>
             </div>
@@ -329,54 +315,22 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
           {/* TAB 3: CHARACTER DOSSIERS */}
           {activeView === 'characters' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Devon */}
-              <div className="p-5 rounded-2xl bg-[#140e2e] border border-amber-500/40 space-y-3 font-mono text-xs shadow-xl">
-                <div className="flex items-center justify-between border-b border-purple-900/60 pb-2">
-                  <span className="font-bold text-amber-300 text-sm">DEVON (19)</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-                    LEAD PROTAGONIST
-                  </span>
+              {characters.map((c, i) => (
+                <div key={c.id || i} className="p-5 rounded-2xl bg-[#140e2e] border border-amber-500/40 space-y-3 font-mono text-xs shadow-xl">
+                  <div className="flex items-center justify-between border-b border-purple-900/60 pb-2">
+                    <span className="font-bold text-amber-300 text-sm">{c.name.toUpperCase()}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                      {c.role.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="space-y-1.5 text-purple-200/80 text-[11px]">
+                    <p><strong>Archetypes:</strong> {c.archetypes.join(', ')}</p>
+                    <p><strong>Arc Type:</strong> {c.arcType}</p>
+                    <p><strong>Personality:</strong> {c.personality}</p>
+                    <p><strong>IP-Adapter Token:</strong> @{c.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_v1 (Likeness Locked)</p>
+                  </div>
                 </div>
-                <div className="space-y-1.5 text-purple-200/80 text-[11px]">
-                  <p><strong>Archetype:</strong> The Wounded Visionary / Creative Seeker</p>
-                  <p><strong>Core Wound:</strong> The search for paternal validation and authentic purpose.</p>
-                  <p><strong>Voice Model:</strong> ElevenLabs Resilient Warm Baritone</p>
-                  <p><strong>IP-Adapter Token:</strong> @devon_lead_v1 (Likeness Locked)</p>
-                  <p><strong>Wardrobe:</strong> Vintage Denim & Canvas Field Jacket</p>
-                </div>
-              </div>
-
-              {/* Marcus */}
-              <div className="p-5 rounded-2xl bg-[#140e2e] border border-purple-800/60 space-y-3 font-mono text-xs shadow-xl">
-                <div className="flex items-center justify-between border-b border-purple-900/60 pb-2">
-                  <span className="font-bold text-rose-300 text-sm">MARCUS (40s)</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
-                    COMMUNITY MENTOR
-                  </span>
-                </div>
-                <div className="space-y-1.5 text-purple-200/80 text-[11px]">
-                  <p><strong>Archetype:</strong> The Wise Guardian & Craftsman</p>
-                  <p><strong>Core Motivation:</strong> Nurturing youth potential to build enduring community pride.</p>
-                  <p><strong>Voice Model:</strong> ElevenLabs Deep Soulful Baritone</p>
-                  <p><strong>IP-Adapter Token:</strong> @marcus_mentor_v1</p>
-                  <p><strong>Wardrobe:</strong> Workwear Utility Over-shirt & Leather Boots</p>
-                </div>
-              </div>
-
-              {/* Evelyn */}
-              <div className="p-5 rounded-2xl bg-[#140e2e] border border-teal-500/40 space-y-3 font-mono text-xs shadow-xl sm:col-span-2">
-                <div className="flex items-center justify-between border-b border-purple-900/60 pb-2">
-                  <span className="font-bold text-teal-300 text-sm">EVELYN (40s)</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/40 font-bold">
-                    DEVOTED MATRIARCH
-                  </span>
-                </div>
-                <div className="space-y-1.5 text-purple-200/80 text-[11px]">
-                  <p><strong>Archetype:</strong> The Resilient Protector</p>
-                  <p><strong>Core Need:</strong> Ensuring her son's emotional and physical safety while learning to trust his creative voice.</p>
-                  <p><strong>Voice Model:</strong> ElevenLabs Gentle Emotional Alto</p>
-                </div>
-              </div>
+              ))}
             </div>
           )}
 
@@ -415,8 +369,8 @@ ACT III: REDEMPTION & HORIZON (Beats 31–40)
                 </div>
                 <div className="space-y-1.5 text-[11px] text-purple-200/90">
                   <p>• <strong>Stem A1 (Dialogue):</strong> Center Channel isolated, denoised, and leveled at -24.0 LKFS.</p>
-                  <p>• <strong>Stem A2 (Foley & Spatial):</strong> Neighborhood ambience, breeze through foliage, porch footfalls.</p>
-                  <p>• <strong>Stem A3 (Score Bed):</strong> Warm acoustic guitar and soulful cello quartet in stereo wide.</p>
+                  <p>• <strong>Stem A2 (Foley & Spatial):</strong> Environmental ambience, footsteps, prop textures in 5.1 bed.</p>
+                  <p>• <strong>Stem A3 (Score Bed):</strong> Orchestral score with dynamic thematic Leitmotifs in stereo wide.</p>
                   <p>• <strong>Stem A4 (LFE Subwoofer):</strong> 40 Hz emotional impact pulses on narrative transitions.</p>
                 </div>
               </div>

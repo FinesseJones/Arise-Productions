@@ -127,16 +127,11 @@ export function PlotRoom({ projectName = 'A Fatherless Child', onNavigateToRoom 
         throw new Error('No AI response');
       }
     } catch (err) {
-      if (field === 'title') setTitle('A Fatherless Child: The Blueprint');
-      if (field === 'logline')
-        setLogline(
-          'An estranged architect uncovers an encrypted set of blueprints left behind in his childhood home, triggering an urban race against a shadowy developer to reclaim his family legacy.'
-        );
-      if (field === 'themes')
-        setThemes(
-          'Generational identity, overcoming paternal absence, and discovering that self-worth is built with your own hands.'
-        );
-      if (field === 'tone') setTone('Gritty yet luminous, intimate, emotionally raw with 3200K golden warmth.');
+      const plotFallback = getProjectPlot(projectName);
+      if (field === 'title') setTitle(plotFallback.title);
+      if (field === 'logline') setLogline(plotFallback.logline);
+      if (field === 'themes') setThemes(plotFallback.themes);
+      if (field === 'tone') setTone(plotFallback.tone);
       toast.success(`✨ Updated ${field.toUpperCase()}!`, { id: toastId });
     } finally {
       setIsGenerating(null);

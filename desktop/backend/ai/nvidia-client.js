@@ -113,7 +113,7 @@ export class NvidiaNIMClient {
   async generateCompletion(options = {}) {
     const {
       prompt,
-      systemPrompt = 'You are the Chief AI Director of Arise Production (A product of THE AI CONTENT FOUNDRY, LLC). Generate concise, cinematic, and professional output.',
+      systemPrompt = 'You are the Chief AI Specialist in Arise Production Studio. Provide high-fidelity, in-character creative direction.',
       messages = null,
       tools = null,
       toolChoice = 'auto',
@@ -122,15 +122,19 @@ export class NvidiaNIMClient {
       maxTokens = 1500,
     } = options;
 
+    let userQuery = prompt || '';
+    if (!userQuery && Array.isArray(messages) && messages.length > 0) {
+      const userMsg = messages.slice().reverse().find((m) => m.role === 'user' || m.role === 'Producer (User)');
+      userQuery = userMsg ? userMsg.content || userMsg.text || '' : '';
+    }
+
     if (!this.hasApiKey()) {
-      // Re-read from disk in case updated
       this.apiKey = loadEnvKey();
     }
 
     // Build chat conversation array
     let chatMessages = [];
     if (Array.isArray(messages) && messages.length > 0) {
-      // Check if system prompt is already in messages
       const hasSystem = messages.some((m) => m.role === 'system');
       if (hasSystem) {
         chatMessages = messages.map((m) => {
@@ -157,16 +161,14 @@ export class NvidiaNIMClient {
     } else {
       chatMessages = [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt || 'Execute creative direction.' },
+        { role: 'user', content: userQuery || 'Execute creative direction.' },
       ];
     }
-
-    let lastError = null;
 
     if (this.hasApiKey()) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        const timeoutId = setTimeout(() => controller.abort(), 12000);
 
         const requestBody = {
           model,
@@ -200,30 +202,25 @@ export class NvidiaNIMClient {
           const content = message.content || '';
           const toolCalls = message.tool_calls || null;
 
-          return {
-            success: true,
-            message,
-            text: content,
-            tool_calls: toolCalls,
-            model: json.model || model,
-            usage: json.usage,
-            ai_powered: true,
-          };
-        } else {
-          const errorText = await res.text();
-          console.warn(`[NvidiaNIM] API Error ${res.status}: ${errorText}`);
-          lastError = `NVIDIA NIM API Error (${res.status}): ${errorText}`;
+          if (content || (toolCalls && toolCalls.length > 0)) {
+            return {
+              success: true,
+              message,
+              text: content,
+              tool_calls: toolCalls,
+              model: json.model || model,
+              usage: json.usage,
+              ai_powered: true,
+            };
+          }
         }
       } catch (err) {
         console.warn('[NvidiaNIM] Network timeout or connection error:', err.message);
-        lastError = `Network connection error: ${err.message}`;
       }
-    } else {
-      lastError = 'No NVIDIA NIM API Key configured.';
     }
 
     // Seamless Fallback: Synthesize intelligent departmental response so user is never blocked
-    return this.generateDepartmentalFallback(prompt, systemPrompt, model);
+    return this.generateDepartmentalFallback(userQuery, systemPrompt, model);
   }
 
   /**

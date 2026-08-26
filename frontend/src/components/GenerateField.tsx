@@ -51,7 +51,7 @@ export function GenerateField({
           roomName,
           role,
           stageId,
-          context: context || `Active Project: A Fatherless Child | Department: ${roomName}`,
+          context: context || `Studio Department: ${roomName}`,
         }),
       });
 
