@@ -284,9 +284,9 @@ const SoundstageEnvironmentTruss: React.FC<{ stageId: string; roomName: string }
           <meshStandardMaterial color="#1a1130" metalness={0.9} roughness={0.2} />
         </mesh>
 
-        {/* 3D Floating Stage with Dynamic Arise Pictures 3D Letters */}
+        {/* 3D Floating Stage with Dynamic Arise Productions 3D Letters */}
         <React.Suspense fallback={null}>
-          <FloatingAriseLogo3D position={[0, 1.2, -0.5]} scale={0.75} showSubtitle={true} />
+          <FloatingAriseLogo3D position={[0, 1.2, -0.5]} scale={0.75} />
         </React.Suspense>
 
         <Float speed={2.0} rotationIntensity={0.08} floatIntensity={0.15}>

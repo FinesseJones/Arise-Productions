@@ -73,7 +73,6 @@ const AgentHologram3D: React.FC<{ agent: DepartmentAgent }> = ({ agent }) => {
         <FloatingAriseLogo3D
           position={[0, 0.1, 0]}
           scale={0.88}
-          showSubtitle={true}
         />
       </React.Suspense>
     </group>
