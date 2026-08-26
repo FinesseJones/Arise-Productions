@@ -57,6 +57,12 @@ function startBackendServer() {
 function createMainWindow() {
   const iconPath = path.join(__dirname, 'build/icon.png');
 
+  if (process.platform === 'darwin' && app.dock && fs.existsSync(iconPath)) {
+    try {
+      app.dock.setIcon(iconPath);
+    } catch (e) {}
+  }
+
   mainWindow = new BrowserWindow({
     width: 1440,
     height: 900,
