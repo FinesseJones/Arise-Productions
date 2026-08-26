@@ -232,25 +232,25 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           </div>
 
           {/* Quick Front of Studio / New Production / Rooms Menu Buttons */}
-          <div className="flex items-center space-x-1.5 pl-2 border-l border-amber-500/30 relative">
+          <div className="flex items-center space-x-1 sm:space-x-1.5 pl-2 border-l border-amber-500/30 relative flex-shrink-0">
             <button
               type="button"
               onClick={onChangeProject}
-              className="px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap cursor-pointer"
+              className="px-2 sm:px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap cursor-pointer"
               title="Return to Front of Studio & All Projects"
             >
               <Home size={12} />
-              <span>Front of Studio</span>
+              <span className="hidden md:inline">Front of Studio</span>
             </button>
 
             <button
               type="button"
               onClick={onChangeProject}
-              className="px-2.5 py-1 rounded-xl bg-[#1a0e36] hover:bg-[#271552] text-amber-200 border border-purple-800/60 text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer"
+              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1a0e36] hover:bg-[#271552] text-amber-200 border border-purple-800/60 text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer"
               title="Create New Production or Ingest Media"
             >
               <Plus size={12} className="text-amber-400" />
-              <span>New Production</span>
+              <span className="hidden lg:inline">New</span>
             </button>
 
             {/* Quick Rooms Dropdown Menu */}
@@ -258,7 +258,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <button
                 type="button"
                 onClick={() => setShowRoomDropdown((prev) => !prev)}
-                className={`px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
+                className={`px-2 sm:px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
                   showRoomDropdown
                     ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black border border-amber-300'
                     : 'bg-[#1f133f] hover:bg-[#2d1b5a] text-amber-300 border border-amber-500/50'
@@ -326,20 +326,20 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           </div>
         </div>
 
-        {/* Center Mode Switcher & Navigation with Left/Right Scroll Arrows & Luxury Scrollbar */}
-        <div className="flex items-center space-x-1.5 flex-1 min-w-0 px-1.5">
+        {/* Center Mode Switcher & Navigation with Left/Right Scroll Arrows & Clean Container */}
+        <div className="flex items-center space-x-1 flex-1 min-w-0 px-1 overflow-hidden">
           <button
             type="button"
             onClick={() => scrollNav('left')}
-            className="p-1.5 rounded-xl bg-[#140e2e] hover:bg-[#201548] text-amber-400 border border-amber-500/30 flex-shrink-0 transition shadow-sm hover:border-amber-400 cursor-pointer active:scale-95"
+            className="p-1 rounded-xl bg-[#140e2e] hover:bg-[#201548] text-amber-400 border border-amber-500/30 flex-shrink-0 transition shadow-sm hover:border-amber-400 cursor-pointer active:scale-95"
             title="Scroll Navigation Left"
           >
-            <ChevronLeft size={14} />
+            <ChevronLeft size={13} />
           </button>
 
           <div
             ref={navScrollRef}
-            className="flex items-center space-x-1 enterprise-nav-scrollbar scroll-smooth flex-1 pb-1 pt-0.5"
+            className="flex items-center space-x-1 enterprise-nav-scrollbar no-scrollbar scroll-smooth flex-1 min-w-0"
           >
             <div className="flex bg-[#140e2e] p-1 rounded-xl border border-amber-500/30 text-[11px] font-mono shadow-inner space-x-0.5 flex-shrink-0">
               {/* 0. Executive Department Agents Hub */}
@@ -503,19 +503,20 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           <button
             type="button"
             onClick={() => scrollNav('right')}
-            className="p-1.5 rounded-xl bg-[#140e2e] hover:bg-[#201548] text-amber-400 border border-amber-500/30 flex-shrink-0 transition shadow-sm hover:border-amber-400 cursor-pointer active:scale-95"
+            className="p-1 rounded-xl bg-[#140e2e] hover:bg-[#201548] text-amber-400 border border-amber-500/30 flex-shrink-0 transition shadow-sm hover:border-amber-400 cursor-pointer active:scale-95"
             title="Scroll Navigation Right"
           >
-            <ChevronRight size={14} />
+            <ChevronRight size={13} />
           </button>
         </div>
 
         {/* Right Tools & Active Project HUD */}
-        <div className="flex items-center space-x-2 flex-shrink-0">
+        <div className="flex items-center space-x-1.5 flex-shrink-0">
           {/* Hollywood Pitch Bible Button */}
           <button
             onClick={() => setShowPitchBibleModal(true)}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
+            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
+            title="Open Hollywood Pitch & Story Bible"
           >
             <FileText size={12} className="text-amber-400" />
             <span>Bible</span>
@@ -524,27 +525,28 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           {/* NVIDIA NIM Free Tier Button */}
           <button
             onClick={() => setShowNvidiaModal(true)}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[11px] font-mono transition shadow-sm flex-shrink-0 cursor-pointer"
+            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[11px] font-mono transition shadow-sm flex-shrink-0 cursor-pointer"
+            title="NVIDIA NIM AI Configuration"
           >
             <Cpu size={12} className="text-purple-400" />
-            <span className="font-bold">{defaultModel.split('/')[1] || 'Llama 3.1 70B'}</span>
+            <span className="font-bold truncate max-w-[85px]">{defaultModel.split('/')[1] || 'Llama 3.1 70B'}</span>
           </button>
 
           {/* Active Enterprise Tier License Badge */}
           <button
             onClick={() => setShowUpgradeModal(true)}
-            className="flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-black border border-amber-300 text-[11px] font-mono transition shadow-lg shadow-amber-500/25 cursor-pointer active:scale-95 flex-shrink-0"
+            className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-black border border-amber-300 text-[11px] font-mono transition shadow-lg shadow-amber-500/25 cursor-pointer active:scale-95 flex-shrink-0"
             title="Arise Studio Enterprise ($299/mo) Active - Dedicated H100 Cluster & Plugins"
           >
             <Crown size={12} fill="currentColor" />
             <span className="uppercase tracking-wider">
-              {studioTier === 'enterprise' ? 'Enterprise ($299/mo)' : studioTier === 'pro' ? 'Studio Pro' : 'Free Tier'}
+              {studioTier === 'enterprise' ? 'Enterprise' : studioTier === 'pro' ? 'Studio Pro' : 'Free Tier'}
             </span>
           </button>
 
-          <div className="hidden xl:flex items-center space-x-1 text-[11px] text-amber-300/70 border-l border-amber-500/30 pl-2.5 flex-shrink-0">
+          <div className="hidden 2xl:flex items-center space-x-1 text-[11px] text-amber-300/70 border-l border-amber-500/30 pl-2 flex-shrink-0">
             <span className="text-amber-400/60">Project:</span>
-            <span className="text-amber-200 font-semibold truncate max-w-[120px]">{projectStatus.projectName}</span>
+            <span className="text-amber-200 font-semibold truncate max-w-[100px]">{projectStatus.projectName}</span>
             {onChangeProject && (
               <button
                 onClick={onChangeProject}

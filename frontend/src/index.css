@@ -147,36 +147,19 @@ html, body {
   scrollbar-color: #3b2d71 #080512;
 }
 
-/* Enterprise Luxury Micro-Scrollbar for Top Navigation Bar */
+/* Enterprise Clean Navigation Scroll Container (No Visual Bar Obstruction) */
 .enterprise-nav-scrollbar {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: #f59e0b rgba(245, 158, 11, 0.2);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .enterprise-nav-scrollbar::-webkit-scrollbar {
-  height: 6px;
-  display: block;
-}
-
-.enterprise-nav-scrollbar::-webkit-scrollbar-track {
-  background: rgba(18, 11, 46, 0.9);
-  border-radius: 6px;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.enterprise-nav-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #d97706, #fbbf24, #f59e0b);
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
-  min-width: 60px;
-}
-
-.enterprise-nav-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(90deg, #fbbf24, #fde047, #f59e0b);
-  box-shadow: 0 0 16px rgba(245, 158, 11, 1);
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Hide scrollbar utility */
