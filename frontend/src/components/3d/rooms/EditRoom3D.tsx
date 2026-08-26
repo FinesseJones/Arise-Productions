@@ -1,7 +1,7 @@
-"use client";
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Float } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 import {
   Scissors,
   Sparkles,
@@ -21,37 +21,94 @@ export interface EditRoom3DProps {
   shotTitle?: string;
 }
 
-// 3D Reference Grading Monitors & Timecode Screen
+// 3D Dynamic Reference Grading Monitors & Animated RGB Waveform Scopes
 export const EditScene3D: React.FC = () => {
+  const scopeRef = useRef<THREE.Mesh>(null);
+  const trackball1 = useRef<THREE.Mesh>(null);
+  const trackball2 = useRef<THREE.Mesh>(null);
+  const trackball3 = useRef<THREE.Mesh>(null);
+
+  useFrame((state, delta) => {
+    const t = state.clock.elapsedTime;
+    if (scopeRef.current) {
+      scopeRef.current.position.y = Math.sin(t * 3) * 0.05;
+    }
+    if (trackball1.current) trackball1.current.rotation.y += delta * 0.8;
+    if (trackball2.current) trackball2.current.rotation.x += delta * 0.6;
+    if (trackball3.current) trackball3.current.rotation.z += delta * 0.9;
+  });
+
   return (
     <group position={[0, 0, 0]}>
-      {/* Primary Reference Monitor */}
-      <Float speed={1.0} rotationIntensity={0.06} floatIntensity={0.12}>
+      {/* Primary Reference 4K Cinema Grading Monitor */}
+      <Float speed={1.2} rotationIntensity={0.06} floatIntensity={0.12}>
         <group position={[-2, 1.4, -1]} rotation={[0, 0.25, 0]}>
-          <mesh position={[0, 0, 0]}>
+          <mesh position={[0, 0, 0]} castShadow>
             <boxGeometry args={[3.2, 2.0, 0.1]} />
-            <meshStandardMaterial color="#09090b" metalness={0.9} roughness={0.1} />
+            <meshStandardMaterial color="#090518" metalness={0.9} roughness={0.15} />
           </mesh>
           <mesh position={[0, 0, 0.06]}>
             <planeGeometry args={[3.0, 1.8]} />
-            <meshStandardMaterial color="#1e1b4b" emissive="#3b0764" emissiveIntensity={0.4} />
+            <meshStandardMaterial
+              color="#0d0722"
+              emissive="#d97706"
+              emissiveIntensity={0.4}
+              roughness={0.2}
+            />
           </mesh>
         </group>
       </Float>
 
-      {/* Secondary Waveform Scope Monitor */}
-      <Float speed={1.2} rotationIntensity={0.08} floatIntensity={0.15}>
+      {/* Secondary Dynamic Waveform RGB Parade Monitor */}
+      <Float speed={1.4} rotationIntensity={0.08} floatIntensity={0.15}>
         <group position={[2, 1.4, -1]} rotation={[0, -0.25, 0]}>
-          <mesh position={[0, 0, 0]}>
+          <mesh position={[0, 0, 0]} castShadow>
             <boxGeometry args={[3.2, 2.0, 0.1]} />
-            <meshStandardMaterial color="#09090b" metalness={0.9} roughness={0.1} />
+            <meshStandardMaterial color="#090518" metalness={0.9} roughness={0.15} />
           </mesh>
-          <mesh position={[0, 0, 0.06]}>
+          <mesh ref={scopeRef} position={[0, 0, 0.06]}>
             <planeGeometry args={[3.0, 1.8]} />
-            <meshStandardMaterial color="#030712" emissive="#065f46" emissiveIntensity={0.3} />
+            <meshStandardMaterial
+              color="#030712"
+              emissive="#10b981"
+              emissiveIntensity={0.55}
+              wireframe
+            />
           </mesh>
         </group>
       </Float>
+
+      {/* 3D Physical Color Grading Control Desk with 3-Way Lift/Gamma/Gain Trackballs */}
+      <group position={[0, -0.6, 0]} rotation={[0.4, 0, 0]}>
+        <mesh receiveShadow castShadow>
+          <boxGeometry args={[4.2, 0.2, 1.8]} />
+          <meshStandardMaterial color="#0c071d" metalness={0.9} roughness={0.2} />
+        </mesh>
+
+        {/* Lift Trackball */}
+        <group position={[-1.2, 0.15, 0]}>
+          <mesh ref={trackball1}>
+            <sphereGeometry args={[0.28, 24, 24]} />
+            <meshStandardMaterial color="#fbbf24" metalness={0.9} roughness={0.1} wireframe />
+          </mesh>
+        </group>
+
+        {/* Gamma Trackball */}
+        <group position={[0, 0.15, 0]}>
+          <mesh ref={trackball2}>
+            <sphereGeometry args={[0.28, 24, 24]} />
+            <meshStandardMaterial color="#06b6d4" metalness={0.9} roughness={0.1} wireframe />
+          </mesh>
+        </group>
+
+        {/* Gain Trackball */}
+        <group position={[1.2, 0.15, 0]}>
+          <mesh ref={trackball3}>
+            <sphereGeometry args={[0.28, 24, 24]} />
+            <meshStandardMaterial color="#ec4899" metalness={0.9} roughness={0.1} wireframe />
+          </mesh>
+        </group>
+      </group>
     </group>
   );
 };

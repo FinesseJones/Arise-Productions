@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Float } from '@react-three/drei';
 import {
   Camera,
@@ -16,47 +16,91 @@ import toast from 'react-hot-toast';
 import { getAPIBaseURL } from '../../../lib/api';
 import { CastingUnrealBridge } from '../../../modules/unreal-bridge/casting-bridge';
 
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+
 export interface PrevisRoom3DProps {
   projectName: string;
   shotNumber: number;
   shotTitle?: string;
 }
 
-// 3D In-Scene Spatial Elements for Blockout Room (CineCamera Gizmo & Dolly Track)
+// 3D Dynamic In-Scene Spatial Elements for Previs Live Room (Animated CineCamera Rig & Dolly Track)
 export const PrevisScene3D: React.FC = () => {
+  const cameraRigRef = useRef<THREE.Group>(null);
+  const lensRef = useRef<THREE.Mesh>(null);
+  const frustumRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state, delta) => {
+    const t = state.clock.elapsedTime;
+    if (cameraRigRef.current) {
+      // Dynamic dolly forward/backward along rails
+      cameraRigRef.current.position.z = Math.sin(t * 0.6) * 1.5;
+      cameraRigRef.current.position.y = 0.5 + Math.cos(t * 0.8) * 0.15;
+      cameraRigRef.current.rotation.y = Math.sin(t * 0.4) * 0.2;
+    }
+    if (lensRef.current) {
+      lensRef.current.rotation.z += delta * 1.2;
+    }
+    if (frustumRef.current) {
+      frustumRef.current.scale.set(
+        1 + Math.sin(t * 2) * 0.05,
+        1 + Math.cos(t * 2) * 0.05,
+        1
+      );
+    }
+  });
+
   return (
     <group position={[0, 0, 0]}>
       {/* 3D Dolly Track Rails on Floor */}
       <group position={[0, -2.1, 0]}>
         <mesh position={[-0.8, 0, 0]}>
           <boxGeometry args={[0.08, 0.08, 16]} />
-          <meshStandardMaterial color="#64748b" metalness={0.9} roughness={0.1} />
+          <meshStandardMaterial color="#d97706" metalness={0.9} roughness={0.1} />
         </mesh>
         <mesh position={[0.8, 0, 0]}>
           <boxGeometry args={[0.08, 0.08, 16]} />
-          <meshStandardMaterial color="#64748b" metalness={0.9} roughness={0.1} />
+          <meshStandardMaterial color="#d97706" metalness={0.9} roughness={0.1} />
         </mesh>
+        {/* Track Cross Ties */}
+        {[-6, -4, -2, 0, 2, 4, 6].map((zPos, idx) => (
+          <mesh key={idx} position={[0, -0.02, zPos]}>
+            <boxGeometry args={[1.8, 0.04, 0.2]} />
+            <meshStandardMaterial color="#1e103d" />
+          </mesh>
+        ))}
       </group>
 
-      {/* 3D CineCamera Gizmo & Matte Box */}
-      <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.2}>
-        <group position={[0, 0.5, 0]}>
-          <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[0.9, 0.7, 1.2]} />
-            <meshStandardMaterial color="#18181b" metalness={0.8} roughness={0.2} />
-          </mesh>
-          {/* Anamorphic Lens Barrel */}
-          <mesh position={[0, 0, 0.8]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.32, 0.35, 0.5, 16]} />
-            <meshStandardMaterial color="#0284c7" metalness={0.9} roughness={0.1} />
-          </mesh>
-          {/* Top Handle */}
-          <mesh position={[0, 0.5, 0]}>
-            <boxGeometry args={[0.15, 0.25, 0.8]} />
-            <meshStandardMaterial color="#3f3f46" />
-          </mesh>
-        </group>
-      </Float>
+      {/* Dynamic 3D CineCamera Gizmo & Animated Laser Frustum */}
+      <group ref={cameraRigRef} position={[0, 0.5, 0]}>
+        <mesh position={[0, 0, 0]} castShadow>
+          <boxGeometry args={[0.9, 0.7, 1.2]} />
+          <meshStandardMaterial color="#0c071d" metalness={0.9} roughness={0.2} />
+        </mesh>
+
+        {/* Rotating Anamorphic Lens Barrel */}
+        <mesh ref={lensRef} position={[0, 0, 0.8]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.32, 0.35, 0.5, 16]} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.9} roughness={0.1} emissive="#78350f" emissiveIntensity={0.4} />
+        </mesh>
+
+        {/* Viewfinder Laser Frustum Pyramid */}
+        <mesh ref={frustumRef} position={[0, 0, 3.2]} rotation={[Math.PI / 2, 0, 0]}>
+          <coneGeometry args={[1.8, 4.4, 4, 1, true]} />
+          <meshBasicMaterial color="#06b6d4" wireframe transparent opacity={0.35} />
+        </mesh>
+
+        {/* Camera Top Handle & Monitor */}
+        <mesh position={[0, 0.5, 0]}>
+          <boxGeometry args={[0.15, 0.25, 0.8]} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.8} />
+        </mesh>
+        <mesh position={[0.4, 0.6, 0.2]} rotation={[0, 0.4, 0]}>
+          <boxGeometry args={[0.6, 0.4, 0.05]} />
+          <meshStandardMaterial color="#1e1b4b" emissive="#06b6d4" emissiveIntensity={0.6} />
+        </mesh>
+      </group>
     </group>
   );
 };

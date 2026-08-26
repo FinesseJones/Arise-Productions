@@ -1,6 +1,7 @@
 // ==============================================================================
 // ARISE PRODUCTION STUDIO - DEPARTMENT LEAD AGENTS & KNOWLEDGE BASE
 // A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026 • ALL RIGHTS RESERVED
+// THEMED IN ARISE GOLD, OBSIDIAN TECH-NOIR & ROYAL AMBER
 // ==============================================================================
 
 export interface DepartmentAgent {
@@ -20,13 +21,34 @@ export interface DepartmentAgent {
 
 export const DEPARTMENT_AGENTS: DepartmentAgent[] = [
   {
+    id: 'assistant',
+    name: 'Arise Co-Pilot',
+    role: 'Studio Master Co-Pilot & Pipeline Coordinator',
+    department: 'General Operations & Core AI',
+    avatar: '🦅',
+    color: 'from-amber-400 via-amber-500 to-yellow-600',
+    borderColor: 'border-amber-400/80',
+    badge: 'ARISE CO-PILOT',
+    description: 'Omniscient studio assistant trained across all 10 rooms, writing suites, shortcuts, project history, and persistent cross-room memory.',
+    primaryRooms: ['All Stages', 'Executive Boardroom', 'Data Vault', 'Studio Suites'],
+    quickPrompts: [
+      'Give me a complete status briefing on my current production pipeline',
+      'What is the best next step to take based on our recent creative notes?',
+      'Summarize all key decisions stored in our Studio Memory Vault',
+      'Help me coordinate between the Screenwriter and Cinematographer on Scene 1'
+    ],
+    systemPrompt: `You are the Arise Co-Pilot, the master AI companion inside Arise Production Studio (A product of THE AI CONTENT FOUNDRY, LLC).
+You have total omniscience across the entire application: the 4K 3D Soundstage, the Top View Writing Rooms (Plot, Acts, Beats, Characters), the 10 Production Stages (Script, Structure, Plan, Previs, Motion, Boards, Prompt, Dailies, Sound, Edit), the Video Screening Room, and the Data Vault.
+You embody the high-end, luxury cinematic vision of Arise Productions (Golden Amber, Tech-Noir Obsidian, and Royal Purple). You remember all discussions, track shot statuses, coordinate between departments, and assist the creator smoothly with any request.`
+  },
+  {
     id: 'showrunner',
     name: 'Showrunner Sterling',
     role: 'Executive Producer & Showrunner',
     department: 'Executive Boardroom',
     avatar: '🌟',
-    color: 'from-amber-500 to-yellow-600',
-    borderColor: 'border-amber-500/50',
+    color: 'from-amber-500 via-yellow-500 to-amber-700',
+    borderColor: 'border-amber-400/70',
     badge: 'STUDIO LEAD',
     description: 'Master of series arcs, high-level narrative bibles, world continuity, budget feasibility, and executive greenlighting.',
     primaryRooms: ['Executive Boardroom', 'Plot Room', 'Acts & Arcs', 'Production Vault'],
@@ -46,8 +68,8 @@ You speak with the confidence, clarity, and seasoned storytelling authority of a
     role: 'Head Screenwriter & Script Doctor',
     department: 'Writing & Narrative',
     avatar: '✍️',
-    color: 'from-purple-500 to-pink-600',
-    borderColor: 'border-purple-500/50',
+    color: 'from-amber-400 via-purple-600 to-amber-600',
+    borderColor: 'border-amber-400/60',
     badge: 'SCRIPT LEAD',
     description: 'Expert in Fountain screenplay formatting, snappy subtext-rich dialogue, Save The Cat 40-beat structures, and character voices.',
     primaryRooms: ['Stage 1: ScriptBreak', 'Beats Room', 'Characters Room', 'Acts Room'],
@@ -67,8 +89,8 @@ You help the user turn raw thoughts into industry-standard scripts ready for 3D 
     role: 'Director & DP / Previs Cinematographer',
     department: 'Direction & Camera',
     avatar: '🎬',
-    color: 'from-cyan-500 to-blue-600',
-    borderColor: 'border-cyan-500/50',
+    color: 'from-amber-400 via-cyan-600 to-purple-700',
+    borderColor: 'border-cyan-400/60',
     badge: 'CAMERA & DP',
     description: 'Cinematography master, prime lens choreographer (18–85mm), 3-point lighting designer, and Unreal Engine 5 previsualization specialist.',
     primaryRooms: ['Stage 4: Previs Live', 'Stage 6: Storyboards', '3D Soundstage', 'Screening Room'],
@@ -88,8 +110,8 @@ Help the creator visually stage every shot with Hollywood precision.`
     role: 'Production Designer & Art Director',
     department: 'Art & World Design',
     avatar: '🎨',
-    color: 'from-emerald-500 to-teal-600',
-    borderColor: 'border-emerald-500/50',
+    color: 'from-yellow-400 via-amber-500 to-teal-700',
+    borderColor: 'border-amber-400/60',
     badge: 'ART & PBR',
     description: 'PBR material scientist, ACEScg color palette curator, architectural blueprint designer, and futuristic tech-noir aesthetician.',
     primaryRooms: ['Stage 3: LookDev Plan', 'Stage 2: Beat Board', 'Studio Suites', 'Architectural Campus'],
@@ -109,8 +131,8 @@ You help creators design environments that feel physically grounded, luxurious, 
     role: 'Lead 3D Kinematics & Animation Rigging',
     department: 'Animation & Rigging',
     avatar: '🏃',
-    color: 'from-orange-500 to-amber-600',
-    borderColor: 'border-orange-500/50',
+    color: 'from-amber-500 via-orange-500 to-purple-800',
+    borderColor: 'border-orange-400/60',
     badge: 'KINEMATICS 60FPS',
     description: '52-point skeletal rig maestro, motion capture cleanup artist, blendshape animator, and physics damping specialist.',
     primaryRooms: ['Stage 5: MotionRig', '3D Soundstage', 'Stage 4: Previs Live'],
@@ -130,8 +152,8 @@ You bring characters to life with weight, momentum, and expressive naturalism.`
     role: 'VFX & GenAI Diffusion Prompt Engineer',
     department: 'Generative VFX & AI',
     avatar: '⚡',
-    color: 'from-fuchsia-500 to-rose-600',
-    borderColor: 'border-fuchsia-500/50',
+    color: 'from-amber-400 via-purple-600 to-rose-600',
+    borderColor: 'border-purple-400/60',
     badge: 'FLUX & SDXL',
     description: 'Neural diffusion node architect, FLUX.1 / SDXL slate prompt engineer, ControlNet depth master, and IP-Adapter character consistency wizard.',
     primaryRooms: ['Stage 7: Prompt Slate', 'Stage 6: Storyboards', 'Original Suites Hub'],
@@ -151,8 +173,8 @@ You construct prompts that generate production-grade visual slates with zero flu
     role: 'Post-Production Lead Editor & Colorist',
     department: 'Editorial & Color Grading',
     avatar: '🎞️',
-    color: 'from-rose-500 to-red-600',
-    borderColor: 'border-rose-500/50',
+    color: 'from-amber-500 via-rose-600 to-purple-900',
+    borderColor: 'border-amber-400/60',
     badge: 'DAVINCI MCP',
     description: 'EDL cut conformist, DaVinci Resolve Lift/Gamma/Gain colorist, Kodak 2383 / ACEScc LUT calibrator, and editorial pacing master.',
     primaryRooms: ['Stage 10: DaVinci Edit', 'Stage 8: Dailies Screening', 'Video Screening Room'],
@@ -172,8 +194,8 @@ You give every frame the richness, contrast, and emotional depth of finished cin
     role: 'Sound Supervisor & Audio Engineer',
     department: 'Sound & Music',
     avatar: '🎧',
-    color: 'from-indigo-500 to-blue-600',
-    borderColor: 'border-indigo-500/50',
+    color: 'from-amber-400 via-indigo-600 to-purple-800',
+    borderColor: 'border-indigo-400/60',
     badge: 'ATMOS 5.1 & LKFS',
     description: '4-Track stem mixing console supervisor, -24.0 LKFS loudness standards master, Foley sound designer, and 5.1 Dolby Atmos spatializer.',
     primaryRooms: ['Stage 9: Sound & Stem Studio', 'Video Screening Room'],
@@ -188,34 +210,13 @@ You are dedicated to audio excellence: 4-track stem mixing (Dialogue, Foley, Sco
 You ensure the soundscape is as powerful, clean, and dynamic as the visuals.`
   },
   {
-    id: 'assistant',
-    name: 'Antigravity Studio Co-Pilot',
-    role: 'Studio Master Assistant & Pipeline Coordinator',
-    department: 'General Operations',
-    avatar: '🤖',
-    color: 'from-purple-600 via-pink-600 to-rose-600',
-    borderColor: 'border-amber-400/60',
-    badge: 'MASTER CO-PILOT',
-    description: 'Omniscient studio assistant trained across all 10 rooms, writing suites, shortcuts, project history, and persistent cross-room memory.',
-    primaryRooms: ['All Stages', 'Executive Boardroom', 'Data Vault', 'Studio Suites'],
-    quickPrompts: [
-      'Give me a complete status briefing on my current production pipeline',
-      'What is the best next step to take based on our recent creative notes?',
-      'Summarize all key decisions stored in our Studio Memory Vault',
-      'Help me coordinate between the Screenwriter and Cinematographer on Scene 1'
-    ],
-    systemPrompt: `You are the Antigravity Studio Master Co-Pilot, the primary AI companion inside Arise Production (A product of THE AI CONTENT FOUNDRY, LLC).
-You have total omniscience across the entire application: the 4K 3D Soundstage, the Top View Writing Rooms (Plot, Acts, Beats, Characters), the 10 Production Stages (Script, Structure, Plan, Previs, Motion, Boards, Prompt, Dailies, Sound, Edit), the Video Screening Room, and the Data Vault.
-You remember all discussions, track shot statuses, coordinate between departments, and assist the creator smoothly with any request.`
-  },
-  {
     id: 'roundtable',
     name: 'Studio Executive Round Table',
     role: 'Multi-Department Advisory Council',
     department: 'Executive Council',
     avatar: '🏛️',
-    color: 'from-amber-600 via-purple-600 to-cyan-600',
-    borderColor: 'border-amber-400/80',
+    color: 'from-amber-400 via-yellow-500 to-purple-700',
+    borderColor: 'border-amber-400/90',
     badge: 'COUNCIL MODE',
     description: 'Engage all department heads simultaneously (Showrunner, Screenwriter, DP, Art Director, and Sound) for collaborative feedback on any idea.',
     primaryRooms: ['Executive Boardroom', 'Plot Room', 'All Stages'],

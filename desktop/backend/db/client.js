@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const STATE_FILE_PATH = path.join(__dirname, 'studio_state.json');
+const STATE_FILE_PATH = path.join(process.env.DATA_DIR || (fs.existsSync('/app/data') ? '/app/data' : __dirname), 'studio_state.json');
 
 // Persistent Transactional Store with file-backed JSON autosave
 class StudioDatabase extends EventEmitter {

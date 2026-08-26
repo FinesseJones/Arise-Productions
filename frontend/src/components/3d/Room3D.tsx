@@ -32,7 +32,7 @@ const STAGE_CAMERA_VANTAGE: Record<
   edit: { position: [1.2, 1.1, 5.2], target: [0.3, 0.2, 0], fov: 48 },
 };
 
-// Smooth Fly-To CineCamera Controller
+// Smooth Fly-To CineCamera Controller with Interactive Mouse Parallax
 const CineCameraController: React.FC<{
   stageId: string;
   shotNumber: number;
@@ -42,9 +42,9 @@ const CineCameraController: React.FC<{
   const targetConfig = STAGE_CAMERA_VANTAGE[stageId] || STAGE_CAMERA_VANTAGE.script;
   
   // Calculate subtle shot-based offset for dynamic feel
-  const targetPos = useMemo(() => {
+  const baseTargetPos = useMemo(() => {
     const [x, y, z] = targetConfig.position;
-    const shotOffset = ((shotNumber % 3) - 1) * 0.2;
+    const shotOffset = ((shotNumber % 3) - 1) * 0.25;
     return new THREE.Vector3(x + shotOffset, y, z);
   }, [stageId, shotNumber, targetConfig]);
 
@@ -57,18 +57,31 @@ const CineCameraController: React.FC<{
 
   useFrame((state, delta) => {
     if (!allowOrbit) {
-      // Smooth interpolation for position (~0.8s ease)
-      const lerpFactor = Math.min(delta * 4.5, 0.12);
-      camera.position.lerp(targetPos, lerpFactor);
+      // Dynamic Mouse Parallax (smooth 3D depth reaction)
+      const mouseX = state.pointer.x * 0.6;
+      const mouseY = state.pointer.y * 0.4;
 
-      // Subtle breathing motion for cinematic vitality
-      const breathX = Math.sin(state.clock.elapsedTime * 0.4) * 0.04;
-      const breathY = Math.cos(state.clock.elapsedTime * 0.6) * 0.03;
-      camera.position.x += breathX * 0.01;
-      camera.position.y += breathY * 0.01;
+      // Natural cinematic breathing motion
+      const breathX = Math.sin(state.clock.elapsedTime * 0.5) * 0.08;
+      const breathY = Math.cos(state.clock.elapsedTime * 0.7) * 0.06;
 
-      // Smooth lookAt interpolation
-      currentLookAt.current.lerp(targetLook, lerpFactor);
+      const dynamicTarget = new THREE.Vector3(
+        baseTargetPos.x + mouseX + breathX,
+        baseTargetPos.y + mouseY + breathY,
+        baseTargetPos.z
+      );
+
+      // Smooth interpolation for camera position
+      const lerpFactor = Math.min(delta * 4.0, 0.12);
+      camera.position.lerp(dynamicTarget, lerpFactor);
+
+      // Dynamic LookAt with subtle mouse tracking
+      const dynamicLookAt = new THREE.Vector3(
+        targetLook.x + mouseX * 0.3,
+        targetLook.y + mouseY * 0.2,
+        targetLook.z
+      );
+      currentLookAt.current.lerp(dynamicLookAt, lerpFactor);
       camera.lookAt(currentLookAt.current);
     }
   });
@@ -84,77 +97,145 @@ const CineCameraController: React.FC<{
   ) : null;
 };
 
-// 4K Soundstage Architectural Floor Grid with Ambient Glow
-const SoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
-  const gridColor = useMemo(() => {
-    switch (stageId) {
-      case 'script':
-        return '#f59e0b';
-      case 'previs':
-      case 'motion':
-        return '#06b6d4';
-      case 'edit':
-      case 'dailies':
-        return '#ec4899';
-      default:
-        return '#8b5cf6';
-    }
-  }, [stageId]);
+// 4K Dynamic Rotating Soundstage Floor & Animated Emitters
+const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
+  const ringRef1 = useRef<THREE.Mesh>(null);
+  const ringRef2 = useRef<THREE.Mesh>(null);
+  const ringRef3 = useRef<THREE.Mesh>(null);
+
+  const primaryGold = '#f59e0b';
+  const secondaryAmber = '#d97706';
+  const royalPurple = '#7e22ce';
+
+  useFrame((state, delta) => {
+    if (ringRef1.current) ringRef1.current.rotation.z += delta * 0.15;
+    if (ringRef2.current) ringRef2.current.rotation.z -= delta * 0.10;
+    if (ringRef3.current) ringRef3.current.rotation.z += delta * 0.06;
+  });
 
   return (
     <group position={[0, -2.2, 0]}>
       {/* Reflective Dark Stage Floor Plane */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[80, 80]} />
+        <planeGeometry args={[100, 100]} />
         <meshStandardMaterial
           color="#030108"
-          roughness={0.25}
-          metalness={0.85}
+          roughness={0.15}
+          metalness={0.92}
         />
       </mesh>
 
       {/* Cyber Grid Lines */}
       <gridHelper
-        args={[60, 60, gridColor, '#180d38']}
+        args={[80, 80, primaryGold, '#1f103d']}
         position={[0, 0.01, 0]}
       />
 
-      {/* Center Soundstage Multi-Rings */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[3.8, 3.9, 64]} />
-        <meshBasicMaterial color={gridColor} transparent opacity={0.5} />
+      {/* Animated Counter-Rotating Concentric Stage Rings */}
+      <mesh ref={ringRef1} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[3.6, 3.8, 64]} />
+        <meshBasicMaterial color={primaryGold} transparent opacity={0.65} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[7.8, 7.9, 64]} />
-        <meshBasicMaterial color="#a855f7" transparent opacity={0.3} />
+
+      <mesh ref={ringRef2} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[7.4, 7.6, 64]} />
+        <meshBasicMaterial color={secondaryAmber} transparent opacity={0.45} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[11.8, 11.9, 64]} />
-        <meshBasicMaterial color="#ec4899" transparent opacity={0.2} />
+
+      <mesh ref={ringRef3} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[11.6, 11.8, 64]} />
+        <meshBasicMaterial color={royalPurple} transparent opacity={0.35} />
+      </mesh>
+
+      {/* Stage Floor Center Golden Aperture Marker */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, 0]}>
+        <circleGeometry args={[1.2, 32]} />
+        <meshStandardMaterial
+          color="#160d2e"
+          emissive="#78350f"
+          emissiveIntensity={0.6}
+          roughness={0.3}
+          metalness={0.8}
+        />
       </mesh>
     </group>
   );
 };
 
-// Atmospheric Volumetric Dust & Floating Studio Nodes
+// Dynamic Animated Studio Spotlights (Sweeping Light Beams)
+const SweepingStudioSpotlights: React.FC = () => {
+  const spotLightRef1 = useRef<THREE.SpotLight>(null);
+  const spotLightRef2 = useRef<THREE.SpotLight>(null);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (spotLightRef1.current) {
+      spotLightRef1.current.position.x = 6 + Math.sin(t * 0.4) * 2;
+      spotLightRef1.current.position.z = 6 + Math.cos(t * 0.3) * 1.5;
+    }
+    if (spotLightRef2.current) {
+      spotLightRef2.current.position.x = -6 + Math.cos(t * 0.35) * 2;
+      spotLightRef2.current.position.z = 5 + Math.sin(t * 0.45) * 1.5;
+    }
+  });
+
+  return (
+    <>
+      {/* Dynamic Key Spotlight (3200K Golden Amber) */}
+      <spotLight
+        ref={spotLightRef1}
+        position={[7, 9, 6]}
+        intensity={2.5}
+        color="#fbbf24"
+        angle={0.55}
+        penumbra={0.7}
+        castShadow
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+      />
+
+      {/* Dynamic Soft Fill Spotlight (Arise Royal Purple) */}
+      <spotLight
+        ref={spotLightRef2}
+        position={[-7, 8, 5]}
+        intensity={1.8}
+        color="#c084fc"
+        angle={0.65}
+        penumbra={0.85}
+      />
+
+      {/* Rim / Back Edge Light (Electric Rose-Gold) */}
+      <spotLight
+        position={[0, 9, -7]}
+        intensity={2.8}
+        color="#f59e0b"
+        angle={0.6}
+        penumbra={0.75}
+        castShadow
+      />
+    </>
+  );
+};
+
+// Atmospheric Volumetric Dust & Floating Golden Embers
 const StudioAtmosphere: React.FC = () => {
   const particlesRef = useRef<THREE.Points>(null);
-  const particleCount = 180;
+  const particleCount = 220;
 
   const [positions] = useState(() => {
     const pos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 26;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 26;
+      pos[i * 3] = (Math.random() - 0.5) * 28;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 16;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 28;
     }
     return pos;
   });
 
   useFrame((state) => {
     if (particlesRef.current) {
-      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.015;
-      particlesRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.01) * 0.02;
+      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.02;
+      particlesRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.015) * 0.03;
     }
   });
 
@@ -170,50 +251,70 @@ const StudioAtmosphere: React.FC = () => {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.035}
-        color="#fbbf24"
+        size={0.04}
+        color="#fde047"
         transparent
-        opacity={0.6}
+        opacity={0.65}
         blending={THREE.AdditiveBlending}
       />
     </points>
   );
 };
 
-// 3D Spatial Soundstage Markers & Overhead Trussing
-const SoundstageTrussing: React.FC<{ stageId: string; roomName: string }> = ({
+// 3D Soundstage Walls & Overhead Rigging Truss with Golden Phoenix Badge
+const SoundstageEnvironmentTruss: React.FC<{ stageId: string; roomName: string }> = ({
   stageId,
   roomName,
 }) => {
-  return (
-    <group position={[0, 4.4, -4]}>
-      {/* Overhead Lighting Truss Beam */}
-      <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[18, 0.25, 0.25]} />
-        <meshStandardMaterial color="#1a1433" metalness={0.9} roughness={0.2} />
-      </mesh>
+  const trussRef = useRef<THREE.Group>(null);
 
-      {/* Stage Number Floating Holo-Sign */}
-      <Float speed={1.2} rotationIntensity={0.05} floatIntensity={0.1}>
-        <Text
-          position={[0, -0.6, 0]}
-          fontSize={0.45}
-          color="#f59e0b"
-          anchorX="center"
-          anchorY="middle"
-        >
-          {`STAGE: ${roomName.toUpperCase()}`}
-        </Text>
-        <Text
-          position={[0, -1.0, 0]}
-          fontSize={0.18}
-          color="#c084fc"
-          anchorX="center"
-          anchorY="middle"
-        >
-          ARISE 4K 3D SOUNDSTAGE • 60 FPS PBR SPATIAL SUITE
-        </Text>
-      </Float>
+  useFrame((state) => {
+    if (trussRef.current) {
+      trussRef.current.position.y = 4.4 + Math.sin(state.clock.elapsedTime * 0.6) * 0.03;
+    }
+  });
+
+  return (
+    <group position={[0, 0, 0]}>
+      {/* Overhead Lighting Truss Beam */}
+      <group ref={trussRef} position={[0, 4.4, -4]}>
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[20, 0.28, 0.28]} />
+          <meshStandardMaterial color="#1a1130" metalness={0.9} roughness={0.2} />
+        </mesh>
+
+        {/* 3D Floating Stage Holo-Sign */}
+        <Float speed={2.0} rotationIntensity={0.08} floatIntensity={0.15}>
+          <Text
+            position={[0, -0.6, 0]}
+            fontSize={0.48}
+            color="#fbbf24"
+            anchorX="center"
+            anchorY="middle"
+          >
+            {`STAGE: ${roomName.toUpperCase()}`}
+          </Text>
+          <Text
+            position={[0, -1.05, 0]}
+            fontSize={0.18}
+            color="#e9d5ff"
+            anchorX="center"
+            anchorY="middle"
+          >
+            ARISE PRODUCTION • 4K 60FPS SPATIAL SOUNDSTAGE
+          </Text>
+        </Float>
+      </group>
+
+      {/* Perimeter Acoustic Soundstage Wall Panels with Rim Glow */}
+      <mesh position={[-14, 2, -10]} rotation={[0, Math.PI / 4, 0]}>
+        <boxGeometry args={[0.2, 10, 16]} />
+        <meshStandardMaterial color="#0c071d" roughness={0.8} metalness={0.3} />
+      </mesh>
+      <mesh position={[14, 2, -10]} rotation={[0, -Math.PI / 4, 0]}>
+        <boxGeometry args={[0.2, 10, 16]} />
+        <meshStandardMaterial color="#0c071d" roughness={0.8} metalness={0.3} />
+      </mesh>
     </group>
   );
 };
@@ -227,7 +328,7 @@ export const Room3D: React.FC<Room3DProps> = ({
   allowOrbit = false,
 }) => {
   return (
-    <div className="relative w-full h-full min-h-[380px] bg-[#04020a] overflow-hidden select-none rounded-2xl">
+    <div className="relative w-full h-full min-h-[380px] bg-[#04020a] overflow-hidden select-none rounded-2xl border border-amber-500/20 shadow-2xl">
       <Canvas
         shadows
         dpr={[1, 2]}
@@ -238,64 +339,45 @@ export const Room3D: React.FC<Room3DProps> = ({
         }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.15;
+          gl.toneMappingExposure = 1.25;
           gl.shadowMap.enabled = true;
           gl.shadowMap.type = THREE.PCFSoftShadowMap;
         }}
         camera={{ position: [0, 1.2, 5.8], fov: 50 }}
         className="w-full h-full"
       >
-        {/* Background Depth Fog */}
+        {/* Background Depth Fog in Arise Deep Obsidian */}
         <color attach="background" args={['#05030e']} />
-        <fog attach="fog" args={['#05030e', 7, 28]} />
+        <fog attach="fog" args={['#05030e', 6, 26]} />
 
-        {/* 3-Point Hollywood 4K Studio Lighting */}
-        <ambientLight intensity={0.45} color="#e9d5ff" />
-        
-        {/* Key Light (3200K Golden Amber) */}
-        <directionalLight
-          position={[7, 9, 7]}
-          intensity={1.8}
-          color="#fef08a"
-          castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-          shadow-bias={-0.0001}
-        />
+        {/* Ambient Stage Fill */}
+        <ambientLight intensity={0.5} color="#e9d5ff" />
 
-        {/* Fill Light (Deep Purple Soft Fill) */}
-        <pointLight position={[-7, 5, 5]} intensity={1.3} color="#a855f7" />
+        {/* Dynamic Sweeping Spotlights */}
+        <SweepingStudioSpotlights />
 
-        {/* Rim / Back Light (Electric Rose / Cyan Edge) */}
-        <spotLight
-          position={[0, 8, -7]}
-          intensity={2.4}
-          color="#ec4899"
-          angle={0.65}
-          penumbra={0.8}
-          castShadow
-        />
-
-        {/* Camera Fly-to Navigation Controller */}
+        {/* Interactive Camera Controller with Mouse Parallax */}
         <CineCameraController
           stageId={stageId}
           shotNumber={shotNumber}
           allowOrbit={allowOrbit}
         />
 
-        {/* 3D Soundstage Environment */}
-        <SoundstageFloor stageId={stageId} />
+        {/* 3D Soundstage Animated Floor & Atmosphere */}
+        <DynamicSoundstageFloor stageId={stageId} />
         <StudioAtmosphere />
-        <SoundstageTrussing stageId={stageId} roomName={roomName} />
+        <SoundstageEnvironmentTruss stageId={stageId} roomName={roomName} />
 
-        {/* Bespoke 3D Stage Elements or Children */}
+        {/* Bespoke 3D Room Stage Props & Geometries */}
         {children}
       </Canvas>
 
-      {/* 4K 60FPS Spatial Soundstage Watermark */}
-      <div className="absolute bottom-3 left-3 z-10 pointer-events-none flex items-center space-x-2 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-purple-900/50 text-[9px] font-mono text-purple-300">
-        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-        <span>4K UHD • 60 FPS PBR SPATIAL SOUNDSTAGE</span>
+      {/* 4K 60FPS Spatial Soundstage Watermark with Arise Golden Phoenix Icon */}
+      <div className="absolute bottom-3 left-3 z-10 pointer-events-none flex items-center space-x-2 bg-[#090518]/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/40 text-[10px] font-mono text-amber-200 shadow-lg">
+        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-sm shadow-amber-400" />
+        <span className="font-bold">ARISE 4K UHD</span>
+        <span className="text-purple-400">•</span>
+        <span>60 FPS DYNAMIC 3D SOUNDSTAGE</span>
       </div>
     </div>
   );

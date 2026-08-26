@@ -22,64 +22,133 @@ export interface MotionRoom3DProps {
   shotTitle?: string;
 }
 
-// 3D 52-Point Kinematic Rig Model in Space
+// 3D 52-Point Dynamic Kinematic Rig Model with Live Articulated Walking Motion
 export const MotionScene3D: React.FC = () => {
   const rigGroup = useRef<THREE.Group>(null);
+  const leftArmRef = useRef<THREE.Group>(null);
+  const rightArmRef = useRef<THREE.Group>(null);
+  const leftLegRef = useRef<THREE.Group>(null);
+  const rightLegRef = useRef<THREE.Group>(null);
+  const floorHaloRef = useRef<THREE.Mesh>(null);
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
+    const t = state.clock.elapsedTime * 2.8;
     if (rigGroup.current) {
-      const t = state.clock.elapsedTime * 2.0;
-      // Gentle idle breathing & subtle weight shift
-      rigGroup.current.position.y = Math.sin(t) * 0.05 - 0.2;
-      rigGroup.current.rotation.y = Math.sin(t * 0.5) * 0.15;
+      // Dynamic vertical bounce and hip sway
+      rigGroup.current.position.y = Math.abs(Math.sin(t)) * 0.12 - 0.2;
+      rigGroup.current.rotation.y = Math.sin(t * 0.5) * 0.25;
     }
-  });
+    // Arm swing counter-motion
+    if (leftArmRef.current) leftArmRef.current.rotation.x = Math.sin(t) * 0.5;
+    if (rightArmRef.current) rightArmRef.current.rotation.x = -Math.sin(t) * 0.5;
 
-  // Key Joint Positions for 52-pt Skeleton Representation
-  const joints: [number, number, number][] = [
-    [0, 1.8, 0],    // Head
-    [0, 1.4, 0],    // Neck
-    [0, 1.1, 0],    // Chest / Spine
-    [0, 0.6, 0],    // Pelvis
-    [-0.5, 1.3, 0], // Left Shoulder
-    [0.5, 1.3, 0],  // Right Shoulder
-    [-0.8, 0.9, 0], // Left Elbow
-    [0.8, 0.9, 0],  // Right Elbow
-    [-1.0, 0.5, 0], // Left Wrist
-    [1.0, 0.5, 0],  // Right Wrist
-    [-0.3, 0.1, 0], // Left Knee
-    [0.3, 0.1, 0],  // Right Knee
-    [-0.35, -0.9, 0], // Left Ankle
-    [0.35, -0.9, 0],  // Right Ankle
-  ];
+    // Leg stride motion
+    if (leftLegRef.current) leftLegRef.current.rotation.x = -Math.sin(t) * 0.6;
+    if (rightLegRef.current) rightLegRef.current.rotation.x = Math.sin(t) * 0.6;
+
+    if (floorHaloRef.current) floorHaloRef.current.rotation.z += delta * 0.5;
+  });
 
   return (
     <group ref={rigGroup} position={[0, 0, -0.5]}>
-      {joints.map((pos, idx) => (
-        <mesh key={idx} position={pos}>
-          <sphereGeometry args={[0.08, 16, 16]} />
-          <meshStandardMaterial
-            color="#06b6d4"
-            emissive="#0891b2"
-            emissiveIntensity={0.8}
-          />
-        </mesh>
-      ))}
+      {/* Head with Visor */}
+      <mesh position={[0, 1.8, 0]}>
+        <sphereGeometry args={[0.18, 16, 16]} />
+        <meshStandardMaterial color="#fbbf24" emissive="#d97706" emissiveIntensity={0.6} metalness={0.9} />
+      </mesh>
+      <mesh position={[0, 1.8, 0.12]}>
+        <boxGeometry args={[0.22, 0.08, 0.1]} />
+        <meshStandardMaterial color="#06b6d4" emissive="#06b6d4" emissiveIntensity={0.9} />
+      </mesh>
 
-      {/* Spine & Limbs Bone Lines */}
-      <mesh position={[0, 1.0, 0]}>
-        <cylinderGeometry args={[0.03, 0.03, 1.2, 8]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.6} />
+      {/* Spine / Torso */}
+      <mesh position={[0, 1.1, 0]}>
+        <cylinderGeometry args={[0.06, 0.08, 1.0, 12]} />
+        <meshStandardMaterial color="#1f103d" metalness={0.8} roughness={0.2} />
       </mesh>
-      {/* Shoulder Clavicle Line */}
-      <mesh position={[0, 1.3, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.03, 0.03, 1.0, 8]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.6} />
+      <mesh position={[0, 1.4, 0]}>
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshStandardMaterial color="#fbbf24" emissive="#f59e0b" emissiveIntensity={0.8} />
       </mesh>
-      {/* Pelvis Line */}
-      <mesh position={[0, 0.6, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.03, 0.03, 0.6, 8]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.6} />
+      <mesh position={[0, 0.7, 0]}>
+        <sphereGeometry args={[0.11, 16, 16]} />
+        <meshStandardMaterial color="#fbbf24" emissive="#f59e0b" emissiveIntensity={0.8} />
+      </mesh>
+
+      {/* Clavicle / Shoulders */}
+      <mesh position={[0, 1.4, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.04, 0.04, 1.1, 8]} />
+        <meshStandardMaterial color="#d97706" metalness={0.9} />
+      </mesh>
+
+      {/* Articulated Left Arm */}
+      <group ref={leftArmRef} position={[-0.55, 1.4, 0]}>
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="#f59e0b" emissive="#fbbf24" emissiveIntensity={0.9} />
+        </mesh>
+        <mesh position={[0, -0.4, 0]}>
+          <cylinderGeometry args={[0.04, 0.03, 0.7, 8]} />
+          <meshStandardMaterial color="#38bdf8" />
+        </mesh>
+        <mesh position={[0, -0.75, 0]}>
+          <sphereGeometry args={[0.07, 16, 16]} />
+          <meshStandardMaterial color="#f59e0b" emissive="#fbbf24" emissiveIntensity={0.8} />
+        </mesh>
+      </group>
+
+      {/* Articulated Right Arm */}
+      <group ref={rightArmRef} position={[0.55, 1.4, 0]}>
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="#f59e0b" emissive="#fbbf24" emissiveIntensity={0.9} />
+        </mesh>
+        <mesh position={[0, -0.4, 0]}>
+          <cylinderGeometry args={[0.04, 0.03, 0.7, 8]} />
+          <meshStandardMaterial color="#38bdf8" />
+        </mesh>
+        <mesh position={[0, -0.75, 0]}>
+          <sphereGeometry args={[0.07, 16, 16]} />
+          <meshStandardMaterial color="#f59e0b" emissive="#fbbf24" emissiveIntensity={0.8} />
+        </mesh>
+      </group>
+
+      {/* Articulated Left Leg */}
+      <group ref={leftLegRef} position={[-0.3, 0.6, 0]}>
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[0.09, 16, 16]} />
+          <meshStandardMaterial color="#f59e0b" emissive="#fbbf24" emissiveIntensity={0.8} />
+        </mesh>
+        <mesh position={[0, -0.5, 0]}>
+          <cylinderGeometry args={[0.05, 0.04, 0.9, 8]} />
+          <meshStandardMaterial color="#38bdf8" />
+        </mesh>
+        <mesh position={[0, -1.0, 0]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="#f59e0b" emissive="#fbbf24" emissiveIntensity={0.9} />
+        </mesh>
+      </group>
+
+      {/* Articulated Right Leg */}
+      <group ref={rightLegRef} position={[0.3, 0.6, 0]}>
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[0.09, 16, 16]} />
+          <meshStandardMaterial color="#f59e0b" emissive="#fbbf24" emissiveIntensity={0.8} />
+        </mesh>
+        <mesh position={[0, -0.5, 0]}>
+          <cylinderGeometry args={[0.05, 0.04, 0.9, 8]} />
+          <meshStandardMaterial color="#38bdf8" />
+        </mesh>
+        <mesh position={[0, -1.0, 0]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="#f59e0b" emissive="#fbbf24" emissiveIntensity={0.9} />
+        </mesh>
+      </group>
+
+      {/* Base Rotating MoCap Tracker Halo */}
+      <mesh ref={floorHaloRef} position={[0, -1.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[1.1, 1.25, 32]} />
+        <meshBasicMaterial color="#f59e0b" transparent opacity={0.6} />
       </mesh>
     </group>
   );

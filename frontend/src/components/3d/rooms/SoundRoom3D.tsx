@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Float } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 import {
   Volume2,
   Sparkles,
@@ -21,38 +23,93 @@ export interface SoundRoom3DProps {
   shotTitle?: string;
 }
 
-// 3D Audio Mixing Console & Monitor Speakers
+// 3D Audio Mixing Console with 16 Animated Bouncing Spectrum Bars & Spatial Rings
 export const SoundScene3D: React.FC = () => {
+  const barsGroupRef = useRef<THREE.Group>(null);
+  const leftSpeakerRing = useRef<THREE.Mesh>(null);
+  const rightSpeakerRing = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime * 6;
+    if (barsGroupRef.current) {
+      barsGroupRef.current.children.forEach((child, i) => {
+        const mesh = child as THREE.Mesh;
+        const h = Math.abs(Math.sin(t + i * 0.45) * Math.cos(t * 0.5 + i * 0.2)) * 1.4 + 0.15;
+        mesh.scale.y = h;
+        mesh.position.y = h / 2;
+      });
+    }
+
+    if (leftSpeakerRing.current) {
+      const s = 1 + Math.sin(t * 0.8) * 0.15;
+      leftSpeakerRing.current.scale.set(s, s, 1);
+    }
+    if (rightSpeakerRing.current) {
+      const s = 1 + Math.cos(t * 0.8) * 0.15;
+      rightSpeakerRing.current.scale.set(s, s, 1);
+    }
+  });
+
   return (
     <group position={[0, 0, 0]}>
       {/* 3D Mixing Console Desk */}
-      <group position={[0, -0.5, 0]} rotation={[0.4, 0, 0]}>
-        <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[4.5, 0.2, 2.2]} />
-          <meshStandardMaterial color="#1e1b4b" metalness={0.8} roughness={0.2} />
+      <group position={[0, -0.5, 0]} rotation={[0.35, 0, 0]}>
+        <mesh position={[0, 0, 0]} receiveShadow castShadow>
+          <boxGeometry args={[4.8, 0.25, 2.4]} />
+          <meshStandardMaterial color="#0c071d" metalness={0.9} roughness={0.15} />
         </mesh>
-        {/* Glowing Channel Strips */}
-        {[-1.5, -0.5, 0.5, 1.5].map((x, idx) => (
-          <mesh key={idx} position={[x, 0.12, 0]}>
-            <boxGeometry args={[0.6, 0.05, 1.8]} />
+
+        {/* 4 Golden Channel Strips */}
+        {[-1.6, -0.55, 0.55, 1.6].map((x, idx) => (
+          <mesh key={idx} position={[x, 0.14, 0]}>
+            <boxGeometry args={[0.7, 0.05, 1.9]} />
             <meshStandardMaterial
-              color="#0f172a"
-              emissive={idx === 0 ? '#10b981' : idx === 1 ? '#3b82f6' : idx === 2 ? '#8b5cf6' : '#f59e0b'}
-              emissiveIntensity={0.3}
+              color="#170c36"
+              emissive="#f59e0b"
+              emissiveIntensity={0.35}
+              metalness={0.8}
             />
           </mesh>
         ))}
       </group>
 
-      {/* Nearfield Monitor Speakers */}
-      <mesh position={[-2.8, 1.2, -1]} rotation={[0, 0.4, 0]}>
-        <boxGeometry args={[0.8, 1.2, 0.8]} />
-        <meshStandardMaterial color="#0f172a" metalness={0.7} roughness={0.3} />
-      </mesh>
-      <mesh position={[2.8, 1.2, -1]} rotation={[0, -0.4, 0]}>
-        <boxGeometry args={[0.8, 1.2, 0.8]} />
-        <meshStandardMaterial color="#0f172a" metalness={0.7} roughness={0.3} />
-      </mesh>
+      {/* 16 Floating 3D Animated Equalizer / VU Meter Bars */}
+      <group ref={barsGroupRef} position={[-2.2, 0.6, -0.8]}>
+        {Array.from({ length: 16 }).map((_, i) => (
+          <mesh key={i} position={[i * 0.28, 0, 0]} castShadow>
+            <boxGeometry args={[0.18, 1, 0.15]} />
+            <meshStandardMaterial
+              color="#fbbf24"
+              emissive={i > 12 ? '#ef4444' : i > 8 ? '#f59e0b' : '#10b981'}
+              emissiveIntensity={0.8}
+              roughness={0.3}
+            />
+          </mesh>
+        ))}
+      </group>
+
+      {/* Nearfield Monitor Speakers with Pulsing Acoustic Cones */}
+      <group position={[-2.8, 1.0, -0.8]} rotation={[0, 0.35, 0]}>
+        <mesh castShadow>
+          <boxGeometry args={[0.9, 1.4, 0.9]} />
+          <meshStandardMaterial color="#0b0618" metalness={0.9} roughness={0.2} />
+        </mesh>
+        <mesh ref={leftSpeakerRing} position={[0, 0.2, 0.46]}>
+          <circleGeometry args={[0.28, 32]} />
+          <meshStandardMaterial color="#fbbf24" emissive="#d97706" emissiveIntensity={0.7} />
+        </mesh>
+      </group>
+
+      <group position={[2.8, 1.0, -0.8]} rotation={[0, -0.35, 0]}>
+        <mesh castShadow>
+          <boxGeometry args={[0.9, 1.4, 0.9]} />
+          <meshStandardMaterial color="#0b0618" metalness={0.9} roughness={0.2} />
+        </mesh>
+        <mesh ref={rightSpeakerRing} position={[0, 0.2, 0.46]}>
+          <circleGeometry args={[0.28, 32]} />
+          <meshStandardMaterial color="#fbbf24" emissive="#d97706" emissiveIntensity={0.7} />
+        </mesh>
+      </group>
     </group>
   );
 };

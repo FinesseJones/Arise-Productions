@@ -1,7 +1,7 @@
-"use client";
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Float } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 import {
   Sparkles,
   Sliders,
@@ -20,33 +20,62 @@ export interface PromptRoom3DProps {
   shotTitle?: string;
 }
 
-// 3D Neural Diffusion Lattice in Space
+// 3D Dynamic Neural Diffusion Quantum Cluster in Space
 export const PromptScene3D: React.FC = () => {
-  return (
-    <group position={[0, 0, 0]}>
-      <Float speed={1.8} rotationIntensity={0.3} floatIntensity={0.4}>
-        <mesh position={[-3, 1.5, -1]}>
-          <octahedronGeometry args={[0.8]} />
-          <meshStandardMaterial
-            color="#8b5cf6"
-            emissive="#7c3aed"
-            emissiveIntensity={0.6}
-            wireframe
-          />
-        </mesh>
-      </Float>
+  const clusterRef = useRef<THREE.Group>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
 
-      <Float speed={1.5} rotationIntensity={0.25} floatIntensity={0.35}>
-        <mesh position={[3, 1.8, -1]}>
-          <icosahedronGeometry args={[0.8]} />
+  useFrame((state, delta) => {
+    const t = state.clock.elapsedTime;
+    if (clusterRef.current) {
+      clusterRef.current.rotation.y += delta * 0.4;
+      clusterRef.current.rotation.x = Math.sin(t * 0.5) * 0.2;
+    }
+    if (ringRef.current) {
+      ringRef.current.rotation.z -= delta * 0.6;
+    }
+  });
+
+  return (
+    <group position={[0, 0.6, -0.5]}>
+      {/* Central Rotating Neural Core Cluster */}
+      <group ref={clusterRef}>
+        {/* Core Quantum Icosahedron */}
+        <mesh>
+          <icosahedronGeometry args={[0.9, 0]} />
           <meshStandardMaterial
-            color="#ec4899"
-            emissive="#db2777"
-            emissiveIntensity={0.6}
+            color="#fbbf24"
+            emissive="#d97706"
+            emissiveIntensity={0.8}
             wireframe
           />
         </mesh>
-      </Float>
+
+        {/* Orbiting Quantum Synapse Nodes */}
+        {[
+          [-1.6, 0.8, 0.5],
+          [1.6, -0.6, -0.5],
+          [0.4, 1.5, -1.0],
+          [-0.8, -1.3, 0.8],
+        ].map((pos, idx) => (
+          <group key={idx} position={pos as [number, number, number]}>
+            <mesh>
+              <octahedronGeometry args={[0.28, 0]} />
+              <meshStandardMaterial
+                color="#f59e0b"
+                emissive="#f59e0b"
+                emissiveIntensity={0.9}
+              />
+            </mesh>
+          </group>
+        ))}
+      </group>
+
+      {/* Orbiting Golden Synaptic Ring */}
+      <mesh ref={ringRef} rotation={[-Math.PI / 3, 0, 0]}>
+        <ringGeometry args={[2.0, 2.15, 48]} />
+        <meshBasicMaterial color="#fbbf24" transparent opacity={0.6} side={THREE.DoubleSide} />
+      </mesh>
     </group>
   );
 };
