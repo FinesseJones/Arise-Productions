@@ -50,14 +50,12 @@ export class NvidiaNIMClient {
   constructor(apiKey = loadEnvKey()) {
     this.apiKey = apiKey || loadEnvKey();
     this.baseUrl = 'https://integrate.api.nvidia.com';
-    this.defaultModel = 'meta/llama-3.3-70b-instruct';
+    this.defaultModel = 'meta/llama-3.2-11b-vision-instruct';
     this.availableModels = [
-      { id: 'meta/llama-3.3-70b-instruct', name: 'Llama 3.3 70B Instruct (Default)', description: 'State-of-the-art tool-calling, structural parsing, 3D camera vectors, and logic' },
-      { id: 'meta/llama-3.1-70b-instruct', name: 'Llama 3.1 70B Instruct', description: 'Fast, highly creative, Hollywood screenplay & dialogue specialist' },
+      { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct (Default)', description: 'Fast, high-fidelity multimodal parsing, screenplay logic, and tool execution' },
       { id: 'meta/llama-3.2-90b-vision-instruct', name: 'Llama 3.2 90B Vision Instruct', description: 'Visual multimodal parsing for shot references and storyboard frames' },
-      { id: 'mistralai/mistral-large', name: 'Mistral Large', description: 'European powerhouse for multi-lingual international production bibles' },
+      { id: 'mistralai/mistral-7b-instruct-v0.3', name: 'Mistral 7B Instruct v0.3', description: 'Fast European powerhouse for screenplay beats and dialogue' },
       { id: 'deepseek-ai/deepseek-v4-flash-0731', name: 'DeepSeek V4 Flash', description: 'Ultra-fast sub-second generation for real-time live script brainstorming' },
-      { id: 'meta/llama-3.1-8b-instruct', name: 'Llama 3.1 8B Instruct (High Speed)', description: 'Lightweight high-throughput parsing for shot metadata and tags' },
     ];
   }
 

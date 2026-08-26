@@ -270,7 +270,7 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
     }
 
     case 'run_stage': {
-      const stageId = args.stageId;
+      const stageId = args.stageId || args.stage;
       const worker = mcpWorkers[stageId];
       if (!worker) {
         return {
