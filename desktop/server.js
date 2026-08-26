@@ -497,6 +497,16 @@ app.post('/api/v1/ingest/link', async (req, res) => {
   }
 });
 
+// POST /api/v1/ingest/analyze-discuss - Ingest YouTube / Social media link and generate deep pitch & discussion notes
+app.post('/api/v1/ingest/analyze-discuss', async (req, res) => {
+  try {
+    const analysis = await MediaIngestionEngine.analyzeAndDiscussMediaLink(req.body);
+    res.json({ success: true, analysis });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET /api/v1/manifest - Retrieve current ProjectStatus manifest
 app.get('/api/v1/manifest', async (req, res) => {
   const projectId = await resolveProjectId(req.query.projectId);

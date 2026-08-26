@@ -4,7 +4,7 @@
 // ==============================================================================
 
 import { db } from '../db/client.js';
-import { nvidiaNIM } from '../ai/nvidia-client.js';
+import { nvidia } from '../ai/nvidia-client.js';
 
 export class MediaIngestionEngine {
   /**
@@ -43,16 +43,12 @@ export class MediaIngestionEngine {
       logline = parsedData.logline;
     } else {
       // Use NVIDIA NIM AI to generate dynamic story beats based on project title
-      if (nvidiaNIM.hasApiKey()) {
-        try {
-          const aiData = await this.generateAIStoryForTitle(title, format, seasonNumber, episodeNumber);
-          ingestedBeats = aiData.beats;
-          characterBible = aiData.characters;
-          logline = aiData.logline;
-        } catch (e) {
-          ingestedBeats = this.getDefaultBeatsForFormat(format, title);
-        }
-      } else {
+      try {
+        const aiData = await this.generateAIStoryForTitle(title, format, seasonNumber, episodeNumber);
+        ingestedBeats = aiData.beats;
+        characterBible = aiData.characters;
+        logline = aiData.logline;
+      } catch (e) {
         ingestedBeats = this.getDefaultBeatsForFormat(format, title);
       }
     }
@@ -186,6 +182,9 @@ Generate a valid JSON object strictly matching this schema:
   /**
    * Parse YouTube / TikTok / Social media links into narrative structure & 3D shots
    */
+  /**
+   * Parse YouTube / TikTok / Social media links into narrative structure & 3D shots
+   */
   static async parseExternalMediaLink(url, format, title) {
     console.log(`[MediaIngest] Ingesting media from URL: ${url} (Format: ${format})`);
 
@@ -193,8 +192,7 @@ Generate a valid JSON object strictly matching this schema:
     let logline = `Media adaptation of ingested source: ${url}`;
     let characters = ['Protagonist', 'Antagonist', 'Supporting'];
 
-    if (nvidiaNIM.hasApiKey()) {
-      const prompt = `We are converting this external media video/link into a professional production pipeline:
+    const prompt = `We are converting this external media video/link into a professional production pipeline:
 Title: "${title}"
 URL/Context: "${url}"
 Target Format: ${format}
@@ -204,19 +202,18 @@ Generate a JSON object with:
 2. "characters": list of 3-5 character names and roles
 3. "beats": array of 4-6 scene beats, each with: "title", "description", "act", "cameraPreset", "scriptSnippet"`;
 
-      const aiResponse = await nvidiaNIM.generateCompletion({ prompt });
-      if (aiResponse.success && aiResponse.text) {
-        try {
-          const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            const parsed = JSON.parse(jsonMatch[0]);
-            if (parsed.beats) beats = parsed.beats;
-            if (parsed.characters) characters = parsed.characters;
-            if (parsed.logline) logline = parsed.logline;
-          }
-        } catch (e) {
-          console.warn('[MediaIngest] Failed to parse AI JSON response, falling back to structured beats.');
+    const aiResponse = await nvidia.generateCompletion({ prompt });
+    if (aiResponse.success && aiResponse.text) {
+      try {
+        const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          if (parsed.beats) beats = parsed.beats;
+          if (parsed.characters) characters = parsed.characters;
+          if (parsed.logline) logline = parsed.logline;
         }
+      } catch (e) {
+        console.warn('[MediaIngest] Failed to parse AI JSON response, falling back to structured beats.');
       }
     }
 
@@ -235,20 +232,18 @@ Generate a JSON object with:
     let logline = 'Original screenplay adaptation';
     let characters = ['Lead', 'Companion'];
 
-    if (nvidiaNIM.hasApiKey()) {
-      const prompt = `Analyze this screenplay content for a ${format} production:\n\n${text.slice(0, 2000)}\n\nExtract 4-6 shot beats (title, description, cameraPreset, scriptSnippet), logline, and character list. Format as JSON.`;
-      const aiResponse = await nvidiaNIM.generateCompletion({ prompt });
-      if (aiResponse.success) {
-        try {
-          const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            const parsed = JSON.parse(jsonMatch[0]);
-            if (parsed.beats) beats = parsed.beats;
-            if (parsed.characters) characters = parsed.characters;
-            if (parsed.logline) logline = parsed.logline;
-          }
-        } catch (e) {}
-      }
+    const prompt = `Analyze this screenplay content for a ${format} production:\n\n${text.slice(0, 2000)}\n\nExtract 4-6 shot beats (title, description, cameraPreset, scriptSnippet), logline, and character list. Format as JSON.`;
+    const aiResponse = await nvidia.generateCompletion({ prompt });
+    if (aiResponse.success && aiResponse.text) {
+      try {
+        const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          if (parsed.beats) beats = parsed.beats;
+          if (parsed.characters) characters = parsed.characters;
+          if (parsed.logline) logline = parsed.logline;
+        }
+      } catch (e) {}
     }
 
     if (beats.length === 0) {
@@ -256,6 +251,96 @@ Generate a JSON object with:
     }
 
     return { beats, logline, characters };
+  }
+
+  /**
+   * Deep Analysis & Interactive Discussion Engine for YouTube & Social Media Links
+   */
+  static async analyzeAndDiscussMediaLink(options = {}) {
+    const {
+      url,
+      userVision = '',
+      format = 'feature_film', // 'feature_film' | 'tv_series' | 'short_form'
+      genre = 'Cinematic Drama',
+      targetTone = 'High-Concept Hollywood',
+    } = options;
+
+    console.log(`[MediaIngest:Discuss] Analyzing link "${url}" with user vision: "${userVision}" (${format})`);
+
+    const prompt = `You are Orion Vance (IP Architect) and Showrunner Sterling at Arise Production Studio.
+The filmmaker has provided an external YouTube / Social Media link and wants to adapt it into a finished ${format} production.
+
+INGESTED LINK / CONTEXT: "${url}"
+FILMMAKER'S ADAPTATION VISION: "${userVision || 'Extract core premise and adapt into a high-stakes cinematic production.'}"
+TARGET FORMAT: ${format}
+TARGET GENRE / TONE: ${genre} (${targetTone})
+
+Perform a deep cinematic dissection and return a valid JSON object strictly matching this schema:
+{
+  "title": "High-Impact Cinematic Title",
+  "hook": "The instant 3-second hook / opening dilemma",
+  "logline": "1-2 sentence dramatic and compelling Hollywood logline",
+  "thematicEngine": "The thematic premise, philosophical conflict, and moral argument",
+  "visualAesthetic": {
+    "camera": "e.g. BMPCC 4K with 35mm Prime, 180° Shutter, Dual Native ISO 400/3200",
+    "lighting": "e.g. 3200K Tungsten Key with 4:1 High-Contrast Shadow Ratios",
+    "colorPalette": "e.g. ACEScc Kodak 2383 D65 Film Emulation"
+  },
+  "characters": [
+    { "name": "Protagonist Name", "role": "Protagonist", "arc": "Brief emotional journey and stakes" },
+    { "name": "Antagonist / Obstacle", "role": "Antagonist", "arc": "Counter-philosophy and pressure" },
+    { "name": "Key Ally", "role": "Supporting", "arc": "Crucial thematic mirror" }
+  ],
+  "acts": [
+    { "act": 1, "title": "Act I: Setup & Catalyst", "beats": "Opening world, incident, and lock-in" },
+    { "act": 2, "title": "Act II: Confrontation & Midpoint Stakes", "beats": "Rising pressure, midpoint revelation, all is lost" },
+    { "act": 3, "title": "Act III: Climax & Resolution", "beats": "Final stand, theme proven, new equilibrium" }
+  ],
+  "showrunnerDiscussionNotes": "Personalized 2-3 paragraph director counsel from Showrunner Sterling discussing why this adaptation works, specific script subtext to emphasize, and how to execute it across our 10 studio stages.",
+  "readyToPromote": true
+}`;
+
+    const aiResponse = await nvidia.generateCompletion({ prompt });
+    let analysis = null;
+
+    if (aiResponse.success && aiResponse.text) {
+      try {
+        const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          analysis = JSON.parse(jsonMatch[0]);
+        }
+      } catch (e) {
+        console.warn('[MediaIngest] Failed to parse AI JSON for link discussion:', e.message);
+      }
+    }
+
+    if (!analysis) {
+      analysis = {
+        title: `The ${format === 'tv_series' ? 'Series' : 'Chronicles'}: Adapted from Media`,
+        hook: `A real-world phenomenon discovered in ${url} triggers an unforeseen chain of events.`,
+        logline: `When an unexpected truth surfaces, an ambitious protagonist must navigate high-stakes conflict before the truth is buried forever.`,
+        thematicEngine: 'Truth versus control in an evolving technological landscape.',
+        visualAesthetic: {
+          camera: 'Blackmagic Pocket Cinema Camera 4K • 35mm Anamorphic • Gen 5 Film Color',
+          lighting: '3200K Warm Key / 5600K Cool Ambient fill',
+          colorPalette: 'Kodak 2383 ACEScc Print Curve'
+        },
+        characters: [
+          { name: 'Devon Wells', role: 'Protagonist', arc: 'Seeks undeniable evidence against impossible odds.' },
+          { name: 'The Director', role: 'Antagonist', arc: 'Commands the narrative from the shadows.' },
+          { name: 'Maya Vance', role: 'Allied DP', arc: 'Captures the raw reality through the lens.' }
+        ],
+        acts: [
+          { act: 1, title: 'Act I: The Discovery', beats: 'The original link footage is analyzed, revealing an anomaly.' },
+          { act: 2, title: 'Act II: The Pursuit', beats: 'Deep investigation, mounting tension, and betrayal.' },
+          { act: 3, title: 'Act III: The Broadcast', beats: 'The ultimate truth is brought to light in high definition.' }
+        ],
+        showrunnerDiscussionNotes: `**🌟 Showrunner Sterling:** "This ingested source (${url}) has incredible narrative fuel. By anchoring the premise around our protagonist's moral dilemma and shooting with our BMPCC 4K Gen 5 color science, we can transform this raw concept into a high-caliber cinematic piece. Let's draft Scene 1 in Stage 1 ScriptBreak and calibrate our camera choreography in Stage 4 Previs!"`,
+        readyToPromote: true
+      };
+    }
+
+    return analysis;
   }
 
   /**

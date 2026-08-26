@@ -87,11 +87,22 @@ export function IdeaRoom({ onPromoteToProject, onNavigateToRoom }: IdeaRoomProps
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; text: string }>>([
     {
       role: 'assistant',
-      text: "💡 **Orion Vance (IP Architect):** Welcome to the **Idea Lab & Concept Vault**! I'm here to help you incubate high-concept hooks, design season engines for episodic TV, or craft sharp proof-of-concept short films. What universe or premise are we exploring today?"
+      text: "💡 **Orion Vance (IP Architect):** Welcome to the **Idea Lab & Concept Vault**! I'm here to help you incubate high-concept hooks, design season engines for episodic TV, or craft sharp proof-of-concept short films. You can also paste any **YouTube or social media link** to brainstorm and turn it into a full studio production!"
     }
   ]);
   const [chatInput, setChatInput] = useState<string>('');
   const [isChatLoading, setIsChatLoading] = useState<boolean>(false);
+
+  // Social Media & YouTube Link Ingest & Discussion State
+  const [showLinkModal, setShowLinkModal] = useState<boolean>(false);
+  const [ingestUrl, setIngestUrl] = useState<string>('');
+  const [ingestVision, setIngestVision] = useState<string>('');
+  const [ingestFormat, setIngestFormat] = useState<'feature_film' | 'tv_series' | 'short_form'>('feature_film');
+  const [ingestGenre, setIngestGenre] = useState<string>('Neo-Noir Cyberpunk Thriller');
+  const [isAnalyzingLink, setIsAnalyzingLink] = useState<boolean>(false);
+  const [linkAnalysisResult, setLinkAnalysisResult] = useState<any | null>(null);
+  const [linkDiscussInput, setLinkDiscussInput] = useState<string>('');
+  const [linkDiscussMessages, setLinkDiscussMessages] = useState<Array<{ role: string; text: string }>>([]);
 
   // Fetch Ideas from Backend
   const loadIdeas = async () => {
@@ -316,6 +327,123 @@ export function IdeaRoom({ onPromoteToProject, onNavigateToRoom }: IdeaRoomProps
     }
   };
 
+  // Analyze & Ingest YouTube / Social Link
+  const handleAnalyzeSocialLink = async () => {
+    if (!ingestUrl.trim()) {
+      toast.error('Please enter a YouTube, TikTok, Instagram, or social link.');
+      return;
+    }
+    setIsAnalyzingLink(true);
+    const toastId = toast.loading('🎬 Ingesting & Analyzing link with AI Showrunner...');
+
+    try {
+      const res = await fetch(`${apiBase}/api/v1/ingest/analyze-discuss`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: ingestUrl.trim(),
+          userVision: ingestVision.trim(),
+          format: ingestFormat,
+          genre: ingestGenre,
+        }),
+      }).then((r) => r.json());
+
+      if (res && res.success && res.analysis) {
+        setLinkAnalysisResult(res.analysis);
+        setLinkDiscussMessages([
+          {
+            role: 'assistant',
+            text: res.analysis.showrunnerDiscussionNotes || `**🌟 Showrunner Sterling:** "I've ingested ${ingestUrl} and mapped out a high-stakes ${ingestFormat} adaptation. What specific scene beats or character arcs would you like to discuss before we greenlight production?"`,
+          },
+        ]);
+        toast.success(`✨ Link analyzed! Pitch deck & 3-Act spine formulated for "${res.analysis.title}".`, { id: toastId });
+      } else {
+        toast.error('Could not analyze link', { id: toastId });
+      }
+    } catch {
+      toast.error('Network error during link analysis', { id: toastId });
+    } finally {
+      setIsAnalyzingLink(false);
+    }
+  };
+
+  // Send interactive discussion message about the link
+  const handleSendLinkDiscussMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!linkDiscussInput.trim()) return;
+
+    const userText = linkDiscussInput.trim();
+    setLinkDiscussInput('');
+    setLinkDiscussMessages((prev) => [...prev, { role: 'user', text: userText }]);
+
+    try {
+      const res = await fetch(`${apiBase}/api/v1/agents/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agentId: 'showrunner',
+          agentName: 'Showrunner Sterling',
+          role: 'Executive Producer & Showrunner',
+          message: `We are discussing adapting the link (${ingestUrl}) into "${linkAnalysisResult?.title || 'Our Production'}". Filmmaker feedback: "${userText}". Keep concise, cinematic, and actionable for our 10-stage studio pipeline.`,
+          systemPrompt: `You are Showrunner Sterling. You and Orion Vance are collaborating with the filmmaker to adapt an ingested media link into a full cinema production. Discuss adaptation decisions, character motivations, and production planning.`,
+        }),
+      }).then((r) => r.json());
+
+      if (res && res.assistantMessage && res.assistantMessage.content) {
+        setLinkDiscussMessages((prev) => [...prev, { role: 'assistant', text: res.assistantMessage.content }]);
+      } else if (res && res.reply) {
+        setLinkDiscussMessages((prev) => [...prev, { role: 'assistant', text: res.reply }]);
+      }
+    } catch {
+      setLinkDiscussMessages((prev) => [...prev, { role: 'assistant', text: '🎬 Noted! Let’s lock this direction into our production manifest.' }]);
+    }
+  };
+
+  // One-click Make & Greenlight Production from Link Analysis
+  const handlePromoteAnalysisToStudio = async () => {
+    if (!linkAnalysisResult) return;
+    const toastId = toast.loading(`🚀 Greenlighting & Promoting "${linkAnalysisResult.title}" to active 10-Stage Production...`);
+
+    try {
+      // 1. Save as idea
+      const savedIdea = await fetch(`${apiBase}/api/v1/ideas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: linkAnalysisResult.title,
+          format: ingestFormat,
+          logline: linkAnalysisResult.logline,
+          hook: linkAnalysisResult.hook,
+          thematicEngine: linkAnalysisResult.thematicEngine,
+          status: 'greenlit',
+          tags: ['Adapted', 'Social Ingest', ingestGenre, ingestFormat],
+        }),
+      }).then((r) => r.json());
+
+      if (savedIdea && savedIdea.success && savedIdea.idea) {
+        // 2. Promote to project
+        const promoteRes = await fetch(`${apiBase}/api/v1/ideas/${savedIdea.idea.id}/promote`, {
+          method: 'POST',
+        }).then((r) => r.json());
+
+        if (promoteRes && promoteRes.success && promoteRes.project) {
+          toast.success(`🎉 "${promoteRes.project.name}" is now an ACTIVE production! Taking you to Stage 1...`, { id: toastId, duration: 4000 });
+          setShowLinkModal(false);
+          await loadIdeas();
+          if (onPromoteToProject) {
+            onPromoteToProject(promoteRes.project.id, promoteRes.project.name);
+          } else if (onNavigateToRoom) {
+            onNavigateToRoom('script');
+          }
+        } else {
+          toast.error('Project promotion failed', { id: toastId });
+        }
+      }
+    } catch {
+      toast.error('Network error creating production project', { id: toastId });
+    }
+  };
+
   // Filtered Ideas based on Search
   const filteredIdeas = ideas.filter((i) => {
     const matchesSearch = searchQuery === '' || 
@@ -399,14 +527,24 @@ export function IdeaRoom({ onPromoteToProject, onNavigateToRoom }: IdeaRoomProps
           </button>
         </div>
 
-        {/* New Blank Idea Action */}
-        <button
-          onClick={handleNewBlankIdea}
-          className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 transition shadow-lg shadow-amber-500/20"
-        >
-          <Plus size={14} />
-          <span>New Pitch Concept</span>
-        </button>
+        {/* Action Buttons: Link Ingest & New Pitch */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowLinkModal(true)}
+            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-extrabold text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 transition shadow-lg shadow-cyan-500/20"
+          >
+            <span>🔗</span>
+            <span>Ingest & Discuss Link</span>
+          </button>
+
+          <button
+            onClick={handleNewBlankIdea}
+            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 transition shadow-lg shadow-amber-500/20"
+          >
+            <Plus size={14} />
+            <span>New Pitch Concept</span>
+          </button>
+        </div>
       </div>
 
       {/* Main 3-Column Studio Workspace */}
@@ -866,6 +1004,214 @@ export function IdeaRoom({ onPromoteToProject, onNavigateToRoom }: IdeaRoomProps
           </form>
         </div>
       </div>
+
+      {/* 4K GLASSMORPHIC SOCIAL MEDIA & YOUTUBE LINK INGESTION & DISCUSSION MODAL */}
+      {showLinkModal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4">
+          <div className="w-full max-w-5xl max-h-[90vh] glass-card-4k specular-border rounded-3xl overflow-hidden shadow-2xl flex flex-col font-mono text-xs border border-amber-500/40">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-amber-500/30 bg-[#0c0620]/95 flex-shrink-0">
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white text-base shadow-lg">
+                  🔗
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-amber-200 uppercase font-serif tracking-wider">
+                    YouTube & Social Media Adaptation Studio
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-sans">
+                    Ingest any external link, discuss what you want to create with Showrunner Sterling, and greenlight a 10-stage production!
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowLinkModal(false)}
+                className="w-8 h-8 rounded-full bg-[#180d38] border border-amber-500/30 text-amber-300 hover:text-white hover:bg-rose-500/20 hover:border-rose-500 transition flex items-center justify-center text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body Grid */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar bg-[#09041a]/95">
+              {/* Ingest Form */}
+              <div className="p-4 rounded-2xl bg-[#12082b] border border-amber-500/30 space-y-4 shadow-inner">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="md:col-span-2 space-y-1.5">
+                    <label className="text-amber-300 font-bold uppercase text-[10px] flex items-center gap-1.5">
+                      <span>🌐</span>
+                      <span>Paste YouTube, TikTok, Instagram, X, or Web URL</span>
+                    </label>
+                    <input
+                      type="url"
+                      placeholder="e.g. https://www.youtube.com/watch?v=... or https://tiktok.com/@..."
+                      value={ingestUrl}
+                      onChange={(e) => setIngestUrl(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#1a0c3b] border border-amber-500/40 text-xs text-slate-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-amber-300 font-bold uppercase text-[10px]">Target Production Format</label>
+                    <select
+                      value={ingestFormat}
+                      onChange={(e: any) => setIngestFormat(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#1a0c3b] border border-amber-500/40 text-xs text-amber-200 focus:outline-none font-mono"
+                    >
+                      <option value="feature_film">🎬 3-Act Feature Film</option>
+                      <option value="tv_series">📺 Episodic TV Series (Pilot)</option>
+                      <option value="short_form">⚡ Short-Form Cinema (Proof of Concept)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-amber-300 font-bold uppercase text-[10px]">
+                      Your Adaptation Vision (What do you want to make out of this?)
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="e.g. Turn this real-world video into a high-stakes psychological thriller with Devon Wells uncovering a covert surveillance ring..."
+                      value={ingestVision}
+                      onChange={(e) => setIngestVision(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl bg-[#1a0c3b] border border-amber-500/40 text-xs text-slate-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 font-sans resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-amber-300 font-bold uppercase text-[10px]">Cinematic Genre & Tone</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Neo-Noir Cyberpunk Thriller • Moody & Anamorphic"
+                      value={ingestGenre}
+                      onChange={(e) => setIngestGenre(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#1a0c3b] border border-amber-500/40 text-xs text-slate-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 font-mono"
+                    />
+                    <div className="flex justify-end pt-1">
+                      <button
+                        type="button"
+                        disabled={isAnalyzingLink || !ingestUrl.trim()}
+                        onClick={handleAnalyzeSocialLink}
+                        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 transition shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                      >
+                        <Sparkles size={14} className={isAnalyzingLink ? 'animate-spin' : ''} />
+                        <span>{isAnalyzingLink ? 'Analyzing Link...' : '⚡ Ingest & Analyze Link'}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Analysis & Discussion Grid (Once Analyzed) */}
+              {linkAnalysisResult && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                  {/* Left Column: Adaptation Pitch & Specs */}
+                  <div className="lg:col-span-7 space-y-4">
+                    {/* Project Header Card */}
+                    <div className="p-4 rounded-2xl bg-[#140a33] border border-amber-500/40 space-y-2 shadow-md">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono text-amber-400 font-bold uppercase">Adapted Production Title</span>
+                        <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold uppercase">
+                          Greenlight Ready
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-black text-amber-200 font-serif">{linkAnalysisResult.title}</h4>
+                      <p className="text-xs text-slate-200 font-sans leading-relaxed italic">
+                        "{linkAnalysisResult.logline}"
+                      </p>
+                    </div>
+
+                    {/* Thematic Engine & Visual Aesthetic */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="p-3.5 rounded-xl bg-[#12082b] border border-purple-800/50 space-y-1">
+                        <span className="text-[10px] text-amber-400 font-bold uppercase">Thematic Engine</span>
+                        <p className="text-[11px] text-purple-200 font-sans leading-relaxed">{linkAnalysisResult.thematicEngine}</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-[#12082b] border border-cyan-800/50 space-y-1">
+                        <span className="text-[10px] text-cyan-300 font-bold uppercase">3D Camera & Color Science</span>
+                        <p className="text-[11px] text-cyan-100 font-sans leading-relaxed">
+                          {linkAnalysisResult.visualAesthetic?.camera || 'BMPCC 4K (35mm Prime)'} • {linkAnalysisResult.visualAesthetic?.colorPalette || 'Gen 5 Film Kodak 2383'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 3-Act Structure */}
+                    <div className="p-3.5 rounded-2xl bg-[#12082b] border border-amber-500/30 space-y-2">
+                      <span className="text-[10px] text-amber-400 font-bold uppercase">Narrative Arc & Acts</span>
+                      <div className="space-y-2">
+                        {linkAnalysisResult.acts?.map((act: any, aIdx: number) => (
+                          <div key={aIdx} className="p-2 rounded-lg bg-[#1a0d3b] border border-purple-900/40 text-[11px]">
+                            <strong className="text-amber-300">{act.title}:</strong> <span className="text-slate-300 font-sans">{act.beats}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Live Discussion Console & Greenlight Action */}
+                  <div className="lg:col-span-5 flex flex-col space-y-4">
+                    {/* Live Showrunner Discussion Chat */}
+                    <div className="flex-1 min-h-[280px] p-3.5 rounded-2xl bg-[#12082b] border border-amber-500/30 flex flex-col">
+                      <div className="flex items-center justify-between pb-2 border-b border-amber-500/20 mb-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-amber-400">🌟</span>
+                          <span className="text-xs font-bold text-amber-200">Showrunner Sterling & Orion Vance</span>
+                        </div>
+                        <span className="text-[9px] text-purple-300/80 font-mono">Live Adaptation Council</span>
+                      </div>
+
+                      <div className="flex-1 overflow-y-auto space-y-2.5 pr-1 custom-scrollbar max-h-[220px]">
+                        {linkDiscussMessages.map((msg, idx) => (
+                          <div
+                            key={idx}
+                            className={`p-2.5 rounded-xl text-xs leading-relaxed ${
+                              msg.role === 'user'
+                                ? 'bg-amber-500/20 text-amber-100 border border-amber-500/40 ml-3'
+                                : 'bg-[#1b0d3d] text-slate-200 border border-purple-800/50 mr-2 whitespace-pre-wrap font-sans'
+                            }`}
+                          >
+                            {msg.text}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Discussion Input */}
+                      <form onSubmit={handleSendLinkDiscussMessage} className="pt-2 flex gap-1.5">
+                        <input
+                          type="text"
+                          placeholder="Discuss script subtext, twist ideas, or tone..."
+                          value={linkDiscussInput}
+                          onChange={(e) => setLinkDiscussInput(e.target.value)}
+                          className="flex-1 px-3 py-1.5 rounded-lg bg-[#1a0c3b] border border-amber-500/30 text-xs text-slate-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 font-sans"
+                        />
+                        <button
+                          type="submit"
+                          className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg transition text-xs"
+                        >
+                          Send
+                        </button>
+                      </form>
+                    </div>
+
+                    {/* GREENLIGHT & MAKE IN STUDIO BUTTON */}
+                    <button
+                      type="button"
+                      onClick={handlePromoteAnalysisToStudio}
+                      className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition shadow-xl shadow-amber-500/30 active:scale-98"
+                    >
+                      <Rocket size={18} />
+                      <span>🚀 Greenlight & Make This in Studio</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
