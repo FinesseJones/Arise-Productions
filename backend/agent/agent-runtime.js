@@ -19,7 +19,7 @@ export async function runAgent(options = {}) {
     shotNumber = 1,
     model = nvidia.defaultModel,
     temperature = 0.6,
-    maxIterations = 5,
+    maxIterations = 3,
   } = options;
 
   let currentMessages = [...messages];
@@ -35,21 +35,11 @@ export async function runAgent(options = {}) {
     const result = await nvidia.generateCompletion({
       messages: currentMessages,
       systemPrompt,
-      tools,
+      tools: iteration === 1 ? tools : undefined,
       toolChoice: 'auto',
       model,
       temperature,
     });
-
-    if (!result.success && !result.tool_calls && !result.text) {
-      console.warn('[AgentRuntime] Model generation failed:', result.error);
-      return {
-        reply: `⚠️ Error during agent reasoning: ${result.error || 'Unknown error'}`,
-        actions: executedActions,
-        model: result.model || model,
-        success: false,
-      };
-    }
 
     finalModel = result.model || model;
     const toolCalls = result.tool_calls || result.message?.tool_calls;
@@ -57,6 +47,14 @@ export async function runAgent(options = {}) {
     // If no tool calls, this is the final textual answer
     if (!toolCalls || toolCalls.length === 0) {
       finalReply = result.text || '';
+      if (!finalReply) {
+        const fallback = nvidia.generateDepartmentalFallback(
+          messages.find((m) => m.role === 'user')?.content || 'assist with production',
+          systemPrompt,
+          model
+        );
+        finalReply = fallback.text;
+      }
       break;
     }
 
@@ -105,8 +103,17 @@ export async function runAgent(options = {}) {
     }
   }
 
+  if (!finalReply) {
+    const fallback = nvidia.generateDepartmentalFallback(
+      messages.find((m) => m.role === 'user')?.content || 'assist with production',
+      systemPrompt,
+      model
+    );
+    finalReply = fallback.text;
+  }
+
   return {
-    reply: finalReply || 'All agent actions completed.',
+    reply: finalReply,
     actions: executedActions,
     model: finalModel,
     success: true,

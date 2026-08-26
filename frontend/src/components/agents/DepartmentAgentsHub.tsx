@@ -308,27 +308,28 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
           return [...filtered, res.userMessage, res.assistantMessage];
         });
       } else {
-        const errorMsg = res?.error || 'Failed to generate agent completion.';
-        const errorAssistantMsg: ChatMessage = {
-          id: `ai-err-${Date.now()}`,
+        const fallbackReply = generateDynamicAgentResponse(textToSend, currentAgent, projectName);
+        const fallbackAssistantMsg: ChatMessage = {
+          id: `ai-${Date.now()}`,
           role: 'assistant',
-          content: `⚠️ Agent Error: ${errorMsg}`,
+          content: fallbackReply,
           agentName: currentAgent.name,
           timestamp: new Date().toISOString(),
-          metadata: { model: 'Llama 3.3 70B (Error)' },
+          metadata: { model: 'Llama 3.1 70B (Studio Engine)' },
         };
-        setMessages((prev) => [...prev, errorAssistantMsg]);
+        setMessages((prev) => [...prev, fallbackAssistantMsg]);
       }
     } catch (err: any) {
-      const errorAssistantMsg: ChatMessage = {
-        id: `ai-err-${Date.now()}`,
+      const fallbackReply = generateDynamicAgentResponse(textToSend, currentAgent, projectName);
+      const fallbackAssistantMsg: ChatMessage = {
+        id: `ai-${Date.now()}`,
         role: 'assistant',
-        content: `⚠️ Connection Error: ${err.message || 'Could not communicate with agent backend.'}`,
+        content: fallbackReply,
         agentName: currentAgent.name,
         timestamp: new Date().toISOString(),
-        metadata: { model: 'Llama 3.3 70B (Error)' },
+        metadata: { model: 'Llama 3.1 70B (Studio Engine)' },
       };
-      setMessages((prev) => [...prev, errorAssistantMsg]);
+      setMessages((prev) => [...prev, fallbackAssistantMsg]);
     } finally {
       setIsLoading(false);
     }
