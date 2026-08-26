@@ -286,35 +286,48 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
       }).then((r) => r.json()).catch(() => null);
 
       if (res && res.success && res.assistantMessage && res.assistantMessage.content) {
+        if (res.actions && res.actions.length > 0) {
+          res.actions.forEach((act: any) => {
+            if (act.tool === 'run_stage') {
+              toast.success(`🟢 Executed Stage: ${act.args?.stageId} on Shot ${act.args?.shotNumber || 1}`, { icon: '🎬' });
+            } else if (act.tool === 'save_script') {
+              toast.success(`💾 Screenplay saved for Shot ${act.args?.shotNumber || 1}!`, { icon: '✍️' });
+            } else if (act.tool === 'get_episode_script') {
+              toast.success(`📖 Retrieved stored screenplay for Shot ${act.args?.shotNumber || 1}`, { icon: '📜' });
+            } else if (act.tool === 'get_story_bible') {
+              toast.success(`🏛️ Loaded project manifest & story bible!`, { icon: '📂' });
+            } else if (act.tool === 'handoff_to_agent') {
+              toast(`🔄 Handoff to ${act.args?.stageId}: ${act.args?.reason || 'Stage transition'}`, { icon: '🚀' });
+            }
+          });
+        }
+
         setMessages((prev) => {
           const filtered = prev.filter((m) => m.id !== tempUserMsg.id);
           return [...filtered, res.userMessage, res.assistantMessage];
         });
       } else {
-        // High-Fidelity Conversational & Agentic Response
-        const fallbackText = getDepartmentalFallbackResponse(currentAgent, textToSend.trim());
-        const fallbackAssistantMsg: ChatMessage = {
-          id: `ai-${Date.now()}`,
+        const errorMsg = res?.error || 'Failed to generate agent completion.';
+        const errorAssistantMsg: ChatMessage = {
+          id: `ai-err-${Date.now()}`,
           role: 'assistant',
-          content: fallbackText,
+          content: `⚠️ Agent Error: ${errorMsg}`,
           agentName: currentAgent.name,
           timestamp: new Date().toISOString(),
-          metadata: { model: 'Llama 3.1 70B (Arise Agentic Engine)' },
+          metadata: { model: 'Llama 3.3 70B (Error)' },
         };
-        setMessages((prev) => [...prev, fallbackAssistantMsg]);
+        setMessages((prev) => [...prev, errorAssistantMsg]);
       }
     } catch (err: any) {
-      // High-Fidelity Conversational & Agentic Response
-      const fallbackText = getDepartmentalFallbackResponse(currentAgent, textToSend.trim());
-      const fallbackAssistantMsg: ChatMessage = {
-        id: `ai-${Date.now()}`,
+      const errorAssistantMsg: ChatMessage = {
+        id: `ai-err-${Date.now()}`,
         role: 'assistant',
-        content: fallbackText,
+        content: `⚠️ Connection Error: ${err.message || 'Could not communicate with agent backend.'}`,
         agentName: currentAgent.name,
         timestamp: new Date().toISOString(),
-        metadata: { model: 'Llama 3.1 70B (Arise Agentic Engine)' },
+        metadata: { model: 'Llama 3.3 70B (Error)' },
       };
-      setMessages((prev) => [...prev, fallbackAssistantMsg]);
+      setMessages((prev) => [...prev, errorAssistantMsg]);
     } finally {
       setIsLoading(false);
     }
@@ -724,6 +737,23 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                               </span>
                             )}
                           </div>
+
+                          {/* Autonomous Tool Actions Executed */}
+                          {msg.metadata?.actions && msg.metadata.actions.length > 0 && (
+                            <div className="p-2 rounded-xl bg-black/40 border border-purple-800/60 space-y-1 text-[10px] font-mono">
+                              <div className="text-amber-400 font-bold flex items-center gap-1">
+                                <Zap size={11} className="text-amber-400 animate-pulse" />
+                                <span>Autonomous Studio Actions Executed ({msg.metadata.actions.length}):</span>
+                              </div>
+                              {msg.metadata.actions.map((act: any, actIdx: number) => (
+                                <div key={actIdx} className="flex items-center justify-between text-purple-200">
+                                  <span className="text-emerald-400 font-bold">⚡ {act.tool}</span>
+                                  <span className="text-slate-400 truncate max-w-[200px]">{JSON.stringify(act.args)}</span>
+                                  <span className="text-emerald-300">✓ Complete</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
 
                           {/* Proactive Stage Handoff Chips */}
                           {onNavigateToRoom && (

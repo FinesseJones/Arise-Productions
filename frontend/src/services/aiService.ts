@@ -1,7 +1,4 @@
-// ==============================================================================
-// ARISE PRODUCTION - CLIENT-SIDE AI CONVERSATIONAL CO-PILOT SERVICE
-// A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026
-// ==============================================================================
+import { getAPIBaseURL } from '../lib/api';
 
 export interface ChatMessage {
   id?: string;
@@ -11,6 +8,7 @@ export interface ChatMessage {
   text?: string;
   timestamp?: string;
   model?: string;
+  actions?: Array<{ tool: string; args: any; result: any }>;
   attachedFile?: { name: string; size: string };
 }
 
@@ -24,8 +22,21 @@ export interface ChatCompletionOptions {
   messages: ChatMessage[];
 }
 
+export interface AgentAction {
+  id?: string;
+  tool: string;
+  args: any;
+  result: any;
+}
+
+export interface ChatResponse {
+  text: string;
+  model: string;
+  actions?: AgentAction[];
+}
+
 const DEFAULT_NVIDIA_KEY = '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';
-const DEFAULT_MODEL = 'meta/llama-3.1-70b-instruct';
+const DEFAULT_MODEL = 'meta/llama-3.3-70b-instruct';
 
 export function getActiveApiKey(): string {
   try {
@@ -43,77 +54,16 @@ export function getActiveModel(): string {
   return DEFAULT_MODEL;
 }
 
-const DEPARTMENT_PROMPTS: Record<string, string> = {
-  script: `You are the Lead Hollywood Screenwriter & Story Architect for Arise Production. You are a creative, insightful, and highly skilled writing partner. When the user asks for dialogue, scenes, ideas, character development, or script improvements, respond with rich, realistic, cinematic screenplay formatting (using EXT./INT. sluglines, character names, parentheticals, and dialogue) along with constructive storytelling notes. Be conversational, engaging, and professional.`,
-  structure: `You are the Showrunner & Narrative Structure Supervisor for Arise Production. You are an expert in 3-act dramatic structure, pacing, beat sheets, inciting incidents, midpoint shifts, and emotional tension curves. Help the user structure their movie or episode with clear, actionable story guidance.`,
-  plan: `You are the Production Designer & 3D Art Director for Arise Production. You specialize in cinematic visual aesthetics, ACEScg color palettes, PBR material roughness and lighting contrast, architectural set designs, and moodboards. Help the user design the visual world of their film.`,
-  previs: `You are the Virtual Cinematographer & DP for Arise Production. You specialize in Unreal Engine 5.4 CineCameras, 35mm/50mm/85mm anamorphic prime lenses, camera movement (dolly, crane, handheld, Steadicam), 3-point key/fill/rim lighting setups, and visual composition. Give clear, professional camera direction and advice.`,
-  motion: `You are the Mocap Director & Kinematics Specialist for Arise Production. You understand 52-point skeletal tracking, body mechanics, optical motion capture, 60 FPS animation curves, cloth/hair secondary physics, and stunt choreography. Assist the user in designing character movement and physical blocking.`,
-  boards: `You are the Lead Storyboard Artist & Visual Concept Director for Arise Production. You help translate script scenes into 2.39:1 widescreen visual storyboards, establishing compositions, camera angles (over-the-shoulder, Dutch angle, low angle), and animatic pacing.`,
-  prompt: `You are the Lead Generative AI Prompt Engineer for Arise Production. You craft state-of-the-art visual prompts for ComfyUI FLUX.1 Dev, Stable Diffusion XL, and Midjourney. You understand positive prompt matrices, negative embeddings, ControlNet Depth weights (0.85), and IP-Adapter character likeness tokens (@lead_hero_v1).`,
-  dailies: `You are the Dailies Supervisor & Quality QC Reviewer for Arise Production. You help the user review footage, evaluate framing, lighting consistency, and actor performance, and suggest adjustments or circle take approvals.`,
-  sound: `You are the Sound Supervisor & Film Composer for Arise Production. You specialize in 5.1 / 7.1 Dolby Atmos spatial audio mixing, dialogue cleaning (-24 LKFS broadcast loudness), Foley sound design, ElevenLabs voice cloning, and emotional musical scoring.`,
-  edit: `You are the Master Editor & Colorist for Arise Production. You specialize in DaVinci Resolve conform workflows, EDL timeline cutting, rhythmic pacing, transitions, and ACEScc 3D LUT color grading (Kodak 2383, Teal & Orange). Help the user edit and master their film.`,
-};
-
 /**
- * Send request to NVIDIA NIM API directly from the client, with backend & intelligent fallback
+ * Send request to backend Autonomous Agent Runtime with tool-calling support
  */
-export async function sendChatMessage(options: ChatCompletionOptions): Promise<{ text: string; model: string }> {
+export async function sendChatMessage(options: ChatCompletionOptions): Promise<ChatResponse> {
   const { stageId, roomName, projectName, shotNumber, departmentRole, messages } = options;
-  const apiKey = getActiveApiKey();
   const model = options.model || getActiveModel();
+  const apiBase = getAPIBaseURL();
 
-  const systemInstruction = DEPARTMENT_PROMPTS[stageId] ||
-    `You are the ${departmentRole} in Arise Production (A product of THE AI CONTENT FOUNDRY, LLC). Provide helpful, natural, creative, and technical guidance for "${projectName}", Shot ${shotNumber}.`;
-
-  // Format messages payload for OpenAI / NVIDIA NIM chat completions format
-  const apiMessages = [
-    { role: 'system', content: `${systemInstruction}\n\nActive Project: "${projectName}"\nActive Shot: ${shotNumber}\nActive 3D Room: "${roomName}"` },
-    ...messages.map((m) => ({
-      role: (m.role === 'assistant' || m.sender === 'ai') ? 'assistant' : 'user',
-      content: m.content || m.text || '',
-    })),
-  ];
-
-  // 1. Try Direct NVIDIA NIM Cloud API Call (Highest speed & reliability)
-  if (apiKey && apiKey.startsWith('nvapi-')) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 35000);
-
-      const res = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
-        method: 'POST',
-        signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages: apiMessages,
-          temperature: 0.7,
-          max_tokens: 1500,
-        }),
-      });
-
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const json = await res.json();
-        const content = json.choices?.[0]?.message?.content;
-        if (content && content.trim()) {
-          return { text: content.trim(), model: json.model || model };
-        }
-      }
-    } catch (err) {
-      console.warn('[AICoPilotService] Direct NVIDIA NIM call failed, trying local backend bridge...', err);
-    }
-  }
-
-  // 2. Try Local Backend Bridge (http://localhost:4000/api/v1/projects/chat)
   try {
-    const res = await fetch('http://localhost:4000/api/v1/projects/chat', {
+    const res = await fetch(`${apiBase}/api/v1/projects/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -133,19 +83,35 @@ export async function sendChatMessage(options: ChatCompletionOptions): Promise<{
       const json = await res.json();
       const text = json.reply || json.text || json.response;
       if (text && text.trim()) {
-        return { text: text.trim(), model: json.model || model };
+        return {
+          text: text.trim(),
+          model: json.model || model,
+          actions: json.actions || [],
+        };
       }
+    } else {
+      const errorJson = await res.json().catch(() => ({}));
+      const errorMsg = errorJson.error || `HTTP ${res.status} Error`;
+      return {
+        text: `⚠️ Agent Error: ${errorMsg}`,
+        model,
+        actions: [],
+      };
     }
-  } catch (err) {
-    console.warn('[AICoPilotService] Local backend bridge unreachable, using dynamic creative engine...', err);
+  } catch (err: any) {
+    console.warn('[AICoPilotService] Backend call failed:', err);
+    return {
+      text: `⚠️ Network Connection Error: Could not connect to Arise Agent Runtime at ${apiBase}. Ensure the backend server is running.`,
+      model,
+      actions: [],
+    };
   }
 
-  // 3. Dynamic Natural Conversational Fallback Generator
-  const lastUserMsg = messages[messages.length - 1];
-  const promptText = (lastUserMsg?.content || lastUserMsg?.text || '').trim();
-
-  const generatedReply = generateDynamicAssistantResponse(promptText, stageId, projectName, shotNumber);
-  return { text: generatedReply, model: `${model} (Studio Engine)` };
+  return {
+    text: '⚠️ Agent returned an empty response.',
+    model,
+    actions: [],
+  };
 }
 
 /**

@@ -23,15 +23,16 @@ echo "🎬 =====================================================================
 echo ""
 echo "📦 [1/3] SYNCING GITHUB REPOSITORY (https://github.com/FinesseJones/Arise-Productions)..."
 cd "$DIR"
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
 git add -A
 if git diff --cached --quiet; then
-    echo "ℹ️ No uncommitted changes. Pushing current state..."
-    git push origin main || true
+    echo "ℹ️ No uncommitted changes. Pushing current state on branch '$CURRENT_BRANCH'..."
+    git push origin "$CURRENT_BRANCH" || true
 else
     git commit -m "$MSG"
-    git push origin main
+    git push origin "$CURRENT_BRANCH"
 fi
-echo "✅ [1/3] GitHub Repository up-to-date!"
+echo "✅ [1/3] GitHub Repository up-to-date on branch '$CURRENT_BRANCH'!"
 
 # ------------------------------------------------------------------------------
 # TARGET 2: LOCAL DESKTOP APP & DMG INSTALLER

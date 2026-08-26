@@ -18,6 +18,8 @@ import { mcpWorkers } from './backend/workers/mcp-workers.js';
 import { MediaIngestionEngine } from './backend/services/media-ingest.js';
 import { nvidia } from './backend/ai/nvidia-client.js';
 import { agentMemory } from './backend/db/agent-memory.js';
+import { runAgent } from './backend/agent/agent-runtime.js';
+import { agentToolDefinitions } from './backend/agent/tools.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -109,15 +111,26 @@ app.post('/api/v1/nvidia/set-model', (req, res) => {
 app.post('/api/v1/nvidia/chat', async (req, res) => {
   try {
     const { message, roomName = 'Studio Department', role = 'AI Specialist', stageId = 'script', context = '', model } = req.body;
-    const systemPrompt = `You are the ${role} inside the 3D "${roomName}" of Arise Production (A product of THE AI CONTENT FOUNDRY, LLC). Provide top-tier, creative, and highly specific technical direction for ${stageId}. Current production context: ${context}`;
-    const result = await nvidia.generateCompletion({
-      prompt: message,
+    const projectId = await resolveProjectId(req.body.projectId);
+    const systemPrompt = `You are the ${role} inside the 3D "${roomName}" of Arise Production (A product of THE AI CONTENT FOUNDRY, LLC). Provide top-tier, creative, and highly specific technical direction for ${stageId}. You have access to real tools to retrieve scripts, story bibles, and execute stages. Current production context: ${context}`;
+    
+    const result = await runAgent({
+      messages: [{ role: 'user', content: message }],
       systemPrompt,
+      tools: agentToolDefinitions,
+      projectId,
+      shotNumber: 1,
       model: model || nvidia.defaultModel,
       temperature: 0.7,
-      maxTokens: 1200,
     });
-    res.json({ success: true, text: result.text, model: result.model });
+    
+    res.json({
+      success: result.success !== false,
+      text: result.reply,
+      reply: result.reply,
+      actions: result.actions,
+      model: result.model,
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -139,7 +152,7 @@ app.get('/api/v1/agents/history/:agentId', async (req, res) => {
   }
 });
 
-// POST /api/v1/agents/chat - Talk to a specialized Department Agent with persistent memory
+// POST /api/v1/agents/chat - Talk to a specialized Department Agent with persistent memory & tool calling
 app.post('/api/v1/agents/chat', async (req, res) => {
   try {
     const { agentId, agentName, role, message, systemPrompt, model } = req.body;
@@ -163,34 +176,40 @@ app.post('/api/v1/agents/chat', async (req, res) => {
       ? `\n\nPERMANENT STUDIO MEMORY & CONTEXT:\n${relevantMemories.map(m => `- [${m.category}] ${m.title}: ${m.content}`).join('\n')}`
       : '';
 
-    // Format recent chat turns into conversation context
-    const recentTurns = history.slice(-8).map(h => `${h.role === 'user' ? 'User' : (h.agentName || 'Agent')}: ${h.content}`).join('\n\n');
+    const fullSystemPrompt = `${systemPrompt || `You are the ${role || 'Department Lead'} of Arise Production Studio.`}\n\nSTUDIO ARCHITECTURE & ROLES:\nArise Production Studio is a unified 4K 3D Virtual Production suite by THE AI CONTENT FOUNDRY, LLC. You have tools available to get scripts, get the story bible, run stages, save scripts, and hand off to other agents. When the user asks for scripts, bibles, stage runs, or room handoffs, CALL the relevant tool.${memoriesContext}`;
 
-    const fullSystemPrompt = `${systemPrompt || `You are the ${role || 'Department Lead'} of Arise Production Studio.`}\n\nSTUDIO ARCHITECTURE & ROLES:\nArise Production Studio is a unified 4K 3D Virtual Production suite by THE AI CONTENT FOUNDRY, LLC. It features a 4K 3D Lit Soundstage, Writing Rooms (Plot, Acts, Beats, Characters), and 10 Production Stages (Script, Structure, Plan, Previs with UE5, Motion Kinematics, Storyboards, Neural Prompt Slate, Dailies Screening, 5.1 Sound Stem Studio, and DaVinci MCP Color Grading). You are an expert assistant directly collaborating with the creator.${memoriesContext}`;
+    // Format recent chat turns into conversation context for agent runtime
+    const recentMessages = history.slice(-8).map(h => ({
+      role: h.role === 'user' ? 'user' : 'assistant',
+      content: h.content || '',
+      name: h.agentName || undefined,
+    }));
 
-    const promptWithHistory = `CONVERSATION HISTORY:\n${recentTurns}\n\nPlease respond directly to the user's latest message with high-caliber technical, creative, and production precision as the ${role || 'Department Lead'}.`;
-
-    // 3. Call NVIDIA NIM
-    const result = await nvidia.generateCompletion({
-      prompt: promptWithHistory,
+    // 3. Call Autonomous Agent Runtime Loop
+    const result = await runAgent({
+      messages: recentMessages,
       systemPrompt: fullSystemPrompt,
+      tools: agentToolDefinitions,
+      projectId,
+      shotNumber: 1,
       model: model || nvidia.defaultModel,
       temperature: 0.7,
-      maxTokens: 1500,
     });
 
     // 4. Record Assistant Response in Persistent Memory
     const assistantMsg = agentMemory.addMessage(agentId, {
       role: 'assistant',
-      content: result.text,
+      content: result.reply,
       agentName: agentName || role || agentId,
-      metadata: { model: result.model }
+      metadata: { model: result.model, actions: result.actions }
     }, projectId);
 
     res.json({
-      success: true,
+      success: result.success !== false,
       userMessage: userMsg,
       assistantMessage: assistantMsg,
+      actions: result.actions,
+      reply: result.reply,
       model: result.model
     });
   } catch (err) {
@@ -355,17 +374,18 @@ app.post('/api/v1/projects/chat', async (req, res) => {
     const systemPrompt = departmentSystemPrompts[stageId] ||
       `You are the ${departmentRole} in Arise Production (A product of THE AI CONTENT FOUNDRY, LLC). Provide top-tier cinematic production direction for "${projectName}", Shot ${shotNumber}.`;
 
-    // Invoke NVIDIA NIM Client
-    const result = await nvidia.generateCompletion({
-      prompt: userPrompt,
-      systemPrompt,
+    // Execute through autonomous Agent Runtime loop
+    const result = await runAgent({
       messages,
+      systemPrompt,
+      tools: agentToolDefinitions,
+      projectId,
+      shotNumber: Number(shotNumber || 1),
       model,
       temperature: 0.7,
-      maxTokens: 1500,
     });
 
-    const reply = result.text;
+    const reply = result.reply;
 
     // Persist conversation to database
     const finalMessages = [
@@ -374,18 +394,19 @@ app.post('/api/v1/projects/chat', async (req, res) => {
         role: 'assistant',
         content: reply,
         model: result.model || model,
+        actions: result.actions,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ];
     db.saveChatHistory(projectId, stageId, finalMessages);
 
     res.json({
-      success: true,
+      success: result.success !== false,
       reply,
       text: reply,
+      actions: result.actions,
       model: result.model || model,
-      ai_powered: result.ai_powered ?? true,
-      usage: result.usage,
+      ai_powered: true,
     });
   } catch (err) {
     console.error('[ServerChat] Chat generation error:', err);

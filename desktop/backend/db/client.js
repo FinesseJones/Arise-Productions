@@ -293,6 +293,25 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
     return newProj;
   }
 
+  async updateShotStageAtomic(projectId, shotNumber, stageId, statusChar = '🟢', metadata = {}) {
+    const shotId = `${projectId}-shot-${shotNumber}`;
+    const key = `${shotId}:${stageId}`;
+    const state = statusChar === '🟢' ? 'DONE' : statusChar === '🟡' ? 'IN_PROGRESS' : 'PENDING';
+    const existing = this.statuses.get(key) || { id: key, shotId, stageId };
+    const updated = {
+      ...existing,
+      state,
+      statusChar,
+      outputHash: metadata.jobId || existing.outputHash || `hash-${stageId}-${shotNumber}`,
+      telemetry: { ...existing.telemetry, ...metadata, timestamp: new Date().toISOString() },
+      updated_at: new Date().toISOString(),
+    };
+    this.statuses.set(key, updated);
+    this._saveToDisk();
+    this.emit('status_updated', updated);
+    return updated;
+  }
+
   async updateStageStatus(shotId, stageId, state, statusChar = '🟢', outputHash = null, telemetry = {}) {
     const key = `${shotId}:${stageId}`;
     const existing = this.statuses.get(key) || { id: key, shotId, stageId };

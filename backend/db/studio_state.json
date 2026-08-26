@@ -59,16 +59,21 @@
       "id": "proj-fatherless-child-shot-1:structure",
       "shotId": "proj-fatherless-child-shot-1",
       "stageId": "structure",
-      "state": "DONE",
-      "statusChar": "🟢",
-      "outputHash": "hash-structure-1",
+      "state": "IN_PROGRESS",
+      "statusChar": "🟡",
+      "outputHash": "job-structure-1787729024741",
       "telemetry": {
         "fps": 60,
         "computeNodes": 4,
         "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
+        "timestamp": "2026-08-26T07:23:44.741Z",
+        "jobId": "job-structure-1787729024741",
+        "worker": "Cork Board",
+        "completedAt": "2026-08-26T07:23:15.244Z",
+        "outputSummary": "Narrative structure generated: 3 Acts, 8 Index Cards, Emotional Arc Solved.",
+        "aiModel": "meta/llama-3.1-70b-instruct"
       },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-26T07:23:44.741Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:plan",
@@ -505,5 +510,5 @@
     "updated_at": "2026-08-24T05:06:41.288Z"
   },
   "auditLogs": [],
-  "saved_at": "2026-08-24T05:19:22.859Z"
+  "saved_at": "2026-08-26T07:23:44.741Z"
 }

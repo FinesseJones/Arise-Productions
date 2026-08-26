@@ -33,6 +33,7 @@ interface Message {
   text: string;
   timestamp: string;
   model?: string;
+  actions?: Array<{ id?: string; tool: string; args: any; result: any }>;
   attachedFile?: { name: string; size: string };
 }
 
@@ -256,7 +257,7 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
     } catch {}
 
     try {
-      const modelId = localStorage.getItem('arise_selected_model') || 'meta/llama-3.1-70b-instruct';
+      const modelId = localStorage.getItem('arise_selected_model') || 'meta/llama-3.3-70b-instruct';
       const aiResult = await sendChatMessage({
         stageId,
         roomName,
@@ -270,12 +271,30 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
         })),
       });
 
+      // Process any tool execution actions
+      if (aiResult.actions && aiResult.actions.length > 0) {
+        aiResult.actions.forEach((act) => {
+          if (act.tool === 'run_stage') {
+            toast.success(`🟢 Executed Stage: ${act.args?.stageId || stageId} (Shot ${act.args?.shotNumber || shotNumber})`, { icon: '🎬' });
+          } else if (act.tool === 'save_script') {
+            toast.success(`💾 Screenplay for Shot ${act.args?.shotNumber || shotNumber} saved to database!`, { icon: '✍️' });
+          } else if (act.tool === 'get_episode_script') {
+            toast.success(`📖 Retrieved stored screenplay for Shot ${act.args?.shotNumber || shotNumber}`, { icon: '📜' });
+          } else if (act.tool === 'get_story_bible') {
+            toast.success(`🏛️ Loaded project manifest & story bible!`, { icon: '📂' });
+          } else if (act.tool === 'handoff_to_agent') {
+            toast(`🔄 Handoff to ${act.args?.stageId}: ${act.args?.reason || 'Stage handoff'}`, { icon: '🚀' });
+          }
+        });
+      }
+
       const aiResponse: Message = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
         text: aiResult.text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         model: aiResult.model.split('/')[1] || aiResult.model,
+        actions: aiResult.actions,
       };
 
       const finalMessages = [...nextMessages, aiResponse];
@@ -289,9 +308,9 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
       const fallbackResponse: Message = {
         id: `ai-err-${Date.now()}`,
         sender: 'ai',
-        text: `I have received your instruction for **${projectName}** (Shot ${shotNumber}). Let's work on this together—would you like me to refine the dialogue, generate a scene breakdown, or calculate the 3D camera staging?`,
+        text: `⚠️ Agent Error: ${err.message || 'Failed to connect to agent runtime.'}`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        model: 'Studio-AI-CoPilot',
+        model: 'Studio-AI-Error',
       };
       const finalMessages = [...nextMessages, fallbackResponse];
       setMessages(finalMessages);
@@ -385,6 +404,22 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
                 </div>
               )}
               <div className="whitespace-pre-wrap">{m.text}</div>
+
+              {m.actions && m.actions.length > 0 && (
+                <div className="mt-2.5 pt-2 border-t border-purple-800/40 space-y-1.5 font-mono text-[10px]">
+                  <div className="text-amber-400/90 font-semibold flex items-center gap-1">
+                    <Zap size={11} className="text-amber-400 animate-pulse" />
+                    <span>Autonomous Tool Actions Executed ({m.actions.length}):</span>
+                  </div>
+                  {m.actions.map((act, actIdx) => (
+                    <div key={actIdx} className="bg-black/40 px-2 py-1 rounded border border-purple-800/60 flex items-center justify-between text-purple-200">
+                      <span className="text-emerald-400 font-bold">⚡ {act.tool}</span>
+                      <span className="text-slate-400 truncate max-w-[180px]">{JSON.stringify(act.args)}</span>
+                      <span className="text-emerald-300">✓ Done</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ))}
