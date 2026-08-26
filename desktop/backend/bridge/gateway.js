@@ -51,7 +51,7 @@ export class StudioWebSocketGateway extends EventEmitter {
     const client = {
       id: `client-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       socket,
-      subscribedProject: 'proj-fatherless-child',
+      subscribedProject: db.getSessionState()?.lastActiveProjectId || 'proj-fatherless-child',
       send: (data) => {
         try {
           const payload = typeof data === 'string' ? data : JSON.stringify(data);

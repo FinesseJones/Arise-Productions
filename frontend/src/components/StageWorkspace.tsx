@@ -1,7 +1,5 @@
-"use client";
-
 import React, { useState } from 'react';
-import { Stage } from '../types/stages';
+import { Stage, stages as STAGES } from '../types/stages';
 import { ProjectStatus, StageKey } from '../types/types';
 import { Play, Sparkles, Sliders, ShieldCheck, Columns, Maximize2, Minimize2, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -9,26 +7,33 @@ import Interactive3DRoom from './3d/Interactive3DRoom';
 import RoomAIChat from './RoomAIChat';
 
 interface StageWorkspaceProps {
-  stage: Stage;
+  stage?: Stage;
+  activeStage?: Stage;
   projectStatus: ProjectStatus;
   onExecuteStage?: (stageId: string) => void;
+  onSelectStage?: (stageId: string) => void;
   selectedShot?: number;
+  activeShotNumber?: number;
   onSelectShot?: (shotNumber: number) => void;
 }
 
 const StageWorkspace: React.FC<StageWorkspaceProps> = ({
   stage,
+  activeStage,
   projectStatus,
   onExecuteStage,
+  onSelectStage,
   selectedShot,
+  activeShotNumber,
   onSelectShot,
 }) => {
+  const currentStage: Stage = stage || activeStage || STAGES[0];
   const [internalShot, setInternalShot] = useState<number>(1);
-  const activeShot = selectedShot !== undefined ? selectedShot : internalShot;
+  const activeShot = selectedShot !== undefined ? selectedShot : (activeShotNumber !== undefined ? activeShotNumber : internalShot);
   const [layoutMode, setLayoutMode] = useState<'split' | 'canvas-focus' | 'chat-focus'>('split');
 
-  const stageKey = stage.id as StageKey;
-  const currentShot = projectStatus.shots?.find((s) => s.shotNumber === activeShot) || projectStatus.shots?.[0];
+  const stageKey = (currentStage?.id || 'script') as StageKey;
+  const currentShot = projectStatus?.shots?.find((s) => s.shotNumber === activeShot) || projectStatus?.shots?.[0];
   const shotStageStatus = currentShot?.status?.[stageKey]?.statusChar || '?';
 
   const handleShotChange = (shotNum: number) => {
@@ -37,9 +42,13 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
   };
 
   const handleRunStage = () => {
+    const stageId = currentStage?.id || 'script';
     if (onExecuteStage) {
-      toast.loading(`Dispatching job for ${stage.name} (Shot ${selectedShot})...`, { duration: 1500 });
-      onExecuteStage(stage.id);
+      toast.loading(`Dispatching job for ${currentStage?.name || 'Stage'} (Shot ${activeShot})...`, { duration: 1500 });
+      onExecuteStage(stageId);
+    } else if (onSelectStage) {
+      toast.loading(`Dispatching job for ${currentStage?.name || 'Stage'} (Shot ${activeShot})...`, { duration: 1500 });
+      onSelectStage(stageId);
     }
   };
 
@@ -50,14 +59,14 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
         <div className="space-y-1">
           <div className="flex items-center space-x-3">
             <span className="px-2.5 py-0.5 rounded-full bg-purple-950 text-rose-300 font-mono text-[10px] font-extrabold border border-purple-800/60 shadow-sm">
-              STAGE {stage.number} OF 10
+              STAGE {currentStage.number} OF 10
             </span>
             <h2 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-rose-200 to-amber-100 tracking-tight uppercase font-serif">
-              {stage.name}
+              {currentStage.name}
             </h2>
             <span className="text-base select-none">{shotStageStatus}</span>
           </div>
-          <p className="text-xs text-purple-300/70 max-w-xl truncate">{stage.description}</p>
+          <p className="text-xs text-purple-300/70 max-w-xl truncate">{currentStage.description}</p>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -92,7 +101,7 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
             onChange={(e) => handleShotChange(Number(e.target.value))}
             className="px-3 py-2 bg-[#140e2e] border border-purple-800/60 rounded-xl text-purple-100 text-xs font-mono focus:outline-none focus:border-rose-500 shadow-sm"
           >
-            {projectStatus.shots?.map((s) => (
+            {projectStatus?.shots?.map((s) => (
               <option key={s.shotNumber} value={s.shotNumber}>
                 Shot {s.shotNumber}: {s.title}
               </option>
@@ -124,8 +133,8 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
         >
           <Interactive3DRoom
             stageId={stageKey}
-            roomName={stage.name}
-            projectName={projectStatus.projectName}
+            roomName={currentStage.name}
+            projectName={projectStatus?.projectName || 'Arise Production'}
             shotNumber={activeShot}
             shotTitle={currentShot?.title}
             shotDescription={currentShot?.description}
@@ -145,8 +154,8 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
         >
           <RoomAIChat
             stageId={stageKey}
-            roomName={stage.name}
-            projectName={projectStatus.projectName}
+            roomName={currentStage.name}
+            projectName={projectStatus?.projectName || 'Arise Production'}
             shotNumber={activeShot}
           />
         </div>

@@ -485,6 +485,57 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
     return Array.from(this.projects.values());
   }
 
+  registerProject(projectData) {
+    const id = projectData.id || `proj-${Date.now()}`;
+    const newProj = {
+      id,
+      name: projectData.name || projectData.title || 'New Production',
+      slug: projectData.slug || id,
+      format: projectData.format || 'long_form',
+      version: 1,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    this.projects.set(id, newProj);
+
+    const shots = projectData.shots || [
+      { shotNumber: 1, title: `${newProj.name} - Scene 1`, description: `Opening sequence for ${newProj.name}` },
+      { shotNumber: 2, title: `${newProj.name} - Scene 2`, description: `Core conflict for ${newProj.name}` },
+      { shotNumber: 3, title: `${newProj.name} - Scene 3`, description: `Climax for ${newProj.name}` },
+    ];
+
+    shots.forEach((s) => {
+      const shotId = `${id}-shot-${s.shotNumber}`;
+      this.shots.set(shotId, {
+        id: shotId,
+        projectId: id,
+        shotNumber: s.shotNumber,
+        title: s.title,
+        description: s.description,
+        durationFrames: 120,
+        created_at: new Date().toISOString(),
+      });
+
+      const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
+      stages.forEach((stageId) => {
+        const statusKey = `${shotId}:${stageId}`;
+        this.statuses.set(statusKey, {
+          id: statusKey,
+          shotId,
+          stageId,
+          state: 'DONE',
+          statusChar: '🟢',
+          outputHash: `hash-${stageId}-${s.shotNumber}`,
+          updated_at: new Date().toISOString(),
+        });
+      });
+    });
+
+    this.sessionState.lastActiveProjectId = id;
+    this._saveToDisk();
+    return this.getProjectManifest(id);
+  }
+
   async createProject(projectData) {
     const id = projectData.id || `proj-${Date.now()}`;
     const newProj = {

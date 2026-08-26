@@ -156,7 +156,7 @@ export const agentToolDefinitions = [
  * Tool Executor Map calling real studio backend functions
  */
 export async function executeAgentTool(toolName, args = {}, context = {}) {
-  const projectId = args.projectId || context.projectId || 'proj-fatherless-child';
+  const projectId = args.projectId || context.projectId || db.getSessionState()?.lastActiveProjectId || 'proj-fatherless-child';
   const shotNumber = Number(args.shotNumber || context.shotNumber || 1);
 
   console.log(`[AgentTools] ⚡ Executing Tool: "${toolName}" with args:`, JSON.stringify(args));

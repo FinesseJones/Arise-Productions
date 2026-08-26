@@ -31,7 +31,23 @@ export function BeatsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setBeats(parsed);
+          const normalized: BeatItem[] = parsed.map((item, i) => {
+            if (typeof item === 'string') {
+              return {
+                id: `beat-${i + 1}`,
+                act: `Act ${Math.min(3, Math.floor(i / 3) + 1)}`,
+                title: `${i + 1}. Beat`,
+                description: item,
+              };
+            }
+            return {
+              id: item?.id || `beat-${i + 1}`,
+              act: item?.act || 'Act 1',
+              title: item?.title || `${i + 1}. Story Beat`,
+              description: item?.description || '',
+            };
+          });
+          setBeats(normalized);
           return;
         }
       }

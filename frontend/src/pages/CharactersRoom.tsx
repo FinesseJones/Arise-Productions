@@ -33,7 +33,7 @@ export function CharactersRoom({ projectName = 'A Fatherless Child', onNavigateT
   const [characters, setCharacters] = useState<CharacterProfile[]>(() => {
     return (getProjectCharacters(projectName) as any);
   });
-  const [activeCharId, setActiveCharId] = useState<string>('c1');
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,8 +44,28 @@ export function CharactersRoom({ projectName = 'A Fatherless Child', onNavigateT
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setCharacters(parsed);
-          setActiveCharId(parsed[0].id);
+          const normalized: CharacterProfile[] = parsed.map((item, i) => {
+            if (typeof item === 'string') {
+              return {
+                id: `char-${i + 1}`,
+                name: item,
+                role: (i === 0 ? 'Protagonist' : i === 1 ? 'Mentor' : i === 2 ? 'Antagonist' : 'Supporting') as any,
+                arcType: 'Positive Arc',
+                personality: `Character profile for ${item}.`,
+                archetypes: ['Hero'],
+              };
+            }
+            return {
+              id: item?.id || `char-${i + 1}`,
+              name: item?.name || `Character ${i + 1}`,
+              role: item?.role || 'Supporting',
+              arcType: item?.arcType || 'Positive Arc',
+              personality: item?.personality || '',
+              archetypes: Array.isArray(item?.archetypes) ? item.archetypes : ['Hero'],
+            };
+          });
+          setCharacters(normalized);
+          setSelectedIndex(0);
           return;
         }
       }
@@ -56,7 +76,6 @@ export function CharactersRoom({ projectName = 'A Fatherless Child', onNavigateT
     setSelectedIndex(0);
   }, [projectName]);
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const activeChar = characters[selectedIndex] || characters[0] || {
     id: 'c1',
     name: 'Protagonist',
