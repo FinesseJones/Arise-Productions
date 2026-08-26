@@ -168,7 +168,7 @@ export class NvidiaNIMClient {
     if (this.hasApiKey()) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 12000);
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
 
         const requestBody = {
           model,

@@ -42,6 +42,8 @@ import {
   Globe,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  Menu,
   Home,
   Plus,
   FolderOpen,
@@ -82,7 +84,8 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
     | 'distribution'
   >('agents');
 
-  // Modals
+  // Modals & Menus
+  const [showRoomDropdown, setShowRoomDropdown] = useState<boolean>(false);
   const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
@@ -228,8 +231,8 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             </p>
           </div>
 
-          {/* Quick Front of Studio / New Production Buttons */}
-          <div className="flex items-center space-x-1.5 pl-2 border-l border-amber-500/30">
+          {/* Quick Front of Studio / New Production / Rooms Menu Buttons */}
+          <div className="flex items-center space-x-1.5 pl-2 border-l border-amber-500/30 relative">
             <button
               type="button"
               onClick={onChangeProject}
@@ -249,6 +252,77 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <Plus size={12} className="text-amber-400" />
               <span>New Production</span>
             </button>
+
+            {/* Quick Rooms Dropdown Menu */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowRoomDropdown((prev) => !prev)}
+                className={`px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
+                  showRoomDropdown
+                    ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black border border-amber-300'
+                    : 'bg-[#1f133f] hover:bg-[#2d1b5a] text-amber-300 border border-amber-500/50'
+                }`}
+                title="Open Studio Rooms & Stages Menu"
+              >
+                <Menu size={12} className={showRoomDropdown ? 'text-black' : 'text-amber-400'} />
+                <span>Rooms</span>
+                <ChevronDown size={11} className={`transition-transform duration-200 ${showRoomDropdown ? 'rotate-180 text-black' : 'text-amber-400/80'}`} />
+              </button>
+
+              {showRoomDropdown && (
+                <div
+                  className="absolute left-0 mt-2 w-72 bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                  style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.9), 0 0 24px rgba(245, 158, 11, 0.35)' }}
+                >
+                  <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
+                    <span className="text-[10px] uppercase font-mono font-black tracking-widest text-amber-400">
+                      Studio Navigation Menu
+                    </span>
+                    <span className="text-[9px] font-mono text-amber-300/80 font-bold">12 Rooms</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1 text-[11px] font-mono">
+                    {[
+                      { id: 'agents', name: 'Command Center', icon: '🏛️', tag: 'HQ' },
+                      { id: 'stage', name: '3D Soundstage', icon: '🎬', tag: 'Core' },
+                      { id: 'ideas', name: '00: Ideas', icon: '💡', tag: 'IP Vault' },
+                      { id: 'plot', name: '01: Plot Room', icon: '📖', tag: 'Script' },
+                      { id: 'characters', name: '02: Cast Room', icon: '🎭', tag: 'Actors' },
+                      { id: 'acts', name: '03: Acts Room', icon: '📑', tag: '3-Act' },
+                      { id: 'beats', name: '04: Beats Room', icon: '⚡', tag: '40 Beats' },
+                      { id: 'architecture', name: '3D Campus', icon: '🏢', tag: 'World' },
+                      { id: 'screening', name: 'Screening Room', icon: '📽️', tag: '4K Play' },
+                      { id: 'suites', name: 'Original Suites', icon: '🎛️', tag: 'Tools' },
+                      { id: 'vault', name: 'Memory Vault', icon: '🗄️', tag: 'Data' },
+                      { id: 'distribution', name: '05: Distribution', icon: '🌐', tag: 'Release' },
+                    ].map((room) => (
+                      <button
+                        key={room.id}
+                        type="button"
+                        onClick={() => {
+                          setMainView(room.id as any);
+                          setShowRoomDropdown(false);
+                        }}
+                        className={`flex items-center justify-between p-2 rounded-xl text-left transition cursor-pointer ${
+                          mainView === room.id
+                            ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/30'
+                            : 'hover:bg-amber-500/20 text-slate-200 hover:text-amber-200 border border-transparent hover:border-amber-500/40'
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="text-sm">{room.icon}</span>
+                          <span className="truncate text-[10.5px] font-semibold">{room.name}</span>
+                        </div>
+                        <span className={`text-[8px] px-1 py-0.2 rounded font-bold ${mainView === room.id ? 'bg-black/30 text-black' : 'bg-amber-950/70 text-amber-300'}`}>
+                          {room.tag}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
