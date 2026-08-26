@@ -62,21 +62,10 @@ interface DepartmentAgentsHubProps {
   onNavigateToRoom?: (roomKey: string) => void;
 }
 
-// 3D Interactive Holographic Agent Pedestal
+import { FloatingAriseLogo3D } from '../3d/FloatingAriseLogo3D';
+
+// 3D Interactive Holographic Agent Pedestal with Floating 3D Arise Logo
 const AgentHologram3D: React.FC<{ agent: DepartmentAgent }> = ({ agent }) => {
-  const ringRef1 = useRef<THREE.Mesh>(null);
-  const ringRef2 = useRef<THREE.Mesh>(null);
-  const coreRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state, delta) => {
-    if (ringRef1.current) ringRef1.current.rotation.z += delta * 0.4;
-    if (ringRef2.current) ringRef2.current.rotation.z -= delta * 0.3;
-    if (coreRef.current) {
-      coreRef.current.rotation.y += delta * 0.5;
-      coreRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.5) * 0.1;
-    }
-  });
-
   return (
     <group position={[0, -0.2, 0]}>
       {/* 3D Golden Pedestal Base */}
@@ -85,56 +74,16 @@ const AgentHologram3D: React.FC<{ agent: DepartmentAgent }> = ({ agent }) => {
         <meshStandardMaterial color="#0d0822" metalness={0.9} roughness={0.2} />
       </mesh>
 
-      {/* Rotating Concentric Holographic Rings */}
-      <mesh ref={ringRef1} position={[0, -0.9, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[1.6, 1.75, 32]} />
-        <meshBasicMaterial color="#fbbf24" transparent opacity={0.7} />
-      </mesh>
-
-      <mesh ref={ringRef2} position={[0, -0.7, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[2.0, 2.1, 32]} />
-        <meshBasicMaterial color="#d97706" transparent opacity={0.5} />
-      </mesh>
-
-      {/* Hologram Light Pillar */}
-      <mesh position={[0, 0.2, 0]}>
-        <cylinderGeometry args={[0.9, 1.4, 2.4, 32, 1, true]} />
-        <meshBasicMaterial color="#f59e0b" transparent opacity={0.12} side={THREE.DoubleSide} />
-      </mesh>
-
-      {/* Floating 3D Agent Core */}
-      <Float speed={2.5} rotationIntensity={0.2} floatIntensity={0.3}>
-        <mesh ref={coreRef} position={[0, 0.4, 0]}>
-          <octahedronGeometry args={[0.75, 0]} />
-          <meshStandardMaterial
-            color="#fbbf24"
-            emissive="#d97706"
-            emissiveIntensity={0.8}
-            roughness={0.2}
-            metalness={0.9}
-            wireframe
-          />
-        </mesh>
-
-        <Text
-          position={[0, 1.4, 0]}
-          fontSize={0.24}
-          color="#fef08a"
-          anchorX="center"
-          anchorY="middle"
-        >
-          {agent.name.toUpperCase()}
-        </Text>
-        <Text
-          position={[0, 1.15, 0]}
-          fontSize={0.12}
-          color="#d8b4fe"
-          anchorX="center"
-          anchorY="middle"
-        >
-          {agent.role.toUpperCase()}
-        </Text>
-      </Float>
+      {/* 3D Dynamic Floating & Rotating Arise Productions Logo */}
+      <React.Suspense fallback={null}>
+        <FloatingAriseLogo3D
+          position={[0, 0.35, 0]}
+          scale={0.82}
+          showText={true}
+          textTitle={agent.name.toUpperCase()}
+          textSubtitle={agent.role.toUpperCase()}
+        />
+      </React.Suspense>
     </group>
   );
 };

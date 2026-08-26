@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, Text, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { StageKey } from '../../types/types';
+import FloatingAriseLogo3D from './FloatingAriseLogo3D';
 
 export interface Room3DProps {
   stageId: StageKey;
@@ -283,7 +284,11 @@ const SoundstageEnvironmentTruss: React.FC<{ stageId: string; roomName: string }
           <meshStandardMaterial color="#1a1130" metalness={0.9} roughness={0.2} />
         </mesh>
 
-        {/* 3D Floating Stage Holo-Sign */}
+        {/* 3D Floating Stage Holo-Sign with Dynamic Arise Logo */}
+        <React.Suspense fallback={null}>
+          <FloatingAriseLogo3D position={[0, 0.4, -0.5]} scale={0.55} showText={false} />
+        </React.Suspense>
+
         <Float speed={2.0} rotationIntensity={0.08} floatIntensity={0.15}>
           <Text
             position={[0, -0.6, 0]}
