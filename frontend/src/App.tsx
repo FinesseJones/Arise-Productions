@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import ShellLayout from './components/ShellLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Toaster } from 'react-hot-toast';
-import { Plus, Link2, Film, Smartphone, Tv, Sparkles, Play, Layers } from 'lucide-react';
+import { Plus, Link2, Film, Smartphone, Tv, Sparkles, Play, Layers, FolderOpen, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from './constants/branding';
 import { getAPIBaseURL } from './lib/api';
@@ -24,13 +24,14 @@ const App: React.FC = () => {
     return localStorage.getItem('arise_session_active') === 'true';
   });
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [showFolderModal, setShowFolderModal] = useState<boolean>(false);
   const [availableProjects, setAvailableProjects] = useState<Array<{ id: string; name: string; format?: string; genre?: string; description?: string }>>([
     {
       id: 'proj-fatherless-child',
       name: 'A Fatherless Child',
       format: 'long_form',
       genre: 'Emotional Family Drama',
-      description: 'Devon grapples with identity and legacy after discovering his late father’s unprocessed 16mm reels.',
+      description: "Devon grapples with identity and legacy after discovering his late father's unprocessed 16mm reels.",
     },
     {
       id: 'proj-vicious-cycle',
@@ -62,6 +63,11 @@ const App: React.FC = () => {
   const [season, setSeason] = useState<number>(1);
   const [episode, setEpisode] = useState<number>(1);
   const [isCreating, setIsCreating] = useState<boolean>(false);
+
+  // Folder Ingest State
+  const [folderPath, setFolderPath] = useState<string>('/Volumes/FinesseJones1 External 1/Archive/Documents/TACF_Hybrid_Film_Scripts');
+  const [folderDefaultFormat, setFolderDefaultFormat] = useState<'long_form' | 'episodic_tv'>('long_form');
+  const [isIngesting, setIsIngesting] = useState<boolean>(false);
 
   // Sync session state & projects from backend and local cache on startup
   React.useEffect(() => {
@@ -233,6 +239,63 @@ const App: React.FC = () => {
     }
   };
 
+  // Import an entire folder of scripts — auto-creates projects
+  const handleFolderIngest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!folderPath.trim()) {
+      toast.error('Please enter a folder path.');
+      return;
+    }
+    setIsIngesting(true);
+    const toastId = toast.loading('📁 Arise Folder Agent: Scanning and ingesting scripts...');
+    try {
+      const res = await fetch(`${apiBase}/api/v1/projects/ingest-folder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folderPath: folderPath.trim(), defaultFormat: folderDefaultFormat }),
+      }).then((r) => r.json());
+
+      if (res.success && res.projects && res.projects.length > 0) {
+        setAvailableProjects((prev) => {
+          const map = new Map();
+          prev.forEach((p) => map.set(p.id, p));
+          res.projects.forEach((p: any) => {
+            if (p && p.id) map.set(p.id, { id: p.id, name: p.name || p.title || 'Imported Script', format: p.format || folderDefaultFormat, genre: 'Scripture-Based Drama', description: p.sourceFile ? `Imported from: ${p.sourceFile.split('/').pop()}` : 'TACF Script Import' });
+          });
+          const updated = Array.from(map.values());
+          try { localStorage.setItem('arise_all_user_projects', JSON.stringify(updated)); } catch {}
+          return updated;
+        });
+        toast.success(`🎬 ${res.projectsCreated} scripts imported as projects! ${res.referenceFilesStored} refs filed to IP Vault.`, { id: toastId, duration: 6000 });
+      } else {
+        toast.error(res.error || 'Folder ingest failed — check folder path.', { id: toastId });
+      }
+      setShowFolderModal(false);
+    } catch {
+      toast.error('Network error during folder ingest. Check server connection.', { id: toastId });
+    } finally {
+      setIsIngesting(false);
+    }
+  };
+
+  // Change format of an existing project (Film / TV Series / Short)
+  const handleFormatChange = async (projId: string, newFormat: 'long_form' | 'short_form' | 'episodic_tv') => {
+    try {
+      await fetch(`${apiBase}/api/v1/projects/${projId}/format`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ format: newFormat }),
+      });
+      setAvailableProjects((prev) =>
+        prev.map((p) => (p.id === projId ? { ...p, format: newFormat } : p))
+      );
+      const formatLabel = newFormat === 'episodic_tv' ? 'TV Series' : newFormat === 'short_form' ? 'Short / Reel' : 'Feature Film';
+      toast.success(`✅ Project format changed to ${formatLabel}`);
+    } catch {
+      toast.error('Could not update format. Try again.');
+    }
+  };
+
   return (
     <ErrorBoundary fallbackTitle="Studio App Level Error Caught">
       <div className="min-h-screen bg-[#050505] text-slate-100 flex flex-col justify-between font-sans">
@@ -260,7 +323,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Main Action Bar */}
-            <div className="flex items-center justify-center gap-3 w-full max-w-4xl">
+            <div className="flex flex-wrap items-center justify-center gap-3 w-full max-w-4xl">
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="px-6 py-3.5 bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-extrabold rounded-2xl transition shadow-xl shadow-amber-500/30 text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 border border-amber-300/50 cursor-pointer"
@@ -275,6 +338,14 @@ const App: React.FC = () => {
               >
                 <Link2 size={16} className="text-amber-400" />
                 <span>Ingest YouTube / Social Media</span>
+              </button>
+
+              <button
+                onClick={() => setShowFolderModal(true)}
+                className="px-5 py-3.5 bg-[#0e1a0e] hover:bg-[#152015] text-emerald-300 border border-emerald-600/50 font-bold rounded-2xl transition text-xs sm:text-sm flex items-center gap-2 font-mono cursor-pointer"
+              >
+                <FolderOpen size={16} className="text-emerald-400" />
+                <span>Import from Folder</span>
               </button>
             </div>
 
@@ -306,14 +377,31 @@ const App: React.FC = () => {
                           <h3 className="text-base font-black text-amber-100 truncate font-serif">
                             🎬 {proj.name}
                           </h3>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold uppercase">
-                            {proj.format === 'short_form'
-                              ? '9:16 Short'
-                              : proj.format === 'episodic_tv'
-                              ? 'Episodic TV'
-                              : 'Feature Film'}
-                          </span>
                         </div>
+
+                        {/* Inline format-change selector */}
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {[
+                            { val: 'long_form' as const, label: 'Feature Film', icon: <Film size={10} /> },
+                            { val: 'episodic_tv' as const, label: 'TV Series', icon: <Tv size={10} /> },
+                            { val: 'short_form' as const, label: 'Short', icon: <Smartphone size={10} /> },
+                          ].map(({ val, label, icon }) => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => proj.format !== val && handleFormatChange(proj.id, val)}
+                              className={`flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-mono font-bold uppercase transition cursor-pointer ${
+                                proj.format === val
+                                  ? 'bg-amber-500/25 border-amber-400 text-amber-200'
+                                  : 'bg-transparent border-slate-700 text-slate-500 hover:border-amber-500/50 hover:text-amber-300'
+                              }`}
+                            >
+                              {icon}
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+
                         {proj.genre && (
                           <p className="text-xs text-amber-400/80 font-mono font-medium">
                             {proj.genre}
@@ -476,6 +564,112 @@ const App: React.FC = () => {
                       className="w-full py-3.5 bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-black rounded-xl transition text-xs uppercase tracking-wider shadow-lg shadow-amber-500/30 border border-amber-300/50 cursor-pointer"
                     >
                       {isCreating ? 'Processing Ingestion with Llama 3.1 70B...' : 'Generate 10-Stage Pipeline'}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Folder Import Modal — auto-creates projects from .fountain/.docx scripts */}
+            {showFolderModal && (
+              <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+                <div className="bg-[#080f08] border border-emerald-600/40 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl shadow-emerald-500/15 space-y-5">
+                  <div className="flex items-center justify-between border-b border-emerald-600/30 pb-3">
+                    <div className="flex items-center space-x-2">
+                      <FolderOpen className="text-emerald-400 w-5 h-5" />
+                      <h3 className="text-lg font-bold text-emerald-100 font-serif tracking-wide">
+                        Import Scripts from Folder
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => setShowFolderModal(false)}
+                      className="text-emerald-400/80 hover:text-emerald-200 text-xs font-mono px-2 py-1 rounded-lg bg-emerald-500/10 cursor-pointer"
+                    >
+                      ✕ Cancel
+                    </button>
+                  </div>
+
+                  <p className="text-xs text-emerald-300/70 font-mono leading-relaxed">
+                    Point the Arise Folder Agent at any directory containing <span className="text-emerald-300 font-bold">.fountain</span> or <span className="text-emerald-300 font-bold">.docx</span> scripts. Each script will become a new studio project. Reference <span className="text-emerald-300 font-bold">.md</span> files will be filed to the IP Vault.
+                  </p>
+
+                  <form onSubmit={handleFolderIngest} className="space-y-4">
+                    {/* Folder Path Input */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-emerald-300/80 uppercase tracking-wider block">
+                        Folder Path
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="/path/to/your/scripts"
+                          value={folderPath}
+                          onChange={(e) => setFolderPath(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2.5 bg-[#040a04] border border-emerald-600/40 rounded-xl text-emerald-100 text-xs font-mono focus:border-emerald-400 focus:outline-none"
+                        />
+                        <FolderOpen size={14} className="absolute left-2.5 top-3 text-emerald-500/70" />
+                      </div>
+                      <p className="text-[10px] text-emerald-400/50 font-mono">
+                        Example: /Volumes/Drive/TACF_Hybrid_Film_Scripts
+                      </p>
+                    </div>
+
+                    {/* Default Format for auto-detected scripts */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-emerald-300/80 uppercase tracking-wider block">
+                        Default Format (for unrecognised scripts)
+                      </label>
+                      <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                        <button
+                          type="button"
+                          onClick={() => setFolderDefaultFormat('long_form')}
+                          className={`p-2.5 rounded-xl border flex flex-col items-center gap-1 text-center transition cursor-pointer ${
+                            folderDefaultFormat === 'long_form'
+                              ? 'bg-emerald-600/20 border-emerald-500 text-emerald-200 font-bold'
+                              : 'bg-[#040a04] border-slate-800 text-slate-400 hover:text-emerald-200'
+                          }`}
+                        >
+                          <Film size={16} />
+                          <span>Feature Film</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFolderDefaultFormat('episodic_tv')}
+                          className={`p-2.5 rounded-xl border flex flex-col items-center gap-1 text-center transition cursor-pointer ${
+                            folderDefaultFormat === 'episodic_tv'
+                              ? 'bg-emerald-600/20 border-emerald-500 text-emerald-200 font-bold'
+                              : 'bg-[#040a04] border-slate-800 text-slate-400 hover:text-emerald-200'
+                          }`}
+                        >
+                          <Tv size={16} />
+                          <span>TV Series</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Info box */}
+                    <div className="p-3 bg-emerald-900/20 border border-emerald-700/30 rounded-xl text-[10px] text-emerald-300/70 font-mono leading-relaxed space-y-1">
+                      <p>• <span className="text-emerald-300">Auto-detected as TV Series:</span> filenames containing "series", "episode", "tv", "season", or "sabbath_class"</p>
+                      <p>• <span className="text-emerald-300">Agent routing:</span> .fountain → Script Room • .docx → Showrunner / Bible Room • .md → IP Vault</p>
+                      <p>• <span className="text-emerald-300">glorified_zion/</span> subfolder will also be scanned</p>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isIngesting}
+                      className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-black rounded-xl transition text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                    >
+                      {isIngesting ? (
+                        <>
+                          <RefreshCw size={14} className="animate-spin" />
+                          <span>Arise Folder Agent Scanning...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FolderOpen size={14} />
+                          <span>Ingest All Scripts as Projects</span>
+                        </>
+                      )}
                     </button>
                   </form>
                 </div>

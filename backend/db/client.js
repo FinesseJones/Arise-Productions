@@ -518,6 +518,17 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
     return Array.from(this.projects.values());
   }
 
+  // Save / update a project by id — merges with existing data and persists to disk
+  async saveProject(projectData) {
+    const id = projectData.id;
+    if (!id) throw new Error('saveProject: projectData.id is required');
+    const existing = this.projects.get(id) || {};
+    const updated = { ...existing, ...projectData, updated_at: new Date().toISOString() };
+    this.projects.set(id, updated);
+    this._saveToDisk();
+    return updated;
+  }
+
   registerProject(projectData) {
     const id = projectData.id || `proj-${Date.now()}`;
     const newProj = {

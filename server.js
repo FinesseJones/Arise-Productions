@@ -596,6 +596,144 @@ app.post('/api/v1/ingest/analyze-discuss', async (req, res) => {
   }
 });
 
+// POST /api/v1/projects/ingest-folder - Auto-import a folder of scripts into studio projects
+// Supported: .fountain (film scripts), .docx (expanded manuscripts), .md (reference/research)
+// Each .fountain or .docx becomes a new studio project; .md files are stored as IP Vault assets
+app.post('/api/v1/projects/ingest-folder', async (req, res) => {
+  try {
+    const { folderPath, defaultFormat } = req.body;
+    if (!folderPath) return res.status(400).json({ success: false, error: 'folderPath is required' });
+    if (!fs.existsSync(folderPath)) return res.status(404).json({ success: false, error: `Folder not found: ${folderPath}` });
+
+    const walk = (dir, depth = 0) => {
+      if (depth > 2) return [];
+      try {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        let files = [];
+        for (const e of entries) {
+          if (e.name.startsWith('.')) continue;
+          const full = path.join(dir, e.name);
+          if (e.isDirectory()) files = files.concat(walk(full, depth + 1));
+          else files.push(full);
+        }
+        return files;
+      } catch { return []; }
+    };
+
+    const allFiles = walk(folderPath);
+    const scriptFiles = allFiles.filter(f => /\.(fountain|docx)$/i.test(f));
+    const referenceFiles = allFiles.filter(f => /\.md$/i.test(f));
+
+    const inferFormat = (filename) => {
+      const base = path.basename(filename).toLowerCase();
+      if (/series|episode|episodic|sabbath_class|tv|season/.test(base)) return 'episodic_tv';
+      if (/short|reel/.test(base)) return 'short_form';
+      return defaultFormat || 'long_form';
+    };
+
+    const titleFromFilename = (filename) => {
+      return path.basename(filename, path.extname(filename))
+        .replace(/[_-]+/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase())
+        .trim();
+    };
+
+    const createdProjects = [];
+    for (const scriptPath of scriptFiles) {
+      const title = titleFromFilename(scriptPath);
+      const format = inferFormat(scriptPath);
+      const ext = path.extname(scriptPath).replace('.', '');
+      const agentRoom = ext === 'fountain' ? 'Script Room' : 'Showrunner / Bible Room';
+
+      const proj = await MediaIngestionEngine.createProject({
+        title,
+        format,
+        sourceType: 'folder_import',
+        sourceUrl: scriptPath,
+      });
+
+      const projStorageDir = path.resolve(__dirname, 'storage/projects', proj.id, 'scripts');
+      if (!fs.existsSync(projStorageDir)) fs.mkdirSync(projStorageDir, { recursive: true });
+      const destFilename = `${Date.now()}_${path.basename(scriptPath)}`;
+      const destPath = path.join(projStorageDir, destFilename);
+      fs.copyFileSync(scriptPath, destPath);
+
+      db.saveAsset({
+        name: title,
+        projectId: proj.id,
+        format,
+        category: 'script',
+        assetType: 'script',
+        fileUrl: `/storage/projects/${proj.id}/scripts/${destFilename}`,
+        fileSize: `${(fs.statSync(scriptPath).size / 1024).toFixed(1)} KB`,
+        extension: ext,
+        tags: ['imported', 'tacf', agentRoom.toLowerCase().replace(/\s/g, '-')],
+        metadata: { sourceFile: scriptPath, agentRoom, importedAt: new Date().toISOString() },
+        uploaded_by: 'FolderIngest',
+      });
+
+      createdProjects.push({ ...proj, agentRoom, sourceFile: scriptPath });
+    }
+
+    const ingestedRefs = [];
+    const refStorageDir = path.resolve(__dirname, 'storage/ingested/references');
+    if (!fs.existsSync(refStorageDir)) fs.mkdirSync(refStorageDir, { recursive: true });
+
+    for (const refPath of referenceFiles) {
+      const title = titleFromFilename(refPath);
+      const destFilename = `${Date.now()}_${path.basename(refPath)}`;
+      fs.copyFileSync(refPath, path.join(refStorageDir, destFilename));
+      const asset = db.saveAsset({
+        name: title,
+        projectId: 'ip-vault',
+        format: 'reference',
+        category: 'research',
+        assetType: 'document',
+        fileUrl: `/storage/ingested/references/${destFilename}`,
+        fileSize: `${(fs.statSync(refPath).size / 1024).toFixed(1)} KB`,
+        extension: 'md',
+        tags: ['reference', 'scripture', 'research', 'tacf'],
+        metadata: { sourceFile: refPath, agentRoom: 'IP Vault / Research', importedAt: new Date().toISOString() },
+        uploaded_by: 'FolderIngest',
+      });
+      ingestedRefs.push(asset);
+    }
+
+    res.json({
+      success: true,
+      message: `Ingested ${scriptFiles.length} scripts as projects and ${referenceFiles.length} reference docs to IP Vault.`,
+      projectsCreated: createdProjects.length,
+      referenceFilesStored: ingestedRefs.length,
+      projects: createdProjects,
+      references: ingestedRefs,
+    });
+  } catch (err) {
+    console.error('Folder ingest error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PUT /api/v1/projects/:projectId/format - Change the format of an existing project (Film / TV Series)
+app.put('/api/v1/projects/:projectId/format', async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { format } = req.body;
+    const validFormats = ['long_form', 'short_form', 'episodic_tv'];
+    if (!format || !validFormats.includes(format)) {
+      return res.status(400).json({ success: false, error: `format must be one of: ${validFormats.join(', ')}` });
+    }
+    // Update project in DB — use saveProject pattern available in db client
+    const projects = await db.listProjects();
+    const existing = projects.find(p => p.id === projectId);
+    if (!existing) return res.status(404).json({ success: false, error: 'Project not found' });
+    const updated = { ...existing, format };
+    await db.saveProject(updated);
+    res.json({ success: true, project: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET /api/v1/manifest - Retrieve current ProjectStatus manifest
 app.get('/api/v1/manifest', async (req, res) => {
   const projectId = await resolveProjectId(req.query.projectId);
