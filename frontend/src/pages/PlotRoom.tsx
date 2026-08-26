@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BookOpen,
   Sparkles,
@@ -14,10 +12,12 @@ import {
   Camera,
   Sliders,
   HelpCircle,
+  Save,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { getAPIBaseURL } from '../lib/api';
+import { getProjectPlot } from '../lib/projectData';
 
 interface PlotRoomProps {
   projectName?: string;
@@ -26,18 +26,43 @@ interface PlotRoomProps {
 
 export function PlotRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: PlotRoomProps) {
   const apiBase = getAPIBaseURL();
-  const [title, setTitle] = useState<string>(projectName || 'Vicious Cycle');
-  const [logline, setLogline] = useState<string>(
-    'When a waitress discovers her miscarriage is tied to a sinister plot between fertility clinics and VR tech, she must confront mercenaries, betrayal, and her own humanity to expose the truth.'
-  );
-  const [themes, setThemes] = useState<string>(
-    'Is seeking justice worth sacrificing your own humanity? Generational grief, technological dehumanization, and maternal instinct.'
-  );
-  const [selectedStoryTypes, setSelectedStoryTypes] = useState<string[]>(['David Vs Goliath', 'Monster in the House']);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>(['Action', 'Thriller', 'Drama']);
-  const [tone, setTone] = useState<string>('Emotionally charged, visceral, tech-noir suspense');
-  const [audience, setAudience] = useState<string>('Adult (18+)');
+  const initialPlot = getProjectPlot(projectName);
+  const [title, setTitle] = useState<string>(initialPlot.title);
+  const [logline, setLogline] = useState<string>(initialPlot.logline);
+  const [themes, setThemes] = useState<string>(initialPlot.themes);
+  const [selectedStoryTypes, setSelectedStoryTypes] = useState<string[]>(initialPlot.storyTypes);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(initialPlot.genres);
+  const [tone, setTone] = useState<string>(initialPlot.tone);
+  const [audience, setAudience] = useState<string>(initialPlot.audience);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
+
+  useEffect(() => {
+    const slug = (projectName || 'Production').replace(/[^a-zA-Z0-9]/g, '_');
+    const storageKey = `arise_plot_${slug}`;
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setTitle(parsed.title || projectName);
+        setLogline(parsed.logline || '');
+        setThemes(parsed.themes || '');
+        if (parsed.storyTypes) setSelectedStoryTypes(parsed.storyTypes);
+        if (parsed.genres) setSelectedGenres(parsed.genres);
+        if (parsed.tone) setTone(parsed.tone);
+        if (parsed.audience) setAudience(parsed.audience);
+        return;
+      }
+    } catch {}
+
+    const defaultPlot = getProjectPlot(projectName);
+    setTitle(defaultPlot.title);
+    setLogline(defaultPlot.logline);
+    setThemes(defaultPlot.themes);
+    setSelectedStoryTypes(defaultPlot.storyTypes);
+    setSelectedGenres(defaultPlot.genres);
+    setTone(defaultPlot.tone);
+    setAudience(defaultPlot.audience);
+  }, [projectName]);
 
   const availableStoryTypes = [
     'David Vs Goliath',

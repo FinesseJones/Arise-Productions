@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAPIBaseURL } from '../../../lib/api';
+import { generateDynamicScript, getProjectCharacters } from '../../../lib/projectData';
 
 export interface ScriptRoom3DProps {
   projectName: string;
@@ -78,33 +79,12 @@ export const ScriptRoomHolo: React.FC<ScriptRoom3DProps> = ({
   const cleanSlug = (projectName || 'Arise_Production').replace(/[^a-zA-Z0-9]/g, '_');
   const storageKey = `arise_script_${cleanSlug}_shot_${shotNumber}`;
 
-  const defaultFountain = `EXT. URBAN NEIGHBORHOOD PORCH - EARLY MORNING
-
-Golden morning light breaks through the amber trees, catching the dust motes in the brisk autumn air. A heavy silence settles over the quiet street.
-
-DEVON (19)
-(standing on the front porch, clutching an old weathered photograph)
-"They always told me a tree without deep roots could never stand a storm. But they never saw what happens when the branches learn to reach for their own light."
-
-MARCUS (40s, mentor, steps onto the porch with two steaming mugs)
-"You've been carrying questions that were never yours to answer, Devon. Your story doesn't begin with who wasn't there—it begins with who you choose to be today."
-
-DEVON
-(taking a slow breath, looking out at the waking city)
-"Then let's build something that lasts."
-
-CUT TO:
-
-INT. LIVING ROOM WORKSPACE - CONTINUOUS
-
-Devon opens a notebook filled with hand-drawn plans and film concepts.`;
-
   const [screenplay, setScreenplay] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(storageKey);
       if (saved) return saved;
     } catch {}
-    return defaultFountain;
+    return generateDynamicScript(projectName, shotNumber, shotTitle);
   });
 
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -112,9 +92,13 @@ Devon opens a notebook filled with hand-drawn plans and film concepts.`;
   useEffect(() => {
     try {
       const saved = localStorage.getItem(storageKey);
-      if (saved) setScreenplay(saved);
+      if (saved) {
+        setScreenplay(saved);
+      } else {
+        setScreenplay(generateDynamicScript(projectName, shotNumber, shotTitle));
+      }
     } catch {}
-  }, [projectName, shotNumber, storageKey]);
+  }, [projectName, shotNumber, storageKey, shotTitle]);
 
   const handleSave = () => {
     try {

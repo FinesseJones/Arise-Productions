@@ -1,11 +1,10 @@
-"use client";
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GenerateField from '../components/GenerateField';
 import { Activity, Download, Plus, Trash2, Sparkles, Layers } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { getAPIBaseURL } from '../lib/api';
+import { getProjectBeats } from '../lib/projectData';
 
 interface BeatsRoomProps {
   projectName?: string;
@@ -20,18 +19,27 @@ interface BeatItem {
 }
 
 export function BeatsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: BeatsRoomProps) {
-  const [beats, setBeats] = useState<BeatItem[]>([
-    { id: 'b1', act: 'Act 1', title: '1. Opening Image', description: 'Devon (19) stands on the porch holding the weathered photograph in morning fog.' },
-    { id: 'b2', act: 'Act 1', title: '2. Theme Stated', description: 'Marcus tells Devon that branches find their own light when roots run deep.' },
-    { id: 'b3', act: 'Act 1', title: '3. Set-Up & Catalyst', description: 'Devon discovers his father vintage 16mm camera in the attic.' },
-    { id: 'b4', act: 'Act 1', title: '4. Debate & Threshold', description: 'Devon wrestles with whether uncovering the past will bring peace or pain.' },
-    { id: 'b5', act: 'Act 2A', title: '5. Break into Two', description: 'Devon begins filming community elders and recording oral histories.' },
-    { id: 'b6', act: 'Act 2A', title: '6. B Story & Mentor', description: 'Marcus teaches Devon camera operation and woodworking restoration.' },
-    { id: 'b7', act: 'Act 2B', title: '7. Midpoint Reversal', description: 'Devon discovers his father designed the neighborhood community hall.' },
-    { id: 'b8', act: 'Act 2B', title: '8. All Is Lost Moment', description: 'A torrential storm leaks onto the workshop, threatening the film reels.' },
-    { id: 'b9', act: 'Act 3', title: '9. Climax & Premiere', description: 'The community packs the hall for the premiere; Devon shares his truth.' },
-    { id: 'b10', act: 'Act 3', title: '10. Final Transformed Image', description: 'Devon stands on the porch, looking forward at the waking city skyline.' },
-  ]);
+  const [beats, setBeats] = useState<BeatItem[]>(() => {
+    return getProjectBeats(projectName);
+  });
+
+  useEffect(() => {
+    const slug = (projectName || 'Production').replace(/[^a-zA-Z0-9]/g, '_');
+    const storageKey = `arise_beats_${slug}`;
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setBeats(parsed);
+          return;
+        }
+      }
+    } catch {}
+
+    const defaultBeats = getProjectBeats(projectName);
+    setBeats(defaultBeats);
+  }, [projectName]);
 
   const handleAddBeat = () => {
     const newBeat: BeatItem = {

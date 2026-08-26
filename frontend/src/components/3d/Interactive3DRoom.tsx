@@ -21,6 +21,7 @@ import {
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../../constants/branding';
 import Room3D from './Room3D';
+import { generateDynamicScript } from '../../lib/projectData';
 
 // 10 Bespoke 3D Stage Rooms
 import { ScriptScene3D, ScriptRoomHolo } from './rooms/ScriptRoom3D';
@@ -241,7 +242,7 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
                 <div className="text-center space-y-2 p-6">
                   <span className="text-2xl">🎬</span>
                   <p className="text-xs text-amber-200 font-sans italic max-w-lg mx-auto">
-                    "{shotDescription || `Master optical framing for ${projectName}. Low angle camera track capturing Devon with 35mm shallow depth of field.`}"
+                    "{shotDescription || `Master optical framing for ${projectName}. Cinematic camera tracking capturing key character beats with ${focalLength} shallow depth of field.`}"
                   </p>
                   <div className="flex items-center justify-center gap-3 text-[10px] font-mono text-amber-400/80">
                     <span>TC: 01:00:04:12</span>
@@ -273,24 +274,13 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
             <div className="glass-card-4k specular-border rounded-3xl p-6 border border-amber-500/40 space-y-4 max-w-2xl mx-auto">
               <div className="border-b border-amber-500/30 pb-3 flex items-center justify-between">
                 <h3 className="text-sm font-bold text-amber-200 uppercase font-mono">
-                  Screenplay Draft • Scene 1 / Shot {shotNumber}
+                  Screenplay Draft • {projectName} • Shot {shotNumber}
                 </h3>
                 <span className="text-xs text-purple-300 font-mono">Fountain Standard</span>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#060310] border border-amber-500/30 font-mono text-xs text-amber-100 space-y-3 leading-relaxed">
-                <p className="text-amber-400 font-bold">EXT. NEIGHBORHOOD FRONT PORCH - DAWN (3200K)</p>
-                <p className="text-slate-300">
-                  Morning fog blankets the weathered timber. DEVON (19) grips his father's 16mm camera, knuckles white.
-                </p>
-                <div className="text-center pl-8 pr-8 space-y-0.5">
-                  <p className="font-bold text-amber-300">DEVON</p>
-                  <p className="text-[10px] text-purple-300/70 italic">(whispering into the mist)</p>
-                  <p className="text-slate-200 font-sans">"If the foundation is cracked, we rebuild from the bedrock up."</p>
-                </div>
-                <p className="text-slate-400 text-[11px] italic">
-                  Marcus steps into the doorway behind him, holding an unlit pipe.
-                </p>
+              <div className="p-5 rounded-2xl bg-[#060310] border border-amber-500/30 font-mono text-xs text-amber-100 space-y-3 leading-relaxed whitespace-pre-wrap">
+                {generateDynamicScript(projectName, shotNumber, shotTitle)}
               </div>
             </div>
           </div>

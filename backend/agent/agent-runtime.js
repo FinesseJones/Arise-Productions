@@ -5,6 +5,7 @@
 
 import { nvidia } from '../ai/nvidia-client.js';
 import { agentToolDefinitions, executeAgentTool } from './tools.js';
+import { db } from '../db/client.js';
 
 /**
  * Execute an autonomous agent loop with multi-step tool-calling
@@ -14,7 +15,7 @@ export async function runAgent(options = {}) {
     messages = [],
     systemPrompt = 'You are an autonomous AI Agent in Arise Production Studio. When asked to retrieve data, run stages, save scripts, or hand off, call the available tools.',
     tools = agentToolDefinitions,
-    projectId = 'proj-fatherless-child',
+    projectId = options.projectId || db.getSessionState()?.lastActiveProjectId || 'proj-fatherless-child',
     shotNumber = 1,
     model = nvidia.defaultModel,
     temperature = 0.6,

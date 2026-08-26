@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Users,
   Download,
@@ -9,13 +7,16 @@ import {
   Sparkles,
   HelpCircle,
   X,
+  BookOpen,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { getAPIBaseURL } from '../lib/api';
+import { getProjectCharacters } from '../lib/projectData';
 
 interface CharactersRoomProps {
   projectName?: string;
+  onNavigateToRoom?: (roomKey: string) => void;
 }
 
 interface CharacterProfile {
@@ -29,57 +30,41 @@ interface CharacterProfile {
 
 export function CharactersRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: CharactersRoomProps) {
   const apiBase = getAPIBaseURL();
-  const [characters, setCharacters] = useState<CharacterProfile[]>([
-    {
-      id: 'c1',
-      name: 'Devon',
-      role: 'Protagonist',
-      arcType: 'Positive Arc',
-      personality:
-        'Initially resilient yet emotionally fragile, Devon is a hardworking, empathetic young builder who feels trapped by life’s disappointments. Her journey transforms her into a determined, courageous creator capable of decisive action when pushed to the edge.',
-      archetypes: ['Hero', 'Creator', 'Seeker'],
-    },
-    {
-      id: 'c2',
-      name: 'Marcus',
-      role: 'Mentor',
-      arcType: 'Flat Arc',
-      personality:
-        'A grounded, master restorer and community patriarch with unwavering moral clarity. He refuses to compromise on truth and serves as the unwavering anchor for those around him.',
-      archetypes: ['Sage', 'Caregiver'],
-    },
-    {
-      id: 'c3',
-      name: 'Vale',
-      role: 'Antagonist',
-      arcType: 'Corruption Arc',
-      personality:
-        'Ruthlessly pragmatic real estate mogul driven by the belief that progress requires erasing the past. Calculating, charming, and unyielding in his pursuit of control.',
-      archetypes: ['Ruler', 'Outlaw'],
-    },
-    {
-      id: 'c4',
-      name: 'Cassie Thornfield',
-      role: 'Supporting',
-      arcType: 'Disillusion Arc',
-      personality:
-        'A sharp investigative journalist whose cynical exterior masks a deep yearning for genuine accountability. She navigates elite corridors with fierce wit.',
-      archetypes: ['Explorer', 'Everyman'],
-    },
-    {
-      id: 'c5',
-      name: 'Victor Ramirez',
-      role: 'Supporting',
-      arcType: 'Positive Arc',
-      personality:
-        'A principled city inspector caught between bureaucratic compromise and doing what is right. Methodical, observant, and quiet until challenged.',
-      archetypes: ['Everyman', 'Caregiver'],
-    },
-  ]);
+  const [characters, setCharacters] = useState<CharacterProfile[]>(() => {
+    return (getProjectCharacters(projectName) as any);
+  });
+  const [activeCharId, setActiveCharId] = useState<string>('c1');
+  const [isGenerating, setIsGenerating] = useState<string | null>(null);
+
+  useEffect(() => {
+    const slug = (projectName || 'Production').replace(/[^a-zA-Z0-9]/g, '_');
+    const storageKey = `arise_chars_${slug}`;
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCharacters(parsed);
+          setActiveCharId(parsed[0].id);
+          return;
+        }
+      }
+    } catch {}
+
+    const defaultCast = getProjectCharacters(projectName) as any;
+    setCharacters(defaultCast);
+    setSelectedIndex(0);
+  }, [projectName]);
 
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const [isGenerating, setIsGenerating] = useState<string | null>(null);
-  const activeChar = characters[selectedIndex] || characters[0];
+  const activeChar = characters[selectedIndex] || characters[0] || {
+    id: 'c1',
+    name: 'Protagonist',
+    role: 'Protagonist',
+    arcType: 'Positive Arc',
+    personality: 'Determined hero.',
+    archetypes: ['Hero'],
+  };
 
   const availableRoles: CharacterProfile['role'][] = [
     'Protagonist',

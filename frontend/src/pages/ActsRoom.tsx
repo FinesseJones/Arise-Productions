@@ -1,10 +1,9 @@
-"use client";
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GenerateField from '../components/GenerateField';
 import { Layers, Download, Sparkles, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
+import { getProjectActs } from '../lib/projectData';
 
 interface ActsRoomProps {
   projectName?: string;
@@ -12,21 +11,36 @@ interface ActsRoomProps {
 }
 
 export function ActsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: ActsRoomProps) {
-  const [teaser, setTeaser] = useState(
-    'A quiet autumn dawn over a weathered front porch. Devon (19) stares at a faded photograph of his father, holding his breath as the neighborhood awakens in golden 3200K mist.'
-  );
-  const [act1, setAct1] = useState(
-    'Devon unearths a wooden chest in the attic containing a vintage 16mm camera and blueprints of the community hall. Marcus urges him to seek answers, but Devon fears dredging up old wounds.'
-  );
-  const [act2A, setAct2A] = useState(
-    'Devon begins recording oral histories of neighborhood elders, learning that his father built the very foundations of the neighborhood hall before disappearing.'
-  );
-  const [act2B, setAct2B] = useState(
-    'A flash storm threatens the archival footage workshop. Evelyn pleads with Devon to stop digging into the past, triggering a crisis of faith and an emotional dark night.'
-  );
-  const [act3, setAct3] = useState(
-    'Marcus gifts Devon a vintage prime lens. Devon rallies the community for the screening premiere in the restored hall. Devon stands on the porch, gazing forward into the waking city.'
-  );
+  const initialActs = getProjectActs(projectName);
+  const [teaser, setTeaser] = useState(initialActs.teaser);
+  const [act1, setAct1] = useState(initialActs.act1);
+  const [act2A, setAct2A] = useState(initialActs.act2A);
+  const [act2B, setAct2B] = useState(initialActs.act2B);
+  const [act3, setAct3] = useState(initialActs.act3);
+
+  useEffect(() => {
+    const slug = (projectName || 'Production').replace(/[^a-zA-Z0-9]/g, '_');
+    const storageKey = `arise_acts_${slug}`;
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.teaser) setTeaser(parsed.teaser);
+        if (parsed.act1) setAct1(parsed.act1);
+        if (parsed.act2A) setAct2A(parsed.act2A);
+        if (parsed.act2B) setAct2B(parsed.act2B);
+        if (parsed.act3) setAct3(parsed.act3);
+        return;
+      }
+    } catch {}
+
+    const defaultActs = getProjectActs(projectName);
+    setTeaser(defaultActs.teaser);
+    setAct1(defaultActs.act1);
+    setAct2A(defaultActs.act2A);
+    setAct2B(defaultActs.act2B);
+    setAct3(defaultActs.act3);
+  }, [projectName]);
 
   const shared = {
     stageId: 'structure',
