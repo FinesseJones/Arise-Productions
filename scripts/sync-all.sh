@@ -49,12 +49,17 @@ cp ../server.js ./server.js
 
 npx electron-builder --mac dmg --arm64
 
+# Ad-hoc codesign the built application bundle to ensure macOS Mach port rendezvous succeeds
+codesign --force --deep --sign - "dist/mac-arm64/Arise Production.app"
+
 # Terminate existing running instance if open so memory cache clears
 killall "Arise Production" 2>/dev/null || true
 pkill -f "Arise Production.app" 2>/dev/null || true
 
 rm -rf "/Applications/Arise Production.app"
-rsync -a --no-xattrs "dist/mac-arm64/Arise Production.app" /Applications/ || cp -X -R "dist/mac-arm64/Arise Production.app" /Applications/
+cp -R "dist/mac-arm64/Arise Production.app" /Applications/
+xattr -cr "/Applications/Arise Production.app" 2>/dev/null || true
+codesign --force --deep --sign - "/Applications/Arise Production.app" 2>/dev/null || true
 cp "dist/Arise Production-1.0.0-arm64.dmg" "/Users/finessejones1/Desktop/Arise Production Installer.dmg" || true
 echo "✅ [2/3] Desktop App refreshed at /Applications/ and DMG updated on Desktop!"
 
