@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import {
   DEPARTMENT_AGENTS,
   DepartmentAgent,
+  PRODUCTION_CHAIN_RELAY,
 } from '../../constants/departmentAgents';
 import {
   Send,
@@ -905,8 +906,39 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Bottom Chat Input Bar */}
+          {/* Bottom Chat Input Bar & Sequential Chain-of-Custody Baton Relay */}
           <div className="p-4 bg-[#0d0722]/95 border-t border-amber-500/30 flex-shrink-0">
+            {PRODUCTION_CHAIN_RELAY[selectedAgentId] && (
+              <div className="mb-3 p-2.5 rounded-xl bg-gradient-to-r from-[#170a35] via-[#281156] to-[#170a35] border border-amber-500/40 flex items-center justify-between gap-3 text-xs flex-wrap shadow-md">
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400 font-bold font-mono text-[10px] uppercase flex items-center gap-1">
+                    <span>⚡</span>
+                    <span>Next Production Step:</span>
+                  </span>
+                  <span className="text-slate-200 text-xs font-medium">
+                    <strong className="text-amber-300">{PRODUCTION_CHAIN_RELAY[selectedAgentId].nextAgentName}</strong> ({PRODUCTION_CHAIN_RELAY[selectedAgentId].nextRole})
+                  </span>
+                  <span className="text-[10px] font-mono text-purple-300/80 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800/50">
+                    {PRODUCTION_CHAIN_RELAY[selectedAgentId].targetRoom}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const relay = PRODUCTION_CHAIN_RELAY[selectedAgentId];
+                    setSelectedAgentId(relay.nextAgentId);
+                    setInputMessage(relay.promptSuggestion);
+                    toast.success(`🎯 Passed baton to ${relay.nextAgentName}! Prompt primed.`, { icon: '🎬' });
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5 transition shadow-lg shadow-amber-500/20"
+                >
+                  <span>👉 Hand off to {PRODUCTION_CHAIN_RELAY[selectedAgentId].nextAgentName}</span>
+                  <ArrowRight size={12} />
+                </button>
+              </div>
+            )}
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();

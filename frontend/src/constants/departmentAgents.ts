@@ -295,6 +295,27 @@ You are dedicated to audio excellence: 4-track stem mixing (Dialogue, Foley, Sco
 You ensure the soundscape is as powerful, clean, and dynamic as the visuals.`
   },
   {
+    id: 'continuity',
+    name: 'Seraphina Cross',
+    role: 'Chief Script Supervisor & Continuity Warden',
+    department: 'Quality Control & Continuity',
+    avatar: '🛡️',
+    color: 'from-amber-400 via-rose-600 to-purple-800',
+    borderColor: 'border-rose-400/80',
+    badge: 'CONTINUITY WARDEN',
+    description: 'Guardian of narrative timeline integrity, character wardrobe & facial consistency, day/night Kelvin lighting match, audio loudness compliance, and zero-defect export validation.',
+    primaryRooms: ['Executive Boardroom', 'Stage 10: DaVinci Edit', 'Stage 8: Dailies Screening', 'Data Vault'],
+    quickPrompts: [
+      'Perform a full cross-department continuity audit across characters, lighting, and props',
+      'Verify character wardrobe, hair, and timeline continuity between Scene 1 and Scene 2',
+      'Audit audio LKFS loudness (-24.0) and video 24.000 FPS frame cadence',
+      'Generate a zero-defect pre-flight release report for executive distribution'
+    ],
+    systemPrompt: `You are Seraphina Cross, the Chief Script Supervisor and Continuity Warden at Arise Production Studio.
+You hold the sacred ledger of production integrity. You cross-reference character physical likenesses, costume changes, prop states, chronological day/night Kelvin lighting, spatial axis (180-degree rule), audio stem loudness (-24 LKFS), and 24.000 FPS cadence.
+You meticulously catch errors BEFORE final render so the studio produces pristine, broadcast-ready film and television.`
+  },
+  {
     id: 'roundtable',
     name: 'Studio Executive Round Table',
     role: 'Multi-Department Advisory Council',
@@ -316,9 +337,154 @@ When the user speaks, you orchestrate a collaborative round-table discussion whe
 - 🌟 **Showrunner Sterling**: Thematic strength, series arc, audience engagement
 - ✍️ **Devon Wells (Screenwriter)**: Character voice, dialogue subtext, pacing
 - 🎬 **CineDirector Maya (DP)**: Visual composition, lens choice, lighting mood
+- 💡 **Lux Sterling (Gaffer)**: 3-Point lighting, Kelvin temperature, atmospheric haze
 - 🎨 **Architect Vance (Art Director)**: World texture, color palette, atmosphere
 - 🎧 **Acoustic Axel (Sound)**: Audio tension, musical score, sonic punch
-
-Format responses with clear speaker headers (e.g. "**🌟 Showrunner Sterling:** ...", "**🎬 CineDirector Maya:** ..."). Deliver rich, multifaceted, high-IQ cinematic counsel.`
+- 🛡️ **Seraphina Cross (Continuity)**: Cross-scene logic, timeline rules, quality control
+Speak with supreme Hollywood authority, cinematic vision, and constructive collaboration.`
   }
 ];
+
+export interface ChainRelayStep {
+  currentAgentId: string;
+  nextAgentId: string;
+  nextAgentName: string;
+  nextRole: string;
+  targetRoom: string;
+  roomKey: string;
+  batonSummary: string;
+  promptSuggestion: string;
+}
+
+export const PRODUCTION_CHAIN_RELAY: Record<string, ChainRelayStep> = {
+  idea_architect: {
+    currentAgentId: 'idea_architect',
+    nextAgentId: 'showrunner',
+    nextAgentName: 'Showrunner Sterling',
+    nextRole: 'Executive Producer',
+    targetRoom: '01 Plot Room & Boardroom',
+    roomKey: 'plot',
+    batonSummary: 'Concept & hook locked. Handing off to Showrunner to structure the 3-Act series arc and narrative bible.',
+    promptSuggestion: 'Showrunner Sterling, our concept is locked. Let’s structure the master episodic arc and character stakes!'
+  },
+  tv_architect: {
+    currentAgentId: 'tv_architect',
+    nextAgentId: 'showrunner',
+    nextAgentName: 'Showrunner Sterling',
+    nextRole: 'Executive Producer',
+    targetRoom: '01 Plot Room & Boardroom',
+    roomKey: 'plot',
+    batonSummary: 'TV season engine calibrated. Handing off to Showrunner for episodic pilot structuring.',
+    promptSuggestion: 'Showrunner Sterling, our TV season engine is designed. Let’s map out the 40-beat pilot structure!'
+  },
+  short_form_lead: {
+    currentAgentId: 'short_form_lead',
+    nextAgentId: 'screenwriter',
+    nextAgentName: 'Devon Wells',
+    nextRole: 'Head Screenwriter',
+    targetRoom: 'Stage 1: ScriptBreak',
+    roomKey: 'script',
+    batonSummary: 'Short-form 4-beat blueprint locked. Handing off to Screenwriter for high-impact Fountain screenplay writing.',
+    promptSuggestion: 'Devon Wells, our short film blueprint is ready. Let’s write the high-impact dialogue and action lines!'
+  },
+  showrunner: {
+    currentAgentId: 'showrunner',
+    nextAgentId: 'screenwriter',
+    nextAgentName: 'Devon Wells',
+    nextRole: 'Head Screenwriter',
+    targetRoom: 'Stage 1: ScriptBreak & 02 Cast',
+    roomKey: 'script',
+    batonSummary: 'Series bible & 40-beat arc greenlit. Handing off to Devon Wells to write the Fountain screenplay and dialogue.',
+    promptSuggestion: 'Devon Wells, the 3-Act story bible is greenlit. Let’s write Scene 1 with razor-sharp subtext and sluglines!'
+  },
+  screenwriter: {
+    currentAgentId: 'screenwriter',
+    nextAgentId: 'art_director',
+    nextAgentName: 'Architect Vance',
+    nextRole: 'Production Designer',
+    targetRoom: 'Stage 3: Master Canvas / LookDev',
+    roomKey: 'plan',
+    batonSummary: 'Screenplay draft & character dialogue complete. Handing off to Architect Vance for PBR materials & ACEScg lookdev.',
+    promptSuggestion: 'Architect Vance, our script is ready. Let’s design the set architecture, ACEScg palettes, and PBR textures!'
+  },
+  art_director: {
+    currentAgentId: 'art_director',
+    nextAgentId: 'director',
+    nextAgentName: 'CineDirector Maya',
+    nextRole: 'Director of Photography',
+    targetRoom: 'Stage 4: Previs Live & 3D Soundstage',
+    roomKey: 'previs',
+    batonSummary: 'Set textures & moodboards locked. Handing off to CineDirector Maya for 35mm optical lens and camera staging.',
+    promptSuggestion: 'CineDirector Maya, our set lookdev is locked. Let’s choreograph the 35mm camera paths and optical depth of field!'
+  },
+  director: {
+    currentAgentId: 'director',
+    nextAgentId: 'lighting',
+    nextAgentName: 'Lux Sterling',
+    nextRole: 'Chief Lighting Technician',
+    targetRoom: '3D Soundstage & Lighting',
+    roomKey: 'previs',
+    batonSummary: 'Camera vectors & prime lenses staged. Handing off to Lux Sterling for 3-point Kelvin lighting and volumetric haze.',
+    promptSuggestion: 'Lux Sterling, our camera moves are locked. Let’s configure the 3200K tungsten key and 4:1 shadow contrast ratios!'
+  },
+  lighting: {
+    currentAgentId: 'lighting',
+    nextAgentId: 'kinetics',
+    nextAgentName: 'Kinetics Kai',
+    nextRole: 'Kinematics Lead',
+    targetRoom: 'Stage 5: Motion Previs',
+    roomKey: 'motion',
+    batonSummary: 'Atmospheric lighting grid calibrated. Handing off to Kinetics Kai for 52-point skeletal motion & Chaos cloth solves.',
+    promptSuggestion: 'Kinetics Kai, lighting is balanced. Let’s solve the 60 FPS skeletal motion and physical character weight transfer!'
+  },
+  kinetics: {
+    currentAgentId: 'kinetics',
+    nextAgentId: 'prompt_engineer',
+    nextAgentName: 'Synthetix Nova',
+    nextRole: 'Prompt Architect',
+    targetRoom: 'Stage 7: Prompt Slate & ComfyUI',
+    roomKey: 'prompt',
+    batonSummary: 'Biomechanical motion trajectories complete. Handing off to Synthetix Nova for ControlNet depth & face-lock prompt slates.',
+    promptSuggestion: 'Synthetix Nova, motion vectors are locked. Let’s compile our ControlNet depth weights and IP-Adapter likeness locks!'
+  },
+  prompt_engineer: {
+    currentAgentId: 'prompt_engineer',
+    nextAgentId: 'editor',
+    nextAgentName: 'Colorist Cole',
+    nextRole: 'Finishing Editor & Colorist',
+    targetRoom: 'Stage 8: Dailies & Stage 10: DaVinci Edit',
+    roomKey: 'dailies',
+    batonSummary: 'ComfyUI prompt matrices & keyframes generated. Handing off to Colorist Cole for FFmpeg rendering and Kodak 2383 grading.',
+    promptSuggestion: 'Colorist Cole, our visual slates are compiled. Let’s render the 4K 24FPS dailies and apply Kodak 2383 film color science!'
+  },
+  editor: {
+    currentAgentId: 'editor',
+    nextAgentId: 'sound',
+    nextAgentName: 'Acoustic Axel',
+    nextRole: 'Sound Supervisor',
+    targetRoom: 'Stage 9: Stem Studio',
+    roomKey: 'sound',
+    batonSummary: 'Video timeline conformed and color-graded. Handing off to Acoustic Axel for 5.1 Dolby Atmos stem mixing at -24 LKFS.',
+    promptSuggestion: 'Acoustic Axel, the video cut is locked. Let’s balance our 4-track stems and Foley to hit the -24.0 LKFS loudness standard!'
+  },
+  sound: {
+    currentAgentId: 'sound',
+    nextAgentId: 'continuity',
+    nextAgentName: 'Seraphina Cross',
+    nextRole: 'Continuity Warden',
+    targetRoom: 'Quality Control & Continuity Vault',
+    roomKey: 'vault',
+    batonSummary: 'Audio stems & soundtrack mixed. Handing off to Seraphina Cross for complete cross-stage continuity verification.',
+    promptSuggestion: 'Seraphina Cross, audio and video are locked. Please run a zero-defect continuity and compliance audit before final release!'
+  },
+  continuity: {
+    currentAgentId: 'continuity',
+    nextAgentId: 'showrunner',
+    nextAgentName: 'Showrunner Sterling',
+    nextRole: 'Executive Producer',
+    targetRoom: 'Executive Boardroom',
+    roomKey: 'agents',
+    batonSummary: 'All 10 stages validated with zero defects. Handing off to Showrunner Sterling for final executive release sign-off.',
+    promptSuggestion: 'Showrunner Sterling, our production is 100% verified with zero continuity defects. Ready for final executive greenlight!'
+  }
+};

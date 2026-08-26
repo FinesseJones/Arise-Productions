@@ -318,6 +318,111 @@ app.post('/api/v1/ideas/:ideaId/promote', async (req, res) => {
   }
 });
 
+// ==============================================================================
+// ASSET STORAGE VAULT & MULTI-FORMAT INGEST API
+// ==============================================================================
+
+// GET /api/v1/assets - List all assets with optional filtering
+app.get('/api/v1/assets', (req, res) => {
+  try {
+    const { projectId, format, category, assetType } = req.query;
+    const assets = db.listAssets({ projectId, format, category, assetType });
+    res.json({ success: true, count: assets.length, assets });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/assets/:assetId - Get single asset
+app.get('/api/v1/assets/:assetId', (req, res) => {
+  try {
+    const asset = db.getAsset(req.params.assetId);
+    if (!asset) return res.status(404).json({ success: false, error: 'Asset not found' });
+    res.json({ success: true, asset });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/assets - Create or update asset metadata
+app.post('/api/v1/assets', (req, res) => {
+  try {
+    const asset = db.saveAsset(req.body);
+    res.json({ success: true, asset });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/assets/upload - Upload binary / base64 asset file to persistent storage
+app.post('/api/v1/assets/upload', async (req, res) => {
+  try {
+    const {
+      name = 'Uploaded Production Asset',
+      projectId = 'proj-fatherless-child',
+      format = 'feature_film',
+      category = 'general', // 'character' | 'environment' | 'audio' | 'color_lut' | 'script' | 'model3d' | 'video'
+      assetType = 'image', // 'image' | 'audio' | 'video' | 'model' | 'script' | 'lut'
+      fileData, // base64 string
+      filename = `upload_${Date.now()}`,
+      tags = [],
+      metadata = {},
+      uploaded_by = 'Creator',
+    } = req.body;
+
+    const baseDir = path.resolve(__dirname, 'storage/assets', category);
+    if (!fs.existsSync(baseDir)) {
+      fs.mkdirSync(baseDir, { recursive: true });
+    }
+
+    let fileUrl = `/assets/arise_productions_logo-DRprh9rP.jpg`;
+    let fileSize = '0 KB';
+    const ext = path.extname(filename).replace('.', '') || (assetType === 'audio' ? 'wav' : assetType === 'video' ? 'mp4' : 'png');
+    const safeFilename = `${Date.now()}_${path.basename(filename)}`;
+    const diskPath = path.join(baseDir, safeFilename);
+
+    if (fileData) {
+      const cleanBase64 = fileData.replace(/^data:.*?;base64,/, '');
+      const buffer = Buffer.from(cleanBase64, 'base64');
+      fs.writeFileSync(diskPath, buffer);
+      fileSize = `${(buffer.length / 1024).toFixed(1)} KB`;
+      fileUrl = `/storage/assets/${category}/${safeFilename}`;
+    }
+
+    const savedAsset = db.saveAsset({
+      name,
+      projectId,
+      format,
+      category,
+      assetType,
+      fileUrl,
+      fileSize,
+      extension: ext,
+      tags: Array.isArray(tags) ? tags : [tags].filter(Boolean),
+      metadata: { ...metadata, diskPath },
+      uploaded_by,
+    });
+
+    res.json({
+      success: true,
+      message: `Asset "${name}" uploaded and stored in ${category} vault!`,
+      asset: savedAsset,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/v1/assets/:assetId - Delete asset
+app.delete('/api/v1/assets/:assetId', (req, res) => {
+  try {
+    const deleted = db.deleteAsset(req.params.assetId);
+    res.json({ success: deleted, message: deleted ? 'Asset removed from vault' : 'Asset not found' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // DELETE /api/v1/studio/memory/:id - Delete a studio memory
 app.delete('/api/v1/studio/memory/:id', (req, res) => {
   try {

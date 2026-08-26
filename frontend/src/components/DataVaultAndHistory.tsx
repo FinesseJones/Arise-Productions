@@ -125,6 +125,25 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
   ]);
 
   // Live generation action log history
+  const [formatFilter, setFormatFilter] = useState<'all' | 'feature_film' | 'short_form' | 'tv_series'>('all');
+  const [liveAssets, setLiveAssets] = useState<any[]>([]);
+
+  // Fetch real assets from backend
+  const loadLiveAssets = async () => {
+    try {
+      const apiBase = getAPIBaseURL();
+      const url = formatFilter === 'all' ? `${apiBase}/api/v1/assets` : `${apiBase}/api/v1/assets?format=${formatFilter}`;
+      const res = await fetch(url).then((r) => r.json());
+      if (res && res.success && Array.isArray(res.assets)) {
+        setLiveAssets(res.assets);
+      }
+    } catch (e) {}
+  };
+
+  React.useEffect(() => {
+    loadLiveAssets();
+  }, [formatFilter]);
+
   const [historyLogs, setHistoryLogs] = useState([
     { time: '19:33:11', dept: 'System', text: 'WebSocket connected to Central API Bridge (:4000/ws)' },
     { time: '19:33:10', dept: 'System', text: 'Live File Watcher initialized on storage/watch_folder' },
@@ -167,13 +186,37 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
         ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
         : `${Math.round(file.size / 1024)} KB`;
 
+      // Read base64 to send to backend asset storage
+      const b64Reader = new FileReader();
+      b64Reader.onload = async (ev) => {
+        const fileData = ev.target?.result as string;
+        try {
+          const apiBase = getAPIBaseURL();
+          await fetch(`${apiBase}/api/v1/assets/upload`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: file.name,
+              projectId: cleanSlug,
+              format: formatFilter === 'all' ? 'feature_film' : formatFilter,
+              category: dept.toLowerCase().includes('script') ? 'script' : dept.toLowerCase().includes('sound') ? 'audio' : dept.toLowerCase().includes('character') ? 'character' : dept.toLowerCase().includes('color') ? 'color_lut' : 'environment',
+              assetType: ['wav', 'mp3', 'aac'].includes(ext) ? 'audio' : ['mp4', 'mov'].includes(ext) ? 'video' : ['cube'].includes(ext) ? 'lut' : ['fountain', 'txt', 'pdf'].includes(ext) ? 'script' : ['obj', 'fbx', 'gltf'].includes(ext) ? 'model3d' : 'image',
+              fileData,
+              filename: file.name,
+              uploaded_by: 'Creator (You)',
+            }),
+          });
+          loadLiveAssets();
+        } catch (e) {}
+      };
+      b64Reader.readAsDataURL(file);
+
       // Read text if it's a screenplay / data file
       if (['fountain', 'txt', 'json', 'edl'].includes(ext)) {
         const reader = new FileReader();
         reader.onload = (e) => {
           const text = e.target?.result as string;
           if (text) {
-            // If screenplay, save to script cache & backend
             if (ext === 'fountain' || ext === 'txt') {
               try {
                 localStorage.setItem(`arise_script_${cleanSlug}_shot_1`, text);
@@ -203,7 +246,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
         timestamp: 'Just now',
         author: 'User Ingested (Master Vault)',
         status: 'Synchronized',
-        preview: `Ingested document: ${file.name} | Calibrated for ${dept} pipeline in production ${projectStatus.projectName}.`,
+        preview: `Ingested document: ${file.name} | Stored in backend storage/assets/ for production ${projectStatus.projectName}.`,
       };
 
       setVaultItems((prev) => [newItem, ...prev]);
@@ -213,12 +256,12 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
         {
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
           dept: dept.split(' ')[0],
-          text: `Ingested & Synchronized "${file.name}" to ${dept}`,
+          text: `Ingested & Synchronized "${file.name}" to ${dept} storage vault`,
         },
         ...prev,
       ]);
 
-      toast.success(`✨ INGESTED: "${file.name}" synced with ${dept}!`, { duration: 4000 });
+      toast.success(`💾 "${file.name}" stored in Asset Vault & synchronized!`, { icon: '📦', duration: 4000 });
     });
   };
 

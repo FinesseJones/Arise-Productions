@@ -46,14 +46,19 @@
       "stageId": "script",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "hash-script-1",
+      "outputHash": "job-script-1787774876122",
       "telemetry": {
         "fps": 60,
         "computeNodes": 4,
         "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
+        "timestamp": "2026-08-26T20:08:02.297Z",
+        "jobId": "job-script-1787774876122",
+        "worker": "ScriptBreak",
+        "completedAt": "2026-08-26T20:08:02.297Z",
+        "outputSummary": "**Scene Breakdown:**\n\n* **Location:** INT. STUDIO SOUNDSTAGE - DAY\n* **Slugline:** Director coordinates with AI camera team.\n\n**Character Dialogue Blocks:** None (this is a non-dia",
+        "aiModel": "meta/llama-3.3-70b-instruct"
       },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-26T20:08:02.297Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:structure",
@@ -141,14 +146,19 @@
       "stageId": "prompt",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "hash-prompt-1",
+      "outputHash": "job-prompt-1787774882299",
       "telemetry": {
         "fps": 60,
         "computeNodes": 4,
         "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
+        "timestamp": "2026-08-26T20:08:14.858Z",
+        "jobId": "job-prompt-1787774882299",
+        "worker": "Slate Prompt",
+        "completedAt": "2026-08-26T20:08:14.856Z",
+        "outputSummary": "**Cinematic Wide Foundry Sequence Prompt Slate**\n\n**Negative Prompt Guidelines:**\n\n1. Avoid explicit or graphic content.\n2. Do not include any copyrighted materials or trademarks.\n [Live Local ComfyUI Linked @ :8188]",
+        "aiModel": "meta/llama-3.3-70b-instruct"
       },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-26T20:08:14.858Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:dailies",
@@ -156,14 +166,19 @@
       "stageId": "dailies",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "hash-dailies-1",
+      "outputHash": "job-dailies-1787774894859",
       "telemetry": {
         "fps": 60,
         "computeNodes": 4,
         "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
+        "timestamp": "2026-08-26T20:08:15.565Z",
+        "jobId": "job-dailies-1787774894859",
+        "worker": "Circle Take",
+        "completedAt": "2026-08-26T20:08:15.565Z",
+        "outputSummary": "Dailies rendered & reviewed: 4K 24FPS DCI MP4 compiled -> /storage/ingested/dailies_shot_1_1787774895061.mp4. Take 1 selected as Circle Take winner.",
+        "aiModel": "NVIDIA-NIM-Llama-3.1-70B"
       },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-26T20:08:15.565Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:sound",
@@ -611,8 +626,8 @@
     "lastActiveProjectId": "proj-fatherless-child",
     "lastActiveStageId": "script",
     "lastActiveView": "stage",
-    "updated_at": "2026-08-26T19:44:20.906Z"
+    "updated_at": "2026-08-26T20:04:48.683Z"
   },
   "auditLogs": [],
-  "saved_at": "2026-08-26T19:44:20.907Z"
+  "saved_at": "2026-08-26T20:08:15.565Z"
 }

@@ -12,7 +12,11 @@
 
 ## 🏛️ Executive Studio Overview
 
-**Arise Production Studio** is a unified, end-to-end virtual production workstation and multi-agent creative studio designed for independent filmmakers, showrunners, and production companies. It integrates **14 dedicated creative rooms**, **10 Model Context Protocol (MCP) production microservices**, **autonomous tool-calling departmental AI agents (powered by NVIDIA NIM Llama 3.3 70B)**, a real-time **Three.js 3D Soundstage**, and native bridges for **Unreal Engine 5**, **ComfyUI**, **Hyperframes**, **Remotion**, **OpenMontage**, and **DaVinci Resolve**.
+**Arise Production Studio** is a unified, end-to-end virtual production workstation and multi-agent creative studio designed for independent filmmakers, showrunners, and production companies. It integrates **14 dedicated creative rooms**, **10 Model Context Protocol (MCP) production microservices**, **13 autonomous tool-calling departmental AI agents**, a real-time **Three.js 3D Soundstage**, and native bridges for **Unreal Engine 5**, **ComfyUI**, **FFmpeg**, **Hyperframes**, **OpenMontage**, and **DaVinci Resolve**.
+
+* 📑 **[Master Systems Paper Trail & Architectural Audit →](./docs/STUDIO_SYSTEMS_PAPER_TRAIL.md)** *(Complete technical audit of all 14 rooms, 13 agents, 10 MCPs, Asset Vault, and Relay protocol)*
+* 📘 **[Master Operational Manual →](./docs/INSTRUCTIONS.md)**
+* 🏗️ **[System Architecture & Data Flows →](./docs/ARCHITECTURE.md)**
 
 ---
 

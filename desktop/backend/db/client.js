@@ -24,6 +24,7 @@ class StudioDatabase extends EventEmitter {
     this.scripts = new Map(); // key: `${projectId}:${shotNumber}`
     this.chatHistories = new Map(); // key: `${projectId}:${stageId}`
     this.ideas = new Map(); // key: ideaId
+    this.assets = new Map(); // key: assetId
     this.auditLogs = [];
     this.sessionState = {
       lastActiveProjectId: 'proj-fatherless-child',
@@ -53,10 +54,14 @@ class StudioDatabase extends EventEmitter {
           if (data.ideas && Array.isArray(data.ideas) && data.ideas.length > 0) {
             data.ideas.forEach((idea) => this.ideas.set(idea.id, idea));
           }
+          if (data.assets && Array.isArray(data.assets) && data.assets.length > 0) {
+            data.assets.forEach((asset) => this.assets.set(asset.id, asset));
+          }
           this._seedDefaultIdeas();
+          this._seedDefaultAssets();
           if (data.sessionState) this.sessionState = { ...this.sessionState, ...data.sessionState };
           if (data.auditLogs) this.auditLogs = data.auditLogs.slice(-100);
-          console.log(`[Database] Loaded ${this.projects.size} projects, ${this.ideas.size} ideas, and session state from ${STATE_FILE_PATH}`);
+          console.log(`[Database] Loaded ${this.projects.size} projects, ${this.ideas.size} ideas, ${this.assets.size} assets from ${STATE_FILE_PATH}`);
           return true;
         }
       }
@@ -139,6 +144,98 @@ class StudioDatabase extends EventEmitter {
     this._saveToDisk();
   }
 
+  _seedDefaultAssets() {
+    const defaultAssets = [
+      {
+        id: 'asset-img-devon-lookdev',
+        name: 'Devon Wells - Character LookDev Reference',
+        projectId: 'proj-fatherless-child',
+        format: 'feature_film',
+        category: 'character',
+        assetType: 'image',
+        fileUrl: '/assets/arise_productions_logo-DRprh9rP.jpg',
+        fileSize: '64 KB',
+        extension: 'jpg',
+        tags: ['Devon', 'Protagonist', 'Wardrobe', '35mm'],
+        metadata: { resolution: '3840x2160', colorSpace: 'ACEScg', locked: true },
+        uploaded_by: 'Architect Vance',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: 'asset-img-foundry-concept',
+        name: 'Historic Foundry - Architectural Environment Art',
+        projectId: 'proj-fatherless-child',
+        format: 'feature_film',
+        category: 'environment',
+        assetType: 'image',
+        fileUrl: '/assets/arise_productions_logo-DRprh9rP.jpg',
+        fileSize: '128 KB',
+        extension: 'png',
+        tags: ['Foundry', 'Interior', 'SetDesign', 'PBR'],
+        metadata: { lighting: '3200K Tungsten + 5600K Window Shafts', roughness: 0.72 },
+        uploaded_by: 'Architect Vance',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: 'asset-audio-main-theme',
+        name: 'Episode 1 Opening Score - 5.1 Surround Stem',
+        projectId: 'proj-fatherless-child',
+        format: 'tv_series',
+        category: 'audio',
+        assetType: 'audio',
+        fileUrl: '/storage/ingested/dailies_shot_1_1787774895061.mp4',
+        fileSize: '4.2 MB',
+        extension: 'wav',
+        tags: ['Score', 'Orchestral', '5.1 Surround', 'DolbyAtmos'],
+        metadata: { lkfs: -24.0, sampleRate: '48000 Hz', channels: 6 },
+        uploaded_by: 'Acoustic Axel',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: 'asset-lut-kodak-2383',
+        name: 'Kodak 2383 Film Print Emulation 3D LUT',
+        projectId: 'proj-fatherless-child',
+        format: 'feature_film',
+        category: 'color_lut',
+        assetType: 'lut',
+        fileUrl: '/storage/assets/luts/kodak_2383_d65.cube',
+        fileSize: '1.8 MB',
+        extension: 'cube',
+        tags: ['DaVinci', 'ACEScc', 'Kodak2383', '35mmGrain'],
+        metadata: { colorProfile: 'ACEScc Rec.709', gridPoints: 65 },
+        uploaded_by: 'Colorist Cole',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: 'asset-script-master-fountain',
+        name: 'Master Pilot Screenplay - A Fatherless Child',
+        projectId: 'proj-fatherless-child',
+        format: 'feature_film',
+        category: 'script',
+        assetType: 'script',
+        fileUrl: '/storage/assets/scripts/fatherless_child_pilot.fountain',
+        fileSize: '48 KB',
+        extension: 'fountain',
+        tags: ['Screenplay', 'Fountain', 'Dialogue', 'SaveTheCat'],
+        metadata: { pages: 58, sceneCount: 12, dialogueBlocks: 44 },
+        uploaded_by: 'Devon Wells',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ];
+
+    defaultAssets.forEach((asset) => {
+      if (!this.assets.has(asset.id)) {
+        this.assets.set(asset.id, asset);
+      }
+    });
+    this._saveToDisk();
+  }
+
   _saveToDisk() {
     try {
       const data = {
@@ -148,6 +245,7 @@ class StudioDatabase extends EventEmitter {
         scripts: Array.from(this.scripts.entries()).map(([id, content]) => ({ id, content })),
         chatHistories: Array.from(this.chatHistories.entries()).map(([id, messages]) => ({ id, messages })),
         ideas: Array.from(this.ideas.values()),
+        assets: Array.from(this.assets.values()),
         sessionState: this.sessionState,
         auditLogs: this.auditLogs.slice(-100),
         saved_at: new Date().toISOString(),
@@ -559,6 +657,62 @@ PROTAGONIST
     await this.saveProjectScript(proj.id, 1, defaultFountain);
     this._saveToDisk();
     return { project: proj, idea };
+  }
+
+  // ============================================================================
+  // ASSET VAULT & MULTI-FORMAT STORAGE METHODS
+  // ============================================================================
+
+  listAssets(options = {}) {
+    const { projectId, format, category, assetType } = options;
+    let list = Array.from(this.assets.values());
+
+    if (projectId) {
+      list = list.filter((a) => a.projectId === projectId || !a.projectId);
+    }
+    if (format && format !== 'all') {
+      list = list.filter((a) => a.format === format || a.format === 'all' || !a.format);
+    }
+    if (category && category !== 'all') {
+      list = list.filter((a) => a.category === category);
+    }
+    if (assetType && assetType !== 'all') {
+      list = list.filter((a) => a.assetType === assetType);
+    }
+
+    return list.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  }
+
+  getAsset(assetId) {
+    return this.assets.get(assetId) || null;
+  }
+
+  saveAsset(assetData = {}) {
+    const id = assetData.id || `asset-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+    const existing = this.assets.get(id) || {};
+
+    const savedAsset = {
+      ...existing,
+      ...assetData,
+      id,
+      created_at: existing.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    this.assets.set(id, savedAsset);
+    this._saveToDisk();
+    this.emit('asset_saved', savedAsset);
+    return savedAsset;
+  }
+
+  deleteAsset(assetId) {
+    const exists = this.assets.has(assetId);
+    if (exists) {
+      this.assets.delete(assetId);
+      this._saveToDisk();
+      this.emit('asset_deleted', { id: assetId });
+    }
+    return exists;
   }
 }
 
