@@ -64,24 +64,16 @@ interface DepartmentAgentsHubProps {
 
 import { FloatingAriseLogo3D } from '../3d/FloatingAriseLogo3D';
 
-// 3D Interactive Holographic Agent Pedestal with Floating 3D Arise Logo
+// 3D Interactive Holographic Stage with Floating 3D Arise Letters
 const AgentHologram3D: React.FC<{ agent: DepartmentAgent }> = ({ agent }) => {
   return (
-    <group position={[0, -0.2, 0]}>
-      {/* 3D Golden Pedestal Base */}
-      <mesh position={[0, -1.2, 0]}>
-        <cylinderGeometry args={[2.2, 2.5, 0.4, 32]} />
-        <meshStandardMaterial color="#0d0822" metalness={0.9} roughness={0.2} />
-      </mesh>
-
-      {/* 3D Dynamic Floating & Rotating Arise Productions Logo */}
+    <group position={[0, 0, 0]}>
+      {/* 3D Dynamic Floating Individual Arise Letters with Drop Shadows */}
       <React.Suspense fallback={null}>
         <FloatingAriseLogo3D
-          position={[0, 0.35, 0]}
-          scale={0.82}
-          showText={true}
-          textTitle={agent.name.toUpperCase()}
-          textSubtitle={agent.role.toUpperCase()}
+          position={[0, 0.1, 0]}
+          scale={0.88}
+          showSubtitle={true}
         />
       </React.Suspense>
     </group>
