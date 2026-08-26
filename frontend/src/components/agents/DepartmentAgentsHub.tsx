@@ -451,6 +451,51 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
             </div>
           )}
 
+          {/* Sagas 5-Step Disciplined Production Hub Pipeline (createsagas.com/how-it-works) */}
+          <div className="px-6 py-2.5 bg-[#0a051d] border-b border-amber-500/25 flex items-center justify-between overflow-x-auto no-scrollbar gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-300 font-bold uppercase flex-shrink-0">
+              <Layers size={13} className="text-amber-400" />
+              <span>Sagas Pipeline:</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onNavigateToRoom && onNavigateToRoom('plot')}
+                className="px-2.5 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/40 text-[10px] font-mono text-amber-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span>01: Ideation & Plot</span>
+              </button>
+              <button
+                onClick={() => onNavigateToRoom && onNavigateToRoom('characters')}
+                className="px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/40 text-[10px] font-mono text-purple-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                <span>02: Character Crafting</span>
+              </button>
+              <button
+                onClick={() => onNavigateToRoom && onNavigateToRoom('script')}
+                className="px-2.5 py-1 rounded-xl bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/40 text-[10px] font-mono text-rose-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                <span>03: Scriptwriting</span>
+              </button>
+              <button
+                onClick={() => onNavigateToRoom && onNavigateToRoom('boards')}
+                className="px-2.5 py-1 rounded-xl bg-blue-500/10 hover:bg-blue-500/25 border border-blue-500/40 text-[10px] font-mono text-blue-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                <span>04: Storyboarding</span>
+              </button>
+              <button
+                onClick={() => onNavigateToRoom && onNavigateToRoom('edit')}
+                className="px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-500/40 text-[10px] font-mono text-emerald-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>05: Polish & Publish</span>
+              </button>
+            </div>
+          </div>
+
           {/* Quick Prompt Pills */}
           <div className="px-6 py-2 bg-[#090416] border-b border-amber-500/20 flex items-center space-x-2 overflow-x-auto no-scrollbar flex-shrink-0">
             <span className="text-[10px] font-mono uppercase text-amber-400 font-bold flex items-center gap-1 flex-shrink-0">

@@ -188,95 +188,92 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         {/* Center Mode Switcher & NVIDIA Model Settings */}
         <div className="flex items-center space-x-3">
           <div className="flex bg-[#140e2e] p-1 rounded-xl border border-purple-900/60 text-xs font-mono shadow-inner">
-            {/* 0. Studio Executive Boardroom & Agents Hub */}
+            {/* 0. Executive Department Agents Hub (Master Consultation Center) */}
             <button
               onClick={() => setMainView('agents')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition ${
                 mainView === 'agents'
-                  ? 'bg-gradient-to-r from-amber-500 via-purple-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
               }`}
             >
               <span>🏛️</span>
-              <span>Agents Hub</span>
-              <span className="text-[8px] bg-amber-400 text-black px-1 rounded font-bold">10 LEADS</span>
+              <span>Command Center</span>
+              <span className="text-[8px] bg-black text-amber-300 px-1 rounded font-mono font-bold">10 LEADS</span>
             </button>
 
             {/* 1. 3D Soundstage (Interactive 3D Rooms) */}
             <button
               onClick={() => setMainView('stage')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition ${
                 mainView === 'stage'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
               }`}
             >
               <LayoutGrid size={13} />
               <span>3D Soundstage</span>
             </button>
 
-            {/* 2. Plot Overview Room (Form-Driven Generative Studio) */}
+            {/* 2. Sagas Plot Room (Form-Driven Generative Studio) */}
             <button
               onClick={() => setMainView('plot')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition ${
                 mainView === 'plot'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
               }`}
             >
               <BookOpen size={13} />
-              <span>Plot</span>
+              <span>01: Plot & Lore</span>
             </button>
 
             {/* 2b. Acts & Arcs Writing Room */}
             <button
               onClick={() => setMainView('acts')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl transition ${
                 mainView === 'acts'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
               }`}
             >
               <Layers size={13} />
               <span>Acts</span>
-              <span className="text-[8px] bg-amber-400 text-black px-1 rounded font-bold">NEW</span>
             </button>
 
             {/* 2c. Beats Sheet Writing Room */}
             <button
               onClick={() => setMainView('beats')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl transition ${
                 mainView === 'beats'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
               }`}
             >
               <Activity size={13} />
               <span>Beats</span>
-              <span className="text-[8px] bg-amber-400 text-black px-1 rounded font-bold">NEW</span>
             </button>
 
             {/* 2d. Cast & Characters Writing Room */}
             <button
               onClick={() => setMainView('characters')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl transition ${
                 mainView === 'characters'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
               }`}
             >
               <Users size={13} />
-              <span>Cast</span>
-              <span className="text-[8px] bg-amber-400 text-black px-1 rounded font-bold">NEW</span>
+              <span>02: Cast</span>
             </button>
 
             {/* 3. 3D Campus / Architectural Studio View */}
             <button
               onClick={() => setMainView('architecture')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition ${
                 mainView === 'architecture'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
               }`}
             >
               <Building2 size={13} />
@@ -518,8 +515,18 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               projectName={projectStatus.projectName}
               projectId={effectiveProjectId}
               onNavigateToRoom={(roomKey) => {
-                setMainView('stage');
-                onStageSelect(roomKey);
+                if (roomKey === 'plot') {
+                  setMainView('plot');
+                } else if (roomKey === 'characters') {
+                  setMainView('characters');
+                } else if (roomKey === 'acts') {
+                  setMainView('acts');
+                } else if (roomKey === 'beats') {
+                  setMainView('beats');
+                } else {
+                  setMainView('stage');
+                  onStageSelect(roomKey);
+                }
               }}
             />
           )}
