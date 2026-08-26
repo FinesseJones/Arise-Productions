@@ -54,8 +54,8 @@ killall "Arise Production" 2>/dev/null || true
 pkill -f "Arise Production.app" 2>/dev/null || true
 
 rm -rf "/Applications/Arise Production.app"
-cp -R "dist/mac-arm64/Arise Production.app" /Applications/
-cp "dist/Arise Production-1.0.0-arm64.dmg" "/Users/finessejones1/Desktop/Arise Production Installer.dmg"
+rsync -a --no-xattrs "dist/mac-arm64/Arise Production.app" /Applications/ || cp -X -R "dist/mac-arm64/Arise Production.app" /Applications/
+cp "dist/Arise Production-1.0.0-arm64.dmg" "/Users/finessejones1/Desktop/Arise Production Installer.dmg" || true
 echo "✅ [2/3] Desktop App refreshed at /Applications/ and DMG updated on Desktop!"
 
 # ------------------------------------------------------------------------------
