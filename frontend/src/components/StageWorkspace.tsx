@@ -129,6 +129,7 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
             shotNumber={activeShot}
             shotTitle={currentShot?.title}
             shotDescription={currentShot?.description}
+            onSelectShot={handleShotChange}
           />
         </div>
 

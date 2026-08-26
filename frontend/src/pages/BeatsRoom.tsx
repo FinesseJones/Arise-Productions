@@ -9,6 +9,7 @@ import { getAPIBaseURL } from '../lib/api';
 
 interface BeatsRoomProps {
   projectName?: string;
+  onNavigateToRoom?: (roomKey: string) => void;
 }
 
 interface BeatItem {
@@ -18,7 +19,7 @@ interface BeatItem {
   description: string;
 }
 
-export function BeatsRoom({ projectName = 'A Fatherless Child' }: BeatsRoomProps) {
+export function BeatsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: BeatsRoomProps) {
   const [beats, setBeats] = useState<BeatItem[]>([
     { id: 'b1', act: 'Act 1', title: '1. Opening Image', description: 'Devon (19) stands on the porch holding the weathered photograph in morning fog.' },
     { id: 'b2', act: 'Act 1', title: '2. Theme Stated', description: 'Marcus tells Devon that branches find their own light when roots run deep.' },
@@ -197,6 +198,28 @@ export function BeatsRoom({ projectName = 'A Fatherless Child' }: BeatsRoomProps
                 />
               </div>
             ))}
+          </div>
+
+          {/* 🌟 NEXT STEP ADVANCE ACTION BAR */}
+          <div className="pt-6 border-t border-amber-500/30 flex items-center justify-between flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => onNavigateToRoom?.('acts')}
+              className="px-4 py-2 rounded-xl bg-[#140b2e] hover:bg-[#1f1044] border border-amber-500/30 text-amber-300 text-xs font-mono font-bold transition flex items-center gap-2 shadow-sm"
+            >
+              <span>⬅️ 03: Acts & Arcs</span>
+            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigateToRoom?.('stage')}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider transition shadow-lg shadow-amber-500/25 flex items-center gap-2"
+              >
+                <Activity size={14} />
+                <span>👉 Launch 3D Soundstage & Production 🎬</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

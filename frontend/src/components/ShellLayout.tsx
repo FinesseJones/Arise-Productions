@@ -558,19 +558,59 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           )}
 
           {mainView === 'plot' && (
-            <PlotRoom projectName={projectStatus.projectName} />
-          )}
-
-          {mainView === 'acts' && (
-            <ActsRoom projectName={projectStatus.projectName} />
-          )}
-
-          {mainView === 'beats' && (
-            <BeatsRoom projectName={projectStatus.projectName} />
+            <PlotRoom
+              projectName={projectStatus.projectName}
+              onNavigateToRoom={(roomKey) => {
+                if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  setMainView(roomKey as any);
+                } else {
+                  setMainView('stage');
+                  onStageSelect(roomKey);
+                }
+              }}
+            />
           )}
 
           {mainView === 'characters' && (
-            <CharactersRoom projectName={projectStatus.projectName} />
+            <CharactersRoom
+              projectName={projectStatus.projectName}
+              onNavigateToRoom={(roomKey) => {
+                if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  setMainView(roomKey as any);
+                } else {
+                  setMainView('stage');
+                  onStageSelect(roomKey);
+                }
+              }}
+            />
+          )}
+
+          {mainView === 'acts' && (
+            <ActsRoom
+              projectName={projectStatus.projectName}
+              onNavigateToRoom={(roomKey) => {
+                if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  setMainView(roomKey as any);
+                } else {
+                  setMainView('stage');
+                  onStageSelect(roomKey);
+                }
+              }}
+            />
+          )}
+
+          {mainView === 'beats' && (
+            <BeatsRoom
+              projectName={projectStatus.projectName}
+              onNavigateToRoom={(roomKey) => {
+                if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  setMainView(roomKey as any);
+                } else {
+                  setMainView('stage');
+                  onStageSelect(roomKey);
+                }
+              }}
+            />
           )}
 
           {mainView === 'architecture' && (

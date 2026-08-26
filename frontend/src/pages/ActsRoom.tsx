@@ -8,9 +8,10 @@ import { ARISE_LOGO_BASE64 } from '../constants/branding';
 
 interface ActsRoomProps {
   projectName?: string;
+  onNavigateToRoom?: (roomKey: string) => void;
 }
 
-export function ActsRoom({ projectName = 'A Fatherless Child' }: ActsRoomProps) {
+export function ActsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: ActsRoomProps) {
   const [teaser, setTeaser] = useState(
     'A quiet autumn dawn over a weathered front porch. Devon (19) stares at a faded photograph of his father, holding his breath as the neighborhood awakens in golden 3200K mist.'
   );
@@ -125,6 +126,28 @@ export function ActsRoom({ projectName = 'A Fatherless Child' }: ActsRoomProps) 
             onChange={setAct3}
             {...shared}
           />
+
+          {/* 🌟 NEXT STEP ADVANCE ACTION BAR */}
+          <div className="pt-6 border-t border-amber-500/30 flex items-center justify-between flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => onNavigateToRoom?.('characters')}
+              className="px-4 py-2 rounded-xl bg-[#140b2e] hover:bg-[#1f1044] border border-amber-500/30 text-amber-300 text-xs font-mono font-bold transition flex items-center gap-2 shadow-sm"
+            >
+              <span>⬅️ 02: Characters & Cast</span>
+            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigateToRoom?.('beats')}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider transition shadow-lg shadow-amber-500/25 flex items-center gap-2"
+              >
+                <Layers size={14} />
+                <span>👉 Next: 04: Beats Matrix 🎚️</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -21,9 +21,10 @@ import { getAPIBaseURL } from '../lib/api';
 
 interface PlotRoomProps {
   projectName?: string;
+  onNavigateToRoom?: (roomKey: string) => void;
 }
 
-export function PlotRoom({ projectName = 'A Fatherless Child' }: PlotRoomProps) {
+export function PlotRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: PlotRoomProps) {
   const apiBase = getAPIBaseURL();
   const [title, setTitle] = useState<string>(projectName || 'Vicious Cycle');
   const [logline, setLogline] = useState<string>(
@@ -198,44 +199,66 @@ ${audience}
         <aside className="w-56 xl:w-60 flex-shrink-0 border-r border-amber-500/20 bg-[#080418]/95 p-3 space-y-4 overflow-y-auto custom-scrollbar">
           <div className="space-y-1">
             <span className="text-[9px] font-mono uppercase text-amber-400/80 font-bold px-2">Your Projects</span>
-            <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs font-bold text-amber-200 truncate">
-              🎬 {title}
-            </div>
+            <button
+              onClick={() => onNavigateToRoom?.('ideas')}
+              className="w-full text-left p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-bold text-amber-200 truncate transition flex items-center justify-between"
+            >
+              <span>🎬 {title}</span>
+              <span className="text-[9px] text-amber-400 font-mono">00: Ideas</span>
+            </button>
           </div>
 
           <div className="space-y-1">
-            <span className="text-[9px] font-mono uppercase text-amber-400/80 font-bold px-2">Story</span>
-            <div className="space-y-0.5">
-              <div className="p-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-purple-900/40 border border-amber-400/60 text-xs font-bold text-amber-300 flex items-center gap-2 shadow-sm">
+            <span className="text-[9px] font-mono uppercase text-amber-400/80 font-bold px-2">Story Architecture</span>
+            <div className="space-y-0.5 font-mono text-xs">
+              <button
+                onClick={() => onNavigateToRoom?.('plot')}
+                className="w-full p-2 rounded-xl bg-gradient-to-r from-amber-500/25 to-purple-900/40 border border-amber-400/60 text-xs font-bold text-amber-300 flex items-center gap-2 shadow-sm text-left"
+              >
                 <BookOpen size={13} className="text-amber-400" />
-                <span>Plot Overview</span>
-              </div>
-              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+                <span>01: Plot Overview</span>
+              </button>
+              <button
+                onClick={() => onNavigateToRoom?.('characters')}
+                className="w-full p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition text-left"
+              >
                 <Users size={13} className="text-purple-400" />
-                <span>Characters</span>
-              </div>
-              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+                <span>02: Characters</span>
+              </button>
+              <button
+                onClick={() => onNavigateToRoom?.('acts')}
+                className="w-full p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition text-left"
+              >
                 <Layers size={13} className="text-purple-400" />
-                <span>Acts</span>
-              </div>
-              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+                <span>03: Acts</span>
+              </button>
+              <button
+                onClick={() => onNavigateToRoom?.('beats')}
+                className="w-full p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition text-left"
+              >
                 <Activity size={13} className="text-purple-400" />
-                <span>Beats</span>
-              </div>
+                <span>04: Beats</span>
+              </button>
             </div>
           </div>
 
           <div className="space-y-1">
-            <span className="text-[9px] font-mono uppercase text-amber-400/80 font-bold px-2">Production</span>
-            <div className="space-y-0.5">
-              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+            <span className="text-[9px] font-mono uppercase text-amber-400/80 font-bold px-2">Production & Release</span>
+            <div className="space-y-0.5 font-mono text-xs">
+              <button
+                onClick={() => onNavigateToRoom?.('stage')}
+                className="w-full p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition text-left"
+              >
                 <Film size={13} className="text-purple-400" />
-                <span>Scriptwriting</span>
-              </div>
-              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
-                <Camera size={13} className="text-purple-400" />
-                <span>Storyboards</span>
-              </div>
+                <span>3D Soundstage</span>
+              </button>
+              <button
+                onClick={() => onNavigateToRoom?.('distribution')}
+                className="w-full p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition text-left"
+              >
+                <Sliders size={13} className="text-amber-400" />
+                <span>05: Distribution</span>
+              </button>
             </div>
           </div>
         </aside>
@@ -428,6 +451,28 @@ ${audience}
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* 🌟 NEXT STEP ADVANCE ACTION BAR */}
+            <div className="pt-6 border-t border-amber-500/30 flex items-center justify-between flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => onNavigateToRoom?.('ideas')}
+                className="px-4 py-2 rounded-xl bg-[#140b2e] hover:bg-[#1f1044] border border-amber-500/30 text-amber-300 text-xs font-mono font-bold transition flex items-center gap-2 shadow-sm"
+              >
+                <span>⬅️ 00: Ideas Lab</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => onNavigateToRoom?.('characters')}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider transition shadow-lg shadow-amber-500/25 flex items-center gap-2"
+                >
+                  <Users size={14} />
+                  <span>👉 Next: Characters & Cast Room 👥</span>
+                </button>
+              </div>
             </div>
           </div>
         </main>

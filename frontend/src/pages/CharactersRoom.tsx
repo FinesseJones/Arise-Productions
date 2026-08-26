@@ -27,7 +27,7 @@ interface CharacterProfile {
   archetypes: string[];
 }
 
-export function CharactersRoom({ projectName = 'A Fatherless Child' }: CharactersRoomProps) {
+export function CharactersRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: CharactersRoomProps) {
   const apiBase = getAPIBaseURL();
   const [characters, setCharacters] = useState<CharacterProfile[]>([
     {
@@ -443,6 +443,28 @@ export function CharactersRoom({ projectName = 'A Fatherless Child' }: Character
                     </button>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* 🌟 NEXT STEP ADVANCE ACTION BAR */}
+            <div className="pt-6 border-t border-amber-500/30 flex items-center justify-between flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => onNavigateToRoom?.('plot')}
+                className="px-4 py-2 rounded-xl bg-[#140b2e] hover:bg-[#1f1044] border border-amber-500/30 text-amber-300 text-xs font-mono font-bold transition flex items-center gap-2 shadow-sm"
+              >
+                <span>⬅️ 01: Plot Overview</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => onNavigateToRoom?.('acts')}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider transition shadow-lg shadow-amber-500/25 flex items-center gap-2"
+                >
+                  <BookOpen size={14} />
+                  <span>👉 Next: 03: Acts & Arcs Engine 📐</span>
+                </button>
               </div>
             </div>
           </div>
