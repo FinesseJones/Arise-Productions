@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getAPIBaseURL } from "@/lib/api";
 
 // Types for casting data
 interface CastingProfile {
@@ -59,7 +60,8 @@ export default function CastingRoom() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/casting/analyze', {
+      const apiBase = getAPIBaseURL();
+      const response = await fetch(`${apiBase}/casting/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
