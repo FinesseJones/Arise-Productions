@@ -35,11 +35,14 @@ export const VideoScreeningRoom: React.FC<VideoScreeningRoomProps> = ({ projectS
   const [selectedTake, setSelectedTake] = useState<string>('Take 3 (Final Grade)');
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
 
-  // Available video takes / dailies
+  // Available video takes / dailies for Episode 1: "Echoes of Absence"
   const shotTakes = [
-    { id: 'take-01', name: 'Take 1 (Rough Previs)', res: '1080p 24fps', date: '14:20 PM', status: 'Previs Pass' },
-    { id: 'take-02', name: 'Take 2 (Unreal 5.4 CineCam Pass)', res: '4K 60fps', date: '15:45 PM', status: 'Lighting Solved' },
-    { id: 'take-03', name: 'Take 3 (Final Grade & 5.1 Audio)', res: '4K ProRes 4444', date: '17:10 PM', status: 'Master Dailies' },
+    { id: 'take-01', name: 'Scene 1: Sunrise Porch Establishing (4K Master)', res: '4K DCI 24fps', date: '08:15 AM', status: 'Master Take 🟢' },
+    { id: 'take-02', name: 'Scene 1: Devon & Marcus Dialogue Close-Up (ProRes 4444)', res: '4K 60fps', date: '09:30 AM', status: 'Circle Take 🟢' },
+    { id: 'take-03', name: 'Scene 2: Vale Zoning Hearing Confrontation (4K DCI)', res: '4K ProRes 4444', date: '11:45 AM', status: 'Color Graded' },
+    { id: 'take-04', name: 'Scene 2: Cassie Leaked Eviction Dossier (Cinema 2.39:1)', res: '4K ACEScg', date: '14:20 PM', status: 'Foley Mixed' },
+    { id: 'take-05', name: 'Scene 3: Midnight Sub-Level Vault Search (HDR Low-Light)', res: '4K 60fps UE5.4', date: '18:05 PM', status: 'VFX Locked' },
+    { id: 'take-06', name: 'Scene 3: Emergency Injunction & Dawn Stand (Master Episode Cut)', res: '4K DCI ProRes XQ', date: '21:30 PM', status: 'FINAL MASTER 🟢' },
   ];
 
   const formatTimecode = (secs: number) => {

@@ -127,9 +127,12 @@ export const EditRoomHolo: React.FC<EditRoom3DProps> = ({
   const tools = ['Media', 'Text', 'Stock', 'Transitions', 'Subtitles'];
 
   const timelineClips = [
-    { id: 'c1', name: 'Scene_1_Wide_Establishing.mp4', duration: '00:04.00', color: 'from-amber-600 to-amber-800' },
-    { id: 'c2', name: 'Scene_1_Devon_CU.mp4', duration: '00:03.50', color: 'from-purple-600 to-purple-800' },
-    { id: 'c3', name: 'Scene_1_Marcus_OTS.mp4', duration: '00:05.20', color: 'from-rose-600 to-rose-800' },
+    { id: 'c1', name: 'Scene_1_Porch_Sunrise_Establishing_4K.mp4', duration: '00:04.50', color: 'from-amber-600 to-amber-800' },
+    { id: 'c2', name: 'Scene_1_Devon_Marcus_Dialogue_CU.mp4', duration: '00:05.20', color: 'from-purple-600 to-purple-800' },
+    { id: 'c3', name: 'Scene_2_Vale_Zoning_Hearing_Conflict.mp4', duration: '00:06.10', color: 'from-rose-600 to-rose-800' },
+    { id: 'c4', name: 'Scene_2_Cassie_Leaked_Documents.mp4', duration: '00:04.80', color: 'from-blue-600 to-blue-800' },
+    { id: 'c5', name: 'Scene_3_Foundry_Vault_Midnight_Search.mp4', duration: '00:07.30', color: 'from-cyan-600 to-cyan-800' },
+    { id: 'c6', name: 'Scene_3_Emergency_Stay_Dawn_Stand.mp4', duration: '00:05.50', color: 'from-emerald-600 to-emerald-800' },
   ];
 
   return (
