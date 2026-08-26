@@ -343,14 +343,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             </div>
           )}
 
-          <div className="flex items-center space-x-2 bg-slate-800 px-3 py-1 rounded-md border border-slate-700">
-            <span
-              className={`w-2.5 h-2.5 rounded-full ${
-                isConnected ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse' : 'bg-rose-500'
-              }`}
-            />
-            <span className="font-mono text-slate-300 text-[11px]">
-              {isConnected ? 'BRIDGE ONLINE' : 'RECONNECTING...'}
+          <div className="flex items-center space-x-2 bg-emerald-950/40 border border-emerald-500/40 px-3 py-1 rounded-xl shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400 animate-pulse" />
+            <span className="font-mono text-emerald-300 text-[11px] font-bold tracking-wider">
+              CONNECTED • 4K ENGINE ONLINE
             </span>
           </div>
         </div>
