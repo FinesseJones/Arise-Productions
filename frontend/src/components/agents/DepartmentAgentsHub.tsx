@@ -91,7 +91,7 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
   const [inputMessage, setInputMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showMemoryVault, setShowMemoryVault] = useState<boolean>(false);
-  const [show3DHologram, setShow3DHologram] = useState<boolean>(true);
+  const [show3DHologram, setShow3DHologram] = useState<boolean>(false);
   const [memories, setMemories] = useState<StudioMemory[]>([]);
   const [newMemCategory, setNewMemCategory] = useState<string>('Creative Note');
   const [newMemTitle, setNewMemTitle] = useState<string>('');
@@ -147,17 +147,32 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
     // 1. Devon Wells (Head Screenwriter & Script Doctor)
     if (agent.id === 'screenwriter' || agent.id === 'writer') {
       if (isGreeting) {
-        return `Hey there! Great to be working with you on **${projectName}**. I'm currently looking over our screenplay draft and character dynamics for Devon and Marcus.\n\nAre we looking to draft a visceral new cold open, punch up the dialogue subtext for Scene 1, or map out an emotional turning point for Act 2? Tell me what scene or character beat is on your mind and I'll start writing right away!`;
+        return `Hey there! Great to be working with you on **${projectName}**. I'm currently looking over our screenplay draft and character dynamics across our ensemble.\n\nAre we looking to walk through the entire storyline for Episode 1, explore our character dynamics (Devon, Marcus, Vale, Cassie, Victor), or draft a specific scene? Tell me what's on your mind and I'm ready!`;
       }
-      return `✍️ **Devon Wells (Head Screenwriter):**\n\nI love where you're heading with this. Let's build out this scene with real dramatic tension:\n\n\`\`\`fountain\nEXT. URBAN NEIGHBORHOOD PORCH - EARLY MORNING\n\nGolden morning dawn breaks through the trees, casting long amber shadows across the porch steps.\n\nDEVON (19)\n(clutching the blueprints, knuckles tight)\n"We built this from nothing. If we walk away now, they don't just win—we disappear."\n\nMARCUS (40s, mentor)\n(steady, stepping onto the wooden planks)\n"Nobody's walking away, Devon. But if you want them to listen, you've got to stop defending the past and start building what comes next."\n\nDEVON\n(slow breath, meeting Marcus's gaze)\n"Then hand me the chalk."\n\nCUT TO:\n\`\`\`\n\n**Script Doctor Notes:**\n- **Subtext:** Devon isn't just fighting for the building—she's fighting for proof that her father's legacy mattered.\n- **Pacing:** Notice how Marcus's line shifts her from defensive fear to proactive resolve.\n\nWould you like me to push this directly into our **Stage 1 (Script Room)**, or should we draft the immediate confrontation that follows?`;
+
+      // Check if user is asking about the first episode / entire episode / plot walkthrough
+      if (q.includes('episode') || q.includes('first episode') || q.includes('episode 1') || q.includes('what it is about') || q.includes('walk through') || q.includes('synopsis')) {
+        return `📖 **Episode 1: "Echoes of Absence" — Complete Story & Scene Walkthrough**\n\nHere is the full episodic narrative arc for the premiere of **${projectName}**:\n\n---\n\n### 🎬 **Act 1: The Weight of the Past (The Routine & The Void)**\n* **Setting:** Early morning in the historic district. Golden dawn light filters through amber trees across the worn porch of the family architectural foundry.\n* **The Opening:** We meet **Devon (19)** standing on the porch holding a weathered photograph of her father and a hand-drawn blueprint. She's carrying the heavy emotional question of who her father was and why he disappeared.\n* **The Mentor's Anchor:** **Marcus (40s)**, her father's longtime workshop partner and master restorer, brings two steaming mugs and grounds her: *"Your story doesn't begin with who wasn't there, Devon—it begins with who you choose to be today."*\n* **The World:** We see Devon inside the workshop—she’s brilliant with hands-on craft, tools, and structural drafting, but emotionally guarded.\n\n---\n\n### ⚡ **Act 2: The Catalyst & The Threat (Vale's Eviction Notice)**\n* **The Inciting Incident:** A red condemnation notice is plastered across the foundry gate by **Vale Holdings**, giving the shop 30 days before forced demolition.\n* **The Antagonist Confrontation:** Devon storms the City Zoning Board hearing to confront **Vale (40s)**, a charismatic, cutthroat developer who dismisses her family's heritage as *"nostalgic ruins standing in the way of progress."*\n* **The Ally Steps In:** Outside city hall, investigative journalist **Cassie Thornfield** intercepts Devon. Cassie reveals that Vale is hiding forged environmental reports to fast-track the demolition because Devon's father had placed a historic preservation covenant on the land.\n\n---\n\n### ⚔️ **Act 3: The Midnight Vault & The Stand (The Turning Point)**\n* **The Investigation:** Devon, Marcus, and Cassie team up with **Victor Ramirez**, a conflicted city building inspector. They sneak into the foundry's sealed subterranean archives beneath the shop floor.\n* **The Revelation:** Devon discovers her father's original 1998 Master Heritage Covenant and structural patents. She realizes her father never abandoned them out of weakness—he vanished while fighting the exact same corporate conglomerate.\n* **The Climax:** Devon and Victor file an emergency legal injunction minutes before the midnight deadline, temporarily halting the demolition crews as dawn breaks.\n* **Episode 1 Cliffhanger:** In his high-rise office, Vale receives the news that Devon has blocked his permit. Vale looks down over the city: *"Then tear down everything around them first."*\n\n---\n\nWould you like me to write out a specific scene between Devon and Vale, draft the emotional porch opening, or map out Episode 2?`;
+      }
+
+      // Check if user is asking about the characters / ensemble cast
+      if (q.includes('character') || q.includes('more than one') || q.includes('who is') || q.includes('cast') || q.includes('people') || q.includes('ensemble')) {
+        return `🎭 **Ensemble Cast & Character Breakdown for "${projectName}":**\n\nWe have a multi-layered 5-character ensemble driving this story:\n\n1. **DEVON (19, Protagonist — Positive Arc):**\n   * A gifted young artisan and architectural creator. Emotionally guarded and burdened by her father's unresolved disappearance, she must overcome her fear of loss to lead the fight for her community.\n\n2. **MARCUS (40s, Mentor — Flat Arc):**\n   * Master craftsman, foundry steward, and community patriarch. Marcus acts as the moral compass and surrogate father figure, teaching Devon that true strength is built from within.\n\n3. **VALE (45, Antagonist — Corruption Arc):**\n   * Ruthless, charismatic real estate tycoon. He believes that erasing history is necessary for progress and will use bribery, legal intimidation, and force to demolish the historic district.\n\n4. **CASSIE THORNFIELD (28, Supporting Ally — Disillusion Arc):**\n   * Tenacious investigative journalist whose cynical exterior masks a passion for exposing corporate corruption. She connects Vale's land grabs to Devon's father's past.\n\n5. **VICTOR RAMIREZ (35, Supporting Bureaucrat — Positive Arc):**\n   * A principled city building inspector caught between keeping his job and upholding the law. When Devon presents authentic blueprints, Victor chooses integrity over corporate pressure.\n\nWhich character dynamics would you like to explore or develop dialogue for next?`;
+      }
+
+      // Default contextual screenwriting response
+      return `✍️ **Devon Wells (Head Screenwriter):**\n\nGot it! Let's explore "${query}" with our characters:\n\n\`\`\`fountain\nINT. FOUNDRY WORKSPACE - NIGHT\n\nRain hammers against the high corrugated roof. MARCUS sits at the workbench, sanding a timber beam. DEVON paces the concrete floor with CASSIE's leaked files.\n\nDEVON\n"He didn't just leave, Marcus. Vale was threatening the foundry twenty years ago. My dad was trying to protect us."\n\nMARCUS\n(pausing his work)\n"Your father fought with blueprints and law books, Devon. But Vale fights with excavators and private security."\n\nDEVON\n(setting her hands on the table)\n"Then we fight him with both."\n\nCUT TO:\n\`\`\`\n\nWould you like me to refine this dialogue, or push this scene into **Stage 1 (Script Room)**?`;
     }
 
     // 2. Showrunner Sterling (Executive Producer & Showrunner)
     if (agent.id === 'showrunner') {
       if (isGreeting) {
-        return `Welcome to the executive suite! **${projectName}** has massive cinematic potential, and I'm tracking our production readiness across all 10 stages.\n\nWhere should we focus today? We can pressure-test our 3-Act tension arc, refine our pilot logline and pitch bible, or audit our character arcs to ensure the stakes stay sky-high. What's your vision?`;
+        return `Welcome to the executive suite! **${projectName}** has massive cinematic potential, and I'm tracking our production readiness across all 10 stages.\n\nWhere should we focus today? We can walk through our Episode 1 story arc, review character stakes, or audit our 10-stage production pipeline. What's your vision?`;
       }
-      return `🌟 **Showrunner Sterling (Executive Producer):**\n\nHere is my executive assessment regarding "${query}":\n\n1. **Core Narrative Engine:** We need to make sure every scene forces our protagonist to make an active, irreversible choice.\n2. **Stakes Escalation:** In Act 2, the antagonist shouldn't just be an obstacle—they should represent the dark mirror of what happens if our hero fails to grow.\n3. **Production Alignment:** I've confirmed that our Script, Storyboard, and Sound stages are fully synced to support this narrative direction.\n\nShall I greenlight this approach and have Devon draft the scene beat, or would you like to review the pitch deck summary first?`;
+      if (q.includes('episode') || q.includes('story') || q.includes('plot') || q.includes('about')) {
+        return `🌟 **Showrunner Sterling (Executive Assessment on Episode 1):**\n\n**Premise:** Episode 1 ("Echoes of Absence") establishes the high-stakes battle between Devon (heritage/identity) and Vale Holdings (corporate gentrification).\n\n**Key Dramatic Pillars:**\n1. **The Personal Stakes:** Devon's journey from searching for her absent father to discovering his legacy.\n2. **The Societal Stakes:** The destruction of an entire community foundry and neighborhood culture.\n3. **The Escalation Rate:** Act 1 builds emotional connection; Act 2 accelerates the threat with Vale's 30-day notice; Act 3 delivers a thrilling midnight vault heist and legal showdown.\n\nI can instruct Devon to draft full scene pages, or we can coordinate with CineDirector Maya on the visual mood for the pilot.`;
+      }
+      return `🌟 **Showrunner Sterling (Executive Producer):**\n\nRegarding "${query}":\n\n1. **Narrative Momentum:** Every scene must force Devon to make an active, irreversible choice.\n2. **Pacing:** Episode 1 moves swiftly from personal reflection to high-stakes legal and physical conflict.\n3. **Production Readiness:** Stages 1-10 are synchronized to support this direction.\n\nShall I greenlight the script draft for this beat?`;
     }
 
     // 3. CineDirector Maya (Director of Photography & DP)
@@ -653,39 +668,39 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
 
                     {/* Message Bubble */}
                     <div
-                      className={`max-w-[78%] rounded-2xl p-4 space-y-1.5 shadow-lg select-text ${
+                      className={`max-w-[88%] lg:max-w-[82%] rounded-2xl p-4 sm:p-5 space-y-2 shadow-xl select-text ${
                         isUser
-                          ? 'bg-[#221245] border border-amber-500/40 text-amber-100'
-                          : 'bg-[#12082b]/95 border border-amber-500/30 text-slate-100 backdrop-blur-sm'
+                          ? 'bg-[#221245] border border-amber-500/50 text-amber-100'
+                          : 'bg-[#12082b]/95 border border-amber-500/40 text-slate-100 backdrop-blur-md'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-3 border-b border-white/5 pb-1">
-                        <span className={`text-[10px] font-mono font-bold ${isUser ? 'text-amber-300' : 'text-amber-400'}`}>
+                      <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-1.5">
+                        <span className={`text-xs font-mono font-bold ${isUser ? 'text-amber-300' : 'text-amber-400'}`}>
                           {isUser ? 'Producer (You)' : (msg.agentName || currentAgent.name)}
                         </span>
-                        <span className="text-[9px] font-mono text-purple-400/60">
+                        <span className="text-[10px] font-mono text-purple-400/70">
                           {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
 
-                      {/* Content with whitespace preservation */}
-                      <div className="text-xs font-sans leading-relaxed whitespace-pre-wrap">
+                      {/* Content with whitespace preservation and rich typography */}
+                      <div className="text-sm font-sans leading-relaxed whitespace-pre-wrap selection:bg-amber-500/30">
                         {msg.content}
                       </div>
 
                       {/* Assistant Actions (Save to Memory Vault) */}
                       {!isUser && (
-                        <div className="pt-2 border-t border-purple-900/40 flex items-center justify-between text-[10px] font-mono text-amber-400/80">
+                        <div className="pt-2 border-t border-purple-900/40 flex items-center justify-between text-[11px] font-mono text-amber-400/90">
                           <button
                             onClick={() => handleSaveToMemory(msg.content)}
                             className="flex items-center space-x-1 hover:text-amber-300 transition"
                           >
-                            <BookmarkPlus size={11} />
+                            <BookmarkPlus size={12} />
                             <span>Bookmark to Studio Memory</span>
                           </button>
 
                           {msg.metadata?.model && (
-                            <span className="text-[9px] text-purple-400">
+                            <span className="text-[10px] text-purple-400">
                               ⚡ {msg.metadata.model.split('/')[1] || msg.metadata.model}
                             </span>
                           )}
