@@ -17,8 +17,11 @@ echo "🎬 Commit Message: $MSG"
 echo "🎬 Working Directory: $DIR"
 echo "🎬 ======================================================================"
 
+# Auto-load SSH key for seamless VPS and GitHub operations
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519 2>/dev/null || ssh-add ~/.ssh/id_ed25519 2>/dev/null || true
+
 # ------------------------------------------------------------------------------
-# TARGET 1: GITHUB REPO
+# TARGET 1: GITHUB REPO (SYNCS CURRENT BRANCH & MAIN)
 # ------------------------------------------------------------------------------
 echo ""
 echo "📦 [1/3] SYNCING GITHUB REPOSITORY (https://github.com/FinesseJones/Arise-Productions)..."
@@ -26,13 +29,24 @@ cd "$DIR"
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
 git add -A
 if git diff --cached --quiet; then
-    echo "ℹ️ No uncommitted changes. Pushing current state on branch '$CURRENT_BRANCH'..."
-    git push origin "$CURRENT_BRANCH" || true
+    echo "ℹ️ No uncommitted changes on '$CURRENT_BRANCH'."
 else
     git commit -m "$MSG"
-    git push origin "$CURRENT_BRANCH"
 fi
-echo "✅ [1/3] GitHub Repository up-to-date on branch '$CURRENT_BRANCH'!"
+
+echo "🚀 Pushing branch '$CURRENT_BRANCH' to GitHub..."
+git push origin "$CURRENT_BRANCH"
+
+# Also sync & push main branch so default GitHub view is 100% up-to-date
+if [ "$CURRENT_BRANCH" != "main" ]; then
+    echo "🔄 Fast-forwarding and pushing 'main' branch..."
+    git checkout main
+    git merge "$CURRENT_BRANCH" -m "merge: Sync $CURRENT_BRANCH to main"
+    git push origin main
+    git checkout "$CURRENT_BRANCH"
+fi
+
+echo "✅ [1/3] GitHub Repository up-to-date on branches '$CURRENT_BRANCH' & 'main'!"
 
 # ------------------------------------------------------------------------------
 # TARGET 2: LOCAL DESKTOP APP & DMG INSTALLER
