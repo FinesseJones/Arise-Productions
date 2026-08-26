@@ -350,20 +350,20 @@ export function DistributionRoom({
       };
 
       recognition.onerror = (event: any) => {
-        console.warn('Speech recognition error:', event.error);
+        console.warn('Speech recognition error:', event?.error);
         setIsVoiceListening(false);
       };
 
       recognition.onend = () => {
-        if (isVoiceActive) {
-          try {
-            recognition.start();
-          } catch {}
-        }
+        setIsVoiceListening(false);
       };
 
-      recognition.start();
-      recognitionRef.current = recognition;
+      try {
+        recognition.start();
+        recognitionRef.current = recognition;
+      } catch (err) {
+        console.warn('Speech recognition start failed:', err);
+      }
     }
   };
 
