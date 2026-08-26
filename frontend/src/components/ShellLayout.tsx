@@ -185,176 +185,148 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           </div>
         </div>
 
-        {/* Center Mode Switcher & NVIDIA Model Settings */}
-        <div className="flex items-center space-x-3">
-          <div className="flex bg-[#140e2e] p-1 rounded-xl border border-purple-900/60 text-xs font-mono shadow-inner">
-            {/* 0. Executive Department Agents Hub (Master Consultation Center) */}
+        {/* Center Mode Switcher & Navigation */}
+        <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar max-w-full">
+          <div className="flex bg-[#140e2e] p-0.5 rounded-xl border border-amber-500/30 text-[11px] font-mono shadow-inner space-x-0.5 flex-shrink-0">
+            {/* 0. Executive Department Agents Hub */}
             <button
               onClick={() => setMainView('agents')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
                 mainView === 'agents'
-                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
-                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
               }`}
             >
               <span>🏛️</span>
               <span>Command Center</span>
-              <span className="text-[8px] bg-black text-amber-300 px-1 rounded font-mono font-bold">10 LEADS</span>
             </button>
 
-            {/* 1. 3D Soundstage (Interactive 3D Rooms) */}
+            {/* 1. 3D Soundstage */}
             <button
               onClick={() => setMainView('stage')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
                 mainView === 'stage'
-                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
-                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
               }`}
             >
-              <LayoutGrid size={13} />
+              <LayoutGrid size={12} />
               <span>3D Soundstage</span>
             </button>
 
-            {/* 2. Sagas Plot Room (Form-Driven Generative Studio) */}
+            {/* 2. Sagas Plot Room */}
             <button
               onClick={() => setMainView('plot')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
                 mainView === 'plot'
-                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
-                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
               }`}
             >
-              <BookOpen size={13} />
-              <span>01: Plot & Lore</span>
+              <BookOpen size={12} />
+              <span>01: Plot</span>
             </button>
 
-            {/* 2b. Acts & Arcs Writing Room */}
-            <button
-              onClick={() => setMainView('acts')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl transition ${
-                mainView === 'acts'
-                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
-                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
-              }`}
-            >
-              <Layers size={13} />
-              <span>Acts</span>
-            </button>
-
-            {/* 2c. Beats Sheet Writing Room */}
-            <button
-              onClick={() => setMainView('beats')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl transition ${
-                mainView === 'beats'
-                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
-                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
-              }`}
-            >
-              <Activity size={13} />
-              <span>Beats</span>
-            </button>
-
-            {/* 2d. Cast & Characters Writing Room */}
+            {/* 2d. Cast Room */}
             <button
               onClick={() => setMainView('characters')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
                 mainView === 'characters'
-                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
-                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
               }`}
             >
-              <Users size={13} />
+              <Users size={12} />
               <span>02: Cast</span>
             </button>
 
-            {/* 3. 3D Campus / Architectural Studio View */}
+            {/* 3. 3D Campus */}
             <button
               onClick={() => setMainView('architecture')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
                 mainView === 'architecture'
-                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/30 border border-amber-300'
-                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40 border border-amber-500/20'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
               }`}
             >
-              <Building2 size={13} />
+              <Building2 size={12} />
               <span>3D Campus</span>
             </button>
 
             {/* 4. 4K Video Screening Room */}
             <button
               onClick={() => setMainView('screening')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
                 mainView === 'screening'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
               }`}
             >
-              <Film size={13} />
-              <span>Video Screening</span>
+              <Film size={12} />
+              <span>Screening</span>
             </button>
 
-            {/* 5. Deep-Dive Department Suites (Original Merged Studio) */}
+            {/* 5. Suites Hub */}
             <button
               onClick={() => setMainView('suites')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
                 mainView === 'suites'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
               }`}
             >
-              <Sliders size={13} />
-              <span>Studio Suites</span>
+              <Sliders size={12} />
+              <span>Suites</span>
             </button>
 
-            {/* 6. Production Data Vault & History Ledger */}
+            {/* 6. Production Data Vault */}
             <button
               onClick={() => setMainView('vault')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
                 mainView === 'vault'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold shadow-md shadow-purple-600/30'
-                  : 'text-purple-300/70 hover:text-white hover:bg-purple-950/40'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
               }`}
             >
-              <FolderArchive size={13} />
-              <span>Data Vault & History</span>
+              <FolderArchive size={12} />
+              <span>Vault</span>
             </button>
           </div>
 
-          {/* Hollywood Pitch Bible & One-Pager Button */}
+          {/* Hollywood Pitch Bible Button */}
           <button
             onClick={() => setShowPitchBibleModal(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#F59E0B]/20 to-[#D97706]/20 hover:from-[#F59E0B]/35 hover:to-[#D97706]/35 text-amber-300 border border-amber-500/50 text-xs font-mono transition shadow-sm font-bold"
+            className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0"
           >
-            <FileText size={13} className="text-amber-400" />
-            <span>📑 Pitch Bible</span>
+            <FileText size={12} className="text-amber-400" />
+            <span>Bible</span>
           </button>
 
           {/* NVIDIA NIM Free Tier Button */}
           <button
             onClick={() => setShowNvidiaModal(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-xs font-mono transition shadow-sm"
+            className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[11px] font-mono transition shadow-sm flex-shrink-0"
           >
-            <Cpu size={13} className="text-purple-400" />
+            <Cpu size={12} className="text-purple-400" />
             <span className="font-bold">{defaultModel.split('/')[1] || 'Llama 3.1 70B'}</span>
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-sm shadow-rose-500" />
           </button>
 
           {/* Stripe-Powered Studio Pro Upgrade Button */}
           <button
             onClick={() => setShowUpgradeModal(true)}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold border border-amber-300 text-xs font-mono transition shadow-md shadow-amber-500/25 cursor-pointer active:scale-95 flex-shrink-0"
+            className="flex items-center space-x-1 px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold border border-amber-300 text-[11px] font-mono transition shadow-md shadow-amber-500/20 cursor-pointer active:scale-95 flex-shrink-0"
           >
-            <Crown size={13} fill="currentColor" />
-            <span>Studio Pro</span>
+            <Crown size={12} fill="currentColor" />
+            <span>Pro</span>
           </button>
 
-          <div className="hidden lg:flex items-center space-x-1.5 text-xs text-purple-300/70 border-l border-purple-900/60 pl-3">
-            <span className="text-purple-400/60">Project:</span>
-            <span className="text-rose-200 font-semibold truncate max-w-[140px]">{projectStatus.projectName}</span>
+          <div className="hidden xl:flex items-center space-x-1 text-[11px] text-amber-300/70 border-l border-amber-500/30 pl-2.5 flex-shrink-0">
+            <span className="text-amber-400/60">Project:</span>
+            <span className="text-amber-200 font-semibold truncate max-w-[120px]">{projectStatus.projectName}</span>
             {onChangeProject && (
               <button
                 onClick={onChangeProject}
-                className="text-rose-400 hover:text-rose-300 text-[11px] underline ml-1"
+                className="text-amber-400 hover:text-amber-300 underline ml-1"
               >
                 Switch
               </button>

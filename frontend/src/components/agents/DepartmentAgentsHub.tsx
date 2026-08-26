@@ -277,50 +277,50 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
   return (
     <div className="flex flex-col h-full bg-[#05030c] text-slate-100 font-sans select-none overflow-hidden">
       {/* Top Hub Telemetry & Title Bar - Styled to Arise Productions Logo */}
-      <div className="flex items-center justify-between px-6 py-3 bg-[#0d0722]/95 border-b border-amber-500/30 backdrop-blur-md flex-shrink-0 z-10 shadow-lg">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl overflow-hidden border border-amber-400 bg-black flex-shrink-0 flex items-center justify-center shadow-lg shadow-amber-500/20">
+      <div className="flex items-center justify-between px-4 py-2 bg-[#0d0722]/95 border-b border-amber-500/30 backdrop-blur-md flex-shrink-0 z-10 shadow-md">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 rounded-lg overflow-hidden border border-amber-400 bg-black flex-shrink-0 flex items-center justify-center shadow-md shadow-amber-500/20">
             <img src={ARISE_LOGO_BASE64} alt="Arise Logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-sm font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif">
-                ARISE EXECUTIVE BOARDROOM
+              <h2 className="text-xs sm:text-sm font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif">
+                ARISE COMMAND CENTER
               </h2>
-              <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/50 font-mono font-bold">
-                10 TRAINED LEADS
+              <span className="text-[8px] px-1.5 py-0.2 rounded-full bg-amber-950 text-amber-300 border border-amber-500/50 font-mono font-bold">
+                10 LEADS
               </span>
             </div>
-            <p className="text-[10px] text-amber-200/70 font-mono tracking-wider">
-              PROJECT CONTEXT: <strong className="text-amber-300">{projectName.toUpperCase()}</strong> • 3D SPATIAL & PERSISTENT MEMORY SYNCED
+            <p className="text-[9px] text-amber-200/70 font-mono tracking-wider truncate max-w-xs sm:max-w-md">
+              PROJECT: <strong className="text-amber-300">{projectName.toUpperCase()}</strong> • 3D 4K & PERSISTENT MEMORY SYNCED
             </p>
           </div>
         </div>
 
         {/* Right Tools: 3D Hologram Toggle & Memory Vault */}
-        <div className="flex items-center space-x-3 text-xs">
+        <div className="flex items-center space-x-2 text-xs">
           <button
             onClick={() => setShow3DHologram((prev) => !prev)}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono transition ${
+            className={`flex items-center space-x-1 px-2.5 py-1 rounded-xl border text-[11px] font-mono transition ${
               show3DHologram
-                ? 'bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-md shadow-amber-500/20'
+                ? 'bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-sm shadow-amber-500/20'
                 : 'bg-purple-950/60 text-purple-300 border-purple-800/50 hover:bg-purple-900/40 hover:text-white'
             }`}
           >
-            {show3DHologram ? <Eye size={13} className="text-amber-400" /> : <EyeOff size={13} className="text-purple-400" />}
-            <span>3D Hologram {show3DHologram ? 'ON' : 'OFF'}</span>
+            {show3DHologram ? <Eye size={12} className="text-amber-400" /> : <EyeOff size={12} className="text-purple-400" />}
+            <span>3D Stage {show3DHologram ? 'ON' : 'OFF'}</span>
           </button>
 
           <button
             onClick={() => setShowMemoryVault((prev) => !prev)}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono transition shadow-sm ${
+            className={`flex items-center space-x-1 px-2.5 py-1 rounded-xl border text-[11px] font-mono transition shadow-sm ${
               showMemoryVault
                 ? 'bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-amber-500/20'
                 : 'bg-purple-950/60 text-purple-300 border-purple-800/50 hover:bg-purple-900/40 hover:text-white'
             }`}
           >
-            <Brain size={13} className={showMemoryVault ? 'text-amber-400' : 'text-purple-400'} />
-            <span>Studio Memory Vault ({memories.length})</span>
+            <Brain size={12} className={showMemoryVault ? 'text-amber-400' : 'text-purple-400'} />
+            <span>Memory Vault ({memories.length})</span>
           </button>
         </div>
       </div>
@@ -328,51 +328,48 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
       {/* Main Boardroom Workspace */}
       <div className="flex flex-grow overflow-hidden relative">
         {/* Left: Department Agent Roster */}
-        <aside className="w-72 xl:w-80 flex-shrink-0 border-r border-amber-500/20 bg-[#080418]/95 flex flex-col overflow-hidden">
+        <aside className="w-64 xl:w-72 flex-shrink-0 border-r border-amber-500/20 bg-[#080418]/95 flex flex-col overflow-hidden">
           {/* Search Box */}
-          <div className="p-3 border-b border-amber-500/20">
+          <div className="p-2.5 border-b border-amber-500/20">
             <div className="relative">
-              <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-amber-400" />
+              <Search className="absolute left-2.5 top-2 w-3 h-3 text-amber-400" />
               <input
                 type="text"
                 placeholder="Search department leads..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-[#12082b] border border-amber-500/30 rounded-xl text-xs text-amber-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 font-mono"
+                className="w-full pl-7 pr-2.5 py-1 bg-[#12082b] border border-amber-500/30 rounded-xl text-[11px] text-amber-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 font-mono"
               />
             </div>
           </div>
 
           {/* Agents List */}
-          <div className="flex-grow overflow-y-auto p-2.5 space-y-1.5 custom-scrollbar">
+          <div className="flex-grow overflow-y-auto p-2 space-y-1 custom-scrollbar">
             {filteredAgents.map((agent) => {
               const isSelected = agent.id === selectedAgentId;
               return (
                 <button
                   key={agent.id}
                   onClick={() => setSelectedAgentId(agent.id)}
-                  className={`w-full text-left p-3 rounded-2xl border transition-all duration-150 flex items-start space-x-3 ${
+                  className={`w-full text-left p-2 rounded-xl border transition-all duration-150 flex items-start space-x-2.5 ${
                     isSelected
-                      ? `bg-gradient-to-r from-amber-500/20 to-purple-900/40 border-amber-400 shadow-lg shadow-amber-500/10`
+                      ? `bg-gradient-to-r from-amber-500/20 to-purple-900/40 border-amber-400 shadow-md shadow-amber-500/10`
                       : `bg-[#0f0727]/60 border-amber-500/10 hover:bg-[#160a36] hover:border-amber-500/30`
                   }`}
                 >
-                  <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-base flex-shrink-0 shadow-md border border-white/20`}>
+                  <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${agent.color} flex items-center justify-center text-sm flex-shrink-0 shadow-sm border border-white/20`}>
                     {agent.avatar}
                   </div>
                   <div className="flex-grow min-w-0">
                     <div className="flex items-center justify-between">
-                      <h4 className={`text-xs font-bold truncate ${isSelected ? 'text-amber-300' : 'text-amber-100'}`}>
+                      <h4 className={`text-[11px] font-bold truncate ${isSelected ? 'text-amber-300' : 'text-amber-100'}`}>
                         {agent.name}
                       </h4>
-                      <span className="text-[8px] font-mono px-1.5 py-0.2 rounded bg-amber-950 text-amber-300 border border-amber-500/40 font-bold">
+                      <span className="text-[7px] font-mono px-1 py-0.2 rounded bg-amber-950 text-amber-300 border border-amber-500/40 font-bold">
                         {agent.badge}
                       </span>
                     </div>
-                    <p className="text-[10px] text-amber-200/60 truncate font-sans">{agent.role}</p>
-                    <div className="flex items-center gap-1 mt-1 text-[9px] font-mono text-purple-400/70">
-                      <span>{agent.department}</span>
-                    </div>
+                    <p className="text-[9px] text-amber-200/60 truncate font-sans">{agent.role}</p>
                   </div>
                 </button>
               );
@@ -380,20 +377,20 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
           </div>
 
           {/* Council Mode Banner */}
-          <div className="p-3 border-t border-amber-500/20 bg-[#0d0722]">
+          <div className="p-2 border-t border-amber-500/20 bg-[#0d0722]">
             <button
               onClick={() => setSelectedAgentId('roundtable')}
-              className={`w-full p-2.5 rounded-xl border flex items-center justify-between text-xs font-mono font-bold transition ${
+              className={`w-full p-2 rounded-xl border flex items-center justify-between text-[11px] font-mono font-bold transition ${
                 selectedAgentId === 'roundtable'
                   ? 'bg-gradient-to-r from-amber-500/30 via-purple-600/30 to-yellow-500/30 border-amber-400 text-amber-200 shadow-md'
                   : 'bg-purple-950/50 border-amber-500/30 text-amber-200 hover:text-white hover:bg-purple-900/40'
               }`}
             >
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1.5">
                 <span>🏛️</span>
                 <span>Council Round Table</span>
               </div>
-              <ChevronRight size={14} className="text-amber-400" />
+              <ChevronRight size={13} className="text-amber-400" />
             </button>
           </div>
         </aside>
@@ -401,22 +398,22 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
         {/* Center: Live Chat & 3D Interactive Stage */}
         <main className="flex-grow flex flex-col bg-[#05030c] overflow-hidden min-h-0">
           {/* Agent Header */}
-          <div className="px-6 py-3 bg-[#0d0722]/95 border-b border-amber-500/20 flex items-center justify-between flex-shrink-0">
-            <div className="flex items-center space-x-3.5">
-              <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${currentAgent.color} flex items-center justify-center text-xl shadow-lg border border-amber-400/40`}>
+          <div className="px-4 py-2 bg-[#0d0722]/95 border-b border-amber-500/20 flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center space-x-2.5">
+              <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${currentAgent.color} flex items-center justify-center text-base shadow-md border border-amber-400/40`}>
                 {currentAgent.avatar}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif tracking-wide">
+                  <h3 className="text-xs sm:text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif tracking-wide">
                     {currentAgent.name}
                   </h3>
-                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[8px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
                     ONLINE & MEMORY SYNCED
                   </span>
                 </div>
-                <p className="text-[11px] text-amber-200/70 font-sans max-w-xl truncate">
+                <p className="text-[10px] text-amber-200/70 font-sans max-w-lg truncate">
                   {currentAgent.role} • {currentAgent.description}
                 </p>
               </div>
@@ -426,18 +423,18 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
               <button
                 onClick={handleClearHistory}
                 title="Clear Chat History"
-                className="p-1.5 text-purple-400 hover:text-rose-400 hover:bg-purple-950/60 rounded-lg transition"
+                className="p-1 text-purple-400 hover:text-rose-400 hover:bg-purple-950/60 rounded-lg transition"
               >
-                <Trash2 size={15} />
+                <Trash2 size={14} />
               </button>
             </div>
           </div>
 
-          {/* Optional 3D Holographic Pedestal Canvas */}
+          {/* Optional 3D Holographic Stage Canvas - Compact & Responsive */}
           {show3DHologram && (
-            <div className="h-52 w-full bg-gradient-to-b from-[#0a051c] to-[#05030c] border-b border-amber-500/20 relative flex-shrink-0">
+            <div className="h-32 sm:h-36 lg:h-40 w-full bg-gradient-to-b from-[#0a051c] to-[#05030c] border-b border-amber-500/20 relative flex-shrink-0">
               <Canvas
-                camera={{ position: [0, 0.3, 4.2], fov: 42 }}
+                camera={{ position: [0, 0.25, 3.8], fov: 40 }}
                 className="w-full h-full"
               >
                 <ambientLight intensity={0.7} color="#fde047" />
@@ -445,59 +442,59 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                 <pointLight position={[-3, 2, 2]} intensity={1.5} color="#a855f7" />
                 <AgentHologram3D agent={currentAgent} />
               </Canvas>
-              <div className="absolute top-2 right-3 pointer-events-none text-[9px] font-mono text-amber-400/80 bg-black/60 px-2 py-0.5 rounded border border-amber-500/30">
-                3D HOLOGRAPHIC STAGE
+              <div className="absolute top-1.5 right-2 pointer-events-none text-[8px] font-mono text-amber-400/80 bg-black/60 px-1.5 py-0.2 rounded border border-amber-500/30">
+                3D 4K STAGE
               </div>
             </div>
           )}
 
           {/* Sagas 5-Step Disciplined Production Hub Pipeline (createsagas.com/how-it-works) */}
-          <div className="px-6 py-2.5 bg-[#0a051d] border-b border-amber-500/25 flex items-center justify-between overflow-x-auto no-scrollbar gap-2 flex-shrink-0">
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-300 font-bold uppercase flex-shrink-0">
-              <Layers size={13} className="text-amber-400" />
+          <div className="px-4 py-1.5 bg-[#0a051d] border-b border-amber-500/25 flex items-center justify-between overflow-x-auto no-scrollbar gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 text-[9px] font-mono text-amber-300 font-bold uppercase flex-shrink-0">
+              <Layers size={11} className="text-amber-400" />
               <span>Sagas Pipeline:</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('plot')}
-                className="px-2.5 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/40 text-[10px] font-mono text-amber-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+                className="px-2 py-0.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/40 text-[9px] font-mono text-amber-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span className="w-1 h-1 rounded-full bg-amber-400" />
                 <span>01: Ideation & Plot</span>
               </button>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('characters')}
-                className="px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/40 text-[10px] font-mono text-purple-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+                className="px-2 py-0.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/40 text-[9px] font-mono text-purple-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                <span>02: Character Crafting</span>
+                <span className="w-1 h-1 rounded-full bg-purple-400" />
+                <span>02: Characters</span>
               </button>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('script')}
-                className="px-2.5 py-1 rounded-xl bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/40 text-[10px] font-mono text-rose-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+                className="px-2 py-0.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/40 text-[9px] font-mono text-rose-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                <span className="w-1 h-1 rounded-full bg-rose-400" />
                 <span>03: Scriptwriting</span>
               </button>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('boards')}
-                className="px-2.5 py-1 rounded-xl bg-blue-500/10 hover:bg-blue-500/25 border border-blue-500/40 text-[10px] font-mono text-blue-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+                className="px-2 py-0.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/25 border border-blue-500/40 text-[9px] font-mono text-blue-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                <span className="w-1 h-1 rounded-full bg-blue-400" />
                 <span>04: Storyboarding</span>
               </button>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('edit')}
-                className="px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-500/40 text-[10px] font-mono text-emerald-200 hover:text-white flex items-center gap-1.5 transition font-bold"
+                className="px-2 py-0.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-500/40 text-[9px] font-mono text-emerald-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="w-1 h-1 rounded-full bg-emerald-400" />
                 <span>05: Polish & Publish</span>
               </button>
             </div>
           </div>
 
           {/* Quick Prompt Pills */}
-          <div className="px-6 py-2 bg-[#090416] border-b border-amber-500/20 flex items-center space-x-2 overflow-x-auto no-scrollbar flex-shrink-0">
+          <div className="px-4 py-1.5 bg-[#090416] border-b border-amber-500/20 flex items-center space-x-1.5 overflow-x-auto no-scrollbar flex-shrink-0">
             <span className="text-[10px] font-mono uppercase text-amber-400 font-bold flex items-center gap-1 flex-shrink-0">
               <Zap size={11} /> Quick Directives:
             </span>
