@@ -20,7 +20,7 @@ export const agentToolDefinitions = [
         properties: {
           projectId: {
             type: 'string',
-            description: 'The unique ID of the project (default: "proj-fatherless-child")',
+            description: 'The unique ID of the target project',
           },
           shotNumber: {
             type: 'integer',
@@ -41,7 +41,7 @@ export const agentToolDefinitions = [
         properties: {
           projectId: {
             type: 'string',
-            description: 'The unique ID of the project (default: "proj-fatherless-child")',
+            description: 'The unique ID of the target project',
           },
         },
         required: [],
@@ -58,7 +58,7 @@ export const agentToolDefinitions = [
         properties: {
           projectId: {
             type: 'string',
-            description: 'The unique ID of the project (default: "proj-fatherless-child")',
+            description: 'The unique ID of the target project',
           },
           shotNumber: {
             type: 'integer',
@@ -246,8 +246,12 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
           projectId,
           projectName: manifest.projectName,
           format: manifest.format,
-          version: manifest.version,
-          shots: manifest.shots,
+          totalShots: manifest.shots?.length || 0,
+          shots: manifest.shots?.map(s => ({
+            shotNumber: s.shotNumber,
+            title: s.title,
+            description: s.description,
+          })) || [],
         };
       }
       return {

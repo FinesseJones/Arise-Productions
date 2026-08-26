@@ -237,33 +237,32 @@ export class NvidiaNIMClient {
       p = p.trim();
     }
 
+    // Extract active project name from system prompt if present
+    let detectedProject = 'Arise Production';
+    if (systemPrompt.includes('Active Project:')) {
+      const match = systemPrompt.match(/Active Project:\s*([^,\n|]+)/i);
+      if (match && match[1]) detectedProject = match[1].trim();
+    } else if (systemPrompt.includes('Project:')) {
+      const match = systemPrompt.match(/Project:\s*([^,\n|]+)/i);
+      if (match && match[1]) detectedProject = match[1].trim();
+    }
+
     const isGreeting = p === 'hello' || p === 'hi' || p === 'hey' || p.startsWith('hello') || p.startsWith('hi ') || p.startsWith('hey ');
 
     if (systemPrompt.includes('Screenwriter') || systemPrompt.includes('script') || systemPrompt.includes('Devon Wells')) {
       if (isGreeting) {
         return {
           success: true,
-          text: `Hey there! Great to connect. I'm currently looking over our screenplay draft and character dynamics across our ensemble.\n\nAre we looking to walk through the entire storyline for Episode 1, explore our character dynamics (Devon, Marcus, Vale, Cassie, Victor), or draft a specific scene? Tell me what's on your mind and I'll jump straight into writing!`,
+          text: `Hey there! Great to connect. I'm currently looking over our screenplay draft and character dynamics for **${detectedProject}**.\n\nAre we looking to walk through the entire episodic storyline, explore our character dynamics, or draft a specific scene? Tell me what's on your mind and I'll jump straight into writing!`,
           model: `${model} (Screenplay Lead)`,
           ai_powered: true,
         };
       }
 
-      // Check if user is asking about the first episode / entire episode / plot walkthrough
       if (p.includes('episode') || p.includes('first episode') || p.includes('episode 1') || p.includes('what it is about') || p.includes('walk through') || p.includes('synopsis') || p.includes('story')) {
         return {
           success: true,
-          text: `📖 **Episode 1: "Echoes of Absence" — Complete Story & Scene Walkthrough**\n\nHere is the full episodic narrative arc for the premiere of **A Fatherless Child**:\n\n---\n\n### 🎬 **Act 1: The Weight of the Past (The Routine & The Void)**\n* **Setting:** Early morning in the historic district. Golden dawn light filters through amber trees across the worn porch of the family architectural foundry.\n* **The Opening:** We meet **Devon (19)** standing on the porch holding a weathered photograph of her father and a hand-drawn blueprint. She's carrying the heavy emotional question of who her father was and why he disappeared.\n* **The Mentor's Anchor:** **Marcus (40s)**, her father's longtime workshop partner and master restorer, brings two steaming mugs and grounds her: *"Your story doesn't begin with who wasn't there, Devon—it begins with who you choose to be today."*\n* **The World:** We see Devon inside the workshop—she’s brilliant with hands-on craft, tools, and structural drafting, but emotionally guarded.\n\n---\n\n### ⚡ **Act 2: The Catalyst & The Threat (Vale's Eviction Notice)**\n* **The Inciting Incident:** A red condemnation notice is plastered across the foundry gate by **Vale Holdings**, giving the shop 30 days before forced demolition.\n* **The Antagonist Confrontation:** Devon storms the City Zoning Board hearing to confront **Vale (40s)**, a charismatic, cutthroat developer who dismisses her family's heritage as *"nostalgic ruins standing in the way of progress."*\n* **The Ally Steps In:** Outside city hall, investigative journalist **Cassie Thornfield** intercepts Devon. Cassie reveals that Vale is hiding forged environmental reports to fast-track the demolition because Devon's father had placed a historic preservation covenant on the land.\n\n---\n\n### ⚔️ **Act 3: The Midnight Vault & The Stand (The Turning Point)**\n* **The Investigation:** Devon, Marcus, and Cassie team up with **Victor Ramirez**, a conflicted city building inspector. They sneak into the foundry's sealed subterranean archives beneath the shop floor.\n* **The Revelation:** Devon discovers her father's original 1998 Master Heritage Covenant and structural patents. She realizes her father never abandoned them out of weakness—he vanished while fighting the exact same corporate conglomerate.\n* **The Climax:** Devon and Victor file an emergency legal injunction minutes before the midnight deadline, temporarily halting the demolition crews as dawn breaks.\n* **Episode 1 Cliffhanger:** In his high-rise office, Vale receives the news that Devon has blocked his permit. Vale looks down over the city: *"Then tear down everything around them first."*\n\n---\n\nWould you like me to write out a specific scene between Devon and Vale, draft the emotional porch opening, or map out Episode 2?`,
-          model: `${model} (Screenplay Lead)`,
-          ai_powered: true,
-        };
-      }
-
-      // Check if user is asking about characters / ensemble cast
-      if (p.includes('character') || p.includes('more than one') || p.includes('who is') || p.includes('cast') || p.includes('people') || p.includes('ensemble') || p.includes('1 person')) {
-        return {
-          success: true,
-          text: `🎭 **Ensemble Cast & Character Breakdown for "A Fatherless Child":**\n\nWe have a multi-layered 5-character ensemble driving this story:\n\n1. **DEVON (19, Protagonist — Positive Arc):**\n   * A gifted young artisan and architectural creator. Emotionally guarded and burdened by her father's unresolved disappearance, she must overcome her fear of loss to lead the fight for her community.\n\n2. **MARCUS (40s, Mentor — Flat Arc):**\n   * Master craftsman, foundry steward, and community patriarch. Marcus acts as the moral compass and surrogate father figure, teaching Devon that true strength is built from within.\n\n3. **VALE (45, Antagonist — Corruption Arc):**\n   * Ruthless, charismatic real estate tycoon. He believes that erasing history is necessary for progress and will use bribery, legal intimidation, and force to demolish the historic district.\n\n4. **CASSIE THORNFIELD (28, Supporting Ally — Disillusion Arc):**\n   * Tenacious investigative journalist whose cynical exterior masks a passion for exposing corporate corruption. She connects Vale's land grabs to Devon's father's past.\n\n5. **VICTOR RAMIREZ (35, Supporting Bureaucrat — Positive Arc):**\n   * A principled city building inspector caught between keeping his job and upholding the law. When Devon presents authentic blueprints, Victor chooses integrity over corporate pressure.\n\nWhich character dynamics would you like to explore or develop dialogue for next?`,
+          text: `📖 **${detectedProject} — Complete Story & Scene Walkthrough**\n\nHere is the full episodic narrative arc for **${detectedProject}**:\n\n---\n\n### 🎬 **Act 1: The Setup & The Void**\n* **Setting:** Early morning. Atmospheric golden dawn light establishes our lead protagonist facing critical stakes.\n* **The Opening:** We meet our lead confronting an unresolved past and weighing their responsibility to the future.\n* **The Mentor's Anchor:** A seasoned guide provides the foundational insight needed to push forward.\n\n---\n\n### ⚡ **Act 2: The Catalyst & The Crucible**\n* **The Inciting Incident:** An external disruption forces our hero out of safety and into direct conflict with powerful opposing forces.\n* **The Confrontation:** The stakes escalate rapidly as hidden truths come to light.\n\n---\n\n### ⚔️ **Act 3: The Turning Point & The Stand**\n* **The Climax:** The protagonist takes decisive action to secure justice and transform their world.\n\n---\n\nWould you like me to write out a specific scene, draft dialogue, or map out the next sequence?`,
           model: `${model} (Screenplay Lead)`,
           ai_powered: true,
         };
@@ -271,7 +270,7 @@ export class NvidiaNIMClient {
 
       return {
         success: true,
-        text: `✍️ **Devon Wells (Head Screenwriter):**\n\nHere is a screenplay sequence addressing "${p}":\n\n\`\`\`fountain\nINT. FOUNDRY WORKSPACE - NIGHT\n\nRain hammers against the high corrugated roof. MARCUS sits at the workbench, sanding a timber beam. DEVON paces the concrete floor with CASSIE's leaked files.\n\nDEVON\n"He didn't just leave, Marcus. Vale was threatening the foundry twenty years ago. My dad was trying to protect us."\n\nMARCUS\n(pausing his work)\n"Your father fought with blueprints and law books, Devon. But Vale fights with excavators and private security."\n\nDEVON\n(setting her hands on the table)\n"Then we fight him with both."\n\nCUT TO:\n\`\`\`\n\nWould you like me to refine this dialogue, or push this scene into **Stage 1 (Script Room)**?`,
+        text: `✍️ **Head Screenwriter (Dialogue Pass for "${detectedProject}"):**\n\n\`\`\`fountain\nINT. COMMAND HEADQUARTERS - NIGHT\n\nRain hammers against the high glass panels. The team gathers around the tactical display as the protagonist paces the floor.\n\nLEAD HERO\n"We don't back down from this. We finish what we started."\n\nMENTOR\n(pausing calmly)\n"Then make sure every move is calculated."\n\nCUT TO:\n\`\`\`\n\nWould you like me to refine this dialogue, or push this scene into **Stage 1 (Script Room)**?`,
         model: `${model} (Screenplay Lead)`,
         ai_powered: true,
       };
@@ -281,14 +280,14 @@ export class NvidiaNIMClient {
       if (isGreeting) {
         return {
           success: true,
-          text: `Welcome to the executive suite! I'm tracking our production readiness across all 10 stages.\n\nWhere should we focus today? We can pressure-test our 3-Act tension arc, refine our pilot logline, or audit our character stakes. What's your vision?`,
+          text: `Welcome to the executive suite for **${detectedProject}**! I'm tracking our production readiness across all 10 stages.\n\nWhere should we focus today? We can pressure-test our 3-Act tension arc, refine our pilot logline, or audit our character stakes. What's your vision?`,
           model: `${model} (Showrunner Lead)`,
           ai_powered: true,
         };
       }
       return {
         success: true,
-        text: `🌟 **Showrunner Sterling (Executive Assessment):**\n\nRegarding "${p}":\n\n1. **Core Narrative Engine:** Every scene must force Devon to make an active, irreversible choice.\n2. **Pacing:** Episode 1 moves swiftly from personal reflection to high-stakes legal and physical conflict.\n3. **Production Readiness:** Stages 1-10 are synchronized to support this direction.\n\nShall I greenlight the script draft for this beat?`,
+        text: `🌟 **Showrunner Sterling (Executive Assessment for "${detectedProject}"):**\n\nRegarding "${p}":\n\n1. **Core Narrative Engine:** Every scene must force our protagonist to make an active, irreversible choice.\n2. **Pacing:** The story moves swiftly from personal reflection to high-stakes conflict.\n3. **Production Readiness:** Stages 1-10 are synchronized to support this direction.\n\nShall I greenlight the script draft for this beat?`,
         model: `${model} (Showrunner Lead)`,
         ai_powered: true,
       };
@@ -298,14 +297,14 @@ export class NvidiaNIMClient {
       if (isGreeting) {
         return {
           success: true,
-          text: `Hey! Soundstage is ready and lit. I've been choreographing our Unreal Engine 5 CineCamera setups.\n\nWe have our 35mm anamorphic prime locked for environmental scale and the 85mm T1.8 standing by for intimate emotional coverage. Do you want to stage a camera move, configure our 3-point golden hour lighting, or map out dolly vectors?`,
+          text: `Hey! Soundstage is ready and lit for **${detectedProject}**. I've been choreographing our Unreal Engine 5 CineCamera setups.\n\nWe have our 35mm anamorphic prime locked for environmental scale and the 85mm T1.8 standing by for intimate emotional coverage. Do you want to stage a camera move, configure our 3-point lighting, or map out dolly vectors?`,
           model: `${model} (Cinematography Lead)`,
           ai_powered: true,
         };
       }
       return {
         success: true,
-        text: `Unreal Engine 5.4 CineCamera Parameters Solved:\n\n• Lens: 35mm Anamorphic Prime (T1.8)\n• Sensor Dimensions: Full Frame 36.00mm x 24.00mm\n• Camera Rig: Orbit Crane Arm with 4-Axis Gyro Stabilizer\n• Coordinate Path: Origin [0, 0, 160cm] $\\rightarrow$ Orbit Vector [14.2, -8.6, 120cm]\n• Depth of Field: Focus Distance 2.8m, Aperture f/2.4\n• Lighting Ratio: 4:1 Golden Hour Key to Fill with Cool Blue Bounce\n\nI can push these camera vectors directly to Stage 4 (Blockout Previs). Ready to render a camera pass?`,
+        text: `Unreal Engine 5.4 CineCamera Parameters Solved for "${detectedProject}":\n\n• Lens: 35mm Anamorphic Prime (T1.8)\n• Sensor Dimensions: Full Frame 36.00mm x 24.00mm\n• Camera Rig: Orbit Crane Arm with 4-Axis Gyro Stabilizer\n• Coordinate Path: Origin [0, 0, 160cm] $\\rightarrow$ Orbit Vector [14.2, -8.6, 120cm]\n• Depth of Field: Focus Distance 2.8m, Aperture f/2.4\n• Lighting Ratio: 4:1 Golden Hour Key to Fill with Cool Blue Bounce\n\nI can push these camera vectors directly to Stage 4 (Blockout Previs). Ready to render a camera pass?`,
         model: `${model} (Cinematography Lead)`,
         ai_powered: true,
       };
@@ -314,7 +313,7 @@ export class NvidiaNIMClient {
     if (systemPrompt.includes('Prompt') || systemPrompt.includes('Diffusion') || systemPrompt.includes('Nova')) {
       return {
         success: true,
-        text: `ComfyUI FLUX.1 Dev Generative Slate Matrix:\n\n• Positive Prompt:\n"Cinematic 35mm anamorphic film still of lead hero standing in atmospheric command bridge, volumetric golden amber sunlight streaming through windows, ultra-detailed skin pores, 8k resolution, photorealistic studio lighting, masterpiece, ACEScg color space."\n\n• Negative Prompt:\n"blurry, cartoon, 3d render plastic, low quality, oversaturated, deformed hands, extra limbs, watermark."\n\n• ControlNet Depth V2 Weight: 0.85 (Balanced)\n• IP-Adapter Likeness Lock: @lead_actor_v1 (Weight: 0.90, FaceID Plus v2)\n\nPrompt matrix deployed to Stage 7 (Prompt Slate).`,
+        text: `ComfyUI FLUX.1 Dev Generative Slate Matrix for "${detectedProject}":\n\n• Positive Prompt:\n"Cinematic 35mm anamorphic film still of lead hero standing in atmospheric setting for ${detectedProject}, volumetric golden amber sunlight streaming through windows, ultra-detailed skin pores, 8k resolution, photorealistic studio lighting, masterpiece, ACEScg color space."\n\n• Negative Prompt:\n"blurry, cartoon, 3d render plastic, low quality, oversaturated, deformed hands, extra limbs, watermark."\n\n• ControlNet Depth V2 Weight: 0.85 (Balanced)\n• IP-Adapter Likeness Lock: @lead_actor_v1 (Weight: 0.90, FaceID Plus v2)\n\nPrompt matrix deployed to Stage 7 (Prompt Slate).`,
         model: `${model} (Prompt Lead)`,
         ai_powered: true,
       };
@@ -324,14 +323,14 @@ export class NvidiaNIMClient {
       if (isGreeting) {
         return {
           success: true,
-          text: `Hey! Sound stage is listening. All 4 stem channels (Dialogue, Foley, Score, LFE) are patched and calibrated to broadcast -24.0 LKFS.\n\nDo you want to balance our dialogue stems, design spatial 5.1 Dolby Atmos sound placement, or compose an emotional score cue for the scene?`,
+          text: `Hey! Sound stage is listening for **${detectedProject}**. All 4 stem channels (Dialogue, Foley, Score, LFE) are patched and calibrated to broadcast -24.0 LKFS.\n\nDo you want to balance our dialogue stems, design spatial 5.1 Dolby Atmos sound placement, or compose an emotional score cue for the scene?`,
           model: `${model} (Audio Lead)`,
           ai_powered: true,
         };
       }
       return {
         success: true,
-        text: `Dolby Atmos 5.1 Multi-Track Stem Setup Configured:\n\n1. Dialogue Center Channel (A1): Denoised at -24.0 LKFS (Voice ID: ElevenLabs Dynamic Baritone)\n2. Spatial Foley Beds (A2/A3): Sub-orbital room tone, metallic switches, atmospheric pressure hum\n3. Orchestral Score (A4): Low-frequency brass swell transitioning to strings at 00:00:08\n4. LFE Subwoofer Channel: 40 Hz structural rumble on scene transition\n\nStem Mix Level: -23.8 LKFS (EBU R128 / Broadcast Compliant). Mixed into Stage 10 (Stem Studio).`,
+        text: `Dolby Atmos 5.1 Multi-Track Stem Setup Configured for "${detectedProject}":\n\n1. Dialogue Center Channel (A1): Denoised at -24.0 LKFS (Voice ID: ElevenLabs Dynamic Baritone)\n2. Spatial Foley Beds (A2/A3): Sub-orbital room tone, metallic switches, atmospheric pressure hum\n3. Orchestral Score (A4): Low-frequency brass swell transitioning to strings at 00:00:08\n4. LFE Subwoofer Channel: 40 Hz structural rumble on scene transition\n\nStem Mix Level: -23.8 LKFS (EBU R128 / Broadcast Compliant). Mixed into Stage 10 (Stem Studio).`,
         model: `${model} (Audio Lead)`,
         ai_powered: true,
       };
@@ -341,58 +340,31 @@ export class NvidiaNIMClient {
       if (isGreeting) {
         return {
           success: true,
-          text: `Hey! Editorial timeline and DaVinci MCP color wheels are standing by.\n\nThe ACEScc color science and Kodak 2383 film print emulation curves are dialed in. Are we conforming scene cuts today, fine-tuning our Lift/Gamma/Gain wheels, or prepping an export deliverable?`,
+          text: `Hey! Editorial timeline and DaVinci MCP color wheels are standing by for **${detectedProject}**.\n\nThe ACEScc color science and Kodak 2383 film print emulation curves are dialed in. Are we conforming scene cuts today, fine-tuning our Lift/Gamma/Gain wheels, or prepping an export deliverable?`,
           model: `${model} (Editorial Lead)`,
           ai_powered: true,
         };
       }
       return {
         success: true,
-        text: `DaVinci Resolve Conform & ACEScc Grade Prepared:\n\n• Timeline Format: 4K DCI (4096x2160) at 24.000 FPS\n• Color Science: ACEScc (AP1 Working Space / Rec.709 ODT)\n• Active 3D LUT: Kodak 2383 Film Print Emulation\n• CDL Matrix: Slope [1.02, 0.98, 0.94], Offset [-0.01, 0.00, 0.02], Power [0.95, 0.95, 0.95]\n• EDL Cut Points: 4 Conformed Events ready for ProRes 4444 XQ Master Export in Stage 9.`,
+        text: `DaVinci Resolve Conform & ACEScc Grade Prepared for "${detectedProject}":\n\n• Timeline Format: 4K DCI (4096x2160) at 24.000 FPS\n• Color Science: ACEScc (AP1 Working Space / Rec.709 ODT)\n• Active 3D LUT: Kodak 2383 Film Print Emulation\n• CDL Matrix: Slope [1.02, 0.98, 0.94], Offset [-0.01, 0.00, 0.02], Power [0.95, 0.95, 0.95]\n• EDL Cut Points: 4 Conformed Events ready for ProRes 4444 XQ Master Export in Stage 9.`,
         model: `${model} (Editorial Lead)`,
         ai_powered: true,
       };
     }
 
     if (systemPrompt.includes('Round Table') || systemPrompt.includes('roundtable') || systemPrompt.includes('Executive')) {
-      if (p.includes('male') && p.includes('female') || p.includes('one male') || p.includes('two') || p.includes('brother') || p.includes('sister') || p.includes('both')) {
-        return {
-          success: true,
-          text: `🏛️ **Studio Executive Round Table — Dual Protagonist Plot Breakdown:**\n\n**🌟 Showrunner Sterling:** "Understood, Producer! That dynamic completely supercharges the emotional engine of **A Fatherless Child**. Having **one female** and **one male** fatherless child creates powerful thematic contrast in how they each process the absence of their father."\n\n**✍️ Devon Wells (Screenwriter):**\n"Here is how we weave their dual storylines:\n* **The Female Lead (DEVON, 19):** Internalizes the loss through preservation, craft, and protecting the family foundry. She seeks emotional closure through what was left behind.\n* **The Male Lead (SEAN / MALIK, 21):** Externalizes the void through kinetic independence, street-level vigilance, or technical defense. He refuses to look back until the threat forces them together.\n* **The Shared Catalyst:** When Vale Holdings moves to seize the neighborhood, both siblings/counterparts discover their father left two halves of the master covenant—meaning they cannot win this war without trusting each other."\n\n**🎬 CineDirector Maya (DP):** "Visually, we can use split-lighting and converging camera angles: warm amber key-light for Devon's foundry world, and cool sodium-vapor blue for his kinetic world, merging into full 4K balance when they stand together."\n\n**🌟 Showrunner Sterling:** "Shall we map out their parallel Act 1 introductions in the **01 Plot Room** or draft their opening confrontation?"`,
-          model: `${model} (Executive Round Table)`,
-          ai_powered: true,
-        };
-      }
-
-      if (p.includes('plot') || p.includes('story') || p.includes('premise') || p.includes('bible') || p.includes('first draft')) {
-        return {
-          success: true,
-          text: `🏛️ **Studio Executive Round Table — Series Plot Architecture:**\n\n**🌟 Showrunner Sterling:** "Let's lock in the core plot foundation for **A Fatherless Child** right now."\n\n### 📖 **Core Plot Overview & Narrative Engine:**\n1. **The Logline:** In a rapidly gentrifying city, two estranged youth—a female artisan and a male protector, both raised without their vanished father—must unite to protect their family's historic foundry from a ruthless corporate empire that holds the secret to their father's disappearance.\n\n2. **The 3-Act Episodic Progression:**\n   * **Act 1 (The Separate Realities):** We establish our female lead (Devon) struggling to keep the foundry alive and our male lead navigating the city streets. Both carry the scar of their absent father.\n   * **Act 2 (The Convergence & The Notice):** Vale Holdings serves a 30-day demolition decree. An investigative leak reveals their father didn't abandon them—he was silenced while protecting the community.\n   * **Act 3 (The Midnight Vault & Injunction):** Devon and her male counterpart infiltrate the sealed archives beneath the foundry, unite the two missing blueprints, and block the demolition excavators at dawn.\n\n**✍️ Devon Wells (Screenwriter):** "This gives us immense dramatic tension in every scene. Would you like to refine the beat sheet, develop the male lead's backstory, or push this plot directly into **01 Ideation & Plot Room**?"`,
-          model: `${model} (Executive Round Table)`,
-          ai_powered: true,
-        };
-      }
-
       return {
         success: true,
-        text: `🏛️ **Studio Executive Round Table:**\n\n**🌟 Showrunner Sterling:** "We have aligned our focus on your directive: '${p}'. This directly informs our narrative roadmap."\n\n**✍️ Devon Wells (Screenwriter):** "I'm adjusting the screenplay dialogue and scene stakes to reflect these exact parameters."\n\n**🎬 CineDirector Maya (DP):** "Visual composition and camera vectors are configured to emphasize these character beats."\n\n**🌟 Showrunner Sterling:** "Would you like us to push these changes into the **01 Plot Room** or continue drafting the scene in **Stage 1 (ScriptBreak)**?"`,
+        text: `🏛️ **Studio Executive Round Table for "${detectedProject}":**\n\n**🌟 Showrunner Sterling:** "We have aligned our focus on your directive: '${p}'. This directly informs our narrative roadmap."\n\n**✍️ Screenplay Lead:** "I'm adjusting the screenplay dialogue and scene stakes for ${detectedProject} to reflect these exact parameters."\n\n**🎬 CineDirector Maya (DP):** "Visual composition and camera vectors are configured to emphasize these character beats."\n\n**🌟 Showrunner Sterling:** "Would you like us to push these changes into the **01 Plot Room** or continue drafting the scene in **Stage 1 (ScriptBreak)**?"`,
         model: `${model} (Executive Round Table)`,
-        ai_powered: true,
-      };
-    }
-
-    if (p.includes('plot') || p.includes('male') || p.includes('female') || p.includes('fatherless')) {
-      return {
-        success: true,
-        text: `🦅 **Arise Co-Pilot (Plot Supervisor):**\n\nI've calibrated the series plot for **A Fatherless Child** around our dual male & female fatherless protagonists.\n\n• **Plot Focus:** The contrast between how a daughter and son/counterpart process an absent father and unite against corporate gentrification.\n• **Status Across Studio:** Plot Room, Characters Room, and Screenplay Engine are updated with this dual-lead narrative arc.\n\nShall I navigate you to the **01 Plot Room** to review the updated logline and themes?`,
-        model: `${model} (Neural Co-Pilot)`,
         ai_powered: true,
       };
     }
 
     return {
       success: true,
-      text: `Hello! I'm your **Arise Co-Pilot**, standing by across all 14 rooms and 10 production stages.\n\nAll systems are powered on and synced. Whether you want to develop the plot, write dialogue with Devon Wells, stage camera angles with CineDirector Maya, or dispatch a full pipeline workflow, I'm right here with you. What would you like to create first?`,
+      text: `Hello! I'm your **Arise Co-Pilot**, standing by across all 14 rooms and 10 production stages for **${detectedProject}**.\n\nAll systems are powered on and synced. Whether you want to develop the plot, write dialogue, stage camera angles, or dispatch a full pipeline workflow, I'm right here with you. What would you like to create first?`,
       model: `${model} (Neural Co-Pilot)`,
       ai_powered: true,
     };
