@@ -212,45 +212,84 @@ Devon opens a notebook filled with hand-drawn plans and film concepts.`;
         </div>
       </div>
 
-      {/* AI Script Doctor Toolbar */}
+      {/* Sagas Scriptwriting Formatting Toolbar (Image 2) */}
       {activeTab === 'editor' && (
-        <div className="flex items-center gap-1.5 px-3 py-1.5 overflow-x-auto flex-shrink-0 text-[10px] font-mono bg-purple-950/40 border-b border-purple-900/40">
-          <span className="text-rose-400 font-bold flex items-center gap-1 mr-1 flex-shrink-0">
-            <Sparkles size={11} className="text-amber-400 animate-spin" />
-            <span>AI DOCTOR:</span>
-          </span>
-          <button
-            type="button"
-            disabled={isGenerating}
-            onClick={() => handleAIDoctor('Raise the emotional stakes and subtext in this dialogue')}
-            className="px-2 py-0.5 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 rounded border border-rose-500/40 transition flex-shrink-0 font-bold disabled:opacity-50"
-          >
-            🔥 Raise Stakes
-          </button>
-          <button
-            type="button"
-            disabled={isGenerating}
-            onClick={() => handleAIDoctor('Add psychological subtext and physical actor business')}
-            className="px-2 py-0.5 bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 rounded border border-purple-500/40 transition flex-shrink-0 font-bold disabled:opacity-50"
-          >
-            🎭 Add Subtext
-          </button>
-          <button
-            type="button"
-            disabled={isGenerating}
-            onClick={() => handleAIDoctor('Format standard Hollywood scene slugline and punchy action line')}
-            className="px-2 py-0.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 rounded border border-amber-500/40 transition flex-shrink-0 font-bold disabled:opacity-50"
-          >
-            ⚡ Hollywood Slugline
-          </button>
-          <button
-            type="button"
-            disabled={isGenerating}
-            onClick={() => handleAIDoctor('Sharpen comedic or dramatic rhythm and dialogue cadences')}
-            className="px-2 py-0.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 rounded border border-cyan-500/40 transition flex-shrink-0 font-bold disabled:opacity-50"
-          >
-            ✨ Polish Cadence
-          </button>
+        <div className="flex items-center justify-between px-3 py-1.5 overflow-x-auto flex-shrink-0 text-[11px] font-mono bg-[#0c0620] border-b border-amber-500/30 gap-2">
+          <div className="flex items-center space-x-1">
+            <button
+              type="button"
+              onClick={() => {
+                setScreenplay((prev) => `${prev}\n\n1. INT. MANSION - NIGHT\n\nCOLD OPEN:`);
+                toast.success('Inserted Scene Heading');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 transition font-bold"
+            >
+              Scene Heading
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setScreenplay((prev) => `${prev}\n\nThe front door bursts open. Rain and amber streetlight illuminate the room.`);
+                toast.success('Inserted Action');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/30 text-purple-200 border border-purple-500/40 transition font-bold"
+            >
+              Action
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setScreenplay((prev) => `${prev}\n\nDEVON`);
+                toast.success('Inserted Character');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/30 text-rose-200 border border-rose-500/40 transition font-bold"
+            >
+              Character
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setScreenplay((prev) => `${prev}\n"We finish what we started."`);
+                toast.success('Inserted Dialogue');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 transition font-bold"
+            >
+              Dialogue
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setScreenplay((prev) => `${prev}\n(whispering, determined)`);
+                toast.success('Inserted Parenthetical');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-blue-500/15 hover:bg-blue-500/30 text-blue-200 border border-blue-500/40 transition font-bold"
+            >
+              Parenthetical
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setScreenplay((prev) => `${prev}\n\nCUT TO:`);
+                toast.success('Inserted Transition');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-yellow-500/15 hover:bg-yellow-500/30 text-yellow-200 border border-yellow-500/40 transition font-bold"
+            >
+              Transition
+            </button>
+          </div>
+
+          {/* AI Doctor Assistant */}
+          <div className="flex items-center space-x-1.5 flex-shrink-0">
+            <button
+              type="button"
+              disabled={isGenerating}
+              onClick={() => handleAIDoctor('Raise the emotional stakes and subtext in this dialogue')}
+              className="px-2.5 py-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded-lg transition flex items-center gap-1 font-bold disabled:opacity-50"
+            >
+              <Sparkles size={11} className={isGenerating ? 'animate-spin' : ''} />
+              <span>AI Dialogue Doctor</span>
+            </button>
+          </div>
         </div>
       )}
 

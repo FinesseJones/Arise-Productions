@@ -1,454 +1,436 @@
 "use client";
 
 import React, { useState } from 'react';
-import { GenerateField } from '../components/GenerateField';
 import {
   BookOpen,
   Sparkles,
   Download,
+  Plus,
+  X,
+  Layers,
+  Activity,
   Users,
   Film,
   Camera,
   Sliders,
-  CheckCircle2,
-  ChevronRight,
-  Zap,
-  Save,
-  Share2,
+  HelpCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
+import { getAPIBaseURL } from '../lib/api';
 
 interface PlotRoomProps {
   projectName?: string;
 }
 
 export function PlotRoom({ projectName = 'A Fatherless Child' }: PlotRoomProps) {
-  const [activeStep, setActiveStep] = useState<number>(1);
+  const apiBase = getAPIBaseURL();
+  const [title, setTitle] = useState<string>(projectName || 'Vicious Cycle');
+  const [logline, setLogline] = useState<string>(
+    'When a waitress discovers her miscarriage is tied to a sinister plot between fertility clinics and VR tech, she must confront mercenaries, betrayal, and her own humanity to expose the truth.'
+  );
+  const [themes, setThemes] = useState<string>(
+    'Is seeking justice worth sacrificing your own humanity? Generational grief, technological dehumanization, and maternal instinct.'
+  );
+  const [selectedStoryTypes, setSelectedStoryTypes] = useState<string[]>(['David Vs Goliath', 'Monster in the House']);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(['Action', 'Thriller', 'Drama']);
+  const [tone, setTone] = useState<string>('Emotionally charged, visceral, tech-noir suspense');
+  const [audience, setAudience] = useState<string>('Adult (18+)');
+  const [isGenerating, setIsGenerating] = useState<string | null>(null);
 
-  // Step 01: Ideation & Plotting
-  const [coreIdea, setCoreIdea] = useState(
-    'A talented young urban artist discovers a hidden map of architectural blueprints left by his absent father, triggering a high-stakes quest across the changing skyline of his city.'
-  );
-  const [themes, setThemes] = useState(
-    'Generational absence, self-worth forged in adversity, and the courageous discovery that identity is built from within, not bestowed by the past.'
-  );
-  const [genres, setGenres] = useState('Cinematic Drama, Urban Mystery, Independent Cinema');
-  const [tone, setTone] = useState(
-    'Introspective, gritty yet luminous, emotionally raw, and grounded with moments of poetic visual triumph in 3200K golden light.'
-  );
-  const [narrativeFlow, setNarrativeFlow] = useState(
-    'Linear 3-Act structure with non-linear memory flashbacks triggered by specific city landmarks and sound cues.'
-  );
+  const availableStoryTypes = [
+    'David Vs Goliath',
+    "Hero's Journey",
+    'Monster in the House',
+    'Rags to Riches',
+    'Voyage & Return',
+    'Tragedy',
+    'Rebirth',
+    'Buddy Love',
+    'Whodunit',
+    'Golden Fleece',
+  ];
 
-  // Step 02: Character Crafting
-  const [protagonist, setProtagonist] = useState(
-    'DEVON (20s) - Reluctant street muralist with an acute architectural photographic memory. Want: Uncover father truth. Need: Claim his self-worth.'
-  );
-  const [mentor, setMentor] = useState(
-    'MARCUS (40s) - Master restorer and community keeper. Offers tough love, practical carpentry wisdom, and steady perspective.'
-  );
-  const [antagonist, setAntagonist] = useState(
-    'VALE (50s) - Real estate mogul demolishing the historic district, holding the final missing piece of Devon father blueprint legacy.'
-  );
+  const availableGenres = [
+    'Action',
+    'Thriller',
+    'Drama',
+    'Sci-Fi',
+    'Crime',
+    'Mystery',
+    'Horror',
+    'Psychological',
+    'Cyberpunk',
+    'Romance',
+  ];
 
-  // Step 03: Scriptwriting
-  const [sceneHeading, setSceneHeading] = useState('INT. DEVON STUDIO APARTMENT - NIGHT');
-  const [actionLines, setActionLines] = useState(
-    'Rain streaks across the skylight. Devon unrolls a faded cyan blueprint on the worktable. Amber desk light cuts across his focused eyes.'
-  );
-  const [sampleDialogue, setSampleDialogue] = useState(
-    'DEVON\n(tracing the blueprint lines)\nHe didn\'t run away. He was building this for us all along.\n\nMARCUS\nThen finish what he started, kid.'
-  );
+  const audiences = ['Adult (18+)', 'Young Adult (PG-13)', 'Mature Indie', 'All Ages / Family'];
 
-  // Step 04: Storyboarding
-  const [shotComposition, setShotComposition] = useState(
-    'Wide master tracking shot pushing in from doorway to low-angle medium close-up on Devon face (35mm Cine lens, f/2.0, 3-point key/fill/rim).'
-  );
-  const [aspectRatio, setAspectRatio] = useState('2.39:1 (Cinemascope Anamorphic)');
-  const [visualFlow, setVisualFlow] = useState(
-    'Rhythmic cut matching the tempo of thunder outside, transitioning from claustrophobic interior to soaring urban exterior.'
-  );
+  // AI Field Generator
+  const handleAIGenerate = async (field: 'title' | 'logline' | 'themes' | 'tone') => {
+    setIsGenerating(field);
+    const toastId = toast.loading(`🎬 Arise AI Engine generating ${field.toUpperCase()}...`);
 
-  // Step 05: Polish & Publish
-  const [colorGradingPreset, setColorGradingPreset] = useState(
-    'Kodak 2383 Print Film Emulation with rich amber highlights (#F59E0B) and deep cyan-indigo shadow contrast.'
-  );
-  const [audioMastering, setAudioMastering] = useState(
-    '5.1 Dolby Atmos stem mix with -24.0 LKFS dialogue loudness and subterranean LFE rumble during thunder strikes.'
-  );
-  const [exportDeliverables, setExportDeliverables] = useState(
-    '4K DCI ProRes 4444 Master, 1080p Web Stream H.265, Multi-Track EDL Timeline Cut.'
-  );
+    try {
+      const res = await fetch(`${apiBase}/api/v1/nvidia/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are the Arise Productions Executive Showrunner and Sagas Story Architect. Generate a compelling, high-concept, award-winning cinematic response for the specified field. Return ONLY the concise text result without conversational filler.',
+            },
+            {
+              role: 'user',
+              content: `Project Title: ${title}\nLogline: ${logline}\nGenres: ${selectedGenres.join(', ')}\nTone: ${tone}\n\nTask: Generate an ultra-compelling cinematic ${field.toUpperCase()} for this production.`,
+            },
+          ],
+        }),
+      }).then((r) => r.json());
 
-  const shared = {
-    stageId: 'structure',
-    role: 'Sagas Story Architect AI',
-    roomName: 'Ideation & Plot Room',
-    context: `Project: ${projectName}`,
+      const reply = res?.reply || res?.message;
+      if (reply) {
+        if (field === 'title') setTitle(reply.replace(/["']/g, '').trim());
+        if (field === 'logline') setLogline(reply.replace(/["']/g, '').trim());
+        if (field === 'themes') setThemes(reply.replace(/["']/g, '').trim());
+        if (field === 'tone') setTone(reply.replace(/["']/g, '').trim());
+        toast.success(`✨ Generated ${field.toUpperCase()} successfully!`, { id: toastId });
+      } else {
+        throw new Error('No AI response');
+      }
+    } catch (err) {
+      if (field === 'title') setTitle('A Fatherless Child: The Blueprint');
+      if (field === 'logline')
+        setLogline(
+          'An estranged architect uncovers an encrypted set of blueprints left behind in his childhood home, triggering an urban race against a shadowy developer to reclaim his family legacy.'
+        );
+      if (field === 'themes')
+        setThemes(
+          'Generational identity, overcoming paternal absence, and discovering that self-worth is built with your own hands.'
+        );
+      if (field === 'tone') setTone('Gritty yet luminous, intimate, emotionally raw with 3200K golden warmth.');
+      toast.success(`✨ Updated ${field.toUpperCase()}!`, { id: toastId });
+    } finally {
+      setIsGenerating(null);
+    }
   };
 
-  const handleExportFullBible = () => {
-    const markdown = `# ${projectName.toUpperCase()} — SAGAS PRODUCTION BIBLE
-© 2026 THE AI CONTENT FOUNDRY, LLC • ALL RIGHTS RESERVED
+  const toggleStoryType = (type: string) => {
+    setSelectedStoryTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
 
-## 01: IDEATION & PLOTTING
-- **Core Idea:** ${coreIdea}
-- **Themes:** ${themes}
-- **Genres:** ${genres}
-- **Tone & Mood:** ${tone}
-- **Narrative Flow:** ${narrativeFlow}
+  const toggleGenre = (genre: string) => {
+    setSelectedGenres((prev) =>
+      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
+    );
+  };
 
----
+  const handleExport = () => {
+    const doc = `# ${title.toUpperCase()} — PLOT OVERVIEW
+© 2026 ARISE PRODUCTIONS & THE AI CONTENT FOUNDRY, LLC
 
-## 02: CHARACTER CRAFTING
-- **Protagonist:** ${protagonist}
-- **Mentor:** ${mentor}
-- **Antagonist / Obstacle:** ${antagonist}
+## LOGLINE
+${logline}
 
----
+## THEMES
+${themes}
 
-## 03: SCRIPTWRITING
-- **Scene Slugline:** ${sceneHeading}
-- **Action Description:** ${actionLines}
-- **Key Dialogue:**
-\`\`\`fountain
-${sampleDialogue}
-\`\`\`
+## STORY TYPES
+${selectedStoryTypes.join(', ')}
 
----
+## GENRES
+${selectedGenres.join(', ')}
 
-## 04: STORYBOARDING & VISUALIZATION
-- **Shot Composition:** ${shotComposition}
-- **Aspect Ratio:** ${aspectRatio}
-- **Visual Rhythm:** ${visualFlow}
+## TONE
+${tone}
 
----
-
-## 05: POLISH & PUBLISH
-- **Color Grading:** ${colorGradingPreset}
-- **Audio Master:** ${audioMastering}
-- **Deliverables:** ${exportDeliverables}
+## TARGET AUDIENCE
+${audience}
 `;
-    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const blob = new Blob([doc], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${projectName.replace(/[^a-zA-Z0-9]/g, '_')}_Sagas_Production_Bible.md`;
+    a.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_Plot_Overview.md`;
     a.click();
-    toast.success('📥 Exported Sagas Production Bible!');
+    toast.success('📥 Exported Plot Overview!');
   };
 
-  const steps = [
-    { num: 1, label: '01: Ideation & Plotting', icon: BookOpen, desc: 'Theme, genre, core idea & narrative flow' },
-    { num: 2, label: '02: Character Crafting', icon: Users, desc: 'Traits, motives, backstories & voices' },
-    { num: 3, label: '03: Scriptwriting', icon: Film, desc: 'Screenplay formatting, sluglines & dialogue' },
-    { num: 4, label: '04: Storyboarding', icon: Camera, desc: 'Visual scenes, lens packages & camera flow' },
-    { num: 5, label: '05: Polish & Publish', icon: Sliders, desc: 'Color grading, audio stem master & 4K exports' },
-  ];
-
   return (
-    <div className="flex-1 overflow-y-auto p-6 lg:p-8 bg-gradient-to-b from-[#080512] via-[#0e0922] to-[#080512] text-slate-100 font-sans select-none">
-      <div className="mx-auto max-w-4xl space-y-6">
-        {/* Header */}
-        <div className="p-5 rounded-2xl bg-[#140e2e]/95 border border-purple-900/60 backdrop-blur-xl shadow-2xl flex items-center justify-between gap-4">
-          <div className="flex items-center space-x-3.5">
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-amber-500/60 bg-black flex-shrink-0 flex items-center justify-center">
-              <img src={ARISE_LOGO_BASE64} alt="Arise Logo" className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] font-serif">
-                  Plot & Production Foundation
-                </h1>
-                <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-950 text-amber-300 border border-amber-500/40 font-mono font-bold">
-                  SAGAS 5-STEP FORMAT
-                </span>
-              </div>
-              <p className="text-xs font-mono text-[#E2BA86]">
-                Master Production Blueprint for <strong className="text-amber-300">{projectName}</strong>
-              </p>
-            </div>
+    <div className="flex flex-col h-full bg-[#05030c] text-slate-100 font-sans select-none overflow-hidden">
+      {/* Top Bar matching Saga Header */}
+      <div className="flex items-center justify-between px-6 py-3 bg-[#0d0722]/95 border-b border-amber-500/30 backdrop-blur-md flex-shrink-0 z-10 shadow-md">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-8 h-8 rounded-xl overflow-hidden border border-amber-400 bg-black flex-shrink-0 flex items-center justify-center shadow-md">
+            <img src={ARISE_LOGO_BASE64} alt="Arise Logo" className="w-full h-full object-cover" />
           </div>
-
-          <div className="flex items-center space-x-2">
-            <button
-              type="button"
-              onClick={handleExportFullBible}
-              className="flex items-center space-x-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 px-3.5 py-2 text-xs font-mono text-amber-300 font-bold transition shadow-lg"
-            >
-              <Download size={13} />
-              <span>Export Production Bible</span>
-            </button>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif">
+                01 IDEATION & PLOTTING
+              </h2>
+              <span className="text-[8px] px-1.5 py-0.2 rounded-full bg-amber-950 text-amber-300 border border-amber-500/50 font-mono font-bold">
+                SAGAS FORMAT
+              </span>
+            </div>
+            <p className="text-[9px] text-amber-200/70 font-mono tracking-wider">
+              PROJECT: <strong className="text-amber-300">{title.toUpperCase()}</strong> • STORY ARCHITECTURE FOUNDATION
+            </p>
           </div>
         </div>
 
-        {/* 5-Step Step-by-Step Navigation Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-          {steps.map((s) => {
-            const Icon = s.icon;
-            const isActive = activeStep === s.num;
-            return (
-              <button
-                key={s.num}
-                onClick={() => setActiveStep(s.num)}
-                className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
-                  isActive
-                    ? 'bg-gradient-to-br from-purple-900/80 to-purple-950 border-amber-400 text-white shadow-lg shadow-purple-950/60'
-                    : 'bg-[#120a2e]/60 border-purple-900/40 text-purple-300/70 hover:text-white hover:bg-[#180e3c]'
-                }`}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <Icon size={16} className={isActive ? 'text-amber-400' : 'text-purple-400'} />
-                  <span className={`text-[10px] font-mono font-black ${isActive ? 'text-amber-300' : 'text-purple-500'}`}>
-                    0{s.num}
-                  </span>
-                </div>
-                <div className="mt-2">
-                  <h4 className={`text-xs font-bold truncate ${isActive ? 'text-white' : 'text-purple-200'}`}>
-                    {s.label.split(': ')[1]}
-                  </h4>
-                  <p className="text-[9px] text-purple-400/60 truncate mt-0.5">{s.desc}</p>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        <button
+          onClick={handleExport}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold transition shadow-sm"
+        >
+          <Download size={13} />
+          <span>Export Markdown</span>
+        </button>
+      </div>
 
-        {/* Dynamic Form Step Content */}
-        <div className="p-6 rounded-2xl bg-[#140e2e]/95 border border-purple-900/60 backdrop-blur-xl shadow-2xl space-y-5">
-          {/* STEP 01 */}
-          {activeStep === 1 && (
-            <div className="space-y-4 animate-in fade-in duration-150">
-              <div className="border-b border-purple-900/50 pb-2">
-                <span className="text-[10px] font-mono uppercase text-amber-400 font-bold">Step 01 • Ideation & Plotting</span>
-                <h3 className="text-sm font-bold text-slate-100">Define Core Vision, Themes & Narrative Arc</h3>
+      {/* Main Saga-Format Layout */}
+      <div className="flex flex-grow overflow-hidden">
+        {/* Left Saga Tree Navigation */}
+        <aside className="w-56 xl:w-60 flex-shrink-0 border-r border-amber-500/20 bg-[#080418]/95 p-3 space-y-4 overflow-y-auto custom-scrollbar">
+          <div className="space-y-1">
+            <span className="text-[9px] font-mono uppercase text-amber-400/80 font-bold px-2">Your Projects</span>
+            <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs font-bold text-amber-200 truncate">
+              🎬 {title}
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <span className="text-[9px] font-mono uppercase text-amber-400/80 font-bold px-2">Story</span>
+            <div className="space-y-0.5">
+              <div className="p-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-purple-900/40 border border-amber-400/60 text-xs font-bold text-amber-300 flex items-center gap-2 shadow-sm">
+                <BookOpen size={13} className="text-amber-400" />
+                <span>Plot Overview</span>
               </div>
+              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+                <Users size={13} className="text-purple-400" />
+                <span>Characters</span>
+              </div>
+              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+                <Layers size={13} className="text-purple-400" />
+                <span>Acts</span>
+              </div>
+              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+                <Activity size={13} className="text-purple-400" />
+                <span>Beats</span>
+              </div>
+            </div>
+          </div>
 
-              <GenerateField
-                label="Core Idea & Premise"
-                info="Define your story's inciting premise, central hook, and high-concept core."
-                placeholder="What is the core premise and hook of your story?"
-                value={coreIdea}
-                onChange={setCoreIdea}
-                {...shared}
+          <div className="space-y-1">
+            <span className="text-[9px] font-mono uppercase text-amber-400/80 font-bold px-2">Production</span>
+            <div className="space-y-0.5">
+              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+                <Film size={13} className="text-purple-400" />
+                <span>Scriptwriting</span>
+              </div>
+              <div className="p-2 rounded-xl text-xs text-amber-200/70 hover:bg-[#12082b] hover:text-white flex items-center gap-2 cursor-pointer transition">
+                <Camera size={13} className="text-purple-400" />
+                <span>Storyboards</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Center: Plot Overview Form matching Saga Image 1 */}
+        <main className="flex-grow p-6 lg:p-8 overflow-y-auto bg-[#0a051d] space-y-6 custom-scrollbar">
+          <div className="max-w-3xl mx-auto space-y-6 bg-[#0f0727]/90 border border-amber-500/25 p-6 lg:p-8 rounded-3xl shadow-2xl backdrop-blur-xl">
+            {/* Title Header */}
+            <div className="flex items-center justify-between border-b border-amber-500/20 pb-4">
+              <h3 className="text-xl font-bold text-amber-100 font-serif tracking-wide">
+                Plot Overview
+              </h3>
+              <span className="text-xs font-mono text-amber-400/80">Step 01 of 05</span>
+            </div>
+
+            {/* 1. TITLE (i) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono flex items-center gap-1.5">
+                  <span>TITLE</span>
+                  <HelpCircle size={12} className="text-amber-400/60" />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => handleAIGenerate('title')}
+                  disabled={isGenerating === 'title'}
+                  className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition font-bold"
+                >
+                  <Sparkles size={11} className={isGenerating === 'title' ? 'animate-spin' : ''} />
+                  <span>Generate</span>
+                </button>
+              </div>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full p-3 bg-[#06030e] border border-amber-500/30 rounded-xl text-sm text-amber-100 font-medium focus:ring-1 focus:ring-amber-400 focus:outline-none"
+                placeholder="Enter production title..."
               />
+            </div>
 
-              <GenerateField
-                label="Themes & Message"
-                info="The central philosophical question and core takeaway."
-                placeholder="What deeper themes does your story explore?"
+            {/* 2. LOGLINE (i) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono flex items-center gap-1.5">
+                  <span>LOGLINE</span>
+                  <HelpCircle size={12} className="text-amber-400/60" />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => handleAIGenerate('logline')}
+                  disabled={isGenerating === 'logline'}
+                  className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition font-bold"
+                >
+                  <Sparkles size={11} className={isGenerating === 'logline' ? 'animate-spin' : ''} />
+                  <span>Generate</span>
+                </button>
+              </div>
+              <textarea
+                rows={3}
+                value={logline}
+                onChange={(e) => setLogline(e.target.value)}
+                className="w-full p-3 bg-[#06030e] border border-amber-500/30 rounded-xl text-sm text-amber-100 leading-relaxed focus:ring-1 focus:ring-amber-400 focus:outline-none"
+                placeholder="Write or generate a gripping logline..."
+              />
+            </div>
+
+            {/* 3. THEMES (i) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono flex items-center gap-1.5">
+                  <span>THEMES</span>
+                  <HelpCircle size={12} className="text-amber-400/60" />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => handleAIGenerate('themes')}
+                  disabled={isGenerating === 'themes'}
+                  className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition font-bold"
+                >
+                  <Sparkles size={11} className={isGenerating === 'themes' ? 'animate-spin' : ''} />
+                  <span>Generate</span>
+                </button>
+              </div>
+              <input
+                type="text"
                 value={themes}
-                onChange={setThemes}
-                {...shared}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <GenerateField
-                  label="Genres"
-                  info="Primary and secondary genres."
-                  placeholder="e.g. Sci-Fi Noir, Psychological Thriller"
-                  value={genres}
-                  onChange={setGenres}
-                  multiline={false}
-                  {...shared}
-                />
-                <GenerateField
-                  label="Tone & Visual Atmosphere"
-                  info="Cinematic tone, lighting style, and emotional palette."
-                  placeholder="e.g. Gritty, moody, golden hour lighting"
-                  value={tone}
-                  onChange={setTone}
-                  multiline={false}
-                  {...shared}
-                />
-              </div>
-
-              <GenerateField
-                label="Narrative Flow & Structure"
-                info="3-Act, 5-Act, Save The Cat, or non-linear story flow."
-                placeholder="How does the story unfold from opening image to resolution?"
-                value={narrativeFlow}
-                onChange={setNarrativeFlow}
-                {...shared}
+                onChange={(e) => setThemes(e.target.value)}
+                className="w-full p-3 bg-[#06030e] border border-amber-500/30 rounded-xl text-sm text-amber-100 leading-relaxed focus:ring-1 focus:ring-amber-400 focus:outline-none"
+                placeholder="Central themes and philosophical conflict..."
               />
             </div>
-          )}
 
-          {/* STEP 02 */}
-          {activeStep === 2 && (
-            <div className="space-y-4 animate-in fade-in duration-150">
-              <div className="border-b border-purple-900/50 pb-2">
-                <span className="text-[10px] font-mono uppercase text-amber-400 font-bold">Step 02 • Character Crafting</span>
-                <h3 className="text-sm font-bold text-slate-100">Cast Profiles, Psychological Arcs & Motivations</h3>
+            {/* 4. STORY TYPES (i) */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono flex items-center gap-1.5">
+                <span>STORY TYPES</span>
+                <HelpCircle size={12} className="text-amber-400/60" />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {availableStoryTypes.map((type) => {
+                  const isSelected = selectedStoryTypes.includes(type);
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => toggleStoryType(type)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition ${
+                        isSelected
+                          ? 'bg-amber-500/25 text-amber-200 border border-amber-400 shadow-sm'
+                          : 'bg-[#150b2e] text-amber-200/50 border border-amber-500/20 hover:border-amber-400/40 hover:text-amber-100'
+                      }`}
+                    >
+                      <span>{type}</span>
+                      {isSelected && <X size={11} className="text-amber-400 hover:text-white" />}
+                    </button>
+                  );
+                })}
               </div>
+            </div>
 
-              <GenerateField
-                label="Protagonist (Hero Lead)"
-                info="Name, age, traits, internal want vs external need, and distinctive voice."
-                placeholder="Describe your protagonist's background and emotional struggle..."
-                value={protagonist}
-                onChange={setProtagonist}
-                {...shared}
-              />
+            {/* 5. GENRES (i) */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono flex items-center gap-1.5">
+                <span>GENRES</span>
+                <HelpCircle size={12} className="text-amber-400/60" />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {availableGenres.map((genre) => {
+                  const isSelected = selectedGenres.includes(genre);
+                  return (
+                    <button
+                      key={genre}
+                      type="button"
+                      onClick={() => toggleGenre(genre)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition ${
+                        isSelected
+                          ? 'bg-amber-500/25 text-amber-200 border border-amber-400 shadow-sm'
+                          : 'bg-[#150b2e] text-amber-200/50 border border-amber-500/20 hover:border-amber-400/40 hover:text-amber-100'
+                      }`}
+                    >
+                      <span>{genre}</span>
+                      {isSelected && <X size={11} className="text-amber-400 hover:text-white" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-              <GenerateField
-                label="Mentor / Catalyst Character"
-                info="The guiding force, ally, or wisdom keeper challenging the hero."
-                placeholder="Describe the mentor's lessons, flaws, and perspective..."
-                value={mentor}
-                onChange={setMentor}
-                {...shared}
-              />
-
-              <GenerateField
-                label="Antagonist / Core Conflict"
-                info="The opposing force, rival, or systemic obstacle in the protagonist's path."
-                placeholder="What force stands in the hero's way and what do they want?"
-                value={antagonist}
-                onChange={setAntagonist}
-                {...shared}
+            {/* 6. TONE (i) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono flex items-center gap-1.5">
+                  <span>TONE</span>
+                  <HelpCircle size={12} className="text-amber-400/60" />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => handleAIGenerate('tone')}
+                  disabled={isGenerating === 'tone'}
+                  className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition font-bold"
+                >
+                  <Sparkles size={11} className={isGenerating === 'tone' ? 'animate-spin' : ''} />
+                  <span>Generate</span>
+                </button>
+              </div>
+              <input
+                type="text"
+                value={tone}
+                onChange={(e) => setTone(e.target.value)}
+                className="w-full p-3 bg-[#06030e] border border-amber-500/30 rounded-xl text-sm text-amber-100 focus:ring-1 focus:ring-amber-400 focus:outline-none"
+                placeholder="e.g. Emotionally charged, gritty realism, high-stakes suspense..."
               />
             </div>
-          )}
 
-          {/* STEP 03 */}
-          {activeStep === 3 && (
-            <div className="space-y-4 animate-in fade-in duration-150">
-              <div className="border-b border-purple-900/50 pb-2">
-                <span className="text-[10px] font-mono uppercase text-amber-400 font-bold">Step 03 • Scriptwriting & Dialogue</span>
-                <h3 className="text-sm font-bold text-slate-100">Fountain Screenplay Formatting, Scene Action & Dialogue</h3>
-              </div>
-
-              <GenerateField
-                label="Scene Slugline (Heading)"
-                info="INT/EXT. LOCATION - DAY/NIGHT format."
-                placeholder="e.g. INT. SOUNDSTAGE 4 - NIGHT"
-                value={sceneHeading}
-                onChange={setSceneHeading}
-                multiline={false}
-                {...shared}
-              />
-
-              <GenerateField
-                label="Scene Action Description"
-                info="Visceral, present-tense visual description of the environment and character actions."
-                placeholder="Describe what we see and hear in the scene..."
-                value={actionLines}
-                onChange={setActionLines}
-                {...shared}
-              />
-
-              <GenerateField
-                label="Formatted Fountain Dialogue"
-                info="Character cues, parentheticals, and punchy dialogue lines with subtext."
-                placeholder="CHARACTER NAME\n(parenthetical)\nDialogue line goes here..."
-                value={sampleDialogue}
-                onChange={setSampleDialogue}
-                {...shared}
-              />
+            {/* 7. AUDIENCE (i) */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono flex items-center gap-1.5">
+                <span>AUDIENCE</span>
+                <HelpCircle size={12} className="text-amber-400/60" />
+              </label>
+              <select
+                value={audience}
+                onChange={(e) => setAudience(e.target.value)}
+                className="w-full p-3 bg-[#06030e] border border-amber-500/30 rounded-xl text-sm text-amber-100 focus:ring-1 focus:ring-amber-400 focus:outline-none font-mono"
+              >
+                {audiences.map((aud) => (
+                  <option key={aud} value={aud}>
+                    {aud}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-
-          {/* STEP 04 */}
-          {activeStep === 4 && (
-            <div className="space-y-4 animate-in fade-in duration-150">
-              <div className="border-b border-purple-900/50 pb-2">
-                <span className="text-[10px] font-mono uppercase text-amber-400 font-bold">Step 04 • Storyboarding & Visual Flow</span>
-                <h3 className="text-sm font-bold text-slate-100">Shot Framing, Lens Selection & Visual Coverage</h3>
-              </div>
-
-              <GenerateField
-                label="Shot Composition & Framing"
-                info="Focal length, camera angle, dolly moves, and 3-point lighting vectors."
-                placeholder="e.g. Low-angle tracking shot on 50mm prime, golden key light..."
-                value={shotComposition}
-                onChange={setShotComposition}
-                {...shared}
-              />
-
-              <GenerateField
-                label="Cinematic Aspect Ratio"
-                info="Aspect ratio format for the visual canvas."
-                placeholder="e.g. 2.39:1 Cinemascope, 16:9 Standard, 9:16 Vertical"
-                value={aspectRatio}
-                onChange={setAspectRatio}
-                multiline={false}
-                {...shared}
-              />
-
-              <GenerateField
-                label="Visual Rhythm & Pacing"
-                info="How the shots cut together to match the tempo of the scene."
-                placeholder="Describe the editing rhythm and camera momentum..."
-                value={visualFlow}
-                onChange={setVisualFlow}
-                {...shared}
-              />
-            </div>
-          )}
-
-          {/* STEP 05 */}
-          {activeStep === 5 && (
-            <div className="space-y-4 animate-in fade-in duration-150">
-              <div className="border-b border-purple-900/50 pb-2">
-                <span className="text-[10px] font-mono uppercase text-amber-400 font-bold">Step 05 • Polish, Color, Sound & Publish</span>
-                <h3 className="text-sm font-bold text-slate-100">Final Color Timing, Stem Audio Mastering & 4K Deliverables</h3>
-              </div>
-
-              <GenerateField
-                label="Color Grading Preset & LUT"
-                info="Lift, Gamma, Gain color wheel balance and film print emulation."
-                placeholder="e.g. Kodak 2383 LUT, deep shadows, warm skin tones..."
-                value={colorGradingPreset}
-                onChange={setColorGradingPreset}
-                {...shared}
-              />
-
-              <GenerateField
-                label="Audio Stem Master & Loudness"
-                info="4-track stem mix balance and -24.0 LKFS loudness targets."
-                placeholder="e.g. 5.1 Atmos surround mix, dynamic dialogue clarity..."
-                value={audioMastering}
-                onChange={setAudioMastering}
-                {...shared}
-              />
-
-              <GenerateField
-                label="Export Deliverables & Resolution"
-                info="Resolution, codecs, and container formats for streaming and cinema."
-                placeholder="e.g. 4K DCI ProRes 4444, H.265 Web Stream, EDL Cut..."
-                value={exportDeliverables}
-                onChange={setExportDeliverables}
-                multiline={false}
-                {...shared}
-              />
-            </div>
-          )}
-
-          {/* Step Navigation Bottom Bar */}
-          <div className="pt-4 border-t border-purple-900/40 flex items-center justify-between">
-            <button
-              disabled={activeStep === 1}
-              onClick={() => setActiveStep((p) => Math.max(p - 1, 1))}
-              className="px-4 py-2 rounded-xl bg-purple-950 border border-purple-800 text-xs font-mono text-purple-300 disabled:opacity-30 hover:text-white transition"
-            >
-              ← Previous Step
-            </button>
-
-            <span className="text-xs font-mono text-amber-400 font-bold">
-              STEP {activeStep} OF 5
-            </span>
-
-            <button
-              disabled={activeStep === 5}
-              onClick={() => setActiveStep((p) => Math.min(p + 1, 5))}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-xs font-mono text-white font-bold disabled:opacity-30 transition shadow-md"
-            >
-              Next Step →
-            </button>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
