@@ -22,6 +22,7 @@ import { runAgent } from './backend/agent/agent-runtime.js';
 import { agentToolDefinitions } from './backend/agent/tools.js';
 import { blackmagicConnector } from './backend/services/blackmagic-connector.js';
 import { audioEngine } from './backend/services/audio-engine.js';
+import { DistributionEngine } from './backend/services/distribution-engine.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -466,6 +467,94 @@ app.delete('/api/v1/studio/memory/:id', (req, res) => {
     const { id } = req.params;
     agentMemory.deleteStudioMemory(id);
     res.json({ success: true, message: 'Memory deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/studio/transcripts - Retrieve all studio voice transcripts
+app.get('/api/v1/studio/transcripts', (req, res) => {
+  try {
+    const { projectId = 'default' } = req.query;
+    const transcripts = agentMemory.getVoiceTranscripts(projectId);
+    res.json({ success: true, transcripts });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/studio/transcripts - Save spoken voice transcript and get contextual response
+app.post('/api/v1/studio/transcripts', async (req, res) => {
+  try {
+    const { userTranscript, agentId = 'assistant', agentName = 'Arise Co-Pilot', room = 'General', projectId = 'default' } = req.body;
+    
+    // Inject memories and context
+    const relevantMemories = agentMemory.searchRelevantMemories(userTranscript);
+    const memoryContext = relevantMemories.map((m) => `[MEMORY - ${m.category}] ${m.title}: ${m.content}`).join('\n');
+
+    const prompt = `You are ${agentName} at Arise Production Studio.
+Active Studio Room: ${room}
+Studio Persistent Context & Knowledge:
+${memoryContext || 'Standard Hollywood 10-Stage Pipeline.'}
+
+The filmmaker just spoke to you via Live Voice Intercom:
+Filmmaker (Voice): "${userTranscript}"
+
+Respond concisely, professionally, and in character with immediate cinematic advice and next actions.`;
+
+    const aiRes = await nvidia.generateCompletion({ prompt });
+    const agentReply = aiRes.success && aiRes.text ? aiRes.text : `Roger that. Noted in our studio transcript. Let's proceed!`;
+
+    const savedRecord = agentMemory.addVoiceTranscript({
+      speaker: 'Filmmaker (Voice)',
+      agentId,
+      agentName,
+      userTranscript,
+      agentReply,
+      room,
+    }, projectId);
+
+    res.json({ success: true, transcript: savedRecord, reply: agentReply });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/distribution/press-kit - Generate Electronic Press Kit
+app.post('/api/v1/distribution/press-kit', async (req, res) => {
+  try {
+    const epk = await DistributionEngine.generatePressKit(req.body);
+    res.json({ success: true, epk });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/distribution/screener - Generate Secure Watermarked Screener Package
+app.post('/api/v1/distribution/screener', (req, res) => {
+  try {
+    const screener = DistributionEngine.generateScreenerPackage(req.body);
+    res.json({ success: true, screener });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/distribution/release-strategy - Generate Global Release Roadmap
+app.post('/api/v1/distribution/release-strategy', async (req, res) => {
+  try {
+    const strategy = await DistributionEngine.generateReleaseStrategy(req.body);
+    res.json({ success: true, strategy });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/distribution/video-commentary - Multi-Agent Timecoded Video Review
+app.post('/api/v1/distribution/video-commentary', async (req, res) => {
+  try {
+    const commentary = await DistributionEngine.getVideoCommentary(req.body);
+    res.json({ success: true, commentary });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

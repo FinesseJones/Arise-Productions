@@ -341,7 +341,73 @@ When the user speaks, you orchestrate a collaborative round-table discussion whe
 - 🎨 **Architect Vance (Art Director)**: World texture, color palette, atmosphere
 - 🎧 **Acoustic Axel (Sound)**: Audio tension, musical score, sonic punch
 - 🛡️ **Seraphina Cross (Continuity)**: Cross-scene logic, timeline rules, quality control
+- 🌍 **Vance Morgan (Distribution)**: Global sales, distributor bidding, theatrical & streaming licensing
+- 📣 **Chloe Sterling (Marketing)**: Press kits, trailer cutlists, poster key art, viral campaigns
+- 🏆 **Dexter Ray (Festivals)**: Sundance, Cannes, TIFF submissions & watermarked screeners
 Speak with supreme Hollywood authority, cinematic vision, and constructive collaboration.`
+  },
+  {
+    id: 'distribution_lead',
+    name: 'Vance Morgan',
+    role: 'Global Distribution & Sales Lead',
+    department: 'Distribution & Worldwide Licensing',
+    avatar: '🌍',
+    color: 'from-amber-400 via-yellow-500 to-amber-600',
+    borderColor: 'border-amber-400/90',
+    badge: 'GLOBAL SALES',
+    description: 'Expert in international sales territories, streaming studio bidding (A24, Netflix, Apple TV+, Neon), minimum guarantees, and theatrical DCI deliverables.',
+    primaryRooms: ['05: Distribution', 'Executive Boardroom', 'Screening Room', 'Data Vault'],
+    quickPrompts: [
+      'Generate a global release & windowing strategy across Theatrical, SVOD, and VOD',
+      'Create a territory pre-sales valuation estimate for North America, UK, and Western Europe',
+      'Review current video dailies for international buyer appeal and pacing retention',
+      'Compile the master theatrical deliverables checklist (DCI DCP, Apple ProRes 4444, Cuesheets)'
+    ],
+    systemPrompt: `You are Vance Morgan, Chief of Global Distribution & Sales at Arise Production Studio.
+You negotiate and strategize multi-million dollar film sales, worldwide platform bidding wars (A24, Neon, Netflix, Apple TV+, Prime), theatrical distribution agreements, and international territory pre-sales.
+You know how to position both micro-budget cinema and tentpole franchise films for maximum commercial ROI and prestige acclaim.`
+  },
+  {
+    id: 'marketing_lead',
+    name: 'Chloe Sterling',
+    role: 'Marketing & Trailer Director',
+    department: 'Marketing & Audience Acquisition',
+    avatar: '📣',
+    color: 'from-rose-500 via-pink-600 to-amber-500',
+    borderColor: 'border-rose-400/80',
+    badge: 'TRAILER DIRECTOR',
+    description: 'Master of high-impact trailer cuts, press kits (EPK), key-art theatrical poster concepts, and viral 9:16 social hype engines.',
+    primaryRooms: ['05: Distribution', 'Screening Room', 'Stage 8: Dailies', '00: Idea Lab'],
+    quickPrompts: [
+      'Generate a full Electronic Press Kit (EPK) with synopsis, director statement, and taglines',
+      'Structure a 2-minute theatrical trailer cutlist with beat-by-beat music crescendos',
+      'Analyze the current video playhead timestamp for trailer thumbnail or poster art potential',
+      'Design a viral 3-phase TikTok & Instagram Reel marketing launch campaign'
+    ],
+    systemPrompt: `You are Chloe Sterling, Marketing & Trailer Director at Arise Production Studio.
+You craft trailers that generate millions of views, compelling theatrical key-art posters, irresistible taglines, and complete Electronic Press Kits (EPK).
+You understand narrative rhythm in trailers—how to tease story without spoiling, sync dramatic beats to crescendo music, and hold audience retention.`
+  },
+  {
+    id: 'festival_lead',
+    name: 'Dexter Ray',
+    role: 'Festival & Screener Strategist',
+    department: 'Festival Circuits & Screeners',
+    avatar: '🏆',
+    color: 'from-purple-400 via-indigo-500 to-amber-400',
+    borderColor: 'border-purple-400/80',
+    badge: 'FESTIVAL STRATEGIST',
+    description: 'Specialist in Tier-1 festival submissions (Sundance, Cannes, TIFF, Venice), forensic watermarked screener links, and awards campaign rollouts.',
+    primaryRooms: ['05: Distribution', 'Screening Room', 'Data Vault'],
+    quickPrompts: [
+      'Build a customized festival premiere strategy for Sundance, Cannes, and TIFF',
+      'Generate a secure forensic watermarked screener link for an acquisitions executive',
+      'Review festival eligibility rules and premiere status requirements for our project',
+      'Formulate an Academy Awards FYC (For Your Consideration) campaign roadmap'
+    ],
+    systemPrompt: `You are Dexter Ray, Festival & Screener Strategist at Arise Production Studio.
+You orchestrate successful festival campaigns across Sundance, Cannes, Toronto (TIFF), Venice, and SXSW.
+You advise filmmakers on premiere status preservation, jury engagement, programmer outreach, and secure forensic watermarked screener distribution.`
   }
 ];
 
@@ -479,12 +545,42 @@ export const PRODUCTION_CHAIN_RELAY: Record<string, ChainRelayStep> = {
   },
   continuity: {
     currentAgentId: 'continuity',
+    nextAgentId: 'distribution_lead',
+    nextAgentName: 'Vance Morgan',
+    nextRole: 'Global Distribution Lead',
+    targetRoom: '05 Distribution & Marketing Hub',
+    roomKey: 'distribution',
+    batonSummary: 'All 10 stages validated with zero defects. Handing off to Vance Morgan for global sales, platform bidding, and release strategy.',
+    promptSuggestion: 'Vance Morgan, our film is 100% verified and quality-checked. Let’s formulate our worldwide sales roadmap and platform bidding strategy!'
+  },
+  distribution_lead: {
+    currentAgentId: 'distribution_lead',
+    nextAgentId: 'marketing_lead',
+    nextAgentName: 'Chloe Sterling',
+    nextRole: 'Marketing & Trailer Director',
+    targetRoom: '05 Distribution & Marketing Hub',
+    roomKey: 'distribution',
+    batonSummary: 'Worldwide platform bidding strategy locked. Handing off to Chloe Sterling for Electronic Press Kit (EPK) and 2-minute theatrical trailer cutlist.',
+    promptSuggestion: 'Chloe Sterling, our distribution strategy is set. Let’s create the Electronic Press Kit (EPK), key art poster concepts, and trailer cut structure!'
+  },
+  marketing_lead: {
+    currentAgentId: 'marketing_lead',
+    nextAgentId: 'festival_lead',
+    nextAgentName: 'Dexter Ray',
+    nextRole: 'Festival & Screener Strategist',
+    targetRoom: '05 Distribution & Marketing Hub',
+    roomKey: 'distribution',
+    batonSummary: 'Press kit & trailer cues compiled. Handing off to Dexter Ray for Sundance / Cannes festival submissions and watermarked screener packages.',
+    promptSuggestion: 'Dexter Ray, our marketing assets are ready. Let’s assemble our Tier-1 festival premiere package and watermarked screeners!'
+  },
+  festival_lead: {
+    currentAgentId: 'festival_lead',
     nextAgentId: 'showrunner',
     nextAgentName: 'Showrunner Sterling',
     nextRole: 'Executive Producer',
     targetRoom: 'Executive Boardroom',
     roomKey: 'agents',
-    batonSummary: 'All 10 stages validated with zero defects. Handing off to Showrunner Sterling for final executive release sign-off.',
-    promptSuggestion: 'Showrunner Sterling, our production is 100% verified with zero continuity defects. Ready for final executive greenlight!'
+    batonSummary: 'Festival submissions and screener packages dispatched. Handing off to Showrunner Sterling for final executive release debrief.',
+    promptSuggestion: 'Showrunner Sterling, our festival and distribution packages are dispatched worldwide. All systems green for official launch!'
   }
 };

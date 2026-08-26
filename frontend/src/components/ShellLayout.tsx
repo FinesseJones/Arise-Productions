@@ -16,6 +16,7 @@ import ActsRoom from '../pages/ActsRoom';
 import BeatsRoom from '../pages/BeatsRoom';
 import CharactersRoom from '../pages/CharactersRoom';
 import IdeaRoom from '../pages/IdeaRoom';
+import DistributionRoom from '../pages/DistributionRoom';
 import DepartmentAgentsHub from './agents/DepartmentAgentsHub';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
@@ -37,6 +38,7 @@ import {
   Users,
   Crown,
   Lightbulb,
+  Globe,
 } from 'lucide-react';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { getAPIBaseURL } from '../lib/api';
@@ -59,7 +61,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 }) => {
   const apiBase = getAPIBaseURL();
   const [mainView, setMainView] = useState<
-    'agents' | 'stage' | 'ideas' | 'plot' | 'acts' | 'beats' | 'characters' | 'architecture' | 'screening' | 'suites' | 'vault'
+    'agents' | 'stage' | 'ideas' | 'plot' | 'acts' | 'beats' | 'characters' | 'architecture' | 'screening' | 'suites' | 'vault' | 'distribution'
   >('agents');
   const [activeShotNumber, setActiveShotNumber] = useState<number>(1);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
@@ -305,6 +307,19 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             >
               <FolderArchive size={12} />
               <span>Vault</span>
+            </button>
+
+            {/* 7. 05: Distribution & Marketing Release Hub */}
+            <button
+              onClick={() => setMainView('distribution')}
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
+                mainView === 'distribution'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
+              }`}
+            >
+              <Globe size={12} />
+              <span>05: Distribution</span>
             </button>
           </div>
 
@@ -576,6 +591,21 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
           {mainView === 'vault' && (
             <DataVaultAndHistory projectStatus={projectStatus} />
+          )}
+
+          {mainView === 'distribution' && (
+            <DistributionRoom
+              projectId={effectiveProjectId}
+              projectName={projectStatus.projectName}
+              onNavigateToRoom={(roomKey) => {
+                if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  setMainView(roomKey as any);
+                } else {
+                  setMainView('stage');
+                  onStageSelect(roomKey);
+                }
+              }}
+            />
           )}
         </main>
 

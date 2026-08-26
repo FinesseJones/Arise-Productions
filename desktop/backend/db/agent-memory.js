@@ -144,5 +144,38 @@ export const agentMemory = {
       m.content.toLowerCase().includes(q) ||
       m.category.toLowerCase().includes(q)
     ).slice(0, 8);
+  },
+
+  // Get full studio voice transcript history
+  getVoiceTranscripts(projectId = 'default') {
+    const TRANSCRIPTS_FILE = path.join(DB_DIR, 'voice_transcripts.json');
+    const all = readJson(TRANSCRIPTS_FILE, {});
+    return all[projectId] || [];
+  },
+
+  // Save a live microphone voice turn / conversation
+  addVoiceTranscript(item, projectId = 'default') {
+    const TRANSCRIPTS_FILE = path.join(DB_DIR, 'voice_transcripts.json');
+    const all = readJson(TRANSCRIPTS_FILE, {});
+    if (!all[projectId]) all[projectId] = [];
+
+    const newRecord = {
+      id: `vt-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+      speaker: item.speaker || 'User (Voice)',
+      agentId: item.agentId || 'assistant',
+      agentName: item.agentName || 'Arise Co-Pilot',
+      userTranscript: item.userTranscript || '',
+      agentReply: item.agentReply || '',
+      room: item.room || 'General',
+      timestamp: new Date().toISOString(),
+    };
+
+    all[projectId].unshift(newRecord);
+    if (all[projectId].length > 200) {
+      all[projectId] = all[projectId].slice(0, 200);
+    }
+
+    writeJson(TRANSCRIPTS_FILE, all);
+    return newRecord;
   }
 };

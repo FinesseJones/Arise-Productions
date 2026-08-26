@@ -47,7 +47,7 @@ graph TD
 
 ---
 
-## 3. The 13 Autonomous Department Agents
+## 3. The 16 Autonomous Department Agents
 
 | # | Agent Name | Title & Department | Core Responsibilities |
 | :-: | :--- | :--- | :--- |
@@ -64,23 +64,28 @@ graph TD
 | **11** | **🎞️ Colorist Cole** | **Finishing Editor & DaVinci Colorist** *(Post & Finishing)* | CMX 3600 EDL assembly, ACEScc color science, Kodak 2383 35mm film print LUTs, and 24.000 FPS cadence. |
 | **12** | **🎧 Acoustic Axel** | **Sound Supervisor & Audio Engineer** *(Sound & Music)* | 5.1 Dolby Atmos surround sound, 4-track stem mixing (Dialogue, Foley, Score, LFE), and -24.0 LKFS loudness. |
 | **13** | **🛡️ Seraphina Cross** | **Chief Script Supervisor & Continuity Warden** *(Quality & Continuity)* | Cross-stage continuity inspection, character likeness lock verification, timeline logic, and pre-flight QC. |
+| **14** | **🌍 Vance Morgan** | **Global Distribution & Sales Lead** *(Distribution & Sales)* | Worldwide territory pre-sales, streaming studio bidding (A24, Neon, Netflix, Apple TV+), and theatrical release. |
+| **15** | **📣 Chloe Sterling** | **Marketing & Trailer Director** *(Marketing & Audience)* | Full Electronic Press Kits (EPK), theatrical 2-minute trailer cutlists, poster key art, and 9:16 viral campaigns. |
+| **16** | **🏆 Dexter Ray** | **Festival & Screener Strategist** *(Festivals & Screeners)* | Tier-1 festival submissions (Sundance, Cannes, TIFF, Venice, SXSW) and forensic watermarked screener distribution. |
 
 ---
 
-## 4. The 14 Creative Rooms & Studio Views
+## 4. The 15 Creative Rooms & Studio Views
 
-1. **💡 00: Ideas (Idea Lab & Concept Vault):** Format-separated incubation for Short-Form, Feature Films, and TV Series with one-click promotion to production.
+1. **💡 00: Ideas (Idea Lab & Concept Vault):** Format-separated incubation for Short-Form, Feature Films, and TV Series, plus **YouTube & Social Media Link Ingestion & Discussion Studio** with one-click promotion.
 2. **🏛️ Command Center (Department Agents Hub):** 3D interactive executive boardroom with real-time tool execution badges and persistent memory.
-3. **LayoutGrid 3D Soundstage:** Real-time Three.js WebGL viewport with 4K camera orbits, prime lens focal selectors, and 3-point lighting rigs.
+3. **LayoutGrid 3D Soundstage:** Real-time Three.js WebGL viewport with 4K camera orbits, prime lens focal selectors, Blackmagic Pocket Cinema Camera 4K controls, and 3-point lighting rigs.
 4. **📖 01: Plot Room:** Multi-act master narrative arc designer, logline calibrations, and high-stakes tension monitoring.
 5. **👥 02: Cast Room:** Character psychological dossiers, voice profiles, relationship maps, and wardrobe likeness matrices.
 6. **Layers 03: Acts & Arcs:** Structural 3-Act and 5-Act tension engines with Save-the-Cat beat pacing.
 7. **Sliders 04: Beats Matrix:** 40-Beat visual card manager with live emotional amplitude scoring.
-8. **Building2 Architecture Room:** High-level studio system blueprint, microservice network topology, and telemetry.
-9. **Film Video Screening Room:** 4K video player with SMPTE timecode readout, 2.39:1 anamorphic framing, and audio waveform analysis.
-10. **FolderArchive Studio Suites Hub:** Quick launchpad for Screenplay Suite, Virtual DP Suite, Generative Slate, and DaVinci Suite.
-11. **Database Master Data Vault:** Multi-format asset storage vault with live uploads, format tagging, and revision history.
-12. **Stage 01–10 Workspace Rails:** Interactive stage executor tracking shot manifests, token allocations, and progress.
+8. **🌍 05: Distribution & Marketing Release Hub:** Interactive Video Player with Timestamp Multi-Agent Commentary, Electronic Press Kit (EPK) Generator, Forensic Watermarked Screeners, and Global Release Roadmaps.
+9. **Building2 Architecture Room:** High-level studio system blueprint, microservice network topology, and telemetry.
+10. **Film Video Screening Room:** 4K video player with SMPTE timecode readout, 2.39:1 anamorphic framing, and audio waveform analysis.
+11. **FolderArchive Studio Suites Hub:** Quick launchpad for Screenplay Suite, Virtual DP Suite, Generative Slate, and DaVinci Suite.
+12. **Database Master Data Vault:** Multi-format asset storage vault with live uploads, format tagging, and revision history.
+13. **🎙️ Live Voice Intercom & Transcript Memory:** Real-time microphone speech-to-text intercom allowing the filmmaker to talk to any agent with persistent contextual memory.
+14. **Stage 01–10 Workspace Rails:** Interactive stage executor tracking shot manifests, token allocations, and progress.
 
 ---
 
