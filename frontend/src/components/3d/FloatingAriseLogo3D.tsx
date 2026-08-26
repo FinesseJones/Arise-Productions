@@ -17,16 +17,17 @@ interface FloatingAriseLogo3DProps {
 export const FloatingAriseLogo3D: React.FC<FloatingAriseLogo3DProps> = ({
   position = [0, 0.6, 0],
   scale = 1.0,
-  showText = true,
-  textTitle = "ARISE PRODUCTIONS",
-  textSubtitle = "THE AI CONTENT FOUNDRY, LLC",
+  showText = false,
+  textTitle = "ARISE PICTURES",
+  textSubtitle = "THE AI CONTENT FOUNDRY",
 }) => {
   const logoGroupRef = useRef<THREE.Group>(null);
+  const flareBeamRef = useRef<THREE.Mesh>(null);
   const ringRef1 = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
-  const outerHaloRef = useRef<THREE.Points>(null);
+  const emberPointsRef = useRef<THREE.Points>(null);
 
-  // Load Arise Logo Texture with anisotropic filtering
+  // Load Arise Pictures Logo Texture with anisotropic filtering
   const logoTexture = useLoader(THREE.TextureLoader, ARISE_LOGO_SRC);
   useMemo(() => {
     if (logoTexture) {
@@ -37,15 +38,15 @@ export const FloatingAriseLogo3D: React.FC<FloatingAriseLogo3DProps> = ({
     }
   }, [logoTexture]);
 
-  // Floating Golden Particles around the Logo Medallion
-  const particleCount = 60;
+  // Floating Golden Sparkle Particles around the Logo
+  const particleCount = 80;
   const particlePositions = useMemo(() => {
     const pos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
       const angle = (i / particleCount) * Math.PI * 2;
-      const radius = 1.6 + (Math.random() - 0.5) * 0.5;
+      const radius = 1.8 + (Math.random() - 0.5) * 0.8;
       pos[i * 3] = Math.cos(angle) * radius;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 1.2;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 1.6;
       pos[i * 3 + 2] = Math.sin(angle) * radius;
     }
     return pos;
@@ -54,88 +55,119 @@ export const FloatingAriseLogo3D: React.FC<FloatingAriseLogo3DProps> = ({
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
 
-    // Continuous 3D slow turntable rotation & breathing
+    // Continuous 3D Floating, Swaying & Turntable Rotation
     if (logoGroupRef.current) {
-      logoGroupRef.current.rotation.y += delta * 0.45;
-      logoGroupRef.current.position.y = position[1] + Math.sin(t * 1.6) * 0.12;
-      logoGroupRef.current.rotation.z = Math.sin(t * 0.8) * 0.04;
+      logoGroupRef.current.rotation.y += delta * 0.35;
+      logoGroupRef.current.position.y = position[1] + Math.sin(t * 1.8) * 0.15;
+      logoGroupRef.current.rotation.z = Math.sin(t * 0.9) * 0.05;
+      logoGroupRef.current.rotation.x = Math.cos(t * 0.7) * 0.04;
     }
 
-    // Counter-rotating holographic energy rings
-    if (ringRef1.current) ringRef1.current.rotation.z += delta * 0.6;
-    if (ringRef2.current) ringRef2.current.rotation.z -= delta * 0.4;
+    // Anamorphic Flare Shimmer & Pulse
+    if (flareBeamRef.current) {
+      const flareScaleX = 1 + Math.sin(t * 4) * 0.15;
+      const flareOpacity = 0.6 + Math.sin(t * 5) * 0.2;
+      flareBeamRef.current.scale.set(flareScaleX, 1, 1);
+      (flareBeamRef.current.material as THREE.MeshBasicMaterial).opacity = flareOpacity;
+    }
 
-    if (outerHaloRef.current) {
-      outerHaloRef.current.rotation.y -= delta * 0.2;
+    // Counter-rotating Golden Energy Rings
+    if (ringRef1.current) ringRef1.current.rotation.z += delta * 0.5;
+    if (ringRef2.current) ringRef2.current.rotation.z -= delta * 0.35;
+
+    // Orbiting Gold Embers
+    if (emberPointsRef.current) {
+      emberPointsRef.current.rotation.y -= delta * 0.25;
+      emberPointsRef.current.rotation.x = Math.sin(t * 0.5) * 0.1;
     }
   });
 
   return (
     <group position={position} scale={scale}>
-      {/* Dynamic 3D Floating Arise Logo Group */}
-      <Float speed={2.2} rotationIntensity={0.15} floatIntensity={0.25}>
+      {/* 3D Floating Arise Pictures Logo Plaque */}
+      <Float speed={2.5} rotationIntensity={0.2} floatIntensity={0.3}>
         <group ref={logoGroupRef}>
-          {/* 3D Gold Extruded Bevel Medallion Outer Casing */}
-          <mesh castShadow receiveShadow>
-            <cylinderGeometry args={[1.22, 1.22, 0.16, 48]} />
+          {/* 3D Gold Chamfered Plaque Casing */}
+          <mesh castShadow receiveShadow position={[0, 0, 0]}>
+            <boxGeometry args={[2.5, 2.5, 0.14]} />
             <meshStandardMaterial
-              color="#d97706"
+              color="#0d0722"
               emissive="#78350f"
-              emissiveIntensity={0.4}
+              emissiveIntensity={0.3}
               metalness={0.95}
               roughness={0.15}
             />
           </mesh>
 
-          {/* Front Face: Arise Productions Logo Graphic */}
-          <mesh position={[0, 0, 0.085]} rotation={[0, 0, 0]}>
-            <circleGeometry args={[1.16, 48]} />
+          {/* Front Face: Arise Pictures Logo Image */}
+          <mesh position={[0, 0, 0.075]} rotation={[0, 0, 0]}>
+            <planeGeometry args={[2.42, 2.42]} />
             <meshStandardMaterial
               map={logoTexture}
               roughness={0.2}
-              metalness={0.4}
-              emissive="#fbbf24"
-              emissiveIntensity={0.2}
+              metalness={0.3}
+              emissive="#f59e0b"
+              emissiveIntensity={0.25}
             />
           </mesh>
 
-          {/* Back Face: Arise Productions Logo Graphic */}
-          <mesh position={[0, 0, -0.085]} rotation={[0, Math.PI, 0]}>
-            <circleGeometry args={[1.16, 48]} />
+          {/* Back Face: Arise Pictures Logo Image */}
+          <mesh position={[0, 0, -0.075]} rotation={[0, Math.PI, 0]}>
+            <planeGeometry args={[2.42, 2.42]} />
             <meshStandardMaterial
               map={logoTexture}
               roughness={0.2}
-              metalness={0.4}
-              emissive="#fbbf24"
-              emissiveIntensity={0.2}
+              metalness={0.3}
+              emissive="#f59e0b"
+              emissiveIntensity={0.25}
             />
           </mesh>
 
-          {/* Golden Rim Highlight Ring */}
-          <mesh position={[0, 0, 0.088]}>
-            <ringGeometry args={[1.15, 1.22, 48]} />
+          {/* Polished Gold Bevel Frame Borders */}
+          <mesh position={[0, 1.25, 0]}>
+            <boxGeometry args={[2.56, 0.06, 0.18]} />
             <meshStandardMaterial color="#fef08a" metalness={1.0} roughness={0.1} />
           </mesh>
-          <mesh position={[0, 0, -0.088]} rotation={[0, Math.PI, 0]}>
-            <ringGeometry args={[1.15, 1.22, 48]} />
+          <mesh position={[0, -1.25, 0]}>
+            <boxGeometry args={[2.56, 0.06, 0.18]} />
             <meshStandardMaterial color="#fef08a" metalness={1.0} roughness={0.1} />
+          </mesh>
+          <mesh position={[-1.25, 0, 0]}>
+            <boxGeometry args={[0.06, 2.56, 0.18]} />
+            <meshStandardMaterial color="#fef08a" metalness={1.0} roughness={0.1} />
+          </mesh>
+          <mesh position={[1.25, 0, 0]}>
+            <boxGeometry args={[0.06, 2.56, 0.18]} />
+            <meshStandardMaterial color="#fef08a" metalness={1.0} roughness={0.1} />
+          </mesh>
+
+          {/* Cinematic Horizontal Anamorphic Optical Flare Beam */}
+          <mesh ref={flareBeamRef} position={[0, 0.1, 0.1]}>
+            <planeGeometry args={[3.6, 0.25]} />
+            <meshBasicMaterial
+              color="#fbbf24"
+              transparent
+              opacity={0.7}
+              blending={THREE.AdditiveBlending}
+              side={THREE.DoubleSide}
+            />
           </mesh>
         </group>
       </Float>
 
       {/* Orbiting Concentric Holographic Energy Rings */}
       <mesh ref={ringRef1} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[1.65, 1.78, 48]} />
-        <meshBasicMaterial color="#f59e0b" transparent opacity={0.65} side={THREE.DoubleSide} />
+        <ringGeometry args={[2.1, 2.22, 48]} />
+        <meshBasicMaterial color="#f59e0b" transparent opacity={0.6} side={THREE.DoubleSide} />
       </mesh>
 
       <mesh ref={ringRef2} position={[0, 0, 0]} rotation={[Math.PI / 3, 0, 0]}>
-        <ringGeometry args={[2.05, 2.18, 48]} />
-        <meshBasicMaterial color="#d97706" transparent opacity={0.45} side={THREE.DoubleSide} />
+        <ringGeometry args={[2.5, 2.62, 48]} />
+        <meshBasicMaterial color="#d97706" transparent opacity={0.4} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Orbiting Golden Sparkle Particles */}
-      <points ref={outerHaloRef}>
+      {/* 80 Orbiting Gold Embers / Cinematic Sparkles */}
+      <points ref={emberPointsRef}>
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
@@ -146,20 +178,20 @@ export const FloatingAriseLogo3D: React.FC<FloatingAriseLogo3DProps> = ({
           />
         </bufferGeometry>
         <pointsMaterial
-          size={0.05}
+          size={0.06}
           color="#fef08a"
           transparent
-          opacity={0.8}
+          opacity={0.85}
           blending={THREE.AdditiveBlending}
         />
       </points>
 
-      {/* 3D Floating Typography Below Logo */}
+      {/* Optional 3D Typography */}
       {showText && (
-        <group position={[0, -1.6, 0]}>
+        <group position={[0, -1.8, 0]}>
           <Text
             position={[0, 0, 0]}
-            fontSize={0.22}
+            fontSize={0.24}
             color="#fbbf24"
             anchorX="center"
             anchorY="middle"
@@ -167,8 +199,8 @@ export const FloatingAriseLogo3D: React.FC<FloatingAriseLogo3DProps> = ({
             {textTitle}
           </Text>
           <Text
-            position={[0, -0.22, 0]}
-            fontSize={0.11}
+            position={[0, -0.24, 0]}
+            fontSize={0.12}
             color="#e9d5ff"
             anchorX="center"
             anchorY="middle"

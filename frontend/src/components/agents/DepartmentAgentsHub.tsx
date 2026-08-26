@@ -444,14 +444,14 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
 
           {/* Optional 3D Holographic Pedestal Canvas */}
           {show3DHologram && (
-            <div className="h-44 w-full bg-gradient-to-b from-[#0a051c] to-[#05030c] border-b border-amber-500/20 relative flex-shrink-0">
+            <div className="h-52 w-full bg-gradient-to-b from-[#0a051c] to-[#05030c] border-b border-amber-500/20 relative flex-shrink-0">
               <Canvas
-                camera={{ position: [0, 0.8, 3.8], fov: 45 }}
+                camera={{ position: [0, 0.3, 4.2], fov: 42 }}
                 className="w-full h-full"
               >
-                <ambientLight intensity={0.6} color="#fde047" />
-                <pointLight position={[3, 4, 3]} intensity={2.0} color="#fbbf24" />
-                <pointLight position={[-3, 2, 2]} intensity={1.2} color="#a855f7" />
+                <ambientLight intensity={0.7} color="#fde047" />
+                <pointLight position={[3, 4, 3]} intensity={2.2} color="#fbbf24" />
+                <pointLight position={[-3, 2, 2]} intensity={1.5} color="#a855f7" />
                 <AgentHologram3D agent={currentAgent} />
               </Canvas>
               <div className="absolute top-2 right-3 pointer-events-none text-[9px] font-mono text-amber-400/80 bg-black/60 px-2 py-0.5 rounded border border-amber-500/30">
