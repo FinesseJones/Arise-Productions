@@ -47,11 +47,15 @@ export function useStudioSocket(options: UseStudioSocketOptions = {}) {
     fetch(`${apiBase}/api/v1/manifest?projectId=${encodeURIComponent(projectId)}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.success && data.manifest) {
+        if (data.success && data.manifest && (data.manifest.projectId === projectId || data.manifest.projectName === projectName)) {
           setProjectStatus(data.manifest);
         }
       })
       .catch(() => {});
+
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({ type: 'SUBSCRIBE_PROJECT', projectId }));
+    }
   }, [projectId, projectName, apiBase]);
 
   // Connect to WebSocket Server
@@ -82,14 +86,14 @@ export function useStudioSocket(options: UseStudioSocketOptions = {}) {
 
           switch (data.type) {
             case 'CONNECTION_ESTABLISHED':
-            case 'MANIFEST_SYNC':
-              if (data.manifest) {
+              if (data.manifest && (data.manifest.projectId === projectId || data.manifest.projectName === projectName)) {
                 setProjectStatus(data.manifest);
               }
               break;
 
+            case 'MANIFEST_SYNC':
             case 'STAGE_STATUS_CHANGED':
-              if (data.manifest) {
+              if (data.manifest && (data.manifest.projectId === projectId || data.manifest.projectName === projectName || !projectId)) {
                 setProjectStatus(data.manifest);
               }
               break;

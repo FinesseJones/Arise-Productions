@@ -11,19 +11,36 @@ export class MediaIngestionEngine {
    * Create a new studio project supporting Long-Form, Short-Form, or Episodic TV
    */
   static async createProject(options = {}) {
+    const rawUrl = options.sourceUrl || options.mediaUrl || options.url || '';
+    const format = options.format || (rawUrl.includes('tiktok') || rawUrl.includes('reel') || rawUrl.includes('shorts') ? 'short_form' : 'long_form');
+    let sourceType = options.sourceType || 'scratch';
+    if (rawUrl && (rawUrl.startsWith('http') || rawUrl.includes('youtube') || rawUrl.includes('youtu.be') || rawUrl.includes('tiktok') || rawUrl.includes('instagram'))) {
+      sourceType = (rawUrl.includes('youtube') || rawUrl.includes('youtu.be')) ? 'youtube_link' : 'social_link';
+    }
+
+    let title = options.title || options.name || '';
+    if (!title || title.trim() === '' || title === 'Untitled Production') {
+      if (sourceType === 'youtube_link') {
+        const cleanVid = rawUrl.replace(/https?:\/\/(www\.)?/, '').slice(0, 36);
+        title = `YouTube Ingest: ${cleanVid}`;
+      } else if (sourceType === 'social_link') {
+        const cleanVid = rawUrl.replace(/https?:\/\/(www\.)?/, '').slice(0, 36);
+        title = `Social Video Ingest: ${cleanVid}`;
+      } else {
+        title = 'New Studio Production';
+      }
+    }
+
     const {
-      title = 'Untitled Production',
-      format = 'long_form', // 'long_form' | 'short_form' | 'episodic_tv'
       seasonNumber = 1,
       episodeNumber = 1,
-      aspectRatio = '16:9', // '16:9' | '9:16' | '2.39:1' | '4:3'
-      targetPlatform = 'Theatrical & Streaming', // 'YouTube' | 'TikTok' | 'Netflix' | 'HBO'
-      sourceType = 'scratch', // 'scratch' | 'youtube_link' | 'social_link' | 'file_upload'
-      sourceUrl = '',
+      aspectRatio = format === 'short_form' ? '9:16' : '16:9',
+      targetPlatform = format === 'short_form' ? 'TikTok & YouTube Shorts' : 'Theatrical & Streaming',
+      sourceUrl = rawUrl,
       rawContent = '',
     } = options;
 
-    const projectId = `proj-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
+    const projectId = options.id || `proj-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
     console.log(`[MediaIngest] Initializing ${format.toUpperCase()} project "${title}" (${projectId}) from source: ${sourceType}`);
 
     // If source is a YouTube or social media link, parse and extract beats

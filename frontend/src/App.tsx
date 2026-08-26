@@ -63,13 +63,42 @@ const App: React.FC = () => {
   const [episode, setEpisode] = useState<number>(1);
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
-  // Sync session state & projects from backend on startup
+  // Sync session state & projects from backend and local cache on startup
   React.useEffect(() => {
+    try {
+      const localSaved = localStorage.getItem('arise_all_user_projects');
+      if (localSaved) {
+        const parsed = JSON.parse(localSaved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAvailableProjects((prev) => {
+            const map = new Map();
+            prev.forEach((p) => map.set(p.id, p));
+            parsed.forEach((p) => map.set(p.id, p));
+            return Array.from(map.values());
+          });
+        }
+      }
+    } catch {}
+
     fetch(`${apiBase}/api/v1/projects`)
       .then((r) => r.json())
       .then((data) => {
         if (data && data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
-          setAvailableProjects(data.projects);
+          setAvailableProjects((prev) => {
+            const map = new Map();
+            prev.forEach((p) => map.set(p.id, p));
+            data.projects.forEach((p: any) => {
+              if (p && p.id) {
+                const existing = map.get(p.id) || {};
+                map.set(p.id, { ...existing, ...p });
+              }
+            });
+            const merged = Array.from(map.values());
+            try {
+              localStorage.setItem('arise_all_user_projects', JSON.stringify(merged));
+            } catch {}
+            return merged;
+          });
         }
       })
       .catch(() => {});
@@ -125,13 +154,20 @@ const App: React.FC = () => {
     }
 
     setIsCreating(true);
-    const toastId = toast.loading('🎬 Arise Ingest Engine: Generating bespoke screenplay & 10-stage manifest...');
+    const toastId = toast.loading('🎬 Arise Ingest Engine: Ingesting media and generating bespoke screenplay...');
 
     try {
       const payload: any = {
         title: newTitle.trim() || undefined,
+        name: newTitle.trim() || undefined,
         format,
         mediaUrl: mediaUrl.trim() || undefined,
+        sourceUrl: mediaUrl.trim() || undefined,
+        sourceType: mediaUrl.trim()
+          ? mediaUrl.includes('youtube') || mediaUrl.includes('youtu.be')
+            ? 'youtube_link'
+            : 'social_link'
+          : 'scratch',
       };
 
       if (format === 'episodic_tv') {
@@ -145,42 +181,53 @@ const App: React.FC = () => {
         body: JSON.stringify(payload),
       }).then((r) => r.json());
 
-      if (res.success && res.project) {
-        const created = res.project;
-        setAvailableProjects((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
-        setProjectId(created.id);
-        setProjectName(created.name);
-        setIsProjectSelected(true);
-        setShowCreateModal(false);
-        setNewTitle('');
-        setMediaUrl('');
+      const created = res.success && res.project
+        ? res.project
+        : {
+            id: `proj-${Date.now()}`,
+            name: newTitle.trim() || (mediaUrl.trim() ? `YouTube Ingest: ${mediaUrl.slice(0, 24)}` : 'New Production'),
+            format,
+            description: mediaUrl.trim() ? `Ingested media from ${mediaUrl}` : 'Bespoke AI Production',
+          };
 
-        localStorage.setItem('arise_last_project_id', created.id);
-        localStorage.setItem('arise_last_project_name', created.name);
-        localStorage.setItem('arise_session_active', 'true');
+      setAvailableProjects((prev) => {
+        const updated = [created, ...prev.filter((p) => p.id !== created.id)];
+        try {
+          localStorage.setItem('arise_all_user_projects', JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
 
-        toast.success(`🎉 Created and loaded "${created.name}" across all 10 stages!`, { id: toastId });
-      } else {
-        const fallbackName = newTitle.trim() || 'Untitled Social Production';
-        const fallbackId = `proj-${Date.now()}`;
-        const fallbackProj = { id: fallbackId, name: fallbackName, format };
-        setAvailableProjects((prev) => [fallbackProj, ...prev]);
-        setProjectId(fallbackId);
-        setProjectName(fallbackName);
-        setIsProjectSelected(true);
-        setShowCreateModal(false);
-        toast.success(`🎉 Created "${fallbackName}" in studio memory!`, { id: toastId });
-      }
+      setProjectId(created.id);
+      setProjectName(created.name || created.title || 'New Production');
+      setIsProjectSelected(true);
+      setShowCreateModal(false);
+      setNewTitle('');
+      setMediaUrl('');
+
+      localStorage.setItem('arise_last_project_id', created.id);
+      localStorage.setItem('arise_last_project_name', created.name || created.title || 'New Production');
+      localStorage.setItem('arise_session_active', 'true');
+
+      toast.success(`🎉 Created and launched "${created.name || created.title}"!`, { id: toastId });
     } catch {
-      const fallbackName = newTitle.trim() || 'Untitled Social Production';
+      const fallbackName = newTitle.trim() || (mediaUrl.trim() ? `YouTube Ingest: ${mediaUrl.slice(0, 24)}` : 'New Production');
       const fallbackId = `proj-${Date.now()}`;
-      const fallbackProj = { id: fallbackId, name: fallbackName, format };
-      setAvailableProjects((prev) => [fallbackProj, ...prev]);
+      const fallbackProj = { id: fallbackId, name: fallbackName, format, description: 'Bespoke Production' };
+
+      setAvailableProjects((prev) => {
+        const updated = [fallbackProj, ...prev];
+        try {
+          localStorage.setItem('arise_all_user_projects', JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
+
       setProjectId(fallbackId);
       setProjectName(fallbackName);
       setIsProjectSelected(true);
       setShowCreateModal(false);
-      toast.success(`🎉 Created "${fallbackName}" in offline studio memory!`, { id: toastId });
+      toast.success(`🎉 Created "${fallbackName}" in studio session!`, { id: toastId });
     } finally {
       setIsCreating(false);
     }
