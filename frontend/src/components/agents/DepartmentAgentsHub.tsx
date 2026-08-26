@@ -688,21 +688,100 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                         {msg.content}
                       </div>
 
-                      {/* Assistant Actions (Save to Memory Vault) */}
+                      {/* Assistant Actions & Proactive Stage Transitions */}
                       {!isUser && (
-                        <div className="pt-2 border-t border-purple-900/40 flex items-center justify-between text-[11px] font-mono text-amber-400/90">
-                          <button
-                            onClick={() => handleSaveToMemory(msg.content)}
-                            className="flex items-center space-x-1 hover:text-amber-300 transition"
-                          >
-                            <BookmarkPlus size={12} />
-                            <span>Bookmark to Studio Memory</span>
-                          </button>
+                        <div className="pt-2 border-t border-purple-900/40 space-y-2">
+                          <div className="flex items-center justify-between text-[11px] font-mono text-amber-400/90 flex-wrap gap-2">
+                            <button
+                              onClick={() => handleSaveToMemory(msg.content)}
+                              className="flex items-center space-x-1 hover:text-amber-300 transition"
+                            >
+                              <BookmarkPlus size={12} />
+                              <span>Bookmark to Studio Memory</span>
+                            </button>
 
-                          {msg.metadata?.model && (
-                            <span className="text-[10px] text-purple-400">
-                              ⚡ {msg.metadata.model.split('/')[1] || msg.metadata.model}
-                            </span>
+                            {msg.metadata?.model && (
+                              <span className="text-[10px] text-purple-400">
+                                ⚡ {msg.metadata.model.split('/')[1] || msg.metadata.model}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Proactive Stage Handoff Chips */}
+                          {onNavigateToRoom && (
+                            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-white/5">
+                              <span className="text-[9px] font-mono text-purple-300/60 uppercase">
+                                Proactive Handoff:
+                              </span>
+                              {selectedAgentId === 'screenwriter' && (
+                                <>
+                                  <button
+                                    onClick={() => onNavigateToRoom('script')}
+                                    className="px-2 py-0.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold transition flex items-center gap-1"
+                                  >
+                                    <span>🎬 Stage 1: ScriptBreak</span>
+                                  </button>
+                                  <button
+                                    onClick={() => onNavigateToRoom('characters')}
+                                    className="px-2 py-0.5 rounded-lg bg-purple-950/60 hover:bg-purple-900 text-purple-300 border border-purple-800/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>👥 02 Characters</span>
+                                  </button>
+                                </>
+                              )}
+
+                              {selectedAgentId === 'cinematographer' && (
+                                <button
+                                  onClick={() => onNavigateToRoom('previs')}
+                                  className="px-2 py-0.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-[10px] font-mono font-bold transition flex items-center gap-1"
+                                >
+                                  <span>🎥 Stage 4: Previs Live</span>
+                                </button>
+                              )}
+
+                              {selectedAgentId === 'prompt_engineer' && (
+                                <>
+                                  <button
+                                    onClick={() => onNavigateToRoom('prompt')}
+                                    className="px-2 py-0.5 rounded-lg bg-pink-500/20 hover:bg-pink-500/30 text-pink-300 border border-pink-500/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>⚡ Stage 7: Prompt Slate</span>
+                                  </button>
+                                  <button
+                                    onClick={() => onNavigateToRoom('boards')}
+                                    className="px-2 py-0.5 rounded-lg bg-purple-950/60 hover:bg-purple-900 text-purple-300 border border-purple-800/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>🎨 04 Storyboard Lab</span>
+                                  </button>
+                                </>
+                              )}
+
+                              {selectedAgentId === 'editor' && (
+                                <button
+                                  onClick={() => onNavigateToRoom('edit')}
+                                  className="px-2 py-0.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold transition flex items-center gap-1"
+                                >
+                                  <span>✂️ Stage 10: DaVinci Polish</span>
+                                </button>
+                              )}
+
+                              {selectedAgentId === 'showrunner' && (
+                                <>
+                                  <button
+                                    onClick={() => onNavigateToRoom('plot')}
+                                    className="px-2 py-0.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>💡 01 Plot Room</span>
+                                  </button>
+                                  <button
+                                    onClick={() => onNavigateToRoom('structure')}
+                                    className="px-2 py-0.5 rounded-lg bg-purple-950/60 hover:bg-purple-900 text-purple-300 border border-purple-800/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>📊 Stage 2: Structure</span>
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           )}
                         </div>
                       )}

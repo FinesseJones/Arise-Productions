@@ -13,7 +13,7 @@ import {
   Check,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getAPIBaseURL } from '../../../lib/api';
+import RemotionTitleCard from '../../video/RemotionTitleCard';
 
 export interface EditRoom3DProps {
   projectName: string;
@@ -123,6 +123,7 @@ export const EditRoomHolo: React.FC<EditRoom3DProps> = ({
   const [activeSidebarTool, setActiveSidebarTool] = useState<string>('Media');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<string>('00:00:01');
+  const [showRemotionOverlay, setShowRemotionOverlay] = useState<boolean>(true);
 
   const tools = ['Media', 'Text', 'Stock', 'Transitions', 'Subtitles'];
 
@@ -138,7 +139,7 @@ export const EditRoomHolo: React.FC<EditRoom3DProps> = ({
   return (
     <div className="relative z-10 flex flex-col w-full h-full max-w-5xl min-h-[520px] bg-[#0e0722]/95 border border-amber-500/30 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden font-sans">
       {/* Top Header Bar matching Image 3 */}
-      <div className="flex items-center justify-between px-5 py-2.5 border-b border-amber-500/25 bg-[#090416]/95 flex-shrink-0">
+      <div className="flex items-center justify-between px-5 py-2.5 border-b border-amber-500/25 bg-[#090416]/95 flex-shrink-0 flex-wrap gap-2">
         <div className="flex items-center space-x-3">
           <Scissors className="text-amber-400 w-4 h-4" />
           <h3 className="text-sm font-bold text-amber-100 font-serif tracking-wide">
@@ -149,7 +150,22 @@ export const EditRoomHolo: React.FC<EditRoom3DProps> = ({
           </span>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2.5">
+          {/* Remotion Overlay Toggle */}
+          <button
+            onClick={() => {
+              setShowRemotionOverlay(!showRemotionOverlay);
+              toast(showRemotionOverlay ? 'Remotion Overlay Disabled' : '✨ Remotion 4K Overlay Active', { icon: '🎬' });
+            }}
+            className={`px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold border transition ${
+              showRemotionOverlay
+                ? 'bg-amber-500/20 text-amber-300 border-amber-400/50 shadow-sm'
+                : 'bg-purple-950/40 text-purple-400 border-purple-800/40 hover:text-white'
+            }`}
+          >
+            {showRemotionOverlay ? '✨ Remotion 4K ON' : 'Remotion OFF'}
+          </button>
+
           {/* Aspect Ratio Selector */}
           <select
             value={aspectRatio}
@@ -213,15 +229,29 @@ export const EditRoomHolo: React.FC<EditRoom3DProps> = ({
                 alt="4K Video Preview"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+
+              {/* Remotion 4K Animated Motion Graphics & Subtitles Overlay */}
+              {showRemotionOverlay && (
+                <RemotionTitleCard
+                  title={projectName || 'A Fatherless Child'}
+                  episode="Episode 1: Echoes of Absence"
+                  characterName="DEVON"
+                  characterRole="Protagonist"
+                  aspectRatio={aspectRatio}
+                  showSubtitle={true}
+                  subtitleText={'Your story doesn\'t begin with who wasn\'t there—it begins with who you choose to be today.'}
+                />
+              )}
+
+              <div className="absolute inset-0 bg-black/20 flex items-center justify-center pointer-events-auto">
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
-                  className="w-12 h-12 rounded-full bg-black/60 border border-amber-400 text-amber-300 flex items-center justify-center hover:scale-110 transition shadow-xl"
+                  className="w-12 h-12 rounded-full bg-black/60 border border-amber-400 text-amber-300 flex items-center justify-center hover:scale-110 transition shadow-xl z-40"
                 >
                   <Play size={20} fill="currentColor" />
                 </button>
               </div>
-              <div className="absolute top-2 left-3 text-[10px] font-mono text-amber-300 bg-black/70 px-2 py-0.5 rounded border border-amber-500/30">
+              <div className="absolute top-2 left-3 text-[10px] font-mono text-amber-300 bg-black/70 px-2 py-0.5 rounded border border-amber-500/30 z-40">
                 4K UHD PREVIEW
               </div>
             </div>
