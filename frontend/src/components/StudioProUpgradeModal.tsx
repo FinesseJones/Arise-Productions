@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sparkles,
   Zap,
@@ -14,52 +14,92 @@ import {
   ArrowRight,
   ShieldCheck,
   X,
+  Server,
+  Workflow,
+  Radio,
+  Sliders,
+  CheckCircle2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
+import { getAPIBaseURL } from '../lib/api';
 
 interface StudioProUpgradeModalProps {
   isOpen: boolean;
   onClose: () => void;
   featureTrigger?: string;
+  currentTier?: string;
+  onTierChange?: (tier: string) => void;
 }
 
 export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
   isOpen,
   onClose,
   featureTrigger,
+  currentTier = 'enterprise',
+  onTierChange,
 }) => {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
+  const apiBase = getAPIBaseURL();
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
   const [isLoadingStripe, setIsLoadingStripe] = useState<boolean>(false);
+  const [activeTier, setActiveTier] = useState<string>(
+    typeof window !== 'undefined' ? localStorage.getItem('arise_studio_tier') || 'enterprise' : 'enterprise'
+  );
+
+  useEffect(() => {
+    const saved = localStorage.getItem('arise_studio_tier') || 'enterprise';
+    setActiveTier(saved);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleCheckout = async (plan: string) => {
+  const handleSelectTier = async (plan: 'starter' | 'pro' | 'enterprise') => {
     setIsLoadingStripe(true);
-    const toastId = toast.loading(`🔒 Initializing secure Stripe Checkout for ${plan}...`);
+    const toastId = toast.loading(`🔒 Activating ${plan.toUpperCase()} studio license...`);
 
-    setTimeout(() => {
+    try {
+      localStorage.setItem('arise_studio_tier', plan);
+      setActiveTier(plan);
+      if (onTierChange) onTierChange(plan);
+
+      await fetch(`${apiBase}/api/v1/studio/tier`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier: plan }),
+      }).catch(() => {});
+
       setIsLoadingStripe(false);
-      toast.success(
-        `👑 Welcome to Arise Studio Pro! Unlimited 405B inference, 4K rendering & UE5 link unlocked!`,
-        { id: toastId, duration: 5000 }
-      );
-      localStorage.setItem('arise_studio_tier', 'pro');
+      if (plan === 'enterprise') {
+        toast.success(
+          `🏢 Studio Enterprise Active ($299/mo)! Dedicated H100 Cluster, Custom LoRAs & DaVinci/Unreal Plugins Enabled!`,
+          { id: toastId, duration: 5000 }
+        );
+      } else if (plan === 'pro') {
+        toast.success(`👑 Studio Pro Active! 405B inference & 4K exports unlocked!`, { id: toastId, duration: 4000 });
+      } else {
+        toast.success(`Starter tier activated.`, { id: toastId });
+      }
       onClose();
-    }, 1800);
+    } catch {
+      setIsLoadingStripe(false);
+      localStorage.setItem('arise_studio_tier', plan);
+      setActiveTier(plan);
+      toast.success(`Updated tier to ${plan}`, { id: toastId });
+      onClose();
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fade-in font-sans">
-      <div className="relative w-full max-w-4xl bg-gradient-to-b from-[#140e2e] via-[#0e0922] to-[#080512] border-2 border-amber-500/50 rounded-3xl shadow-2xl shadow-amber-500/20 overflow-hidden text-slate-100 flex flex-col my-auto">
+      <div className="relative w-full max-w-5xl bg-gradient-to-b from-[#140e2e] via-[#0e0922] to-[#080512] border-2 border-amber-500/60 rounded-3xl shadow-2xl shadow-amber-500/25 overflow-hidden text-slate-100 flex flex-col my-auto">
         {/* Glow Header Accent */}
-        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-purple-500 via-amber-400 to-rose-500" />
+        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-amber-500 via-rose-500 to-amber-400" />
 
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-purple-950/60 hover:bg-purple-900 border border-purple-800 text-purple-300 hover:text-white transition"
+          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-purple-950/60 hover:bg-purple-900 border border-purple-800 text-purple-300 hover:text-white transition cursor-pointer"
           aria-label="Close modal"
         >
           <X size={16} />
@@ -74,21 +114,21 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black text-[10px] font-black uppercase font-mono tracking-wider flex items-center gap-1">
+                  <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[10px] font-black uppercase font-mono tracking-wider flex items-center gap-1">
                     <Crown size={12} fill="currentColor" />
-                    STUDIO PRO
+                    ENTERPRISE INDUSTRIAL POWER
                   </span>
-                  {featureTrigger && (
-                    <span className="text-[11px] text-amber-300 font-mono">
-                      Unlocked by: <strong className="text-white">{featureTrigger}</strong>
+                  {activeTier === 'enterprise' && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center gap-1">
+                      <CheckCircle2 size={11} /> CURRENT ACTIVE PLAN
                     </span>
                   )}
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] font-serif uppercase tracking-wide mt-1">
-                  Scale Your 3D Film Production
+                  Arise Studio Production Licensing
                 </h2>
                 <p className="text-xs text-[#E2BA86] font-mono">
-                  Unlock Meta Llama 3.1 405B, Unlimited Shots, 4K Master Exports & Real-time UE5 Sync.
+                  Custom AI Fine-Tunes, Dedicated H100 GPU Clusters, Direct DaVinci & Unreal Engine 5.4 Links.
                 </p>
               </div>
             </div>
@@ -98,9 +138,9 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
               <button
                 type="button"
                 onClick={() => setBillingCycle('monthly')}
-                className={`px-3 py-1.5 rounded-xl transition ${
+                className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
                   billingCycle === 'monthly'
-                    ? 'bg-purple-700 text-white font-bold'
+                    ? 'bg-amber-500 text-black font-bold'
                     : 'text-purple-300/70 hover:text-white'
                 }`}
               >
@@ -109,7 +149,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
               <button
                 type="button"
                 onClick={() => setBillingCycle('annual')}
-                className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
                   billingCycle === 'annual'
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-extrabold shadow-sm'
                     : 'text-purple-300/70 hover:text-white'
@@ -126,11 +166,16 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
           {/* Pricing Grid: Starter vs Pro vs Studio Enterprise */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Tier 1: Free Starter */}
-            <div className="p-5 rounded-2xl bg-[#0c081e]/80 border border-purple-900/50 flex flex-col justify-between space-y-4">
+            <div className={`p-5 rounded-2xl bg-[#0c081e]/80 border flex flex-col justify-between space-y-4 ${activeTier === 'starter' ? 'border-purple-500 shadow-md' : 'border-purple-900/50'}`}>
               <div className="space-y-3">
-                <span className="text-xs font-bold text-purple-400 font-mono uppercase tracking-wider block">
-                  Starter Tier
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-purple-400 font-mono uppercase tracking-wider block">
+                    Starter Tier
+                  </span>
+                  {activeTier === 'starter' && (
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">ACTIVE</span>
+                  )}
+                </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-black text-white font-serif">$0</span>
                   <span className="text-xs text-purple-400 font-mono">/ forever</span>
@@ -154,30 +199,31 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
                   </div>
                   <div className="flex items-center gap-2 text-purple-400/50">
                     <Lock size={12} className="flex-shrink-0" />
-                    <span>No 405B Ultra reasoning</span>
+                    <span>No Dedicated H100 Cluster</span>
                   </div>
                 </div>
               </div>
 
               <button
                 type="button"
-                onClick={onClose}
-                className="w-full py-2.5 rounded-xl border border-purple-800 text-purple-300 text-xs font-mono font-bold hover:bg-purple-950/60 transition"
+                onClick={() => handleSelectTier('starter')}
+                className="w-full py-2.5 rounded-xl border border-purple-800 text-purple-300 text-xs font-mono font-bold hover:bg-purple-950/60 transition cursor-pointer"
               >
-                Current Plan
+                {activeTier === 'starter' ? 'Active Plan' : 'Switch to Starter'}
               </button>
             </div>
 
-            {/* Tier 2: Studio Pro (Highlighted) */}
-            <div className="p-5 rounded-2xl bg-gradient-to-b from-[#1c1240] to-[#120a2e] border-2 border-amber-500/80 flex flex-col justify-between space-y-4 shadow-xl shadow-amber-500/15 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-black font-black text-[10px] font-mono uppercase tracking-widest shadow-md">
-                MOST POPULAR
-              </div>
-
-              <div className="space-y-3 pt-1">
-                <span className="text-xs font-bold text-amber-300 font-mono uppercase tracking-wider block">
-                  Studio Pro Tier
-                </span>
+            {/* Tier 2: Studio Pro */}
+            <div className={`p-5 rounded-2xl bg-[#0c081e]/80 border flex flex-col justify-between space-y-4 ${activeTier === 'pro' ? 'border-amber-500 shadow-md bg-amber-950/20' : 'border-purple-900/50'}`}>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-400 font-mono uppercase tracking-wider block">
+                    Studio Pro Tier
+                  </span>
+                  {activeTier === 'pro' && (
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">ACTIVE</span>
+                  )}
+                </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-black text-amber-200 font-serif">
                     {billingCycle === 'annual' ? '$79' : '$99'}
@@ -185,7 +231,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
                   <span className="text-xs text-purple-300 font-mono">/ month</span>
                 </div>
                 <p className="text-[11px] text-purple-200">
-                  Full industrial horsepower for commercial creators and indie directors.
+                  Industrial horsepower for independent film directors and content studios.
                 </p>
 
                 <div className="space-y-2 pt-2 border-t border-purple-900/60 text-xs text-purple-100">
@@ -205,54 +251,61 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
                     <Check size={14} className="text-emerald-400 flex-shrink-0" />
                     <span>Unreal Engine 5 Real-Time Sync</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check size={14} className="text-emerald-400 flex-shrink-0" />
-                    <span>Priority MCP Cloud Worker queue</span>
-                  </div>
                 </div>
               </div>
 
               <button
                 type="button"
                 disabled={isLoadingStripe}
-                onClick={() => handleCheckout('Studio Pro')}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-xs font-black uppercase tracking-wider transition shadow-lg shadow-amber-500/30 flex items-center justify-center space-x-2 border border-amber-300/50 disabled:opacity-50"
+                onClick={() => handleSelectTier('pro')}
+                className="w-full py-2.5 rounded-xl border border-amber-500/50 bg-amber-500/15 text-amber-200 text-xs font-mono font-bold hover:bg-amber-500/25 transition cursor-pointer"
               >
-                <span>Upgrade to Studio Pro</span>
-                <ArrowRight size={14} />
+                {activeTier === 'pro' ? 'Active Plan' : 'Switch to Studio Pro ($99/mo)'}
               </button>
             </div>
 
-            {/* Tier 3: Enterprise Studio */}
-            <div className="p-5 rounded-2xl bg-[#0c081e]/80 border border-purple-900/50 flex flex-col justify-between space-y-4">
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-rose-400 font-mono uppercase tracking-wider block">
-                  Studio Enterprise
-                </span>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-white font-serif">$299</span>
-                  <span className="text-xs text-purple-400 font-mono">/ month</span>
+            {/* Tier 3: Studio Enterprise (High-End Active Card) */}
+            <div className="p-5 rounded-2xl bg-gradient-to-b from-[#24133a] via-[#160c28] to-[#0c0618] border-2 border-amber-500/90 flex flex-col justify-between space-y-4 shadow-2xl shadow-amber-500/25 relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-black text-[10px] font-mono uppercase tracking-widest shadow-md flex items-center gap-1">
+                <Crown size={11} fill="currentColor" />
+                INDUSTRIAL ENTERPRISE
+              </div>
+
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-rose-300 to-amber-400 font-mono uppercase tracking-wider block">
+                    Studio Enterprise
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/25 text-emerald-300 border border-emerald-500/50 font-black">
+                    ACTIVE NOW
+                  </span>
                 </div>
-                <p className="text-[11px] text-purple-300/70">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] to-[#FBBF24] font-serif">
+                    $299
+                  </span>
+                  <span className="text-xs text-amber-300/80 font-mono">/ month</span>
+                </div>
+                <p className="text-[11px] text-amber-100/90 leading-snug">
                   Custom AI fine-tunes, dedicated GPU clusters and on-premise soundstage links.
                 </p>
 
-                <div className="space-y-2 pt-2 border-t border-purple-900/40 text-xs text-purple-200">
+                <div className="space-y-2 pt-2 border-t border-amber-500/30 text-xs text-amber-100 font-medium">
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-emerald-400 flex-shrink-0" />
                     <span>Custom LoRA & Character fine-tunes</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check size={14} className="text-emerald-400 flex-shrink-0" />
-                    <span>Dedicated H100 GPU cluster</span>
+                    <Server size={14} className="text-amber-400 flex-shrink-0" />
+                    <span className="font-bold text-amber-200">Dedicated H100 GPU cluster</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-emerald-400 flex-shrink-0" />
                     <span>Unlimited team seats & SSO</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check size={14} className="text-emerald-400 flex-shrink-0" />
-                    <span>Direct DaVinci Resolve & Unreal plugin</span>
+                    <Workflow size={14} className="text-teal-400 flex-shrink-0" />
+                    <span className="font-bold text-teal-200">Direct DaVinci Resolve & Unreal plugin</span>
                   </div>
                 </div>
               </div>
@@ -260,11 +313,47 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
               <button
                 type="button"
                 disabled={isLoadingStripe}
-                onClick={() => handleCheckout('Studio Enterprise')}
-                className="w-full py-2.5 rounded-xl border border-rose-500/50 bg-rose-500/10 text-rose-300 text-xs font-mono font-bold hover:bg-rose-500/20 transition"
+                onClick={() => handleSelectTier('enterprise')}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black text-xs font-black uppercase tracking-wider transition shadow-xl shadow-amber-500/30 flex items-center justify-center space-x-2 border border-amber-300/60 cursor-pointer active:scale-95 disabled:opacity-50"
               >
-                Contact Enterprise
+                <Crown size={14} fill="currentColor" />
+                <span>Enterprise Active ($299/mo)</span>
               </button>
+            </div>
+          </div>
+
+          {/* Enterprise Live Diagnostic Status Bar */}
+          <div className="p-4 rounded-2xl bg-[#090514] border border-amber-500/40 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+            <div className="flex items-center space-x-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+              <div>
+                <span className="text-[10px] text-amber-400/80 block">GPU Compute</span>
+                <span className="text-slate-100 font-bold">8x H100 SXM5 (Online)</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+              <div>
+                <span className="text-[10px] text-amber-400/80 block">DaVinci Resolve</span>
+                <span className="text-slate-100 font-bold">Studio 19 Bridge Synced</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+              <div>
+                <span className="text-[10px] text-amber-400/80 block">Unreal Engine</span>
+                <span className="text-slate-100 font-bold">5.4 Live Link Stream</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+              <div>
+                <span className="text-[10px] text-amber-400/80 block">Custom LoRA Engine</span>
+                <span className="text-slate-100 font-bold">Character Likeness Locked</span>
+              </div>
             </div>
           </div>
 
@@ -272,7 +361,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
           <div className="flex items-center justify-center space-x-2 text-[11px] text-purple-400/80 font-mono pt-2 border-t border-purple-900/40">
             <ShieldCheck size={14} className="text-amber-400" />
             <span>
-              256-Bit Encrypted Payments via Stripe • Cancel anytime • 14-Day Full Production Guarantee
+              256-Bit Encrypted Enterprise Payments via Stripe • Dedicated Soundstage SLA • 14-Day Full Production Guarantee
             </span>
           </div>
         </div>

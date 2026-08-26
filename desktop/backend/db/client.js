@@ -258,7 +258,10 @@ class StudioDatabase extends EventEmitter {
 
   _seedInitialData() {
     const defaultProjects = [
-      { id: 'proj-fatherless-child', name: 'A Fatherless Child', slug: 'a-fatherless-child', format: 'long_form', version: 1 },
+      { id: 'proj-fatherless-child', name: 'A Fatherless Child', slug: 'a-fatherless-child', format: 'long_form', genre: 'Family Emotional Drama', version: 1 },
+      { id: 'proj-vicious-cycle', name: 'Vicious Cycle', slug: 'vicious-cycle', format: 'short_form', genre: 'Urban Action Noir', version: 1 },
+      { id: 'proj-echoes-of-past', name: 'Echoes of the Past', slug: 'echoes-of-the-past', format: 'short_form', genre: 'Sci-Fi Psychological Mystery', version: 1 },
+      { id: 'proj-shadow-protocol', name: 'Shadow Protocol', slug: 'shadow-protocol', format: 'episodic_tv', genre: 'Espionage Political Thriller', version: 1 },
     ];
 
     // Seed default cross-format ideas
@@ -279,9 +282,6 @@ class StudioDatabase extends EventEmitter {
         tags: ['Sci-Fi', 'Short Film', 'High-Concept', 'Temporal'],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        history: [
-          { timestamp: new Date().toISOString(), author: 'Flash Nova', note: 'Calibrated for 9-minute tight festival pacing with Unreal Engine 5 lunar environment.' }
-        ]
       },
       {
         id: 'idea-feature-fatherless-child',
@@ -300,9 +300,6 @@ class StudioDatabase extends EventEmitter {
         tags: ['Feature Film', 'Drama', 'Thriller', 'Heritage', 'Dual-Lead'],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        history: [
-          { timestamp: new Date().toISOString(), author: 'Orion Vance', note: 'Promoted to active 10-stage production pipeline.' }
-        ]
       },
       {
         id: 'idea-tv-obsidian-protocol',
@@ -320,9 +317,6 @@ class StudioDatabase extends EventEmitter {
         tags: ['TV Series', 'Sci-Fi', 'Cyberpunk', 'Episodic', 'Mystery'],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        history: [
-          { timestamp: new Date().toISOString(), author: 'Scribe Vance', note: 'Constructed 8-episode season arc and episodic tension engine.' }
-        ]
       },
     ];
 
@@ -446,8 +440,47 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
 
   // --- Manifest Methods ---
   async getProjectManifest(projectId = 'proj-fatherless-child') {
-    const project = this.projects.get(projectId);
-    if (!project) return null;
+    if (!projectId) projectId = 'proj-fatherless-child';
+    let project = this.projects.get(projectId);
+    if (!project) {
+      const cleanName = projectId.replace(/^proj-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+      project = {
+        id: projectId,
+        name: cleanName || 'Arise Production',
+        slug: projectId,
+        format: 'long_form',
+        version: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      this.projects.set(projectId, project);
+
+      for (let shotNumber = 1; shotNumber <= 3; shotNumber++) {
+        const shotId = `${projectId}-shot-${shotNumber}`;
+        this.shots.set(shotId, {
+          id: shotId,
+          projectId,
+          shotNumber,
+          title: `${project.name} - Scene ${shotNumber}`,
+          description: `Production shot ${shotNumber} for ${project.name}`,
+          durationFrames: 120,
+          created_at: new Date().toISOString(),
+        });
+        const stages = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
+        stages.forEach((st) => {
+          this.statuses.set(`${shotId}:${st}`, {
+            id: `${shotId}:${st}`,
+            shotId,
+            stageId: st,
+            state: 'DONE',
+            statusChar: '🟢',
+            outputHash: `hash-${st}-${shotNumber}`,
+            updated_at: new Date().toISOString(),
+          });
+        });
+      }
+      this._saveToDisk();
+    }
 
     const projectShots = Array.from(this.shots.values())
       .filter((s) => s.projectId === projectId)

@@ -87,6 +87,11 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
 
+  // Active Studio Licensing Tier (Default: Enterprise $299/mo)
+  const [studioTier, setStudioTier] = useState<string>(() =>
+    typeof window !== 'undefined' ? localStorage.getItem('arise_studio_tier') || 'enterprise' : 'enterprise'
+  );
+
   // NVIDIA NIM Model & API Key State
   const [defaultModel, setDefaultModel] = useState<string>('meta/llama-3.1-70b-instruct');
   const [apiKeyInput, setApiKeyInput] = useState<string>('');
@@ -451,13 +456,16 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             <span className="font-bold">{defaultModel.split('/')[1] || 'Llama 3.1 70B'}</span>
           </button>
 
-          {/* Stripe-Powered Studio Pro Upgrade Button */}
+          {/* Active Enterprise Tier License Badge */}
           <button
             onClick={() => setShowUpgradeModal(true)}
-            className="flex items-center space-x-1 px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold border border-amber-300 text-[11px] font-mono transition shadow-md shadow-amber-500/20 cursor-pointer active:scale-95 flex-shrink-0"
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-black border border-amber-300 text-[11px] font-mono transition shadow-lg shadow-amber-500/25 cursor-pointer active:scale-95 flex-shrink-0"
+            title="Arise Studio Enterprise ($299/mo) Active - Dedicated H100 Cluster & Plugins"
           >
             <Crown size={12} fill="currentColor" />
-            <span>Pro</span>
+            <span className="uppercase tracking-wider">
+              {studioTier === 'enterprise' ? 'Enterprise ($299/mo)' : studioTier === 'pro' ? 'Studio Pro' : 'Free Tier'}
+            </span>
           </button>
 
           <div className="hidden xl:flex items-center space-x-1 text-[11px] text-amber-300/70 border-l border-amber-500/30 pl-2.5 flex-shrink-0">
@@ -674,10 +682,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         />
       )}
 
-      {/* Stripe-Powered Studio Pro Upgrade Modal */}
+      {/* Stripe-Powered Studio Enterprise & Pro Upgrade Modal */}
       <StudioProUpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
+        currentTier={studioTier}
+        onTierChange={(t) => setStudioTier(t)}
       />
 
       {/* NVIDIA NIM Free Tier Modal */}
