@@ -13,7 +13,7 @@ services:
       - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
       - VITE_API_URL=
     volumes:
-      - arise_data:/app/backend/db
+      - arise_data:/app/data
     networks:
       - default
       - caddy_net

@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DB_DIR = process.env.DATA_DIR || (fs.existsSync('/app/data') ? '/app/data' : path.join(__dirname));
+const DB_DIR = path.join(__dirname);
 const CHAT_FILE = path.join(DB_DIR, 'agent_conversations.json');
 const MEMORY_FILE = path.join(DB_DIR, 'studio_memory.json');
 
