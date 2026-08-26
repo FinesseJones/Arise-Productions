@@ -1,89 +1,128 @@
 # 🎬 Arise Production Studio
 
-**A Product of THE AI CONTENT FOUNDRY, LLC**  
-*© 2026 Arise Production. All rights reserved.*
+**A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026 • ALL RIGHTS RESERVED**  
+*The Premier 4K 3D Virtual Film & Television Production Studio Suite*
 
-A next-generation virtual production studio and single-pane-of-glass workspace powered by 10 Model Context Protocol (MCP) microservices, NVIDIA NIM AI models (Llama 3.1 70B), real-time WebSocket state synchronization, Three.js 3D spatial viewports, and automated conform pipelines.
-
----
-
-## 📖 Documentation & Architecture
-
-* 📘 **[Master Operational Manual →](./docs/INSTRUCTIONS.md)** *(Complete guide covering 10 MCP departments, document ingestion matrix, 5 studio modes, NVIDIA NIM setup, and autonomous director commands)*
-* 📱 **[Multi-Platform Installation Guide (Mac, iOS, Android) →](./docs/INSTALLATION.md)**
-* 🏗️ **[System Architecture & Data Flows →](./docs/ARCHITECTURE.md)**
-* ⚡ **[Quick Start Reference →](./docs/QUICK_START.md)**
+[![GitHub Release](https://img.shields.io/badge/Release-v1.0.0-gold.svg)](https://github.com/FinesseJones/Arise-Productions)
+[![Architecture](https://img.shields.io/badge/Architecture-10_MCP_Workers-amber.svg)](./docs/ARCHITECTURE.md)
+[![Model](https://img.shields.io/badge/NVIDIA_NIM-Llama_3.3_70B_Instruct-purple.svg)](https://build.nvidia.com)
+[![Platform](https://img.shields.io/badge/Platforms-macOS_Desktop_|_Web_VPS-blue.svg)](http://2.25.113.26:4000)
 
 ---
 
-## 🌟 Core Capabilities
+## 🏛️ Executive Studio Overview
 
-1. **🎬 Multi-Format Production Management:**
-   * **Feature Films (Long-Form):** 90–150 min 3-act narrative structures (Save the Cat), multi-shot manifests, and scene continuity.
-   * **Short-Form Content (9:16 Vertical):** Dynamic mobile video, TikToks, and Instagram Reels with rapid pacing.
-   * **Episodic TV Series:** Multi-season and episodic arc tracking, cold opens, and cross-episode bibles.
-
-2. **📝 Screenwriting & AI Script Doctoring (Stage 01):**
-   * Hollywood Fountain screenplay syntax editor with live element formatting (`Scene`, `Action`, `Character`, `Dialogue`, `Transition`).
-   * Inline AI Script Doctor: Raise Stakes, Deepen Subtext, Next Beat, and Polish Dialogue powered by Llama 3.1 70B.
-   * Real-time page estimators, word counts, and estimated runtime metrics.
-
-3. **🏛️ 40-Beat Sheet Narrative Matrix (Stage 02):**
-   * Complete Save-the-Cat 3-Act structure breakdown with dynamic emotional tension monitoring.
-
-4. **📑 1-Click Production Pitch Bible Generator:**
-   * Generates exportable pitch decks with Master One-Pagers, 40-Beat Sheets, Character Dossiers, and Unreal DP / Dolby Atmos specs.
-
-5. **🏛️ 10 Domain-Specific MCP Departments:**
-   * **01 ScriptBreak (`/mcp/script`):** Screenplay parsing, scene bibles, character extraction.
-   * **02 Cork Board (`/mcp/structure`):** 3-Act narrative index cards and emotional intensity arcs.
-   * **03 Master Canvas (`/mcp/plan`):** ACEScg color bibles, PBR textures, 3-point lighting setups, and wardrobe matrices.
-   * **04 Blockout 3D (`/mcp/previs`):** Virtual cinematography, Cooke anamorphic prime lenses (18mm–135mm), and 3D vector coordinates.
-   * **05 Motion Previs (`/mcp/motion`):** 52-point skeletal kinematics tracking, optical vectors, and 60 FPS motion solves.
-   * **06 Storyboard Lab (`/mcp/boards`):** 4-Panel visual storyboards with aspect ratio selectors (`2.39:1`, `16:9`, `9:16`).
-   * **07 Slate Prompt (`/mcp/prompt`):** FLUX.1 Dev diffusion prompt matrices with ControlNet Depth V2 and IP-Adapter character likeness locks.
-   * **08 Circle Take (`/mcp/dailies`):** 4K HDR dailies review, take scoring, and technical QC verification.
-   * **09 Stem Studio (`/mcp/sound`):** Dolby Atmos 5.1 4-track stem mixing console at -24.0 LKFS.
-   * **10 DaVinci MCP (`/mcp/edit`):** Multi-track NLE timeline assembler, 3D LUT film profiles (Kodak 2383, Fuji Eterna, ACEScc), and `.EDL` / `.XML` exports.
+**Arise Production Studio** is a unified, end-to-end virtual production workstation and multi-agent creative studio designed for independent filmmakers, showrunners, and production companies. It integrates **14 dedicated creative rooms**, **10 Model Context Protocol (MCP) production microservices**, **autonomous tool-calling departmental AI agents (powered by NVIDIA NIM Llama 3.3 70B)**, a real-time **Three.js 3D Soundstage**, and native bridges for **Unreal Engine 5**, **ComfyUI**, **Hyperframes**, **Remotion**, **OpenMontage**, and **DaVinci Resolve**.
 
 ---
 
-## 🧠 AI Orchestration & Creative Engines
+## 🌟 Key Features & Systems
 
-* **NVIDIA NIM AI Models:**
-  * `meta/llama-3.1-70b-instruct` (Default free tier model for departmental co-pilots and pitch generation).
-  * `meta/llama-3.3-70b-instruct` (Structural parsing and camera vector calculations).
-* **Creative Connectors & Protocols:**
-  * **Unreal Engine 5 (`:30010`):** Virtual camera parameter synchronization.
-  * **OpenMontage:** Timeline EDL/XML assembly for DaVinci Resolve 19.
-  * **Hyperframes:** 60 FPS neural motion synthesis.
-  * **ComfyUI (`:8188`):** FLUX.1 Dev diffusion and IP-Adapter character likeness consistency.
+### 💡 1. 00: Idea Lab & IP Concept Vault
+A dedicated incubation suite for pitching, developing, and categorizing story concepts with format-separated database tracking:
+* ⚡ **Short-Form Cinema:** 5–15 min festival pieces, viral cinematic reels, and high-impact proof-of-concepts.
+* 🎬 **Feature Films:** 3-Act 90–120 min cinematic narratives, indie films, and tentpole screenplays.
+* 📺 **TV & Episodic Series:** Multi-season story engines, pilot episode setups, and season cliffhanger bibles.
+* 🎯 **Real-Time Pitch Architect:** AI-assisted generators for High-Concept Hooks, Cinematic Loglines, Thematic Engines, Season/Act Blueprints, and Market Comparisons.
+* 🚀 **One-Click Promotion:** Convert any approved concept directly into an active project with a 10-stage manifest and default scene script.
 
 ---
 
-## 🚀 Quick Start
+### 🤖 2. Autonomous Tool-Calling Multi-Agent Boardroom
+Unlike chat-only chatbots, Arise Production agents are autonomous **tool-calling systems** capable of inspecting database scripts, modifying project manifests, executing MCP pipeline stages, and coordinating cross-room handoffs:
 
-### 1. Launch the Native macOS Application
-Open **Finder** &rarr; **Applications** &rarr; Double-click **Arise Production.app**.
+| Agent | Department | Role & Specialization |
+| :--- | :--- | :--- |
+| **💡 Orion Vance** | **Development & IP** | **IP Architect & Idea Catalyst Lead:** High-concept hooks, franchise lore, cross-format adaptation. |
+| **📺 Scribe Vance** | **Television & Series** | **Episodic TV Series Architect:** Multi-season story engines, pilot cold opens, B-story balance. |
+| **⚡ Flash Nova** | **Short Form Cinema** | **Short-Form Specialist:** 5–15 min festival pacing, proof-of-concept reels, vertical cinema. |
+| **🌟 Showrunner Sterling** | **Executive Boardroom** | **Studio Lead & Executive Producer:** Series bibles, 40-beat sheets, production greenlights. |
+| **✍️ Devon Wells** | **Writing & Narrative** | **Head Screenwriter & Script Doctor:** Fountain screenplay syntax, subtext, dialogue polish. |
+| **🎬 CineDirector Maya** | **Direction & Camera** | **Director of Photography & DP:** 18–85mm prime lenses, Unreal CineCamera tracking, rack focus. |
+| **💡 Lux Sterling** | **Lighting & Atmosphere** | **Chief Lighting Technician & Master Gaffer:** 3-point Kelvin lighting, volumetric haze, contrast ratios. |
+| **🎨 Architect Vance** | **Art & LookDev** | **Production Designer:** ACEScg color palettes, PBR material roughness, spatial set aesthetics. |
+| **⚡ Kinetics Kai** | **Animation & Kinematics** | **Kinematics Specialist:** 52-point skeletal tracking, Chaos cloth dynamics, physical weight transfer. |
+| **⚡ Synthetix Nova** | **Prompt & VFX** | **Prompt Architect:** FLUX/SDXL negative shields, IP-Adapter face likeness locks, ControlNet depth. |
+| **🎞️ Colorist Cole** | **Post & Finishing** | **Finishing Colorist & Editor:** ACEScc color science, Kodak 2383 35mm film print emulation, CDL wheels. |
+| **🎧 Acoustic Axel** | **Audio & Sound** | **Sound Supervisor:** 5.1 Dolby Atmos surround sound, AI stem separation, Foley cue sheets. |
 
-### 2. Run from Source
+---
+
+### 🎥 3. True Cinematic Realism vs. Generic "AI Video"
+Arise replaces random prompt guessing with **physical Hollywood cinematography stages**:
+1. **Spatial Camera Lock (Stage 4 / Three.js & Unreal Engine):** Real 35mm optical geometry and physical dolly/crane paths prevent random AI camera drift.
+2. **Identity & Depth Shield (Stage 7 / ComfyUI & IP-Adapter):** ControlNet depth maps + face vector locks ensure actors never morph between cuts.
+3. **DaVinci Resolve ACEScc & Kodak 2383 CDL (Stage 10):** Authentic 35mm film grain, 24.000 FPS motion cadence, and highlight compression deliver true movie aesthetic.
+
+---
+
+### ⚙️ 4. The 10 Production MCP Microservices
+
+```
+ ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+ │   Stage 01   │     │   Stage 02   │     │   Stage 03   │     │   Stage 04   │     │   Stage 05   │
+ │ ScriptBreak  ├────►│  Cork Board  ├────►│Master Canvas ├────►│ Blockout 3D  ├────►│ Motion Previs│
+ │ (/mcp/script)│     │(/mcp/struct) │     │ (/mcp/plan)  │     │(/mcp/previs) │     │(/mcp/motion) │
+ └──────────────┘     └──────────────┘     └──────────────┘     └──────┬───────┘     └──────────────┘
+                                                                       │
+ ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────▼───────┐     ┌──────────────┐
+ │   Stage 10   │     │   Stage 09   │     │   Stage 08   │     │   Stage 07   │     │   Stage 06   │
+ │ DaVinci MCP  │◄────┤ Stem Studio  │◄────┤ Circle Take  │◄────┤ Slate Prompt │◄────┤Storyboard Lab│
+ │  (/mcp/edit) │     │ (/mcp/sound) │     │(/mcp/dailies)│     │(/mcp/prompt) │     │(/mcp/boards) │
+ └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+```
+
+1. **Stage 1 (ScriptBreak):** Screenplay parser, Fountain element tagger, character dialogue tracker.
+2. **Stage 2 (Cork Board):** 3-Act narrative index cards, Save-the-Cat 40-beat structures.
+3. **Stage 3 (Master Canvas):** ACEScg color swatches, PBR material roughness, asset manifests.
+4. **Stage 4 (Blockout 3D):** Unreal Engine 5 CineCamera bridge (`:30010`), 35mm/85mm optical vectors.
+5. **Stage 5 (Motion Previs):** Hyperframes 60 FPS keyframe interpolation and 3D transition blocks.
+6. **Stage 6 (Storyboard Lab):** 4-Panel visual storyboards, aspect ratio framing (`2.39:1`, `16:9`, `9:16`).
+7. **Stage 7 (Slate Prompt):** ComfyUI (`:8188`) FLUX.1 Dev prompt matrix, IP-Adapter face lock, ControlNet depth.
+8. **Stage 8 (Circle Take):** Remotion programmatic compositor, automated take scoring, continuity tracking.
+9. **Stage 9 (Stem Studio):** Dolby Atmos 5.1 4-track stem mixing console, AI dialogue cleanup.
+10. **Stage 10 (DaVinci MCP):** CMX 3600 EDL timeline assembler, ACEScc Kodak 2383 LUTs, 24.000 FPS export.
+
+---
+
+## 🚀 Quick Start & Installation
+
+### Option 1: Native macOS Desktop Application
+* Open `/Applications/Arise Production.app`
+* The desktop application runs standalone with bundled backend, local WebSocket gateway, and custom dock branding.
+
+### Option 2: Run from Source
 ```bash
-# Clone repository
-git clone https://github.com/FinesseJones/Unified-3D-Production-Studio.git
-cd Unified-3D-Production-Studio
+# Clone the repository
+git clone https://github.com/FinesseJones/Arise-Productions.git
+cd Arise-Productions
 
-# Install all dependencies
+# Install dependencies across root, frontend, and desktop
 npm run install:all
 
-# Start Backend API & WebSocket Gateway (:4000)
-node server.js
+# Start Studio Backend & API Gateway (:4000)
+npm run server
 
-# Start Frontend Studio (:5002)
+# Start Frontend Client (:5055)
 npm run dev
 ```
 
 ---
 
+## 🔄 3-Way Continuous Synchronization
+
+The studio includes a master synchronization utility (`./scripts/sync-all.sh`) that synchronizes all three deployment targets in a single atomic command:
+
+```bash
+./scripts/sync-all.sh "Your commit message here"
+```
+
+1. **GitHub Repository:** Pushes current branch (`tool-calling-agents` or `main`) to [GitHub](https://github.com/FinesseJones/Arise-Productions).
+2. **macOS Desktop App:** Recompiles frontend, builds Electron app bundle, applies ad-hoc codesigning (`codesign --force --deep --sign -`), and refreshes `/Applications/Arise Production.app` and Desktop DMG.
+3. **VPS Server:** Synchronizes remote web deployment at `http://2.25.113.26:4000`.
+
+---
+
 ## ⚖️ Legal & Copyright
 **© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.**  
-This repository and its codebase are proprietary and unlicensed for external distribution without explicit authorization from THE AI CONTENT FOUNDRY, LLC.
+This repository and its codebase are proprietary and unlicensed for unauthorized distribution without explicit written consent from THE AI CONTENT FOUNDRY, LLC.
