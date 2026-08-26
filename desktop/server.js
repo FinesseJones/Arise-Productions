@@ -20,6 +20,8 @@ import { nvidia } from './backend/ai/nvidia-client.js';
 import { agentMemory } from './backend/db/agent-memory.js';
 import { runAgent } from './backend/agent/agent-runtime.js';
 import { agentToolDefinitions } from './backend/agent/tools.js';
+import { blackmagicConnector } from './backend/services/blackmagic-connector.js';
+import { audioEngine } from './backend/services/audio-engine.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -418,6 +420,41 @@ app.delete('/api/v1/assets/:assetId', (req, res) => {
   try {
     const deleted = db.deleteAsset(req.params.assetId);
     res.json({ success: deleted, message: deleted ? 'Asset removed from vault' : 'Asset not found' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==============================================================================
+// BLACKMAGIC DESIGN & BMPCC 4K STUDIO INTEGRATION ENDPOINTS
+// ==============================================================================
+
+// GET /api/v1/blackmagic/status - Get installed Blackmagic apps, BMPCC 4K spec, and SDK status
+app.get('/api/v1/blackmagic/status', (req, res) => {
+  try {
+    const status = blackmagicConnector.getSystemStatus();
+    res.json(status);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/blackmagic/launch - Launch DaVinci Resolve or Blackmagic app
+app.post('/api/v1/blackmagic/launch', async (req, res) => {
+  try {
+    const { appKey = 'davinciResolve' } = req.body;
+    const result = await blackmagicConnector.launchApp(appKey);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/blackmagic/project - Generate DaVinci Resolve project descriptor with BMPCC 4K Gen 5 color science
+app.post('/api/v1/blackmagic/project', (req, res) => {
+  try {
+    const projectDesc = blackmagicConnector.generateDaVinciProjectDescriptor(req.body);
+    res.json({ success: true, project: projectDesc });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

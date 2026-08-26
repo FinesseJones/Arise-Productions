@@ -137,11 +137,13 @@ Arise Production prevents the notorious "AI video look" (plastic skin, morphing 
 
 ## 8. External Creative Connectors & Protocols
 
-| External Software | Connection Protocol | Default Port | Status & Auto-Detect Behavior |
+| External Software | Connection Protocol | Default Port / Path | Status & Auto-Detect Behavior |
 | :--- | :--- | :---: | :--- |
+| **Blackmagic Design & BMPCC 4K** | USB-C UVC / Bluetooth LE / Scripting | `/Applications/DaVinci Resolve` | **Auto-detects live on macOS.** Supports Blackmagic Pocket Cinema Camera 4K (MFT 18.96x10mm, Dual Native ISO 400/3200, BRAW 5:1 Gen 5 Film Color) and one-click launch into DaVinci Resolve Studio 19. |
 | **ComfyUI / Comfy Desktop** | HTTP REST & WebSockets | `8188` | **Auto-detects live on port 8188.** Queues diffusion workflows and IP-Adapter tensors. |
 | **Unreal Engine 5** | Remote Control Web Server API | `30010` | Connects to `/remote/object/call` to update `CineCameraActor` and Lumen lights. |
 | **FFmpeg Cinema Engine** | Native System Subprocess | Local Bin | Uses `/opt/homebrew/bin/ffmpeg` for live 4K H.264 / AAC video compilation. |
+| **Open-Source Audio Engine** | Local Whisper / Kokoro-82M / XTTS-v2 | Local On-Device | Free, 100% on-device speech-to-text and character voice cloning with -24.0 LKFS stem mastering. |
 | **Hyperframes Engine** | File-backed JSON Cache | `~/.hyperframes` | Loads 50+ animated 3D transition and VFX blocks. |
 | **OpenMontage** | Python Subprocess & YAML | Local Venv | Generates CMX 3600 EDLs and DaVinci Resolve 19 timeline conforms. |
 

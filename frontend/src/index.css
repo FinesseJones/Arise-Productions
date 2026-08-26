@@ -29,10 +29,38 @@ body {
 /* Cosmic Glass & Glowing Cards */
 .amethyst-glass {
   background: rgba(20, 14, 46, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(139, 92, 246, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(10, 5, 25, 0.5);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-4k {
+  background: rgba(14, 7, 36, 0.82);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-4k:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 16px 48px 0 rgba(245, 158, 11, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+}
+
+.specular-border {
+  position: relative;
+}
+.specular-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.6), transparent);
 }
 
 .rose-gold-glow {
@@ -43,12 +71,23 @@ body {
   box-shadow: 0 0 25px rgba(139, 92, 246, 0.35);
 }
 
+.amber-gold-glow {
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);
+}
+
 .amethyst-gradient {
   background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f43f5e 100%);
 }
 
 .amethyst-gradient-text {
   background: linear-gradient(135deg, #c084fc 0%, #fb7185 50%, #fde047 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -65,13 +104,19 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2e1d5e;
-  border-radius: 9999px;
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: #3b2d71;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #8b5cf6;
+  background: #a855f7;
+}
+
+/* Smooth high-DPI text rendering */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Ambient Pulsing Animations */
