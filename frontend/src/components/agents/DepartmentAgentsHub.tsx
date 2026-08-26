@@ -429,7 +429,7 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
               </span>
             </div>
             <p className="text-[9px] text-amber-200/70 font-mono tracking-wider truncate max-w-xs sm:max-w-md">
-              PROJECT: <strong className="text-amber-300">{projectName.toUpperCase()}</strong> • 3D 4K & PERSISTENT MEMORY SYNCED
+              PROJECT: <strong className="text-amber-300">{(projectName || "PRODUCTION").toUpperCase()}</strong> • 3D 4K & PERSISTENT MEMORY SYNCED
             </p>
           </div>
         </div>

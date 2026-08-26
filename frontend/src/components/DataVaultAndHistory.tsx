@@ -65,7 +65,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
       timestamp: 'Today, 2:45 PM',
       author: 'Screenwriter AI (NVIDIA NIM)',
       status: 'Locked',
-      preview: `EXT. ${projectStatus.projectName.toUpperCase()} - SCENE 1\n${projectStatus.shots?.[0]?.description || `The opening world of ${projectStatus.projectName} unfolds with full visual scope and character setup.`}`,
+      preview: `EXT. ${(projectStatus?.projectName || "PRODUCTION").toUpperCase()} - SCENE 1\n${projectStatus.shots?.[0]?.description || `The opening world of ${projectStatus.projectName} unfolds with full visual scope and character setup.`}`,
     },
     {
       id: 'art-002',
@@ -109,7 +109,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
       timestamp: 'Today, 4:40 PM',
       author: 'OpenMontage & Editorial AI',
       status: 'Conformed',
-      preview: `001  AX       V     C        00:00:00:00 00:00:08:12 00:00:00:00 00:00:08:12\n* FROM CLIP NAME: ${cleanSlug.toUpperCase()}_SHOT01_TAKE03`,
+      preview: `001  AX       V     C        00:00:00:00 00:00:08:12 00:00:00:00 00:00:08:12\n* FROM CLIP NAME: ${(cleanSlug || "SLUG").toUpperCase()}_SHOT01_TAKE03`,
     },
     {
       id: 'art-006',

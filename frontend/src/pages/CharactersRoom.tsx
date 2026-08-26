@@ -206,10 +206,10 @@ export function CharactersRoom({ projectName = 'A Fatherless Child', onNavigateT
   };
 
   const handleExportPDF = () => {
-    const markdown = `# ${projectName.toUpperCase()} — CHARACTER & CASTING BIBLE
+    const markdown = `# ${(projectName || "PRODUCTION").toUpperCase()} — CHARACTER & CASTING BIBLE
 © 2026 ARISE PRODUCTIONS • ALL RIGHTS RESERVED
 
-` + characters.map((c) => `## ${c.name.toUpperCase()} (${c.role.toUpperCase()})
+` + characters.map((c) => `## ${(c.name || "Character").toUpperCase()} (${(c.role || "Role").toUpperCase()})
 - **Arc Type:** ${c.arcType} (${arcDescriptions[c.arcType]})
 - **Archetypes:** ${c.archetypes.join(', ')}
 - **Personality:** ${c.personality}
@@ -242,7 +242,7 @@ export function CharactersRoom({ projectName = 'A Fatherless Child', onNavigateT
               </span>
             </div>
             <p className="text-[9px] text-amber-200/70 font-mono tracking-wider">
-              PROJECT: <strong className="text-amber-300">{projectName.toUpperCase()}</strong> • CAST & ARCS
+              PROJECT: <strong className="text-amber-300">{(projectName || "PRODUCTION").toUpperCase()}</strong> • CAST & ARCS
             </p>
           </div>
         </div>

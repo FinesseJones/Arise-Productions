@@ -101,7 +101,7 @@ export function BeatsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom
   };
 
   const handleExport = () => {
-    const markdown = `# ${projectName.toUpperCase()} - BEAT SHEET\n\n` +
+    const markdown = `# ${(projectName || "PRODUCTION").toUpperCase()} - BEAT SHEET\n\n` +
       beats.map((b) => `### ${b.title} (${b.act})\n${b.description}\n`).join('\n') +
       `\n---\n© 2026 THE AI CONTENT FOUNDRY, LLC`;
     const blob = new Blob([markdown], { type: 'text/markdown' });

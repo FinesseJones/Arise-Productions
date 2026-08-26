@@ -50,7 +50,7 @@ export function ActsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom 
   };
 
   const handleExport = () => {
-    const markdown = `# ${projectName.toUpperCase()} - 5-ACT NARRATIVE ARCHITECTURE\n\n## TEASER / COLD OPEN\n${teaser}\n\n## ACT 1: THE SETUP & CATALYST\n${act1}\n\n## ACT 2A: THE RESPONSE & EXPEDITION\n${act2A}\n\n## ACT 2B: THE ATTACK & DARK NIGHT\n${act2B}\n\n## ACT 3: THE CLIMAX & TRANSFORMATION\n${act3}\n\n---\n© 2026 THE AI CONTENT FOUNDRY, LLC`;
+    const markdown = `# ${(projectName || "PRODUCTION").toUpperCase()} - 5-ACT NARRATIVE ARCHITECTURE\n\n## TEASER / COLD OPEN\n${teaser}\n\n## ACT 1: THE SETUP & CATALYST\n${act1}\n\n## ACT 2A: THE RESPONSE & EXPEDITION\n${act2A}\n\n## ACT 2B: THE ATTACK & DARK NIGHT\n${act2B}\n\n## ACT 3: THE CLIMAX & TRANSFORMATION\n${act3}\n\n---\n© 2026 THE AI CONTENT FOUNDRY, LLC`;
     const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

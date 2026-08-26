@@ -151,7 +151,7 @@ export function PlotRoom({ projectName = 'A Fatherless Child', onNavigateToRoom 
   };
 
   const handleExport = () => {
-    const doc = `# ${title.toUpperCase()} — PLOT OVERVIEW
+    const doc = `# ${(title || "PRODUCTION").toUpperCase()} — PLOT OVERVIEW
 © 2026 ARISE PRODUCTIONS & THE AI CONTENT FOUNDRY, LLC
 
 ## LOGLINE
@@ -199,7 +199,7 @@ ${audience}
               </span>
             </div>
             <p className="text-[9px] text-amber-200/70 font-mono tracking-wider">
-              PROJECT: <strong className="text-amber-300">{title.toUpperCase()}</strong> • STORY ARCHITECTURE FOUNDATION
+              PROJECT: <strong className="text-amber-300">{(title || "PRODUCTION").toUpperCase()}</strong> • STORY ARCHITECTURE FOUNDATION
             </p>
           </div>
         </div>

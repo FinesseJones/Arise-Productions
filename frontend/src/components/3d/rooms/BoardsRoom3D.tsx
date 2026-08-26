@@ -121,7 +121,7 @@ export const BoardsRoomHolo: React.FC<BoardsRoom3DProps> = ({
   ]);
 
   const handleExportPDF = () => {
-    const doc = `# ${projectName.toUpperCase()} — STORYBOARD SHOT LIST
+    const doc = `# ${(projectName || "PRODUCTION").toUpperCase()} — STORYBOARD SHOT LIST
 © 2026 ARISE PRODUCTIONS • ALL RIGHTS RESERVED
 
 ` + shots.map((s) => `### ${s.scene} — ${s.shot}: ${s.title}

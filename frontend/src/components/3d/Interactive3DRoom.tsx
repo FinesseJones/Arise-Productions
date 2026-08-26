@@ -83,7 +83,7 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-amber-100 font-bold uppercase font-serif tracking-wide text-xs">
-                3D {roomName.toUpperCase()} SOUNDSTAGE
+                3D {(roomName || "STUDIO").toUpperCase()} SOUNDSTAGE
               </span>
               <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
                 BMPCC 4K GEN 5

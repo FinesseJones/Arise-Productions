@@ -63,7 +63,7 @@ ${act3Beats.map(b => `• ${b.title}: ${b.description}`).join('\n')}
 --------------------------------------------------------------------------------
 2. PRINCIPAL CHARACTER DOSSIERS
 --------------------------------------------------------------------------------
-${characters.map((c, i) => `${i + 1}. ${c.name.toUpperCase()} — ${c.role.toUpperCase()}
+${characters.map((c, i) => `${i + 1}. ${(c.name || "Character").toUpperCase()} — ${(c.role || "Role").toUpperCase()}
    • Archetype: ${c.archetypes.join(', ')} (${c.arcType})
    • Personality: ${c.personality}
    • IP-Adapter Token: @${c.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_v1 (Likeness Locked)`).join('\n\n')}
@@ -318,9 +318,9 @@ ${characters.map((c, i) => `${i + 1}. ${c.name.toUpperCase()} — ${c.role.toUpp
               {characters.map((c, i) => (
                 <div key={c.id || i} className="p-5 rounded-2xl bg-[#140e2e] border border-amber-500/40 space-y-3 font-mono text-xs shadow-xl">
                   <div className="flex items-center justify-between border-b border-purple-900/60 pb-2">
-                    <span className="font-bold text-amber-300 text-sm">{c.name.toUpperCase()}</span>
+                    <span className="font-bold text-amber-300 text-sm">{(c.name || "Character").toUpperCase()}</span>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-                      {c.role.toUpperCase()}
+                      {(c.role || "Role").toUpperCase()}
                     </span>
                   </div>
                   <div className="space-y-1.5 text-purple-200/80 text-[11px]">

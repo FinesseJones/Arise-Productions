@@ -191,7 +191,7 @@ function generateDynamicAssistantResponse(prompt: string, stageId: string, proje
   }
 
   // General Assistant
-  return `I am your AI Co-Pilot for the **${stageId.toUpperCase()}** department in **${projectName}** (Shot ${shotNumber}).\n\n` +
+  return `I am your AI Co-Pilot for the **${(stageId || "STUDIO").toUpperCase()}** department in **${projectName}** (Shot ${shotNumber}).\n\n` +
     `I have analyzed your directive: *"${prompt}"*.\n\n` +
     `Here are the next creative steps we can take:\n` +
     `1. Refine the specific narrative or technical parameters for this shot.\n` +

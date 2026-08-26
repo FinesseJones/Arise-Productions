@@ -297,7 +297,7 @@ const SoundstageEnvironmentTruss: React.FC<{ stageId: string; roomName: string }
             anchorX="center"
             anchorY="middle"
           >
-            {`STAGE: ${roomName.toUpperCase()}`}
+            {`STAGE: ${(roomName || "STAGE").toUpperCase()}`}
           </Text>
           <Text
             position={[0, -1.05, 0]}
