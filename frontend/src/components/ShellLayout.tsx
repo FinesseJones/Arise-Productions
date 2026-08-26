@@ -161,9 +161,9 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#080512] text-slate-100 overflow-hidden font-sans">
+    <div className="flex flex-col h-screen h-[100dvh] bg-[#080512] text-slate-100 overflow-hidden font-sans">
       {/* Top Studio Header & Telemetry Bar (4K Glassmorphic Specular Theme) */}
-      <header className="flex items-center justify-between px-5 py-2.5 bg-[#09041a]/90 border-b border-amber-500/30 select-none flex-shrink-0 backdrop-blur-2xl specular-border z-30 shadow-2xl">
+      <header className="flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 bg-[#09041a]/90 border-b border-amber-500/30 select-none flex-shrink-0 backdrop-blur-2xl specular-border z-30 shadow-2xl flex-wrap lg:flex-nowrap gap-2">
         <div className="flex items-center space-x-3.5">
           {/* Official Arise Productions Logo Badge - Fits Entire Icon */}
           <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/25 p-0 flex items-center justify-center transition hover:scale-105">

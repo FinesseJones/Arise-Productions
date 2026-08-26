@@ -19,16 +19,31 @@
   --starlight-gold: #fde047;
 }
 
-body {
+html, body {
   background-color: #080512;
   color: #f8fafc;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
+  height: 100%;
+  height: 100dvh;
+  min-height: -webkit-fill-available;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  scrollbar-width: thin;
+  scrollbar-color: #3b2d71 #080512;
+}
+
+#root {
+  min-height: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Cosmic Glass & Glowing Cards */
 .amethyst-glass {
-  background: rgba(20, 14, 46, 0.75);
+  background: rgba(20, 14, 46, 0.85);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(245, 158, 11, 0.25);
@@ -36,18 +51,30 @@ body {
 }
 
 .glass-card-4k {
-  background: rgba(14, 7, 36, 0.82);
+  background: rgba(14, 7, 36, 0.88);
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
   border: 1px solid rgba(245, 158, 11, 0.3);
   box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .glass-card-4k:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) translateZ(0);
   border-color: rgba(245, 158, 11, 0.6);
   box-shadow: 0 16px 48px 0 rgba(245, 158, 11, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Fallback for browsers that do not support backdrop-filter */
+@supports not (backdrop-filter: blur(1px)) {
+  .amethyst-glass {
+    background: #140e2e;
+  }
+  .glass-card-4k {
+    background: #0e0724;
+  }
 }
 
 .specular-border {
@@ -61,6 +88,7 @@ body {
   right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.6), transparent);
+  pointer-events: none;
 }
 
 .rose-gold-glow {
@@ -93,7 +121,7 @@ body {
   background-clip: text;
 }
 
-/* Custom Cosmic Scrollbar */
+/* Custom Cosmic Scrollbar for WebKit browsers */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -110,6 +138,22 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a855f7;
+}
+
+/* Mobile & Tablet smooth touch scrolling */
+.custom-scrollbar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #3b2d71 #080512;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Smooth high-DPI text rendering */
