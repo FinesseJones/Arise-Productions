@@ -28,16 +28,25 @@ function startBackendServer() {
     cwd = path.resolve(__dirname, '..');
   }
 
-  console.log('[AriseDesktop] Spawning Arise Production backend server:', serverPath);
+  console.log('[AriseDesktop] 🎬 Spawning Arise Production backend server:', serverPath);
 
   try {
-    backendProcess = spawn('node', [serverPath], {
+    // Use Electron's embedded node runtime if global node is not on GUI PATH
+    backendProcess = spawn(process.execPath, [serverPath], {
       cwd,
+      env: {
+        ...process.env,
+        ELECTRON_RUN_AS_NODE: '1',
+        PORT: '4000',
+      },
       stdio: 'inherit',
     });
 
     backendProcess.on('error', (err) => {
-      console.error('[AriseDesktop] Failed to start backend server:', err);
+      console.warn('[AriseDesktop] Embedded node runner notice, trying fallback spawn:', err.message);
+      try {
+        backendProcess = spawn('node', [serverPath], { cwd, stdio: 'inherit' });
+      } catch (e) {}
     });
   } catch (err) {
     console.warn('[AriseDesktop] Backend launch warning:', err);
