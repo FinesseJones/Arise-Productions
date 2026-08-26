@@ -162,6 +162,64 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
   console.log(`[AgentTools] ⚡ Executing Tool: "${toolName}" with args:`, JSON.stringify(args));
 
   switch (toolName) {
+    case 'create_story_idea': {
+      const idea = db.saveIdea({
+        title: args.title,
+        format: args.format || 'feature_film',
+        logline: args.logline || '',
+        hook: args.hook || '',
+        thematicEngine: args.thematicEngine || '',
+        structureBlueprint: args.structureBlueprint || '',
+        targetAudience: args.targetAudience || 'Indie & Studio Audience',
+        marketComps: args.marketComps || '',
+        tags: args.tags || [args.format],
+        status: 'concept',
+        author: 'Orion Vance',
+        note: 'Concept generated and saved via autonomous agent tool.',
+      });
+      return {
+        status: 'SUCCESS',
+        message: `Successfully created and saved idea "${idea.title}" (${idea.format}) into Idea Vault!`,
+        idea,
+      };
+    }
+
+    case 'list_story_ideas': {
+      const format = args.format === 'all' ? null : args.format;
+      const ideas = db.listIdeas(format);
+      return {
+        status: 'SUCCESS',
+        count: ideas.length,
+        format: args.format || 'all',
+        ideas: ideas.map((i) => ({
+          id: i.id,
+          title: i.title,
+          format: i.format,
+          logline: i.logline,
+          status: i.status,
+          tags: i.tags,
+        })),
+      };
+    }
+
+    case 'promote_idea_to_project': {
+      const ideaId = args.ideaId;
+      try {
+        const result = await db.promoteIdeaToProject(ideaId);
+        return {
+          status: 'SUCCESS',
+          message: `Idea "${result.idea.title}" promoted to active project "${result.project.id}"! 10-stage manifest initialized.`,
+          project: result.project,
+          idea: result.idea,
+        };
+      } catch (err) {
+        return {
+          status: 'ERROR',
+          error: err.message,
+        };
+      }
+    }
+
     case 'get_episode_script': {
       const script = db.getProjectScript(projectId, shotNumber);
       if (script && script.trim()) {

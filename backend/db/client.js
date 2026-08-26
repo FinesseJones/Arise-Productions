@@ -23,6 +23,7 @@ class StudioDatabase extends EventEmitter {
     this.jobs = new Map();
     this.scripts = new Map(); // key: `${projectId}:${shotNumber}`
     this.chatHistories = new Map(); // key: `${projectId}:${stageId}`
+    this.ideas = new Map(); // key: ideaId
     this.auditLogs = [];
     this.sessionState = {
       lastActiveProjectId: 'proj-fatherless-child',
@@ -49,9 +50,13 @@ class StudioDatabase extends EventEmitter {
           if (data.statuses) data.statuses.forEach((st) => this.statuses.set(st.id, st));
           if (data.scripts) data.scripts.forEach((sc) => this.scripts.set(sc.id, sc.content));
           if (data.chatHistories) data.chatHistories.forEach((ch) => this.chatHistories.set(ch.id, ch.messages));
+          if (data.ideas && Array.isArray(data.ideas) && data.ideas.length > 0) {
+            data.ideas.forEach((idea) => this.ideas.set(idea.id, idea));
+          }
+          this._seedDefaultIdeas();
           if (data.sessionState) this.sessionState = { ...this.sessionState, ...data.sessionState };
           if (data.auditLogs) this.auditLogs = data.auditLogs.slice(-100);
-          console.log(`[Database] Loaded ${this.projects.size} projects and session state from ${STATE_FILE_PATH}`);
+          console.log(`[Database] Loaded ${this.projects.size} projects, ${this.ideas.size} ideas, and session state from ${STATE_FILE_PATH}`);
           return true;
         }
       }
@@ -59,6 +64,79 @@ class StudioDatabase extends EventEmitter {
       console.warn(`[Database] Could not read disk state: ${err.message}. Initializing defaults.`);
     }
     return false;
+  }
+
+  _seedDefaultIdeas() {
+    const defaultIdeas = [
+      {
+        id: 'idea-short-last-transmission',
+        title: 'The Last Transmission',
+        format: 'short_form',
+        runtimeEstimate: '9 Minutes',
+        logline: 'On an isolated lunar relay, a solo signal operator receives a distress frequency originating from Earth—dated three days into the future.',
+        hook: 'A race against deterministic time where every transmission received changes the impending catastrophe.',
+        coreConflict: 'Solo operator vs. temporal paradox vs. isolation breakdown.',
+        thematicEngine: 'Fate vs. Free Will, the burden of foreknowledge, and human connection across cosmic distances.',
+        structureBlueprint: 'Beat 1: Routine signal scan -> Beat 2: Future distress audio received -> Beat 3: Desperate override attempt -> Climax: The countdown hits zero.',
+        targetAudience: 'Sci-Fi Festival / Indie Proof-of-Concept',
+        marketComps: 'Moon x Arrival x The Twilight Zone',
+        status: 'greenlit',
+        tags: ['Sci-Fi', 'Short Film', 'High-Concept', 'Temporal'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        history: [
+          { timestamp: new Date().toISOString(), author: 'Flash Nova', note: 'Calibrated for 9-minute tight festival pacing with Unreal Engine 5 lunar environment.' }
+        ]
+      },
+      {
+        id: 'idea-feature-fatherless-child',
+        title: 'A Fatherless Child',
+        format: 'feature_film',
+        runtimeEstimate: '115 Minutes',
+        logline: 'When an aspiring architectural restorer discovers her absent father vanished while fighting a predatory developer, she teams up with an estranged brother to defend their historic family foundry.',
+        hook: 'Dual-lead emotional mystery confronting corporate gentrification, generational resilience, and architectural heritage.',
+        coreConflict: 'Devon & Sean (Heritage) vs. Vale Holdings (Corporate Gentrification).',
+        thematicEngine: 'Roots do not define you—choices do. The enduring power of generational legacy and community truth.',
+        structureBlueprint: 'Act 1: The Porch Discovery & Eviction -> Act 2A: The Investigative Alliance -> Act 2B: Midpoint Blueprint Heist -> Act 3: Midnight Injunction & Showdown.',
+        targetAudience: 'Prestige Drama / Theatrical Feature / Streamer Tentpole',
+        marketComps: 'Erin Brockovich x Fences x The Last Black Man in San Francisco',
+        status: 'in_production',
+        projectId: 'proj-fatherless-child',
+        tags: ['Feature Film', 'Drama', 'Thriller', 'Heritage', 'Dual-Lead'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        history: [
+          { timestamp: new Date().toISOString(), author: 'Orion Vance', note: 'Promoted to active 10-stage production pipeline.' }
+        ]
+      },
+      {
+        id: 'idea-tv-obsidian-protocol',
+        title: 'Obsidian Protocol',
+        format: 'tv_series',
+        runtimeEstimate: '8 Episodes (45m each)',
+        logline: 'In a near-future metropolis powered by neural memory vaults, a rogue data forensic investigator uncovers a shadow syndicate altering collective public memories to erase corporate atrocities.',
+        hook: 'What happens to justice when the evidence inside your own mind can be rewritten by executive decree?',
+        coreConflict: 'Memory Forensics Division vs. The Memory Syndicate.',
+        thematicEngine: 'Truth, synthetic identity, the sanctity of human memory, and corporate state surveillance.',
+        structureBlueprint: 'Episode 1: The Blank Case -> Episode 2-4: The Fragment Trail -> Episode 5: The Mid-Season Blackout -> Episode 8: The Global Unmasking.',
+        targetAudience: 'Prestige Episodic TV / Adult Sci-Fi Thriller',
+        marketComps: 'Severance x Blade Runner 2049 x Dark',
+        status: 'developing',
+        tags: ['TV Series', 'Sci-Fi', 'Cyberpunk', 'Episodic', 'Mystery'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        history: [
+          { timestamp: new Date().toISOString(), author: 'Scribe Vance', note: 'Constructed 8-episode season arc and episodic tension engine.' }
+        ]
+      },
+    ];
+
+    defaultIdeas.forEach((idea) => {
+      if (!this.ideas.has(idea.id)) {
+        this.ideas.set(idea.id, idea);
+      }
+    });
+    this._saveToDisk();
   }
 
   _saveToDisk() {
@@ -69,6 +147,7 @@ class StudioDatabase extends EventEmitter {
         statuses: Array.from(this.statuses.values()),
         scripts: Array.from(this.scripts.entries()).map(([id, content]) => ({ id, content })),
         chatHistories: Array.from(this.chatHistories.entries()).map(([id, messages]) => ({ id, messages })),
+        ideas: Array.from(this.ideas.values()),
         sessionState: this.sessionState,
         auditLogs: this.auditLogs.slice(-100),
         saved_at: new Date().toISOString(),
@@ -83,6 +162,73 @@ class StudioDatabase extends EventEmitter {
     const defaultProjects = [
       { id: 'proj-fatherless-child', name: 'A Fatherless Child', slug: 'a-fatherless-child', format: 'long_form', version: 1 },
     ];
+
+    // Seed default cross-format ideas
+    const defaultIdeas = [
+      {
+        id: 'idea-short-last-transmission',
+        title: 'The Last Transmission',
+        format: 'short_form',
+        runtimeEstimate: '9 Minutes',
+        logline: 'On an isolated lunar relay, a solo signal operator receives a distress frequency originating from Earth—dated three days into the future.',
+        hook: 'A race against deterministic time where every transmission received changes the impending catastrophe.',
+        coreConflict: 'Solo operator vs. temporal paradox vs. isolation breakdown.',
+        thematicEngine: 'Fate vs. Free Will, the burden of foreknowledge, and human connection across cosmic distances.',
+        structureBlueprint: 'Beat 1: Routine signal scan -> Beat 2: Future distress audio received -> Beat 3: Desperate override attempt -> Climax: The countdown hits zero.',
+        targetAudience: 'Sci-Fi Festival / Indie Proof-of-Concept',
+        marketComps: 'Moon x Arrival x The Twilight Zone',
+        status: 'greenlit',
+        tags: ['Sci-Fi', 'Short Film', 'High-Concept', 'Temporal'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        history: [
+          { timestamp: new Date().toISOString(), author: 'Flash Nova', note: 'Calibrated for 9-minute tight festival pacing with Unreal Engine 5 lunar environment.' }
+        ]
+      },
+      {
+        id: 'idea-feature-fatherless-child',
+        title: 'A Fatherless Child',
+        format: 'feature_film',
+        runtimeEstimate: '115 Minutes',
+        logline: 'When an aspiring architectural restorer discovers her absent father vanished while fighting a predatory developer, she teams up with an estranged brother to defend their historic family foundry.',
+        hook: 'Dual-lead emotional mystery confronting corporate gentrification, generational resilience, and architectural heritage.',
+        coreConflict: 'Devon & Sean (Heritage) vs. Vale Holdings (Corporate Gentrification).',
+        thematicEngine: 'Roots do not define you—choices do. The enduring power of generational legacy and community truth.',
+        structureBlueprint: 'Act 1: The Porch Discovery & Eviction -> Act 2A: The Investigative Alliance -> Act 2B: Midpoint Blueprint Heist -> Act 3: Midnight Injunction & Showdown.',
+        targetAudience: 'Prestige Drama / Theatrical Feature / Streamer Tentpole',
+        marketComps: 'Erin Brockovich x Fences x The Last Black Man in San Francisco',
+        status: 'in_production',
+        projectId: 'proj-fatherless-child',
+        tags: ['Feature Film', 'Drama', 'Thriller', 'Heritage', 'Dual-Lead'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        history: [
+          { timestamp: new Date().toISOString(), author: 'Orion Vance', note: 'Promoted to active 10-stage production pipeline.' }
+        ]
+      },
+      {
+        id: 'idea-tv-obsidian-protocol',
+        title: 'Obsidian Protocol',
+        format: 'tv_series',
+        runtimeEstimate: '8 Episodes (45m each)',
+        logline: 'In a near-future metropolis powered by neural memory vaults, a rogue data forensic investigator uncovers a shadow syndicate altering collective public memories to erase corporate atrocities.',
+        hook: 'What happens to justice when the evidence inside your own mind can be rewritten by executive decree?',
+        coreConflict: 'Memory Forensics Division vs. The Memory Syndicate.',
+        thematicEngine: 'Truth, synthetic identity, the sanctity of human memory, and corporate state surveillance.',
+        structureBlueprint: 'Episode 1: The Blank Case -> Episode 2-4: The Fragment Trail -> Episode 5: The Mid-Season Blackout -> Episode 8: The Global Unmasking.',
+        targetAudience: 'Prestige Episodic TV / Adult Sci-Fi Thriller',
+        marketComps: 'Severance x Blade Runner 2049 x Dark',
+        status: 'developing',
+        tags: ['TV Series', 'Sci-Fi', 'Cyberpunk', 'Episodic', 'Mystery'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        history: [
+          { timestamp: new Date().toISOString(), author: 'Scribe Vance', note: 'Constructed 8-episode season arc and episodic tension engine.' }
+        ]
+      },
+    ];
+
+    defaultIdeas.forEach((idea) => this.ideas.set(idea.id, idea));
 
     for (const proj of defaultProjects) {
       this.projects.set(proj.id, {
@@ -327,6 +473,92 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
     this._saveToDisk();
     this.emit('status_updated', updated);
     return updated;
+  }
+
+  // --- Idea Vault Methods ---
+  listIdeas(format = null) {
+    const all = Array.from(this.ideas.values());
+    if (!format || format === 'all') return all;
+    return all.filter((i) => i.format === format);
+  }
+
+  getIdea(ideaId) {
+    return this.ideas.get(ideaId) || null;
+  }
+
+  saveIdea(ideaData) {
+    const id = ideaData.id || `idea-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const existing = this.ideas.get(id) || {};
+    const history = existing.history || [];
+    if (ideaData.note) {
+      history.unshift({
+        timestamp: new Date().toISOString(),
+        author: ideaData.author || 'Creator',
+        note: ideaData.note,
+      });
+    }
+
+    const savedIdea = {
+      ...existing,
+      ...ideaData,
+      id,
+      history: ideaData.history || history,
+      created_at: existing.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    this.ideas.set(id, savedIdea);
+    this._saveToDisk();
+    this.emit('idea_saved', savedIdea);
+    return savedIdea;
+  }
+
+  deleteIdea(ideaId) {
+    const exists = this.ideas.has(ideaId);
+    if (exists) {
+      this.ideas.delete(ideaId);
+      this._saveToDisk();
+      this.emit('idea_deleted', { id: ideaId });
+    }
+    return exists;
+  }
+
+  async promoteIdeaToProject(ideaId) {
+    const idea = this.ideas.get(ideaId);
+    if (!idea) throw new Error(`Idea "${ideaId}" not found`);
+
+    const formatCode = idea.format === 'tv_series' ? 'episodic_tv' : idea.format === 'short_form' ? 'short_form' : 'long_form';
+    const proj = await this.createProject(idea.title, formatCode);
+    
+    // Update idea status
+    idea.status = 'in_production';
+    idea.projectId = proj.id;
+    idea.updated_at = new Date().toISOString();
+    idea.history = idea.history || [];
+    idea.history.unshift({
+      timestamp: new Date().toISOString(),
+      author: 'Orion Vance',
+      note: `Promoted concept to active 10-stage production project (${proj.id}).`,
+    });
+    this.ideas.set(idea.id, idea);
+
+    // Save initial script scene for shot 1
+    const defaultFountain = `/* ${idea.title.toUpperCase()} — PITCH & PROMOTED SCRIPT */
+TITLE: ${idea.title}
+FORMAT: ${idea.format}
+LOGLINE: ${idea.logline || ''}
+THEMATIC ENGINE: ${idea.thematicEngine || ''}
+
+EXT. SCENE 1 - DAY
+
+The world awakens. A high-concept premise unfolds: ${idea.hook || idea.logline || ''}
+
+PROTAGONIST
+"We begin here."`;
+
+    await this.saveProjectScript(proj.id, 1, defaultFountain);
+    this._saveToDisk();
+    return { project: proj, idea };
   }
 }
 

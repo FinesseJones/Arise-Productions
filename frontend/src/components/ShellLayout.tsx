@@ -15,6 +15,7 @@ import PlotRoom from '../pages/PlotRoom';
 import ActsRoom from '../pages/ActsRoom';
 import BeatsRoom from '../pages/BeatsRoom';
 import CharactersRoom from '../pages/CharactersRoom';
+import IdeaRoom from '../pages/IdeaRoom';
 import DepartmentAgentsHub from './agents/DepartmentAgentsHub';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
@@ -35,6 +36,7 @@ import {
   Activity,
   Users,
   Crown,
+  Lightbulb,
 } from 'lucide-react';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { getAPIBaseURL } from '../lib/api';
@@ -57,7 +59,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 }) => {
   const apiBase = getAPIBaseURL();
   const [mainView, setMainView] = useState<
-    'agents' | 'stage' | 'plot' | 'acts' | 'beats' | 'characters' | 'architecture' | 'screening' | 'suites' | 'vault'
+    'agents' | 'stage' | 'ideas' | 'plot' | 'acts' | 'beats' | 'characters' | 'architecture' | 'screening' | 'suites' | 'vault'
   >('agents');
   const [activeShotNumber, setActiveShotNumber] = useState<number>(1);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
@@ -212,6 +214,19 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             >
               <LayoutGrid size={12} />
               <span>3D Soundstage</span>
+            </button>
+
+            {/* 1.5. 00 Idea Lab & IP Concept Vault */}
+            <button
+              onClick={() => setMainView('ideas')}
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
+                mainView === 'ideas'
+                  ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
+              }`}
+            >
+              <Lightbulb size={12} />
+              <span>00: Ideas</span>
             </button>
 
             {/* 2. Sagas Plot Room */}
@@ -506,6 +521,24 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               selectedShot={activeShotNumber}
               onSelectShot={setActiveShotNumber}
               onExecuteStage={(stageId) => sendCommand(`run stage ${stageId}`, stageId)}
+            />
+          )}
+
+          {mainView === 'ideas' && (
+            <IdeaRoom
+              onPromoteToProject={(newPid, newName) => {
+                if (onChangeProject) onChangeProject();
+                setMainView('stage');
+                onStageSelect('script');
+              }}
+              onNavigateToRoom={(roomKey) => {
+                if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault'].includes(roomKey)) {
+                  setMainView(roomKey as any);
+                } else {
+                  setMainView('stage');
+                  onStageSelect(roomKey);
+                }
+              }}
             />
           )}
 

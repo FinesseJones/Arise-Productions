@@ -761,6 +761,57 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                               <span className="text-[9px] font-mono text-purple-300/60 uppercase">
                                 Proactive Handoff:
                               </span>
+                              {selectedAgentId === 'idea_architect' && (
+                                <>
+                                  <button
+                                    onClick={() => onNavigateToRoom('ideas')}
+                                    className="px-2 py-0.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold transition flex items-center gap-1"
+                                  >
+                                    <span>💡 00 Idea Lab</span>
+                                  </button>
+                                  <button
+                                    onClick={() => onNavigateToRoom('plot')}
+                                    className="px-2 py-0.5 rounded-lg bg-purple-950/60 hover:bg-purple-900 text-purple-300 border border-purple-800/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>💡 01 Plot Room</span>
+                                  </button>
+                                </>
+                              )}
+
+                              {selectedAgentId === 'tv_architect' && (
+                                <>
+                                  <button
+                                    onClick={() => onNavigateToRoom('ideas')}
+                                    className="px-2 py-0.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>📺 00 Series Vault</span>
+                                  </button>
+                                  <button
+                                    onClick={() => onNavigateToRoom('plot')}
+                                    className="px-2 py-0.5 rounded-lg bg-purple-950/60 hover:bg-purple-900 text-purple-300 border border-purple-800/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>💡 01 Plot Room</span>
+                                  </button>
+                                </>
+                              )}
+
+                              {selectedAgentId === 'short_form_lead' && (
+                                <>
+                                  <button
+                                    onClick={() => onNavigateToRoom('ideas')}
+                                    className="px-2 py-0.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>⚡ 00 Short Film Lab</span>
+                                  </button>
+                                  <button
+                                    onClick={() => onNavigateToRoom('previs')}
+                                    className="px-2 py-0.5 rounded-lg bg-cyan-950/60 hover:bg-cyan-900 text-cyan-300 border border-cyan-800/40 text-[10px] font-mono font-bold transition"
+                                  >
+                                    <span>🎥 Stage 4: Previs</span>
+                                  </button>
+                                </>
+                              )}
+
                               {selectedAgentId === 'screenwriter' && (
                                 <>
                                   <button

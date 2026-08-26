@@ -252,6 +252,72 @@ app.post('/api/v1/studio/memory', (req, res) => {
   }
 });
 
+// ==============================================================================
+// IDEA LAB & IP CONCEPT VAULT REST API (Short Form, Feature Film, TV Series)
+// ==============================================================================
+
+// GET /api/v1/ideas - List ideas (optional ?format=)
+app.get('/api/v1/ideas', (req, res) => {
+  try {
+    const { format } = req.query;
+    const ideas = db.listIdeas(format);
+    res.json({ success: true, ideas });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/ideas/:ideaId - Get idea by ID
+app.get('/api/v1/ideas/:ideaId', (req, res) => {
+  try {
+    const idea = db.getIdea(req.params.ideaId);
+    if (!idea) return res.status(404).json({ success: false, error: 'Idea not found' });
+    res.json({ success: true, idea });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/ideas - Create or save idea
+app.post('/api/v1/ideas', (req, res) => {
+  try {
+    const idea = db.saveIdea(req.body);
+    res.json({ success: true, idea });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PUT /api/v1/ideas/:ideaId - Update idea
+app.put('/api/v1/ideas/:ideaId', (req, res) => {
+  try {
+    const idea = db.saveIdea({ ...req.body, id: req.params.ideaId });
+    res.json({ success: true, idea });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/v1/ideas/:ideaId - Delete idea
+app.delete('/api/v1/ideas/:ideaId', (req, res) => {
+  try {
+    const deleted = db.deleteIdea(req.params.ideaId);
+    res.json({ success: deleted, message: deleted ? 'Idea deleted' : 'Idea not found' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/ideas/:ideaId/promote - Promote idea to full active 10-stage project
+app.post('/api/v1/ideas/:ideaId/promote', async (req, res) => {
+  try {
+    const result = await db.promoteIdeaToProject(req.params.ideaId);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // DELETE /api/v1/studio/memory/:id - Delete a studio memory
 app.delete('/api/v1/studio/memory/:id', (req, res) => {
   try {
