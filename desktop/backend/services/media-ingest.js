@@ -48,7 +48,16 @@ export class MediaIngestionEngine {
     let characterBible = [];
     let logline = '';
 
-    if (sourceType === 'youtube_link' || sourceType === 'social_link') {
+    if (sourceType === 'folder_import' && rawContent) {
+      const parsedData = this.extractBeatsFromScriptContent(rawContent, format, title);
+      ingestedBeats = parsedData.beats;
+      characterBible = parsedData.characters;
+      logline = parsedData.logline;
+    } else if (sourceType === 'folder_import') {
+      ingestedBeats = this.getDefaultBeatsForFormat(format, title);
+      logline = `Scripture-inspired ${format === 'episodic_tv' ? 'TV series' : 'feature film'} production titled "${title}".`;
+      characterBible = ['Lead Protagonist', 'Allied Guardian', 'Central Antagonist'];
+    } else if (sourceType === 'youtube_link' || sourceType === 'social_link') {
       const parsedData = await this.parseExternalMediaLink(sourceUrl, format, title);
       ingestedBeats = parsedData.beats;
       characterBible = parsedData.characters;
@@ -118,6 +127,58 @@ export class MediaIngestionEngine {
   }
 
   /**
+   * Fast script content analyzer — extracts scenes, sluglines, and character cues directly
+   */
+  static extractBeatsFromScriptContent(text, format, title) {
+    if (!text || typeof text !== 'string') {
+      return {
+        beats: this.getDefaultBeatsForFormat(format, title),
+        logline: `Screenplay adaptation of "${title}".`,
+        characters: ['Lead Protagonist', 'Allied Guardian', 'Central Antagonist'],
+      };
+    }
+
+    const lines = text.split('\n');
+    const sluglines = [];
+    const characters = new Set();
+    let logline = '';
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      // Match scene headings
+      if (/^(INT\.|EXT\.|INT\.\/EXT\.|I\/E\.|SCENE)/i.test(line)) {
+        const nextLines = lines.slice(i + 1, i + 4).map((l) => l.trim()).filter(Boolean).join(' ');
+        sluglines.push({
+          title: line,
+          description: nextLines.slice(0, 160) || `Cinematic sequence for ${line}`,
+          act: sluglines.length < 2 ? 1 : sluglines.length < 5 ? 2 : 3,
+          cameraPreset: '35mm Cinematic Dolly',
+          scriptSnippet: lines.slice(i, Math.min(lines.length, i + 5)).join('\n'),
+        });
+      }
+      // Match uppercase character cues
+      if (/^[A-Z0-9\s]{2,24}$/.test(line) && !line.includes('INT') && !line.includes('EXT') && lines[i + 1] && lines[i + 1].trim()) {
+        const charName = line.trim();
+        if (charName.length > 2 && !['THE END', 'FADE IN', 'FADE OUT', 'CUT TO', 'SCENE', 'CONTINUED'].includes(charName)) {
+          characters.add(charName);
+        }
+      }
+      if (/^logline[:\s]/i.test(line)) {
+        logline = line.replace(/^logline[:\s]*/i, '').trim();
+      }
+    }
+
+    const beats = sluglines.length > 0 ? sluglines.slice(0, 8) : this.getDefaultBeatsForFormat(format, title);
+    const characterList = characters.size > 0 ? Array.from(characters).slice(0, 6) : ['Lead Protagonist', 'Allied Guardian', 'Central Antagonist'];
+
+    return {
+      beats,
+      logline: logline || `Screenplay adaptation of "${title}".`,
+      characters: characterList,
+    };
+  }
+
+  /**
    * Generate bespoke AI story beats for a brand new production title using NVIDIA NIM
    */
   static async generateAIStoryForTitle(title, format, seasonNumber, episodeNumber) {
@@ -163,7 +224,7 @@ Generate a valid JSON object strictly matching this schema:
   ]
 }`;
 
-    const aiRes = await nvidiaNIM.generateCompletion({
+    const aiRes = await nvidia.generateCompletion({
       prompt,
       systemPrompt: 'You are an award-winning Hollywood writer and virtual production supervisor. Output only valid JSON without markdown fences.',
       temperature: 0.7,
