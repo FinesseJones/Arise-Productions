@@ -224,14 +224,22 @@ Generate a valid JSON object strictly matching this schema:
   ]
 }`;
 
-    const aiRes = await nvidia.generateCompletion({
-      prompt,
-      systemPrompt: 'You are an award-winning Hollywood writer and virtual production supervisor. Output only valid JSON without markdown fences.',
-      temperature: 0.7,
-      maxTokens: 1500,
-    });
+    let aiRes = null;
+    try {
+      aiRes = await Promise.race([
+        nvidia.generateCompletion({
+          prompt,
+          systemPrompt: 'You are an award-winning Hollywood writer and virtual production supervisor. Output only valid JSON without markdown fences.',
+          temperature: 0.7,
+          maxTokens: 1500,
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('AI timeout')), 5000)),
+      ]);
+    } catch (e) {
+      console.warn('[MediaIngest] AI story beats fast-path fallback:', e.message);
+    }
 
-    if (aiRes.success && aiRes.text) {
+    if (aiRes && aiRes.success && aiRes.text) {
       try {
         const jsonMatch = aiRes.text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
@@ -252,14 +260,11 @@ Generate a valid JSON object strictly matching this schema:
 
     return {
       beats: this.getDefaultBeatsForFormat(format, title),
-      logline: `Production for "${title}"`,
-      characters: ['Protagonist', 'Antagonist'],
+      logline: `Production plan for "${title}"`,
+      characters: ['Lead Hero', 'Key Antagonist', 'Allied Companion'],
     };
   }
 
-  /**
-   * Parse YouTube / TikTok / Social media links into narrative structure & 3D shots
-   */
   /**
    * Parse YouTube / TikTok / Social media links into narrative structure & 3D shots
    */
@@ -268,7 +273,7 @@ Generate a valid JSON object strictly matching this schema:
 
     let beats = [];
     let logline = `Media adaptation of ingested source: ${url}`;
-    let characters = ['Protagonist', 'Antagonist', 'Supporting'];
+    let characters = ['Lead Protagonist', 'Central Antagonist', 'Supporting Companion'];
 
     const prompt = `We are converting this external media video/link into a professional production pipeline:
 Title: "${title}"
@@ -280,9 +285,12 @@ Generate a JSON object with:
 2. "characters": list of 3-5 character names and roles
 3. "beats": array of 4-6 scene beats, each with: "title", "description", "act", "cameraPreset", "scriptSnippet"`;
 
-    const aiResponse = await nvidia.generateCompletion({ prompt });
-    if (aiResponse.success && aiResponse.text) {
-      try {
+    try {
+      const aiResponse = await Promise.race([
+        nvidia.generateCompletion({ prompt }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('AI link parse timeout')), 5000)),
+      ]);
+      if (aiResponse && aiResponse.success && aiResponse.text) {
         const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const parsed = JSON.parse(jsonMatch[0]);
@@ -290,9 +298,9 @@ Generate a JSON object with:
           if (parsed.characters) characters = parsed.characters;
           if (parsed.logline) logline = parsed.logline;
         }
-      } catch (e) {
-        console.warn('[MediaIngest] Failed to parse AI JSON response, falling back to structured beats.');
       }
+    } catch (e) {
+      console.warn('[MediaIngest] AI link parse fast-path fallback:', e.message);
     }
 
     if (beats.length === 0) {
@@ -311,9 +319,12 @@ Generate a JSON object with:
     let characters = ['Lead', 'Companion'];
 
     const prompt = `Analyze this screenplay content for a ${format} production:\n\n${text.slice(0, 2000)}\n\nExtract 4-6 shot beats (title, description, cameraPreset, scriptSnippet), logline, and character list. Format as JSON.`;
-    const aiResponse = await nvidia.generateCompletion({ prompt });
-    if (aiResponse.success && aiResponse.text) {
-      try {
+    try {
+      const aiResponse = await Promise.race([
+        nvidia.generateCompletion({ prompt }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('AI screenplay parse timeout')), 5000)),
+      ]);
+      if (aiResponse && aiResponse.success && aiResponse.text) {
         const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const parsed = JSON.parse(jsonMatch[0]);
@@ -321,7 +332,9 @@ Generate a JSON object with:
           if (parsed.characters) characters = parsed.characters;
           if (parsed.logline) logline = parsed.logline;
         }
-      } catch (e) {}
+      }
+    } catch (e) {
+      console.warn('[MediaIngest] Screenplay parse fast-path fallback:', e.message);
     }
 
     if (beats.length === 0) {
