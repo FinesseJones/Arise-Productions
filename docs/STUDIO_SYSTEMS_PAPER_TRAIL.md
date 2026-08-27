@@ -156,10 +156,69 @@ Arise Production prevents the notorious "AI video look" (plastic skin, morphing 
 
 ## 9. 3-Way Synchronization & Deployment Architecture
 
-The studio includes a master continuous synchronization utility (`./scripts/sync-all.sh`) that updates all three deployment targets simultaneously:
-1. **GitHub Repository:** Pushes current branch (`tool-calling-agents`) to [GitHub](https://github.com/FinesseJones/Arise-Productions).
-2. **macOS Desktop App:** Recompiles frontend, packages Electron bundle, signs with ad-hoc certificates, and refreshes `/Applications/Arise Production.app` and Desktop `.dmg`.
-3. **Remote VPS:** Mirrors full production stack to `http://2.25.113.26:4000`.
+The studio enforces a continuous 3-way synchronization protocol that guarantees all three deployment targets remain 100% parity-locked on every commit:
+1. **GitHub Repository (`main` & `tool-calling-agents` branches):** Pushes to [GitHub Repository](https://github.com/FinesseJones/Arise-Productions).
+2. **Native macOS Desktop App (`/Applications/Arise Production.app`):** Recompiles frontend, packages Electron bundle, and refreshes local `/Applications/Arise Production.app` and DMG distribution.
+3. **Live Production VPS (`http://2.25.113.26:4000`):** Rsyncs backend services and compiled UI to Ubuntu host and restarts Docker container stack.
+
+---
+
+## 10. NVIDIA NIM Strict Mode & Permanent Key Persistence
+
+### 10.1 Canned Fallback Elimination
+All artificial hardcoded text fallbacks (e.g. `generateDepartmentalFallback` returning canned "Showrunner Sterling" or "INT. COMMAND HEADQUARTERS" scripts) have been **permanently eliminated**.
+- If the NVIDIA NIM API returns an error (`HTTP 401`, `HTTP 404`, `HTTP 410`, etc.), the exact HTTP status code, title, and detail message are surfaced directly to the user and runtime logs.
+- Strict `hasApiKey()` verification: requires `apiKey && typeof apiKey === 'string' && apiKey.trim().startsWith('nvapi-')`.
+
+### 10.2 Permanent Multi-Path Key Persistence
+To guarantee API keys are never lost across application restarts, reinstalls, git checkouts, or system reboots, the client writes to and verifies across 5 redundant storage tiers on key change:
+1. `~/.arise_nvidia_key` (Protected user home dedicated keyfile)
+2. `~/.arise.env` & `~/.env` (User environment configuration)
+3. `backend/db/nvidia_config.json` & `desktop/backend/db/nvidia_config.json` (Database state)
+4. `.env` in repository root
+5. `process.env.NVIDIA_API_KEY` (Process memory)
+
+### 10.3 Dynamic Model Discovery & Active Endpoint
+- Verified Active Flagship Model: **`meta/llama-3.2-11b-vision-instruct`** (High-speed multimodal parsing, screenplay reasoning, and autonomous tool calling).
+- Obsolete/EOL models (`llama-3.1-70b`, `llama-3.3-70b`, `mistral-large-2`) are filtered automatically from browser storage and runtime requests.
+
+---
+
+## 11. Studio Desk Chief of Staff Briefings Engine
+
+The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of Staff for the Producer, tracking production progression across all 10 MCP stages and logging studio activity.
+
+### 11.1 Real Studio Status Tools:
+- `get_studio_status`: Aggregates total shots, completed stages, and unstarted/blocked stages.
+- `get_recent_activity`: Pulls chronological event logs (stages run, scripts saved, agent handoffs).
+- `get_last_briefing`: Reads historical morning and evening briefings.
+
+### 11.2 Activity Log & Briefing Store:
+- Persisted to `backend/db/studio_state.json` (`briefings` and `activityLog`).
+- Auto-triggers morning briefing on first session of the day; manual on-demand triggers via **☀️ Briefing** and **🌙 Wrap Day** header buttons.
+
+---
+
+## 12. Desktop Shell & Adaptive Navigation Architecture
+
+### 12.1 Auto-Maximized Display Sizing (`desktop/main.js`):
+- Uses Electron `screen.getPrimaryDisplay().workAreaSize` to detect active monitor resolution.
+- Calls `mainWindow.maximize()` on `ready-to-show` so the studio window fills the screen without clipping.
+
+### 12.2 Responsive Specular Header (`ShellLayout.tsx`):
+- Responsive breakpoints collapse action labels into icon-first buttons on narrower viewports.
+- Overflow protection (`max-w-full overflow-x-auto no-scrollbar`) prevents right-side tool HUD elements from clipping.
+
+---
+
+## 13. Audit & Change History Paper Trail
+
+| Timestamp | Phase / Change | Components Affected | Targets Updated | Status |
+| :--- | :--- | :--- | :---: | :---: |
+| **2026-08-27 11:20** | Studio Desk Briefings Integration | `server.js`, `tools.js`, `client.js`, `StudioDeskBriefing.tsx`, `ShellLayout.tsx` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 12:15** | NVIDIA NIM Strict Mode & Permanent Key Storage | `backend/ai/nvidia-client.js`, `agent-runtime.js`, `mcp-workers.js` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 12:22** | Desktop Window Auto-Maximize & Responsive Header | `desktop/main.js`, `ShellLayout.tsx` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 12:29** | Dynamic Model Selector & Obsolete Cleanup | `ShellLayout.tsx`, `StudioDeskBriefing.tsx` | GitHub, Desktop, VPS | ✅ Verified |
 
 ---
 *© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.*
