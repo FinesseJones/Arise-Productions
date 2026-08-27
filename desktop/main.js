@@ -3,7 +3,7 @@
 // A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026
 // ==============================================================================
 
-import { app, BrowserWindow, Menu, shell, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, Menu, shell, ipcMain, dialog, screen } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -63,11 +63,16 @@ function createMainWindow() {
     } catch (e) {}
   }
 
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
+  const winWidth = Math.min(1600, screenWidth);
+  const winHeight = Math.min(1000, screenHeight);
+
   mainWindow = new BrowserWindow({
-    width: 1440,
-    height: 900,
-    minWidth: 1024,
-    minHeight: 700,
+    width: winWidth,
+    height: winHeight,
+    minWidth: 1000,
+    minHeight: 650,
     title: 'Arise Production - A Product of THE AI CONTENT FOUNDRY, LLC',
     titleBarStyle: 'hiddenInset', // macOS native titlebar styling
     backgroundColor: '#020617', // slate-950
@@ -97,8 +102,9 @@ function createMainWindow() {
   mainWindow.loadFile(distIndex);
 
   mainWindow.once('ready-to-show', () => {
+    mainWindow.maximize();
     mainWindow.show();
-    console.log('[AriseDesktop] 🎬 Arise Production Studio Window is ready.');
+    console.log('[AriseDesktop] 🎬 Arise Production Studio Window is ready and maximized.');
   });
 
   mainWindow.on('closed', () => {

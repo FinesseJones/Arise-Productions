@@ -269,14 +269,14 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   return (
     <div className="flex flex-col h-screen h-[100dvh] bg-[#080512] text-slate-100 overflow-hidden font-sans">
       {/* Top Studio Header & Telemetry Bar (4K Glassmorphic Specular Theme) */}
-      <header className="flex items-center justify-between px-3 sm:px-4 py-2 bg-[#09041a]/95 border-b border-amber-500/30 select-none flex-shrink-0 backdrop-blur-2xl specular-border z-30 shadow-2xl gap-3">
+      <header className="flex items-center justify-between px-2 sm:px-4 py-1.5 sm:py-2 bg-[#09041a]/95 border-b border-amber-500/30 select-none flex-shrink-0 backdrop-blur-2xl specular-border z-30 shadow-2xl gap-1.5 sm:gap-2 w-full max-w-full overflow-x-auto no-scrollbar">
         {/* Left Side: Arise Logo, Title, and Front of Studio Navigation */}
-        <div className="flex items-center space-x-3 flex-shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
           <button
             type="button"
             onClick={onChangeProject}
             title="Return to Front of Studio & All Projects"
-            className="w-9 h-9 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/25 p-0 flex items-center justify-center transition hover:scale-105 hover:border-amber-400 cursor-pointer"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden border-2 border-amber-500/60 bg-black flex-shrink-0 shadow-lg shadow-amber-500/25 p-0 flex items-center justify-center transition hover:scale-105 hover:border-amber-400 cursor-pointer"
           >
             <img
               src={ARISE_LOGO_BASE64}
@@ -285,8 +285,8 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             />
           </button>
 
-          <div>
-            <div className="flex items-center gap-2">
+          <div className="hidden sm:block">
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={onChangeProject}
@@ -305,25 +305,15 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           </div>
 
           {/* Quick Front of Studio / New Production / Rooms Menu Buttons */}
-          <div className="flex items-center space-x-1 sm:space-x-1.5 pl-2 border-l border-amber-500/30 relative flex-shrink-0">
+          <div className="flex items-center space-x-1 pl-1.5 sm:pl-2 border-l border-amber-500/30 relative flex-shrink-0">
             <button
               type="button"
               onClick={onChangeProject}
-              className="px-2 sm:px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap cursor-pointer"
+              className="px-2 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap cursor-pointer"
               title="Return to Front of Studio & All Projects"
             >
               <Home size={12} />
-              <span className="hidden md:inline">Front of Studio</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onChangeProject}
-              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1a0e36] hover:bg-[#271552] text-amber-200 border border-purple-800/60 text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer"
-              title="Create New Production or Ingest Media"
-            >
-              <Plus size={12} className="text-amber-400" />
-              <span className="hidden lg:inline">New</span>
+              <span className="hidden xl:inline">Front</span>
             </button>
 
             {/* Quick Projects Switcher Dropdown */}
@@ -334,7 +324,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                   setShowProjectDropdown((prev) => !prev);
                   setShowRoomDropdown(false);
                 }}
-                className={`px-2 sm:px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-sm ${
+                className={`px-2 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
                   showProjectDropdown
                     ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black border border-amber-300'
                     : 'bg-[#150a2e] hover:bg-[#200f45] text-amber-200 border border-amber-500/50'
@@ -342,41 +332,32 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 title="Switch Active Production"
               >
                 <Film size={12} className={showProjectDropdown ? 'text-black' : 'text-amber-400'} />
-                <span className="truncate max-w-[110px] sm:max-w-[160px]">{projectName}</span>
+                <span className="truncate max-w-[90px] sm:max-w-[140px]">{projectName}</span>
                 <ChevronDown size={11} className={`transition-transform duration-200 ${showProjectDropdown ? 'rotate-180 text-black' : 'text-amber-400/80'}`} />
               </button>
 
               {showProjectDropdown && (
                 <div
-                  className="absolute left-0 mt-2 w-80 bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 max-h-96 overflow-y-auto"
+                  className="absolute left-0 mt-2 w-72 bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
                   style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.9), 0 0 24px rgba(245, 158, 11, 0.35)' }}
                 >
                   <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
                     <span className="text-[10px] uppercase font-mono font-black tracking-widest text-amber-400">
-                      Active Productions ({availableProjects.length})
+                      Select Active Production
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowProjectDropdown(false);
-                        onChangeProject?.();
-                      }}
-                      className="text-[9px] font-mono text-amber-300 hover:text-amber-100 underline cursor-pointer"
-                    >
-                      Front of Studio
-                    </button>
+                    <span className="text-[9px] font-mono text-amber-300/80 font-bold">{availableProjects.length} Titles</span>
                   </div>
 
-                  <div className="space-y-1 text-[11px] font-mono">
+                  <div className="space-y-1 max-h-64 overflow-y-auto custom-scrollbar text-[11px] font-mono">
                     {availableProjects.map((p) => {
-                      const isCurrent = p.name === projectName || p.id === projectId;
+                      const isCurrent = p.id === effectiveProjectId;
                       return (
                         <button
                           key={p.id}
                           type="button"
                           onClick={() => {
+                            if (onSelectProject) onSelectProject(p.id, p.name);
                             setShowProjectDropdown(false);
-                            onSelectProject?.(p.id, p.name);
                           }}
                           className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition cursor-pointer ${
                             isCurrent
@@ -386,12 +367,11 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                         >
                           <div className="truncate pr-2">
                             <div className="font-bold truncate">{p.name}</div>
-                            {p.genre && <div className={`text-[9px] truncate ${isCurrent ? 'text-black/80' : 'text-amber-400/70'}`}>{p.genre}</div>}
                           </div>
                           <span className={`text-[8px] uppercase px-1.5 py-0.5 rounded font-bold flex-shrink-0 ${
                             isCurrent ? 'bg-black/20 text-black' : 'bg-purple-950/80 text-amber-300 border border-purple-700/50'
                           }`}>
-                            {p.format === 'episodic_tv' ? 'TV' : p.format === 'short_form' ? 'Short' : 'Film'}
+                            {p.format === 'episodic_tv' ? 'TV' : 'Film'}
                           </span>
                         </button>
                       );
@@ -409,7 +389,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                   setShowRoomDropdown((prev) => !prev);
                   setShowProjectDropdown(false);
                 }}
-                className={`px-2 sm:px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
+                className={`px-2 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
                   showRoomDropdown
                     ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black border border-amber-300'
                     : 'bg-[#1f133f] hover:bg-[#2d1b5a] text-amber-300 border border-amber-500/50'
@@ -430,23 +410,22 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                     <span className="text-[10px] uppercase font-mono font-black tracking-widest text-amber-400">
                       Studio Navigation Menu
                     </span>
-                    <span className="text-[9px] font-mono text-amber-300/80 font-bold">12 Rooms</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-1 text-[11px] font-mono">
                     {[
-                      { id: 'agents', name: 'Command Center', icon: '🏛️', tag: 'HQ' },
-                      { id: 'stage', name: '3D Soundstage', icon: '🎬', tag: 'Core' },
-                      { id: 'ideas', name: '00: Ideas', icon: '💡', tag: 'IP Vault' },
-                      { id: 'plot', name: '01: Plot Room', icon: '📖', tag: 'Script' },
-                      { id: 'characters', name: '02: Cast Room', icon: '🎭', tag: 'Actors' },
-                      { id: 'acts', name: '03: Acts Room', icon: '📑', tag: '3-Act' },
-                      { id: 'beats', name: '04: Beats Room', icon: '⚡', tag: '40 Beats' },
-                      { id: 'architecture', name: '3D Campus', icon: '🏢', tag: 'World' },
-                      { id: 'screening', name: 'Screening Room', icon: '📽️', tag: '4K Play' },
-                      { id: 'suites', name: 'Original Suites', icon: '🎛️', tag: 'Tools' },
-                      { id: 'vault', name: 'Memory Vault', icon: '🗄️', tag: 'Data' },
-                      { id: 'distribution', name: '05: Distribution', icon: '🌐', tag: 'Release' },
+                      { id: 'agents', name: 'Command Center', icon: '🏛️' },
+                      { id: 'stage', name: '3D Soundstage', icon: '🎬' },
+                      { id: 'ideas', name: '00: Ideas', icon: '💡' },
+                      { id: 'plot', name: '01: Plot Room', icon: '📖' },
+                      { id: 'characters', name: '02: Cast Room', icon: '🎭' },
+                      { id: 'acts', name: '03: Acts Room', icon: '📑' },
+                      { id: 'beats', name: '04: Beats Room', icon: '⚡' },
+                      { id: 'architecture', name: '3D Campus', icon: '🏢' },
+                      { id: 'screening', name: 'Screening Room', icon: '📽️' },
+                      { id: 'suites', name: 'Original Suites', icon: '🎛️' },
+                      { id: 'vault', name: 'Memory Vault', icon: '🗄️' },
+                      { id: 'distribution', name: '05: Distribution', icon: '🌐' },
                     ].map((room) => (
                       <button
                         key={room.id}
@@ -465,9 +444,6 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                           <span className="text-sm">{room.icon}</span>
                           <span className="truncate text-[10.5px] font-semibold">{room.name}</span>
                         </div>
-                        <span className={`text-[8px] px-1 py-0.2 rounded font-bold ${mainView === room.id ? 'bg-black/30 text-black' : 'bg-amber-950/70 text-amber-300'}`}>
-                          {room.tag}
-                        </span>
                       </button>
                     ))}
                   </div>
@@ -584,7 +560,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 <span>04: Beats</span>
               </button>
 
-              {/* 3. 3D Campus */}
+              {/* 3. 3D Spatial Architecture */}
               <button
                 onClick={() => setMainView('architecture')}
                 className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
@@ -594,7 +570,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 }`}
               >
                 <Building2 size={12} />
-                <span>3D Campus</span>
+                <span>Campus</span>
               </button>
 
               {/* 4. 4K Video Screening Room */}
@@ -662,113 +638,98 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         </div>
 
         {/* Right Tools & Active Project HUD */}
-        <div className="flex items-center space-x-1.5 flex-shrink-0">
+        <div className="flex items-center space-x-1 flex-shrink-0">
           {/* Master Studio Video Tour Modal Trigger */}
           <button
             onClick={() => setShowVideoTourModal(true)}
-            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500/20 via-amber-500/30 to-amber-500/15 hover:from-amber-500/40 hover:to-amber-500/25 text-amber-300 border border-amber-500/50 hover:border-amber-400 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
+            className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
             title="Watch Master Live Action Studio Video Tour"
           >
             <Film size={12} className="text-amber-400" />
-            <span>Studio Tour</span>
+            <span className="hidden 2xl:inline">Tour</span>
           </button>
 
           {/* Hollywood Pitch Bible Button */}
           <button
             onClick={() => setShowPitchBibleModal(true)}
-            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
+            className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
             title="Open Hollywood Pitch & Story Bible"
           >
             <FileText size={12} className="text-amber-400" />
-            <span>Bible</span>
+            <span className="hidden xl:inline">Bible</span>
           </button>
 
           {/* Studio Desk Morning / Evening Briefing Buttons */}
           <button
             onClick={() => setBriefingType('morning')}
-            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
+            className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
             title="Open Morning Briefing from Studio Desk"
           >
-            <span>☀️ Briefing</span>
+            <span>☀️</span>
+            <span className="hidden xl:inline">Briefing</span>
           </button>
 
           <button
             onClick={() => setBriefingType('evening')}
-            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[11px] font-mono transition shadow-sm flex-shrink-0 cursor-pointer"
+            className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[11px] font-mono transition shadow-sm flex-shrink-0 cursor-pointer"
             title="End of Day Wrap from Studio Desk"
           >
-            <span>🌙 Wrap Day</span>
+            <span>🌙</span>
+            <span className="hidden xl:inline">Wrap</span>
           </button>
 
           {/* NVIDIA NIM Free Tier Button */}
           <button
             onClick={() => setShowNvidiaModal(true)}
-            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[11px] font-mono transition shadow-sm flex-shrink-0 cursor-pointer"
+            className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[11px] font-mono transition shadow-sm flex-shrink-0 cursor-pointer"
             title="NVIDIA NIM AI Configuration"
           >
             <Cpu size={12} className="text-purple-400" />
-            <span className="font-bold truncate max-w-[85px]">{defaultModel.split('/')[1] || 'Llama 3.1 70B'}</span>
+            <span className="font-bold truncate max-w-[70px] hidden sm:inline">{defaultModel.split('/')[1] || 'Llama'}</span>
           </button>
 
           {/* Active Enterprise Tier License Badge */}
           <button
             onClick={() => setShowUpgradeModal(true)}
-            className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-black border border-amber-300 text-[11px] font-mono transition shadow-lg shadow-amber-500/25 cursor-pointer active:scale-95 flex-shrink-0"
-            title="Arise Studio Enterprise ($299/mo) Active - Dedicated H100 Cluster & Plugins"
+            className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-black border border-amber-300 text-[11px] font-mono transition shadow-lg shadow-amber-500/25 cursor-pointer active:scale-95 flex-shrink-0"
+            title="Arise Studio Enterprise ($299/mo) Active"
           >
             <Crown size={12} fill="currentColor" />
-            <span className="uppercase tracking-wider">
-              {studioTier === 'enterprise' ? 'Enterprise' : studioTier === 'pro' ? 'Studio Pro' : 'Free Tier'}
+            <span className="uppercase tracking-wider hidden lg:inline">
+              {studioTier === 'enterprise' ? 'Enterprise' : 'Pro'}
             </span>
           </button>
 
-          {/* Performance Mode Toggle — drops the blurred glass effect (stacked over the live 3D canvas) for smoother frame rates */}
+          {/* Performance Mode Toggle */}
           <button
             type="button"
             onClick={() => setPerfMode((v) => !v)}
-            className={`flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl border text-[11px] font-mono font-bold transition flex-shrink-0 cursor-pointer ${
+            className={`flex items-center space-x-1 px-2 py-1 rounded-xl border text-[11px] font-mono font-bold transition flex-shrink-0 cursor-pointer ${
               perfMode
                 ? 'bg-sky-500/20 border-sky-500/50 text-sky-300'
                 : 'bg-[#1a0e36] hover:bg-[#271552] border-purple-800/60 text-amber-200'
             }`}
-            title={perfMode ? 'Performance Mode is ON — glass blur disabled for smoother 3D rendering' : 'Turn on Performance Mode to disable glass blur effects for smoother 3D rendering'}
+            title={perfMode ? 'Performance Mode is ON' : 'Turn on Performance Mode'}
           >
             <Gauge size={12} className={perfMode ? 'text-sky-400' : 'text-amber-400'} />
-            <span className="hidden sm:inline">{perfMode ? 'Perf: Lite' : 'Perf: Full'}</span>
+            <span className="hidden 2xl:inline">{perfMode ? 'Lite' : 'Full'}</span>
           </button>
 
-          {/* Studio Bridge Connection Status — surfaces WS/agent connectivity that was previously silent */}
+          {/* Studio Bridge Connection Status */}
           <div
-            className={`flex items-center space-x-1.5 px-2 sm:px-2.5 py-1 rounded-xl border text-[11px] font-mono font-bold transition flex-shrink-0 ${
+            className={`flex items-center space-x-1 px-2 py-1 rounded-xl border text-[11px] font-mono font-bold transition flex-shrink-0 ${
               isConnected
                 ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
                 : 'bg-red-500/15 border-red-500/50 text-red-300 animate-pulse'
             }`}
-            title={
-              isConnected
-                ? 'Connected to Central Studio Bridge — agents are reachable'
-                : lastError || 'Unable to reach the studio bridge — agents will not respond until this reconnects'
-            }
+            title={isConnected ? 'Bridge Online' : lastError || 'Bridge Offline'}
           >
             <span
               className={`w-2 h-2 rounded-full flex-shrink-0 ${
                 isConnected ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]' : 'bg-red-400 shadow-[0_0_6px_rgba(248,113,113,0.8)]'
               }`}
             />
-            <span className="hidden sm:inline">{isConnected ? 'Bridge Online' : 'Bridge Offline'}</span>
-          </div>
-
-          <div className="hidden 2xl:flex items-center space-x-1 text-[11px] text-amber-300/70 border-l border-amber-500/30 pl-2 flex-shrink-0">
-            <span className="text-amber-400/60">Project:</span>
-            <span className="text-amber-200 font-semibold truncate max-w-[100px]">{projectStatus.projectName}</span>
-            {onChangeProject && (
-              <button
-                onClick={onChangeProject}
-                className="text-amber-400 hover:text-amber-300 underline ml-1 cursor-pointer"
-              >
-                Switch
-              </button>
-            )}
+            <span className="hidden xl:inline">{isConnected ? 'Online' : 'Offline'}</span>
           </div>
         </div>
       </header>
