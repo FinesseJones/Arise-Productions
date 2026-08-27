@@ -614,10 +614,15 @@ app.post('/api/v1/projects/ingest-folder', async (req, res) => {
         path.resolve(__dirname, folderPath),
         path.resolve(__dirname, 'storage/ingested', path.basename(folderPath)),
         path.resolve(__dirname, 'storage/ingested/TACF_Hybrid_Film_Scripts'),
+        path.resolve(__dirname, 'storage/ingested'),
+        path.resolve(process.cwd(), folderPath),
         path.resolve(process.cwd(), 'storage/ingested', path.basename(folderPath)),
         path.resolve(process.cwd(), 'storage/ingested/TACF_Hybrid_Film_Scripts'),
+        path.resolve(process.cwd(), 'storage/ingested'),
         '/app/storage/ingested/TACF_Hybrid_Film_Scripts',
+        '/app/storage/ingested',
         '/root/Arise-Productions/storage/ingested/TACF_Hybrid_Film_Scripts',
+        '/root/Arise-Productions/storage/ingested',
         '/Volumes/FinesseJones1 External 1/Archive/Documents/TACF_Hybrid_Film_Scripts',
       ];
       for (const cand of candidates) {
@@ -629,9 +634,9 @@ app.post('/api/v1/projects/ingest-folder', async (req, res) => {
     }
 
     if (!fs.existsSync(targetDir)) {
-      return res.status(404).json({
+      return res.json({
         success: false,
-        error: `Folder not found: "${folderPath}". Please verify folder path or upload files directly.`,
+        error: `Could not locate folder "${folderPath}". Please use "Pick Mac Folder" or "Select Script Files" to upload directly from your device.`,
       });
     }
 
