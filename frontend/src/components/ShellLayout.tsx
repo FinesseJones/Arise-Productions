@@ -165,6 +165,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
     projectName,
   });
 
+  const [availableModels, setAvailableModels] = useState<Array<{ id: string; name: string; description?: string }>>([
+    { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct (Active Flagship)', description: 'Fast, high-fidelity multimodal parsing, screenplay reasoning, and autonomous tool execution' },
+  ]);
+
   // Fetch NVIDIA NIM Key Status & default model on mount with localStorage backup
   useEffect(() => {
     try {
@@ -174,8 +178,20 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
         setMaskedKey(`${savedKey.slice(0, 10)}...${savedKey.slice(-4)}`);
       }
       const savedModel = localStorage.getItem('arise_selected_model');
-      if (savedModel) {
+      const obsoleteModels = [
+        'mistralai/mistral-large-2-instruct',
+        'meta/llama-3.1-70b-instruct',
+        'meta/llama-3.1-8b-instruct',
+        'meta/llama-3.3-70b-instruct',
+        'nvidia/llama-3.1-nemotron-70b-instruct',
+        'meta/llama-3.2-3b-instruct',
+        'meta/llama-3.2-1b-instruct',
+      ];
+      if (savedModel && !obsoleteModels.includes(savedModel)) {
         setDefaultModel(savedModel);
+      } else if (savedModel) {
+        localStorage.removeItem('arise_selected_model');
+        setDefaultModel('meta/llama-3.2-11b-vision-instruct');
       }
     } catch {}
 
@@ -196,6 +212,9 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 body: JSON.stringify({ apiKey: localKey }),
               }).catch(() => {});
             }
+          }
+          if (data.availableModels && Array.isArray(data.availableModels) && data.availableModels.length > 0) {
+            setAvailableModels(data.availableModels);
           }
           if (data.defaultModel) setDefaultModel(data.defaultModel);
         }
@@ -977,31 +996,21 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 Select Default Free Tier Model
               </label>
               <div className="space-y-2 font-mono text-xs">
-                {[
-                  {
-                    id: 'meta/llama-3.1-70b-instruct',
-                    name: 'Llama 3.1 70B Instruct (General Director)',
-                  },
-                  {
-                    id: 'mistralai/mistral-large-2-instruct',
-                    name: 'Mistral Large 2 (Creative Screenwriter)',
-                  },
-                  {
-                    id: 'nvidia/llama-3.1-nemotron-70b-instruct',
-                    name: 'Nemotron 70B (High-Precision Reasoning)',
-                  },
-                ].map((m) => (
+                {availableModels.map((m) => (
                   <button
                     key={m.id}
                     onClick={() => handleSelectModel(m.id)}
                     className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition ${
                       defaultModel === m.id
-                        ? 'bg-emerald-950/60 border-emerald-500/80 text-emerald-200'
+                        ? 'bg-emerald-950/60 border-emerald-500/80 text-emerald-200 shadow-md shadow-emerald-500/10'
                         : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
                     }`}
                   >
-                    <span>{m.name}</span>
-                    {defaultModel === m.id && <Check size={14} className="text-emerald-400" />}
+                    <div>
+                      <div className="font-bold">{m.name}</div>
+                      {m.description && <div className="text-[10px] text-slate-400 font-sans mt-0.5">{m.description}</div>}
+                    </div>
+                    {defaultModel === m.id && <Check size={14} className="text-emerald-400 flex-shrink-0" />}
                   </button>
                 ))}
               </div>

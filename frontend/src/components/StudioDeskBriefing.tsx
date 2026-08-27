@@ -14,31 +14,30 @@ export const StudioDeskBriefing: React.FC<Props> = ({ projectId, type, onClose }
   const [briefing, setBriefing] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(`${apiBase}/api/v1/briefing`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ projectId, type }),
-        });
-        const data = await res.json();
-        if (cancelled) return;
-        if (data.success) {
-          setBriefing(data.briefing || '');
-        } else {
-          setError(data.error || 'Failed to generate briefing');
-        }
-      } catch (e: any) {
-        if (!cancelled) setError(e.message || 'Network error');
-      } finally {
-        if (!cancelled) setLoading(false);
+  const fetchBriefing = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${apiBase}/api/v1/briefing`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, type }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBriefing(data.briefing || '');
+      } else {
+        setError(data.error || 'Failed to generate briefing');
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    } catch (e: any) {
+      setError(e.message || 'Network error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBriefing();
   }, [apiBase, projectId, type]);
 
   const title = type === 'evening' ? 'End-of-Day Wrap' : 'Morning Briefing';
@@ -61,7 +60,7 @@ export const StudioDeskBriefing: React.FC<Props> = ({ projectId, type, onClose }
           </div>
           <button
             onClick={onClose}
-            className="text-purple-400/80 hover:text-purple-200 text-xs font-mono px-2.5 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 transition"
+            className="text-purple-400/80 hover:text-purple-200 text-xs font-mono px-2.5 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 transition cursor-pointer"
           >
             ✕ Close
           </button>
@@ -70,11 +69,22 @@ export const StudioDeskBriefing: React.FC<Props> = ({ projectId, type, onClose }
         {loading && (
           <div className="flex items-center gap-2 text-purple-200 text-sm py-8 justify-center">
             <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
-            <span>Studio Desk is reviewing the studio…</span>
+            <span>Studio Desk is reviewing the studio state…</span>
           </div>
         )}
 
-        {error && <p className="text-rose-400 text-sm py-6 text-center">{error}</p>}
+        {error && (
+          <div className="py-6 space-y-3 text-center">
+            <p className="text-rose-400 text-xs font-mono max-w-md mx-auto">{error}</p>
+            <button
+              type="button"
+              onClick={fetchBriefing}
+              className="px-4 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold transition shadow-sm cursor-pointer"
+            >
+              🔄 Retry Briefing
+            </button>
+          </div>
+        )}
 
         {!loading && !error && (
           <div className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap max-h-[60vh] overflow-y-auto custom-scrollbar font-sans select-text">
