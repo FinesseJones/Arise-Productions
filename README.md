@@ -10,19 +10,13 @@
 
 ---
 
-## 📺 Master Studio Video Walkthrough & Interactive Demo
+## 📺 Master Studio Video Walkthrough & Live Action Demo
 
-Watch the complete, end-to-end studio demonstration video showing how to use all 14 modules, 10 virtual soundstage stages, and distribution tools in **Arise Production Studio**:
+Experience the live action studio demonstration recorded directly from the running **Arise Production Studio** soundstage, showing step-by-step navigation, screenplay writing, 3D optical camera solving, and distribution packaging:
 
-<p align="center">
-  <a href="./docs/assets/arise_studio_walkthrough_demo.mp4">
-    <img src="./docs/assets/arise_studio_demo_preview.gif" alt="Arise Production Studio Walkthrough Demo" width="900" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);" />
-  </a>
-</p>
+[![Arise Production Studio Live Walkthrough Video](https://raw.githubusercontent.com/FinesseJones/Arise-Productions/main/docs/assets/arise_studio_demo_preview.gif)](https://raw.githubusercontent.com/FinesseJones/Arise-Productions/main/docs/assets/arise_studio_walkthrough_demo.mp4)
 
-<p align="center">
-  <b>▶️ <a href="./docs/assets/arise_studio_walkthrough_demo.mp4">Click to Download & Play Master 1080p 60FPS Walkthrough Video (MP4)</a></b>
-</p>
+> 🎬 **[▶️ Click here to Play/Download Full HD 1080p Live Action Demo Video (MP4)](https://raw.githubusercontent.com/FinesseJones/Arise-Productions/main/docs/assets/arise_studio_walkthrough_demo.mp4)**
 
 ### 🧭 14-Module Step-by-Step Studio Guide
 
