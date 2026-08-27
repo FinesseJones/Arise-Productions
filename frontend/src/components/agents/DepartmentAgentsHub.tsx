@@ -107,29 +107,45 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
-
-  // Load chat history when switching agent or project
+  // Load chat history when switching agent or project with instant localStorage fallback
   const loadChatHistory = async (agentId: string) => {
+    // 1. Instant local history restore so messages are never wiped
+    try {
+      const keysToTry = [
+        `arise_chat_${projectId}_${agentId}`,
+        `arise_chat_proj-fatherless-child_${agentId}`,
+        `arise_chat_default_${agentId}`,
+        `arise_chat_${agentId}`,
+      ];
+      for (const k of keysToTry) {
+        const saved = localStorage.getItem(k);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setMessages(parsed);
+            break;
+          }
+        }
+      }
+    } catch {}
+
+    // 2. Fetch latest synced history from backend server
     try {
       const res = await fetch(`${apiBase}/api/v1/agents/history/${agentId}?projectId=${projectId}`).then((r) => r.json());
-      if (res.success && Array.isArray(res.history)) {
+      if (res && res.success && Array.isArray(res.history) && res.history.length > 0) {
         setMessages(res.history);
-      } else {
-        setMessages([]);
+        try {
+          localStorage.setItem(`arise_chat_${projectId}_${agentId}`, JSON.stringify(res.history));
+        } catch {}
       }
-    } catch (e) {
-      setMessages([]);
-    }
+    } catch (e) {}
   };
 
   // Load persistent studio memories
   const loadMemories = async () => {
     try {
       const res = await fetch(`${apiBase}/api/v1/studio/memory`).then((r) => r.json());
-      if (res.success && Array.isArray(res.memories)) {
+      if (res && res.success && Array.isArray(res.memories)) {
         setMemories(res.memories);
       }
     } catch (e) {}
@@ -533,43 +549,43 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
         </aside>
 
         {/* Center: Live Chat & 3D Interactive Stage */}
-        <main className="flex-grow flex flex-col bg-[#05030c] overflow-hidden min-h-0">
+        <main className="flex-1 flex flex-col bg-[#05030c] overflow-hidden min-h-0 relative">
           {/* Agent Header */}
-          <div className="px-4 py-2 bg-[#0d0722]/95 border-b border-amber-500/20 flex items-center justify-between flex-shrink-0">
-            <div className="flex items-center space-x-2.5">
-              <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${currentAgent.color} flex items-center justify-center text-base shadow-md border border-amber-400/40`}>
+          <div className="px-4 py-2.5 bg-[#0d0722]/95 border-b border-amber-500/20 flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center space-x-3">
+              <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${currentAgent.color} flex items-center justify-center text-lg shadow-md border border-amber-400/40 flex-shrink-0`}>
                 {currentAgent.avatar}
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-xs sm:text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif tracking-wide">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm sm:text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase font-serif tracking-wide truncate">
                     {currentAgent.name}
                   </h3>
-                  <span className="text-[8px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center gap-1">
-                    <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     ONLINE & MEMORY SYNCED
                   </span>
                 </div>
-                <p className="text-[10px] text-amber-200/70 font-sans max-w-lg truncate">
+                <p className="text-[11px] text-amber-200/70 font-sans truncate max-w-xl">
                   {currentAgent.role} • {currentAgent.description}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-shrink-0">
               <button
                 onClick={handleClearHistory}
                 title="Clear Chat History"
-                className="p-1 text-purple-400 hover:text-rose-400 hover:bg-purple-950/60 rounded-lg transition"
+                className="p-1.5 text-purple-400 hover:text-rose-400 hover:bg-purple-950/60 rounded-lg transition"
               >
-                <Trash2 size={14} />
+                <Trash2 size={15} />
               </button>
             </div>
           </div>
 
           {/* Optional 3D Holographic Stage Canvas - Compact & Responsive */}
           {show3DHologram && (
-            <div className="h-32 sm:h-36 lg:h-40 w-full bg-gradient-to-b from-[#0a051c] to-[#05030c] border-b border-amber-500/20 relative flex-shrink-0">
+            <div className="h-24 sm:h-28 w-full bg-gradient-to-b from-[#0a051c] to-[#05030c] border-b border-amber-500/20 relative flex-shrink-0">
               <Canvas
                 camera={{ position: [0, 0.25, 3.8], fov: 40 }}
                 className="w-full h-full"
@@ -580,90 +596,87 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                 <AgentHologram3D agent={currentAgent} />
               </Canvas>
               <div className="absolute top-1.5 right-2 pointer-events-none text-[8px] font-mono text-amber-400/80 bg-black/60 px-1.5 py-0.2 rounded border border-amber-500/30">
-                3D 4K STAGE
+                3D STAGE
               </div>
             </div>
           )}
 
-          {/* Sagas 5-Step Disciplined Production Hub Pipeline (createsagas.com/how-it-works) */}
-          <div className="px-4 py-1.5 bg-[#0a051d] border-b border-amber-500/25 flex items-center justify-between overflow-x-auto no-scrollbar gap-2 flex-shrink-0">
-            <div className="flex items-center gap-1 text-[9px] font-mono text-amber-300 font-bold uppercase flex-shrink-0">
-              <Layers size={11} className="text-amber-400" />
-              <span>Sagas Pipeline:</span>
-            </div>
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          {/* Compact Pipeline & Quick Directive Strip */}
+          <div className="px-4 py-1.5 bg-[#090418] border-b border-amber-500/20 flex items-center justify-between overflow-x-auto no-scrollbar gap-3 flex-shrink-0">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-shrink-0">
+              <span className="text-[10px] font-mono text-amber-300 font-bold uppercase flex items-center gap-1">
+                <Layers size={11} className="text-amber-400" /> Pipeline:
+              </span>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('plot')}
                 className="px-2 py-0.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/40 text-[9px] font-mono text-amber-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1 h-1 rounded-full bg-amber-400" />
-                <span>01: Ideation & Plot</span>
+                <span>01 Plot</span>
               </button>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('characters')}
                 className="px-2 py-0.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/40 text-[9px] font-mono text-purple-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1 h-1 rounded-full bg-purple-400" />
-                <span>02: Characters</span>
+                <span>02 Chars</span>
               </button>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('script')}
                 className="px-2 py-0.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/40 text-[9px] font-mono text-rose-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1 h-1 rounded-full bg-rose-400" />
-                <span>03: Scriptwriting</span>
+                <span>03 Script</span>
               </button>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('boards')}
                 className="px-2 py-0.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/25 border border-blue-500/40 text-[9px] font-mono text-blue-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1 h-1 rounded-full bg-blue-400" />
-                <span>04: Storyboarding</span>
+                <span>04 Boards</span>
               </button>
               <button
                 onClick={() => onNavigateToRoom && onNavigateToRoom('edit')}
                 className="px-2 py-0.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-500/40 text-[9px] font-mono text-emerald-200 hover:text-white flex items-center gap-1 transition whitespace-nowrap font-bold"
               >
-                <span className="w-1 h-1 rounded-full bg-emerald-400" />
-                <span>05: Polish & Publish</span>
+                <span>05 Edit</span>
               </button>
+            </div>
+
+            <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar flex-shrink-0">
+              <span className="text-[10px] font-mono uppercase text-amber-400 font-bold flex items-center gap-1">
+                <Zap size={11} /> Directives:
+              </span>
+              {currentAgent.quickPrompts.slice(0, 3).map((prompt, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleSendMessage(prompt)}
+                  className="px-2.5 py-0.5 rounded-full bg-[#150a30] hover:bg-[#200f48] border border-amber-500/30 text-[10px] text-amber-200 whitespace-nowrap transition hover:border-amber-400"
+                >
+                  {prompt}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Quick Prompt Pills */}
-          <div className="px-4 py-1.5 bg-[#090416] border-b border-amber-500/20 flex items-center space-x-1.5 overflow-x-auto no-scrollbar flex-shrink-0">
-            <span className="text-[10px] font-mono uppercase text-amber-400 font-bold flex items-center gap-1 flex-shrink-0">
-              <Zap size={11} /> Quick Directives:
-            </span>
-            {currentAgent.quickPrompts.map((prompt, i) => (
-              <button
-                key={i}
-                onClick={() => handleSendMessage(prompt)}
-                className="px-2.5 py-1 rounded-full bg-[#150a30] hover:bg-[#200f48] border border-amber-500/30 text-[10px] text-amber-200 whitespace-nowrap transition flex-shrink-0 hover:border-amber-400"
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-
-          {/* Messages Stream */}
-          <div className="flex-grow p-6 overflow-y-auto space-y-4 custom-scrollbar">
+          {/* Spacious Messages Stream */}
+          <div className="flex-1 min-h-0 p-4 sm:p-6 md:p-8 overflow-y-auto space-y-5 custom-scrollbar">
             {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto space-y-3 opacity-90">
-                <div className={`w-14 h-14 rounded-3xl bg-gradient-to-br ${currentAgent.color} flex items-center justify-center text-3xl shadow-xl border border-amber-400/40`}>
+              <div className="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto p-6 bg-[#0e0724]/70 border border-amber-500/30 rounded-3xl space-y-3.5 shadow-2xl my-auto">
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${currentAgent.color} flex items-center justify-center text-3xl shadow-xl border border-amber-400/40`}>
                   {currentAgent.avatar}
                 </div>
-                <h4 className="text-base font-bold text-amber-200 font-serif">
+                <h4 className="text-base sm:text-lg font-bold text-amber-200 font-serif">
                   Consult with {currentAgent.name}
                 </h4>
-                <p className="text-xs text-amber-100/70 leading-relaxed font-sans">
-                  {currentAgent.description} Ask questions, direct scene updates, brainstorm new concepts, or collaborate on your production.
+                <p className="text-xs sm:text-sm text-amber-100/80 leading-relaxed font-sans">
+                  {currentAgent.description} Ask questions, direct scene updates, brainstorm new concepts, or coordinate your production.
                 </p>
                 <div className="pt-2 flex flex-wrap gap-2 justify-center">
-                  {currentAgent.primaryRooms.map((room, idx) => (
-                    <span key={idx} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#160a36] border border-amber-500/30 text-amber-300">
-                      📍 {room}
-                    </span>
+                  {currentAgent.quickPrompts.map((prompt, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleSendMessage(prompt)}
+                      className="text-[11px] font-mono px-3 py-1 rounded-xl bg-[#160a36] hover:bg-[#220e50] border border-amber-500/40 text-amber-300 transition text-left cursor-pointer"
+                    >
+                      💬 {prompt}
+                    </button>
                   ))}
                 </div>
               </div>
@@ -673,11 +686,11 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                 return (
                   <div
                     key={msg.id}
-                    className={`flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}
+                    className={`flex items-start space-x-3.5 ${isUser ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}
                   >
                     {/* Avatar */}
                     <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 shadow-md border ${
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm flex-shrink-0 shadow-md border ${
                         isUser
                           ? 'bg-gradient-to-br from-amber-600 to-yellow-600 border-amber-400/60'
                           : `bg-gradient-to-br ${currentAgent.color} border-amber-400/40`
@@ -686,9 +699,9 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                       {isUser ? '👤' : currentAgent.avatar}
                     </div>
 
-                    {/* Message Bubble */}
+                    {/* Message Bubble - Generously Sized & Readable */}
                     <div
-                      className={`max-w-[88%] lg:max-w-[82%] rounded-2xl p-4 sm:p-5 space-y-2 shadow-xl select-text ${
+                      className={`max-w-[94%] sm:max-w-[90%] md:max-w-[85%] rounded-2xl p-4 sm:p-5 space-y-2.5 shadow-xl select-text ${
                         isUser
                           ? 'bg-[#221245] border border-amber-500/50 text-amber-100'
                           : 'bg-[#12082b]/95 border border-amber-500/40 text-slate-100 backdrop-blur-md'
@@ -704,7 +717,7 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                       </div>
 
                       {/* Content with whitespace preservation and rich typography */}
-                      <div className="text-sm font-sans leading-relaxed whitespace-pre-wrap selection:bg-amber-500/30">
+                      <div className="text-sm sm:text-[15px] font-sans leading-relaxed whitespace-pre-wrap selection:bg-amber-500/30">
                         {msg.content}
                       </div>
 
@@ -880,12 +893,12 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
             )}
 
             {isLoading && (
-              <div className="flex items-start space-x-3">
-                <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${currentAgent.color} flex items-center justify-center text-sm flex-shrink-0 animate-pulse`}>
+              <div className="flex items-start space-x-3.5">
+                <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${currentAgent.color} flex items-center justify-center text-sm flex-shrink-0 animate-pulse`}>
                   {currentAgent.avatar}
                 </div>
-                <div className="p-3.5 rounded-2xl bg-[#12082b] border border-amber-500/40 text-xs font-mono text-amber-300 flex items-center space-x-2">
-                  <RefreshCw className="animate-spin w-3.5 h-3.5 text-amber-400" />
+                <div className="p-4 rounded-2xl bg-[#12082b] border border-amber-500/40 text-xs font-mono text-amber-300 flex items-center space-x-2.5">
+                  <RefreshCw className="animate-spin w-4 h-4 text-amber-400" />
                   <span>{currentAgent.name} is formulating production direction...</span>
                 </div>
               </div>
@@ -895,18 +908,18 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
           </div>
 
           {/* Bottom Chat Input Bar & Sequential Chain-of-Custody Baton Relay */}
-          <div className="p-4 bg-[#0d0722]/95 border-t border-amber-500/30 flex-shrink-0">
+          <div className="p-3 sm:p-4 bg-[#0d0722]/95 border-t border-amber-500/30 flex-shrink-0">
             {PRODUCTION_CHAIN_RELAY[selectedAgentId] && (
-              <div className="mb-3 p-2.5 rounded-xl bg-gradient-to-r from-[#170a35] via-[#281156] to-[#170a35] border border-amber-500/40 flex items-center justify-between gap-3 text-xs flex-wrap shadow-md">
-                <div className="flex items-center gap-2">
-                  <span className="text-amber-400 font-bold font-mono text-[10px] uppercase flex items-center gap-1">
+              <div className="mb-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#170a35] via-[#281156] to-[#170a35] border border-amber-500/40 flex items-center justify-between gap-2 text-xs flex-wrap shadow-md">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-amber-400 font-bold font-mono text-[10px] uppercase flex items-center gap-1 flex-shrink-0">
                     <span>⚡</span>
-                    <span>Next Production Step:</span>
+                    <span>Next Relay:</span>
                   </span>
-                  <span className="text-slate-200 text-xs font-medium">
+                  <span className="text-slate-200 text-xs font-medium truncate">
                     <strong className="text-amber-300">{PRODUCTION_CHAIN_RELAY[selectedAgentId].nextAgentName}</strong> ({PRODUCTION_CHAIN_RELAY[selectedAgentId].nextRole})
                   </span>
-                  <span className="text-[10px] font-mono text-purple-300/80 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800/50">
+                  <span className="text-[10px] font-mono text-purple-300/80 bg-purple-950/80 px-2 py-0.2 rounded border border-purple-800/50 flex-shrink-0">
                     {PRODUCTION_CHAIN_RELAY[selectedAgentId].targetRoom}
                   </span>
                 </div>
@@ -919,7 +932,7 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                     setInputMessage(relay.promptSuggestion);
                     toast.success(`🎯 Passed baton to ${relay.nextAgentName}! Prompt primed.`, { icon: '🎬' });
                   }}
-                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5 transition shadow-lg shadow-amber-500/20"
+                  className="px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5 transition shadow-lg shadow-amber-500/20 flex-shrink-0"
                 >
                   <span>👉 Hand off to {PRODUCTION_CHAIN_RELAY[selectedAgentId].nextAgentName}</span>
                   <ArrowRight size={12} />
@@ -946,14 +959,14 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
                       handleSendMessage();
                     }
                   }}
-                  className="w-full px-4 py-2.5 bg-[#150a30] border border-amber-500/40 rounded-2xl text-xs text-slate-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 resize-none font-sans select-text shadow-inner"
+                  className="w-full px-4 py-3 bg-[#150a30] border border-amber-500/40 rounded-2xl text-xs sm:text-sm text-slate-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 resize-none font-sans select-text shadow-inner min-h-[52px]"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={!inputMessage.trim() || isLoading}
-                className="px-5 py-3 bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 disabled:opacity-40 text-black font-bold rounded-2xl transition shadow-lg shadow-amber-500/20 flex items-center space-x-2 text-xs uppercase tracking-wider flex-shrink-0"
+                className="px-4 sm:px-6 py-3 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 disabled:opacity-40 text-black font-black rounded-2xl transition flex items-center justify-center gap-1.5 flex-shrink-0 shadow-lg shadow-amber-500/25 uppercase font-mono text-xs tracking-wider cursor-pointer active:scale-95 min-h-[52px]"
               >
                 <span>Send</span>
                 <Send size={13} />

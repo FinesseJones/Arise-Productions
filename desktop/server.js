@@ -78,9 +78,12 @@ fileWatcher.start();
 
 // Helper: Resolve active project dynamically
 async function resolveProjectId(explicitId) {
-  if (explicitId && explicitId !== 'default') return explicitId;
+  if (explicitId && explicitId !== 'default' && explicitId !== 'undefined') return explicitId;
   const session = db.getSessionState();
-  if (session && session.activeProjectId) return session.activeProjectId;
+  if (session) {
+    if (session.lastActiveProjectId) return session.lastActiveProjectId;
+    if (session.activeProjectId) return session.activeProjectId;
+  }
   const projects = await db.listProjects();
   return projects[0]?.id || 'proj-fatherless-child';
 }
