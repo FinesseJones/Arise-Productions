@@ -559,8 +559,16 @@
       "stageId": "script",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "hash-script-1",
-      "updated_at": "2026-08-27T01:53:01.843Z"
+      "outputHash": "dir-job-1787850857535",
+      "updated_at": "2026-08-27T17:14:18.001Z",
+      "telemetry": {
+        "jobId": "dir-job-1787850857535",
+        "worker": "ScriptBreak",
+        "timestamp": "2026-08-27T17:14:18.001Z",
+        "completedAt": "2026-08-27T17:14:18.001Z",
+        "outputSummary": "Screenplay parsed: 3 scenes, 4 characters, 12 dialogue blocks identified.",
+        "aiModel": "meta/llama-3.3-70b-instruct"
+      }
     },
     {
       "id": "proj-fatherless-child-shot-1:structure",
@@ -649,8 +657,16 @@
       "stageId": "script",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "hash-script-2",
-      "updated_at": "2026-08-27T01:53:01.843Z"
+      "outputHash": "dir-job-1787850859073",
+      "updated_at": "2026-08-27T17:14:19.535Z",
+      "telemetry": {
+        "jobId": "dir-job-1787850859073",
+        "worker": "ScriptBreak",
+        "timestamp": "2026-08-27T17:14:19.535Z",
+        "completedAt": "2026-08-27T17:14:19.535Z",
+        "outputSummary": "Screenplay parsed: 3 scenes, 4 characters, 12 dialogue blocks identified.",
+        "aiModel": "meta/llama-3.3-70b-instruct"
+      }
     },
     {
       "id": "proj-fatherless-child-shot-2:structure",
@@ -4974,6 +4990,8 @@
       "updated_at": "2026-08-26T20:17:19.665Z"
     }
   ],
+  "briefings": [],
+  "activityLog": [],
   "sessionState": {
     "lastActiveProjectId": "proj-fatherless-child",
     "lastActiveStageId": "script",
@@ -4981,5 +4999,5 @@
     "updated_at": "2026-08-27T08:32:19.010Z"
   },
   "auditLogs": [],
-  "saved_at": "2026-08-27T16:27:24.072Z"
+  "saved_at": "2026-08-27T17:14:19.535Z"
 }

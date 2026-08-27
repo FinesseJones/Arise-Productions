@@ -74,7 +74,7 @@ export class ScriptBreakWorker extends BaseMCPWorker {
       stage: 'script',
       summary: aiSummary,
       sceneBible: { scenes: 3, characters: ['Devon', 'Marcus', 'Vale', 'Cassie'], location: 'Historic Foundry' },
-      aiModel: nvidia.hasApiKey() ? 'meta/llama-3.3-70b-instruct' : 'local-deterministic',
+      aiModel: nvidia.hasApiKey() ? (nvidia.defaultModel || 'meta/llama-3.2-11b-vision-instruct') : 'local-deterministic',
     };
   }
 }
@@ -95,7 +95,7 @@ export class CorkBoardWorker extends BaseMCPWorker {
       stage: 'structure',
       summary: aiSummary,
       indexCards: [{ act: 1, title: 'Inciting Beat' }, { act: 2, title: 'Midpoint Climax' }, { act: 3, title: 'Resolution' }],
-      aiModel: nvidia.hasApiKey() ? 'meta/llama-3.3-70b-instruct' : 'local-deterministic',
+      aiModel: nvidia.hasApiKey() ? (nvidia.defaultModel || 'meta/llama-3.2-11b-vision-instruct') : 'local-deterministic',
     };
   }
 }
@@ -137,7 +137,7 @@ export class BlockoutWorker extends BaseMCPWorker {
       spatialCoordinates: { cameraFocalLength: '35mm', pathPoints: 240, lightSetup: 'ThreePointStudio' },
       engine: 'Unreal Engine 5 (/Applications/Film Making/UnrealEditor.app)',
       unrealConnected: ueStatus.active,
-      aiModel: nvidia.hasApiKey() ? 'meta/llama-3.3-70b-instruct' : 'local-deterministic',
+      aiModel: nvidia.hasApiKey() ? (nvidia.defaultModel || 'meta/llama-3.2-11b-vision-instruct') : 'local-deterministic',
     };
   }
 }
@@ -197,7 +197,7 @@ export class SlatePromptWorker extends BaseMCPWorker {
         negativePrompt: 'blurry, distorted, artifacts, low resolution',
       },
       comfyConnected: comfyStatus.online,
-      aiModel: nvidia.hasApiKey() ? 'meta/llama-3.3-70b-instruct' : 'local-deterministic',
+      aiModel: nvidia.hasApiKey() ? (nvidia.defaultModel || 'meta/llama-3.2-11b-vision-instruct') : 'local-deterministic',
     };
   }
 }

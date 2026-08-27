@@ -90,6 +90,16 @@ export async function runAgent(options = {}) {
     maxTokens,
   });
 
+  if (result.success === false) {
+    return {
+      reply: `⚠️ **NVIDIA NIM Error:** ${result.error || 'NVIDIA NIM API request failed.'}`,
+      actions: executedActions,
+      model: result.model || model,
+      success: false,
+      error: result.error,
+    };
+  }
+
   for (let iteration = 0; iteration < 4; iteration += 1) {
     // A) Standard OpenAI-format tool_calls
     if (result.tool_calls && result.tool_calls.length > 0) {
@@ -135,6 +145,16 @@ export async function runAgent(options = {}) {
         temperature,
         maxTokens,
       });
+
+      if (result.success === false) {
+        return {
+          reply: `⚠️ **NVIDIA NIM Error:** ${result.error || 'NVIDIA NIM API request failed during tool execution.'}`,
+          actions: executedActions,
+          model: result.model || model,
+          success: false,
+          error: result.error,
+        };
+      }
       continue;
     }
 
@@ -163,6 +183,16 @@ export async function runAgent(options = {}) {
           temperature,
           maxTokens,
         });
+
+        if (result.success === false) {
+          return {
+            reply: `⚠️ **NVIDIA NIM Error:** ${result.error || 'NVIDIA NIM API request failed.'}`,
+            actions: executedActions,
+            model: result.model || model,
+            success: false,
+            error: result.error,
+          };
+        }
         continue;
       } catch (error) {
         console.warn('[AgentRuntime] Error executing embedded JSON tool:', error.message);
@@ -182,19 +212,6 @@ export async function runAgent(options = {}) {
       const toolResult = await executeAgentTool(lingeringJson.name, lingeringJson.arguments || {}, { projectId, shotNumber });
       executedActions.push({ id: `act-${Date.now()}`, tool: lingeringJson.name, args: lingeringJson.arguments, result: toolResult });
     } catch (e) {}
-
-    // Synthesize natural conversational response
-    if (lastUserMsg.toLowerCase().includes('character') || lastUserMsg.toLowerCase().includes('lives') || lastUserMsg.toLowerCase().includes('names')) {
-      replyText = `I've pulled the story bible and screenplay records for **${projectId}**! Here is the latest breakdown of our characters and narrative arcs:\n\n### 👥 Character Ensemble & Narrative Stakes:\n\n1. **Malik (Lead Protagonist - 28)**\n   - *Background & Life:* A brilliant, reflective young man in modern 2026 urban America navigating city pressures while seeking absolute truth.\n   - *Core Conflict:* Balancing corporate expectations with spiritual convictions.\n\n2. **Elder Josiah (Master Teacher & Mentor - 60s)**\n   - *Background & Life:* Revered community elder who carries ancestral wisdom and speaks exclusively in immutable scripture and sacred references.\n   - *Dramatic Role:* The anchor of moral clarity and guidance for the ensemble.\n\n3. **Devon & Seraphina (Allies & Family)**\n   - *Dynamics:* Tangled in the consequences of broken family ties, seeking restoration and redemption.\n\nWhere would you like us to direct the next character beat or scene dialogue?`;
-    } else {
-      const fallback = nvidia.generateDepartmentalFallback(lastUserMsg, systemPrompt, model);
-      replyText = fallback.text;
-    }
-  }
-
-  if (!replyText || replyText.trim().startsWith('{')) {
-    const fallback = nvidia.generateDepartmentalFallback(lastUserMsg, systemPrompt, model);
-    replyText = fallback.text;
   }
 
   return {
