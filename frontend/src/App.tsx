@@ -4,10 +4,111 @@ import React, { useState, useRef } from 'react';
 import ShellLayout from './components/ShellLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Toaster } from 'react-hot-toast';
-import { Plus, Link2, Film, Smartphone, Tv, Sparkles, Play, Layers, FolderOpen, RefreshCw, Upload, FileText, CheckCircle2 } from 'lucide-react';
+import { Plus, Link2, Film, Smartphone, Tv, Sparkles, Play, Layers, FolderOpen, RefreshCw, Upload, FileText, CheckCircle2, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from './constants/branding';
 import { getAPIBaseURL } from './lib/api';
+
+const DEFAULT_CATALOGUE = [
+  {
+    id: 'proj-fatherless-child',
+    name: 'A Fatherless Child',
+    format: 'long_form',
+    genre: 'Emotional Family Drama',
+    description: "Devon grapples with identity and legacy after discovering his late father's unprocessed 16mm reels.",
+  },
+  {
+    id: 'proj-armor-of-god',
+    name: 'Armor Of God',
+    format: 'long_form',
+    genre: 'Spiritual Warfare Drama',
+    description: 'Based on Ephesians 6:11 & Romans 1: A powerful journey into spiritual protection, identity, and faith.',
+  },
+  {
+    id: 'proj-awakened',
+    name: 'Awakened',
+    format: 'long_form',
+    genre: 'Spiritual Thriller',
+    description: 'A gripping narrative of spiritual awakening, uncovering biblical truth against unseen forces.',
+  },
+  {
+    id: 'proj-joseph-the-dreamer',
+    name: 'Joseph The Dreamer',
+    format: 'long_form',
+    genre: 'Biblical Epic',
+    description: 'From betrayal and slavery in Egypt to divine redemption, destiny, and family reconciliation.',
+  },
+  {
+    id: 'proj-the-awakening',
+    name: 'The Awakening',
+    format: 'long_form',
+    genre: 'Faith & Family Drama',
+    description: 'An emotional exploration of spiritual warfare, covenant restoration, and fatherly legacy.',
+  },
+  {
+    id: 'proj-the-remnant',
+    name: 'The Remnant',
+    format: 'long_form',
+    genre: 'Prophetic Historical Drama',
+    description: 'A faithful remnant stands resilient against societal turbulence to preserve sacred truth.',
+  },
+  {
+    id: 'proj-uncut-word-sabbath-class',
+    name: 'Uncut Word: Sabbath Class Series',
+    format: 'episodic_tv',
+    genre: 'Episodic Biblical Docuseries',
+    description: 'Season 1: Deep precept-upon-precept scripture breakdowns and historical revelations.',
+  },
+  {
+    id: 'proj-fatherlessness-spiritual-warfare',
+    name: 'Fatherlessness And Spiritual Warfare',
+    format: 'long_form',
+    genre: 'High-Impact Drama',
+    description: 'An unflinching cinematic look at the root causes of fatherlessness and the armor of God.',
+  },
+  {
+    id: 'proj-film-script-portfolio',
+    name: 'Film Script Portfolio',
+    format: 'long_form',
+    genre: 'Scripture Anthology',
+    description: 'A curated portfolio of cinematic, scripture-anchored master screenplays.',
+  },
+  {
+    id: 'proj-la-film-school',
+    name: 'LA Film School Project',
+    format: 'long_form',
+    genre: 'Cinematic Narrative',
+    description: 'Combining Hollywood cinematic pacing and virtual production with biblical truth.',
+  },
+  {
+    id: 'proj-movie-script-outline',
+    name: 'Movie Script Outline',
+    format: 'long_form',
+    genre: 'Production Masterplan',
+    description: '10-stage virtual production master breakdown and feature screenplay arc.',
+  },
+  {
+    id: 'proj-vicious-cycle',
+    name: 'Vicious Cycle',
+    format: 'long_form',
+    genre: 'Urban Crime Thriller',
+    description: 'A streetwise detective breaks rules to dismantle a syndicate before time runs out.',
+  },
+  {
+    id: 'proj-echoes-of-past',
+    name: 'Echoes of the Past',
+    format: 'short_form',
+    genre: 'Sci-Fi Psychological Drama',
+    description: 'A lone archivist restores holographic memory fragments in a flooded coastal city.',
+  },
+  {
+    id: 'proj-shadow-protocol',
+    name: 'Shadow Protocol',
+    format: 'episodic_tv',
+    genre: 'Espionage Political Thriller',
+    description: 'Season 1 / Episode 1: Rogue cyber operatives uncover a global surveillance conspiracy.',
+  },
+];
 
 const App: React.FC = () => {
   const apiBase = getAPIBaseURL();
@@ -27,36 +128,10 @@ const App: React.FC = () => {
   });
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [showFolderModal, setShowFolderModal] = useState<boolean>(false);
-  const [availableProjects, setAvailableProjects] = useState<Array<{ id: string; name: string; format?: string; genre?: string; description?: string }>>([
-    {
-      id: 'proj-fatherless-child',
-      name: 'A Fatherless Child',
-      format: 'long_form',
-      genre: 'Emotional Family Drama',
-      description: "Devon grapples with identity and legacy after discovering his late father's unprocessed 16mm reels.",
-    },
-    {
-      id: 'proj-vicious-cycle',
-      name: 'Vicious Cycle',
-      format: 'long_form',
-      genre: 'Urban Crime Thriller',
-      description: 'A streetwise detective breaks rules to dismantle a syndicate before time runs out.',
-    },
-    {
-      id: 'proj-echoes-of-past',
-      name: 'Echoes of the Past',
-      format: 'short_form',
-      genre: 'Sci-Fi Psychological Drama',
-      description: 'A lone archivist restores holographic memory fragments in a flooded coastal city.',
-    },
-    {
-      id: 'proj-shadow-protocol',
-      name: 'Shadow Protocol',
-      format: 'episodic_tv',
-      genre: 'Espionage Political Thriller',
-      description: 'Season 1 / Episode 1: Rogue cyber operatives uncover a global surveillance conspiracy.',
-    },
-  ]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'long_form' | 'episodic_tv' | 'short_form'>('all');
+
+  const [availableProjects, setAvailableProjects] = useState<Array<{ id: string; name: string; format?: string; genre?: string; description?: string }>>(DEFAULT_CATALOGUE);
 
   // New Project Form State
   const [newTitle, setNewTitle] = useState<string>('');
@@ -455,87 +530,172 @@ const App: React.FC = () => {
               </button>
             </div>
 
-            {/* List of All Productions Cards Grid */}
-            <div className="w-full max-w-4xl space-y-3">
-              <div className="flex items-center justify-between px-2">
-                <span className="text-xs font-mono uppercase text-amber-400 font-bold tracking-wider">
-                  🎬 Active Studio Productions ({availableProjects.length})
-                </span>
-                <span className="text-[11px] font-mono text-slate-400">
-                  Select any project to enter 16-agent soundstage
-                </span>
-              </div>
+            {/* List of All Productions Cards Grid with Live Search & Category Tabs */}
+            <div className="w-full max-w-4xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-2">
+                <div>
+                  <span className="text-sm font-mono uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] to-[#F59E0B] font-black tracking-wider">
+                    🎬 Active Studio Productions ({availableProjects.length})
+                  </span>
+                  <p className="text-[11px] font-mono text-slate-400">
+                    Select any project to launch 16-agent soundstage or switch formats
+                  </p>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {availableProjects.map((proj) => {
-                  const isCurrent = proj.name === projectName;
-                  return (
-                    <div
-                      key={proj.id}
-                      className={`p-5 rounded-3xl border transition flex flex-col justify-between space-y-3 ${
-                        isCurrent
-                          ? 'bg-[#150a2e] border-amber-400 shadow-xl shadow-amber-500/20'
-                          : 'bg-[#0c0819]/90 border-amber-500/30 hover:border-amber-400/60 hover:bg-[#120826]'
-                      }`}
+                {/* Search Input Bar */}
+                <div className="relative w-full sm:w-72">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400/70 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search titles, genres, stories..."
+                    className="w-full pl-9 pr-3 py-1.5 bg-[#0e0a1a] border border-amber-500/40 rounded-xl text-xs font-mono text-amber-100 placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs font-mono"
                     >
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-base font-black text-amber-100 truncate font-serif">
-                            🎬 {proj.name}
-                          </h3>
-                        </div>
-
-                        {/* Inline format-change selector */}
-                        <div className="flex items-center gap-1 flex-wrap">
-                          {[
-                            { val: 'long_form' as const, label: 'Feature Film', icon: <Film size={10} /> },
-                            { val: 'episodic_tv' as const, label: 'TV Series', icon: <Tv size={10} /> },
-                            { val: 'short_form' as const, label: 'Short', icon: <Smartphone size={10} /> },
-                          ].map(({ val, label, icon }) => (
-                            <button
-                              key={val}
-                              type="button"
-                              onClick={() => proj.format !== val && handleFormatChange(proj.id, val)}
-                              className={`flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-mono font-bold uppercase transition cursor-pointer ${
-                                proj.format === val
-                                  ? 'bg-amber-500/25 border-amber-400 text-amber-200'
-                                  : 'bg-transparent border-slate-700 text-slate-500 hover:border-amber-500/50 hover:text-amber-300'
-                              }`}
-                            >
-                              {icon}
-                              {label}
-                            </button>
-                          ))}
-                        </div>
-
-                        {proj.genre && (
-                          <p className="text-xs text-amber-400/80 font-mono font-medium">
-                            {proj.genre}
-                          </p>
-                        )}
-                        {proj.description && (
-                          <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
-                            {proj.description}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-amber-500/20">
-                        <span className="text-[10px] font-mono text-purple-300/70">
-                          10 Stages & 16 Agents Ready
-                        </span>
-                        <button
-                          onClick={() => handleLaunchProject(proj.id, proj.name)}
-                          className="px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold rounded-xl transition text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
-                        >
-                          <Play size={12} fill="currentColor" />
-                          <span>Launch Studio</span>
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+                      ✕
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {/* Format Category Filter Tabs */}
+              <div className="flex items-center gap-1.5 flex-wrap px-2">
+                {[
+                  { id: 'all' as const, label: `All (${availableProjects.length})` },
+                  { id: 'long_form' as const, label: `🎬 Feature Films (${availableProjects.filter((p) => p.format === 'long_form').length})` },
+                  { id: 'episodic_tv' as const, label: `📺 TV Series (${availableProjects.filter((p) => p.format === 'episodic_tv').length})` },
+                  { id: 'short_form' as const, label: `📱 Shorts / Reels (${availableProjects.filter((p) => p.format === 'short_form').length})` },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setCategoryFilter(tab.id)}
+                    className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition cursor-pointer ${
+                      categoryFilter === tab.id
+                        ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black shadow-md shadow-amber-500/20'
+                        : 'bg-[#130b26] text-slate-300 hover:text-amber-200 hover:bg-[#1a0f35] border border-amber-500/30'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Grid of Projects */}
+              {availableProjects
+                .filter((p) => {
+                  const query = searchQuery.trim().toLowerCase();
+                  const matchesSearch =
+                    !query ||
+                    p.name.toLowerCase().includes(query) ||
+                    (p.genre && p.genre.toLowerCase().includes(query)) ||
+                    (p.description && p.description.toLowerCase().includes(query));
+                  const matchesCategory = categoryFilter === 'all' || p.format === categoryFilter;
+                  return matchesSearch && matchesCategory;
+                })
+                .length === 0 ? (
+                <div className="text-center py-12 bg-[#0c0819]/80 border border-amber-500/20 rounded-3xl space-y-2">
+                  <p className="text-sm font-mono text-amber-200">No productions match your search filter.</p>
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setCategoryFilter('all');
+                    }}
+                    className="text-xs font-mono text-amber-400 underline"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {availableProjects
+                    .filter((p) => {
+                      const query = searchQuery.trim().toLowerCase();
+                      const matchesSearch =
+                        !query ||
+                        p.name.toLowerCase().includes(query) ||
+                        (p.genre && p.genre.toLowerCase().includes(query)) ||
+                        (p.description && p.description.toLowerCase().includes(query));
+                      const matchesCategory = categoryFilter === 'all' || p.format === categoryFilter;
+                      return matchesSearch && matchesCategory;
+                    })
+                    .map((proj) => {
+                      const isCurrent = proj.name === projectName || proj.id === projectId;
+                      return (
+                        <div
+                          key={proj.id}
+                          className={`p-5 rounded-3xl border transition flex flex-col justify-between space-y-3 ${
+                            isCurrent
+                              ? 'bg-[#150a2e] border-amber-400 shadow-xl shadow-amber-500/20'
+                              : 'bg-[#0c0819]/90 border-amber-500/30 hover:border-amber-400/60 hover:bg-[#120826]'
+                          }`}
+                        >
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <h3 className="text-base font-black text-amber-100 truncate font-serif">
+                                🎬 {proj.name}
+                              </h3>
+                              <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-purple-950/80 text-amber-300 border border-purple-700/50 uppercase">
+                                {proj.format === 'episodic_tv' ? 'TV Series' : proj.format === 'short_form' ? 'Short Film' : 'Feature Film'}
+                              </span>
+                            </div>
+
+                            {/* Inline format-change selector */}
+                            <div className="flex items-center gap-1 flex-wrap pt-0.5">
+                              {[
+                                { val: 'long_form' as const, label: 'Feature Film', icon: <Film size={10} /> },
+                                { val: 'episodic_tv' as const, label: 'TV Series', icon: <Tv size={10} /> },
+                                { val: 'short_form' as const, label: 'Short', icon: <Smartphone size={10} /> },
+                              ].map(({ val, label, icon }) => (
+                                <button
+                                  key={val}
+                                  type="button"
+                                  onClick={() => proj.format !== val && handleFormatChange(proj.id, val)}
+                                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-mono font-bold uppercase transition cursor-pointer ${
+                                    proj.format === val
+                                      ? 'bg-amber-500/25 border-amber-400 text-amber-200'
+                                      : 'bg-transparent border-slate-700 text-slate-500 hover:border-amber-500/50 hover:text-amber-300'
+                                  }`}
+                                >
+                                  {icon}
+                                  {label}
+                                </button>
+                              ))}
+                            </div>
+
+                            {proj.genre && (
+                              <p className="text-xs text-amber-400/80 font-mono font-medium">
+                                {proj.genre}
+                              </p>
+                            )}
+                            {proj.description && (
+                              <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
+                                {proj.description}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-between pt-2 border-t border-amber-500/20">
+                            <span className="text-[10px] font-mono text-purple-300/70">
+                              10 Stages & 16 Agents Ready
+                            </span>
+                            <button
+                              onClick={() => handleLaunchProject(proj.id, proj.name)}
+                              className="px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold rounded-xl transition text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
+                            >
+                              <Play size={12} fill="currentColor" />
+                              <span>Launch Studio</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
             </div>
 
             {/* New Production & Media Ingest Modal */}
@@ -847,6 +1007,8 @@ const App: React.FC = () => {
             activeStage={activeStageId}
             onStageSelect={handleStageSelect}
             onChangeProject={() => setIsProjectSelected(false)}
+            availableProjects={availableProjects}
+            onSelectProject={handleLaunchProject}
           />
         )}
       </div>

@@ -58,6 +58,8 @@ interface ShellLayoutProps {
   activeStage: string | null;
   onStageSelect: (stageId: string) => void;
   onChangeProject?: () => void;
+  availableProjects?: Array<{ id: string; name: string; format?: string; genre?: string; description?: string }>;
+  onSelectProject?: (id: string, name: string) => void;
 }
 
 const ShellLayout: React.FC<ShellLayoutProps> = ({
@@ -66,6 +68,8 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   activeStage,
   onStageSelect,
   onChangeProject,
+  availableProjects = [],
+  onSelectProject,
 }) => {
   const apiBase = getAPIBaseURL();
   const [activeShotNumber, setActiveShotNumber] = useState<number>(1);
@@ -86,6 +90,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
   // Modals & Menus
   const [showRoomDropdown, setShowRoomDropdown] = useState<boolean>(false);
+  const [showProjectDropdown, setShowProjectDropdown] = useState<boolean>(false);
   const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
@@ -253,11 +258,89 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <span className="hidden lg:inline">New</span>
             </button>
 
+            {/* Quick Projects Switcher Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowProjectDropdown((prev) => !prev);
+                  setShowRoomDropdown(false);
+                }}
+                className={`px-2 sm:px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-sm ${
+                  showProjectDropdown
+                    ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black border border-amber-300'
+                    : 'bg-[#150a2e] hover:bg-[#200f45] text-amber-200 border border-amber-500/50'
+                }`}
+                title="Switch Active Production"
+              >
+                <Film size={12} className={showProjectDropdown ? 'text-black' : 'text-amber-400'} />
+                <span className="truncate max-w-[110px] sm:max-w-[160px]">{projectName}</span>
+                <ChevronDown size={11} className={`transition-transform duration-200 ${showProjectDropdown ? 'rotate-180 text-black' : 'text-amber-400/80'}`} />
+              </button>
+
+              {showProjectDropdown && (
+                <div
+                  className="absolute left-0 mt-2 w-80 bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 max-h-96 overflow-y-auto"
+                  style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.9), 0 0 24px rgba(245, 158, 11, 0.35)' }}
+                >
+                  <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
+                    <span className="text-[10px] uppercase font-mono font-black tracking-widest text-amber-400">
+                      Active Productions ({availableProjects.length})
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowProjectDropdown(false);
+                        onChangeProject?.();
+                      }}
+                      className="text-[9px] font-mono text-amber-300 hover:text-amber-100 underline cursor-pointer"
+                    >
+                      Front of Studio
+                    </button>
+                  </div>
+
+                  <div className="space-y-1 text-[11px] font-mono">
+                    {availableProjects.map((p) => {
+                      const isCurrent = p.name === projectName || p.id === projectId;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            setShowProjectDropdown(false);
+                            onSelectProject?.(p.id, p.name);
+                          }}
+                          className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition cursor-pointer ${
+                            isCurrent
+                              ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/30'
+                              : 'hover:bg-amber-500/20 text-slate-200 hover:text-amber-200 border border-transparent hover:border-amber-500/40'
+                          }`}
+                        >
+                          <div className="truncate pr-2">
+                            <div className="font-bold truncate">{p.name}</div>
+                            {p.genre && <div className={`text-[9px] truncate ${isCurrent ? 'text-black/80' : 'text-amber-400/70'}`}>{p.genre}</div>}
+                          </div>
+                          <span className={`text-[8px] uppercase px-1.5 py-0.5 rounded font-bold flex-shrink-0 ${
+                            isCurrent ? 'bg-black/20 text-black' : 'bg-purple-950/80 text-amber-300 border border-purple-700/50'
+                          }`}>
+                            {p.format === 'episodic_tv' ? 'TV' : p.format === 'short_form' ? 'Short' : 'Film'}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Quick Rooms Dropdown Menu */}
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setShowRoomDropdown((prev) => !prev)}
+                onClick={() => {
+                  setShowRoomDropdown((prev) => !prev);
+                  setShowProjectDropdown(false);
+                }}
                 className={`px-2 sm:px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
                   showRoomDropdown
                     ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black border border-amber-300'
