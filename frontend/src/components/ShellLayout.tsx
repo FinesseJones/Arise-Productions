@@ -9,8 +9,9 @@ import StudioArchitecturalView from './StudioArchitecturalView';
 import VideoScreeningRoom from './VideoScreeningRoom';
 import DataVaultAndHistory from './DataVaultAndHistory';
 import OriginalSuitesHub from './OriginalSuitesHub';
-import ProductionPitchDeckModal from './ProductionPitchDeckModal';
-import StudioProUpgradeModal from './StudioProUpgradeModal';
+import { ProductionPitchDeckModal } from './ProductionPitchDeckModal';
+import { StudioProUpgradeModal } from './StudioProUpgradeModal';
+import { StudioVideoTourModal } from './StudioVideoTourModal';
 import PlotRoom from '../pages/PlotRoom';
 import ActsRoom from '../pages/ActsRoom';
 import BeatsRoom from '../pages/BeatsRoom';
@@ -94,6 +95,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
+  const [showVideoTourModal, setShowVideoTourModal] = useState<boolean>(false);
 
   // Active Studio Licensing Tier (Default: Enterprise $299/mo)
   const [studioTier, setStudioTier] = useState<string>(() =>
@@ -595,6 +597,16 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
         {/* Right Tools & Active Project HUD */}
         <div className="flex items-center space-x-1.5 flex-shrink-0">
+          {/* Master Studio Video Tour Modal Trigger */}
+          <button
+            onClick={() => setShowVideoTourModal(true)}
+            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500/20 via-amber-500/30 to-amber-500/15 hover:from-amber-500/40 hover:to-amber-500/25 text-amber-300 border border-amber-500/50 hover:border-amber-400 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
+            title="Watch Master Live Action Studio Video Tour"
+          >
+            <Film size={12} className="text-amber-400" />
+            <span>Studio Tour</span>
+          </button>
+
           {/* Hollywood Pitch Bible Button */}
           <button
             onClick={() => setShowPitchBibleModal(true)}
@@ -936,6 +948,11 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           </div>
         </div>
       )}
+      {/* Studio Video Tour Modal */}
+      <StudioVideoTourModal
+        isOpen={showVideoTourModal}
+        onClose={() => setShowVideoTourModal(false)}
+      />
     </div>
   );
 };
