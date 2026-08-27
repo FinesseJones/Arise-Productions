@@ -14,9 +14,9 @@
 
 Experience the live action studio demonstration recorded directly from the running **Arise Production Studio** soundstage, showing step-by-step navigation, screenplay writing, 3D optical camera solving, and distribution packaging:
 
-[![Arise Production Studio Live Walkthrough Video](https://raw.githubusercontent.com/FinesseJones/Arise-Productions/main/docs/assets/arise_studio_demo_preview.gif)](https://raw.githubusercontent.com/FinesseJones/Arise-Productions/main/docs/assets/arise_studio_walkthrough_demo.mp4)
+[![Arise Production Studio Live Walkthrough Video](./docs/assets/arise_studio_demo_preview.gif)](./docs/assets/arise_studio_walkthrough_demo.mp4)
 
-> 🎬 **[▶️ Click here to Play/Download Full HD 1080p Live Action Demo Video (MP4)](https://raw.githubusercontent.com/FinesseJones/Arise-Productions/main/docs/assets/arise_studio_walkthrough_demo.mp4)**
+> 🎬 **[▶️ Click here to Play/Download Full HD 1080p Live Action Demo Video (MP4)](./docs/assets/arise_studio_walkthrough_demo.mp4)**
 
 ### 🧭 14-Module Step-by-Step Studio Guide
 
