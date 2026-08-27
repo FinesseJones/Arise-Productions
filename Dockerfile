@@ -34,6 +34,9 @@ RUN npm install --omit=dev
 COPY server.js ./
 COPY backend ./backend
 
+# Copy storage assets and reference files
+COPY storage ./storage
+
 # Copy compiled frontend from builder stage
 COPY --from=builder /app/frontend/dist ./frontend/dist
 

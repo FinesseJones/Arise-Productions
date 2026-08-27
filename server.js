@@ -601,28 +601,64 @@ app.post('/api/v1/ingest/analyze-discuss', async (req, res) => {
 // Each .fountain or .docx becomes a new studio project; .md files are stored as IP Vault assets
 app.post('/api/v1/projects/ingest-folder', async (req, res) => {
   try {
-    const { folderPath, defaultFormat } = req.body;
-    if (!folderPath) return res.status(400).json({ success: false, error: 'folderPath is required' });
-    if (!fs.existsSync(folderPath)) return res.status(404).json({ success: false, error: `Folder not found: ${folderPath}` });
+    let { folderPath, defaultFormat } = req.body || {};
+    if (!folderPath || typeof folderPath !== 'string') {
+      folderPath = 'storage/ingested/TACF_Hybrid_Film_Scripts';
+    }
+    folderPath = folderPath.trim();
+
+    // Resilient path resolution across Mac local paths, Docker containers, and VPS directories
+    let targetDir = folderPath;
+    if (!fs.existsSync(targetDir)) {
+      const candidates = [
+        path.resolve(__dirname, folderPath),
+        path.resolve(__dirname, 'storage/ingested', path.basename(folderPath)),
+        path.resolve(__dirname, 'storage/ingested/TACF_Hybrid_Film_Scripts'),
+        path.resolve(process.cwd(), 'storage/ingested', path.basename(folderPath)),
+        path.resolve(process.cwd(), 'storage/ingested/TACF_Hybrid_Film_Scripts'),
+        '/app/storage/ingested/TACF_Hybrid_Film_Scripts',
+        '/root/Arise-Productions/storage/ingested/TACF_Hybrid_Film_Scripts',
+        '/Volumes/FinesseJones1 External 1/Archive/Documents/TACF_Hybrid_Film_Scripts',
+      ];
+      for (const cand of candidates) {
+        if (fs.existsSync(cand)) {
+          targetDir = cand;
+          break;
+        }
+      }
+    }
+
+    if (!fs.existsSync(targetDir)) {
+      return res.status(404).json({
+        success: false,
+        error: `Folder not found: "${folderPath}". Please verify folder path or upload files directly.`,
+      });
+    }
 
     const walk = (dir, depth = 0) => {
-      if (depth > 2) return [];
+      if (depth > 3) return [];
       try {
         const entries = fs.readdirSync(dir, { withFileTypes: true });
         let files = [];
         for (const e of entries) {
-          if (e.name.startsWith('.')) continue;
+          if (e.name.startsWith('.') || e.name.startsWith('~$') || e.name === 'node_modules' || e.name === '.git') continue;
           const full = path.join(dir, e.name);
-          if (e.isDirectory()) files = files.concat(walk(full, depth + 1));
-          else files.push(full);
+          if (e.isDirectory()) {
+            files = files.concat(walk(full, depth + 1));
+          } else {
+            files.push(full);
+          }
         }
         return files;
-      } catch { return []; }
+      } catch (err) {
+        console.warn(`[Ingest] Directory walk warning in ${dir}:`, err.message);
+        return [];
+      }
     };
 
-    const allFiles = walk(folderPath);
-    const scriptFiles = allFiles.filter(f => /\.(fountain|docx)$/i.test(f));
-    const referenceFiles = allFiles.filter(f => /\.md$/i.test(f));
+    const allFiles = walk(targetDir);
+    const scriptFiles = allFiles.filter((f) => /\.(fountain|docx|txt)$/i.test(f) && !path.basename(f).startsWith('~$'));
+    const referenceFiles = allFiles.filter((f) => /\.md$/i.test(f) && !path.basename(f).startsWith('.'));
 
     const inferFormat = (filename) => {
       const base = path.basename(filename).toLowerCase();
@@ -633,46 +669,69 @@ app.post('/api/v1/projects/ingest-folder', async (req, res) => {
 
     const titleFromFilename = (filename) => {
       return path.basename(filename, path.extname(filename))
+        .replace(/^Expanded_/i, '')
+        .replace(/_TACF$/i, '')
         .replace(/[_-]+/g, ' ')
-        .replace(/\b\w/g, c => c.toUpperCase())
+        .replace(/\b\w/g, (c) => c.toUpperCase())
         .trim();
     };
 
     const createdProjects = [];
     for (const scriptPath of scriptFiles) {
-      const title = titleFromFilename(scriptPath);
-      const format = inferFormat(scriptPath);
-      const ext = path.extname(scriptPath).replace('.', '');
-      const agentRoom = ext === 'fountain' ? 'Script Room' : 'Showrunner / Bible Room';
+      try {
+        const title = titleFromFilename(scriptPath);
+        const format = inferFormat(scriptPath);
+        const ext = path.extname(scriptPath).replace('.', '').toLowerCase();
+        const agentRoom = ext === 'fountain' ? 'Script Room' : 'Showrunner / Bible Room';
 
-      const proj = await MediaIngestionEngine.createProject({
-        title,
-        format,
-        sourceType: 'folder_import',
-        sourceUrl: scriptPath,
-      });
+        let rawContent = '';
+        if (ext === 'fountain' || ext === 'txt') {
+          try {
+            rawContent = fs.readFileSync(scriptPath, 'utf8');
+          } catch (e) {}
+        }
 
-      const projStorageDir = path.resolve(__dirname, 'storage/projects', proj.id, 'scripts');
-      if (!fs.existsSync(projStorageDir)) fs.mkdirSync(projStorageDir, { recursive: true });
-      const destFilename = `${Date.now()}_${path.basename(scriptPath)}`;
-      const destPath = path.join(projStorageDir, destFilename);
-      fs.copyFileSync(scriptPath, destPath);
+        const proj = await MediaIngestionEngine.createProject({
+          title,
+          format,
+          sourceType: 'folder_import',
+          sourceUrl: scriptPath,
+          rawContent,
+        });
 
-      db.saveAsset({
-        name: title,
-        projectId: proj.id,
-        format,
-        category: 'script',
-        assetType: 'script',
-        fileUrl: `/storage/projects/${proj.id}/scripts/${destFilename}`,
-        fileSize: `${(fs.statSync(scriptPath).size / 1024).toFixed(1)} KB`,
-        extension: ext,
-        tags: ['imported', 'tacf', agentRoom.toLowerCase().replace(/\s/g, '-')],
-        metadata: { sourceFile: scriptPath, agentRoom, importedAt: new Date().toISOString() },
-        uploaded_by: 'FolderIngest',
-      });
+        const projStorageDir = path.resolve(__dirname, 'storage/projects', proj.id, 'scripts');
+        if (!fs.existsSync(projStorageDir)) fs.mkdirSync(projStorageDir, { recursive: true });
+        const destFilename = `${Date.now()}_${path.basename(scriptPath)}`;
+        const destPath = path.join(projStorageDir, destFilename);
+        fs.copyFileSync(scriptPath, destPath);
 
-      createdProjects.push({ ...proj, agentRoom, sourceFile: scriptPath });
+        if (rawContent) {
+          db.saveProjectScript(proj.id, 1, rawContent);
+        }
+
+        let fileSize = '0 KB';
+        try {
+          fileSize = `${(fs.statSync(scriptPath).size / 1024).toFixed(1)} KB`;
+        } catch {}
+
+        db.saveAsset({
+          name: title,
+          projectId: proj.id,
+          format,
+          category: 'script',
+          assetType: 'script',
+          fileUrl: `/storage/projects/${proj.id}/scripts/${destFilename}`,
+          fileSize,
+          extension: ext,
+          tags: ['imported', 'tacf', agentRoom.toLowerCase().replace(/\s+/g, '-')],
+          metadata: { sourceFile: scriptPath, agentRoom, importedAt: new Date().toISOString() },
+          uploaded_by: 'FolderIngest',
+        });
+
+        createdProjects.push({ ...proj, agentRoom, sourceFile: scriptPath, genre: 'Scripture-Based Drama' });
+      } catch (err) {
+        console.error(`[Ingest] Error creating project for ${scriptPath}:`, err.message);
+      }
     }
 
     const ingestedRefs = [];
@@ -680,38 +739,158 @@ app.post('/api/v1/projects/ingest-folder', async (req, res) => {
     if (!fs.existsSync(refStorageDir)) fs.mkdirSync(refStorageDir, { recursive: true });
 
     for (const refPath of referenceFiles) {
-      const title = titleFromFilename(refPath);
-      const destFilename = `${Date.now()}_${path.basename(refPath)}`;
-      fs.copyFileSync(refPath, path.join(refStorageDir, destFilename));
-      const asset = db.saveAsset({
-        name: title,
-        projectId: 'ip-vault',
-        format: 'reference',
-        category: 'research',
-        assetType: 'document',
-        fileUrl: `/storage/ingested/references/${destFilename}`,
-        fileSize: `${(fs.statSync(refPath).size / 1024).toFixed(1)} KB`,
-        extension: 'md',
-        tags: ['reference', 'scripture', 'research', 'tacf'],
-        metadata: { sourceFile: refPath, agentRoom: 'IP Vault / Research', importedAt: new Date().toISOString() },
-        uploaded_by: 'FolderIngest',
-      });
-      ingestedRefs.push(asset);
+      try {
+        const title = titleFromFilename(refPath);
+        const destFilename = `${Date.now()}_${path.basename(refPath)}`;
+        fs.copyFileSync(refPath, path.join(refStorageDir, destFilename));
+        let fileSize = '0 KB';
+        try {
+          fileSize = `${(fs.statSync(refPath).size / 1024).toFixed(1)} KB`;
+        } catch {}
+
+        const asset = db.saveAsset({
+          name: title,
+          projectId: 'ip-vault',
+          format: 'reference',
+          category: 'research',
+          assetType: 'document',
+          fileUrl: `/storage/ingested/references/${destFilename}`,
+          fileSize,
+          extension: 'md',
+          tags: ['reference', 'scripture', 'research', 'tacf'],
+          metadata: { sourceFile: refPath, agentRoom: 'IP Vault / Research', importedAt: new Date().toISOString() },
+          uploaded_by: 'FolderIngest',
+        });
+        ingestedRefs.push(asset);
+      } catch (err) {
+        console.warn(`[Ingest] Error saving reference file ${refPath}:`, err.message);
+      }
     }
 
     res.json({
       success: true,
-      message: `Ingested ${scriptFiles.length} scripts as projects and ${referenceFiles.length} reference docs to IP Vault.`,
+      message: `Ingested ${createdProjects.length} scripts as projects and ${ingestedRefs.length} reference docs to IP Vault.`,
       projectsCreated: createdProjects.length,
       referenceFilesStored: ingestedRefs.length,
       projects: createdProjects,
       references: ingestedRefs,
+      scannedDirectory: targetDir,
     });
   } catch (err) {
     console.error('Folder ingest error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+// POST /api/v1/projects/ingest-files - Direct browser batch file & folder upload
+app.post('/api/v1/projects/ingest-files', async (req, res) => {
+  try {
+    const { files = [], defaultFormat = 'long_form' } = req.body || {};
+    if (!Array.isArray(files) || files.length === 0) {
+      return res.status(400).json({ success: false, error: 'No files provided for ingestion' });
+    }
+
+    const createdProjects = [];
+    const ingestedRefs = [];
+    const refStorageDir = path.resolve(__dirname, 'storage/ingested/references');
+    if (!fs.existsSync(refStorageDir)) fs.mkdirSync(refStorageDir, { recursive: true });
+
+    for (const file of files) {
+      const fileName = file.name || 'Untitled';
+      if (fileName.startsWith('.') || fileName.startsWith('~$')) continue;
+      const ext = path.extname(fileName).replace('.', '').toLowerCase();
+      const content = file.content || '';
+
+      const title = path.basename(fileName, path.extname(fileName))
+        .replace(/^Expanded_/i, '')
+        .replace(/_TACF$/i, '')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase())
+        .trim();
+
+      if (['fountain', 'docx', 'txt'].includes(ext)) {
+        const isTv = /series|episode|episodic|sabbath_class|tv|season/i.test(fileName);
+        const format = isTv ? 'episodic_tv' : defaultFormat;
+        const agentRoom = ext === 'fountain' ? 'Script Room' : 'Showrunner / Bible Room';
+
+        const proj = await MediaIngestionEngine.createProject({
+          title,
+          format,
+          sourceType: 'folder_import',
+          sourceUrl: fileName,
+          rawContent: ext === 'fountain' || ext === 'txt' ? content : '',
+        });
+
+        const projStorageDir = path.resolve(__dirname, 'storage/projects', proj.id, 'scripts');
+        if (!fs.existsSync(projStorageDir)) fs.mkdirSync(projStorageDir, { recursive: true });
+        const destFilename = `${Date.now()}_${path.basename(fileName)}`;
+        const destPath = path.join(projStorageDir, destFilename);
+
+        if (file.isBase64) {
+          fs.writeFileSync(destPath, Buffer.from(content, 'base64'));
+        } else {
+          fs.writeFileSync(destPath, content, 'utf8');
+        }
+
+        if (ext === 'fountain' || ext === 'txt') {
+          db.saveProjectScript(proj.id, 1, content);
+        }
+
+        db.saveAsset({
+          name: title,
+          projectId: proj.id,
+          format,
+          category: 'script',
+          assetType: 'script',
+          fileUrl: `/storage/projects/${proj.id}/scripts/${destFilename}`,
+          fileSize: `${(content.length / 1024).toFixed(1)} KB`,
+          extension: ext,
+          tags: ['uploaded', 'tacf', agentRoom.toLowerCase().replace(/\s+/g, '-')],
+          metadata: { sourceFile: fileName, agentRoom, importedAt: new Date().toISOString() },
+          uploaded_by: 'BrowserUpload',
+        });
+
+        createdProjects.push({ ...proj, agentRoom, sourceFile: fileName, genre: 'Scripture-Based Drama' });
+      } else if (ext === 'md') {
+        const destFilename = `${Date.now()}_${path.basename(fileName)}`;
+        const destPath = path.join(refStorageDir, destFilename);
+        if (file.isBase64) {
+          fs.writeFileSync(destPath, Buffer.from(content, 'base64'));
+        } else {
+          fs.writeFileSync(destPath, content, 'utf8');
+        }
+
+        const asset = db.saveAsset({
+          name: title,
+          projectId: 'ip-vault',
+          format: 'reference',
+          category: 'research',
+          assetType: 'document',
+          fileUrl: `/storage/ingested/references/${destFilename}`,
+          fileSize: `${(content.length / 1024).toFixed(1)} KB`,
+          extension: 'md',
+          tags: ['reference', 'scripture', 'research', 'tacf'],
+          metadata: { sourceFile: fileName, agentRoom: 'IP Vault / Research', importedAt: new Date().toISOString() },
+          uploaded_by: 'BrowserUpload',
+        });
+        ingestedRefs.push(asset);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Uploaded & ingested ${createdProjects.length} scripts as projects and ${ingestedRefs.length} reference docs to IP Vault.`,
+      projectsCreated: createdProjects.length,
+      referenceFilesStored: ingestedRefs.length,
+      projects: createdProjects,
+      references: ingestedRefs,
+    });
+  } catch (err) {
+    console.error('File upload ingest error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 
 // PUT /api/v1/projects/:projectId/format - Change the format of an existing project (Film / TV Series)
 app.put('/api/v1/projects/:projectId/format', async (req, res) => {

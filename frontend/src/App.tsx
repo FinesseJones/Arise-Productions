@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ShellLayout from './components/ShellLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Toaster } from 'react-hot-toast';
-import { Plus, Link2, Film, Smartphone, Tv, Sparkles, Play, Layers, FolderOpen, RefreshCw } from 'lucide-react';
+import { Plus, Link2, Film, Smartphone, Tv, Sparkles, Play, Layers, FolderOpen, RefreshCw, Upload, FileText, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ARISE_LOGO_BASE64 } from './constants/branding';
 import { getAPIBaseURL } from './lib/api';
 
 const App: React.FC = () => {
   const apiBase = getAPIBaseURL();
+  const folderInputRef = useRef<HTMLInputElement>(null);
+  const filesInputRef = useRef<HTMLInputElement>(null);
   const [projectName, setProjectName] = useState<string>(() => {
     return localStorage.getItem('arise_last_project_name') || 'A Fatherless Child';
   });
@@ -249,34 +251,138 @@ const App: React.FC = () => {
     setIsIngesting(true);
     const toastId = toast.loading('📁 Arise Folder Agent: Scanning and ingesting scripts...');
     try {
-      const res = await fetch(`${apiBase}/api/v1/projects/ingest-folder`, {
+      const response = await fetch(`${apiBase}/api/v1/projects/ingest-folder`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ folderPath: folderPath.trim(), defaultFormat: folderDefaultFormat }),
-      }).then((r) => r.json());
+      });
+
+      const res = await response.json().catch(() => ({
+        success: false,
+        error: `Server returned HTTP ${response.status}: ${response.statusText}`,
+      }));
 
       if (res.success && res.projects && res.projects.length > 0) {
         setAvailableProjects((prev) => {
           const map = new Map();
           prev.forEach((p) => map.set(p.id, p));
           res.projects.forEach((p: any) => {
-            if (p && p.id) map.set(p.id, { id: p.id, name: p.name || p.title || 'Imported Script', format: p.format || folderDefaultFormat, genre: 'Scripture-Based Drama', description: p.sourceFile ? `Imported from: ${p.sourceFile.split('/').pop()}` : 'TACF Script Import' });
+            if (p && p.id) {
+              map.set(p.id, {
+                id: p.id,
+                name: p.name || p.title || 'Imported Script',
+                format: p.format || folderDefaultFormat,
+                genre: p.genre || 'Scripture-Based Drama',
+                description: p.sourceFile ? `Imported: ${p.sourceFile.split('/').pop()}` : 'TACF Script Import',
+              });
+            }
           });
           const updated = Array.from(map.values());
-          try { localStorage.setItem('arise_all_user_projects', JSON.stringify(updated)); } catch {}
+          try {
+            localStorage.setItem('arise_all_user_projects', JSON.stringify(updated));
+          } catch {}
           return updated;
         });
-        toast.success(`🎬 ${res.projectsCreated} scripts imported as projects! ${res.referenceFilesStored} refs filed to IP Vault.`, { id: toastId, duration: 6000 });
+        toast.success(`🎬 ${res.projectsCreated} scripts imported as projects! ${res.referenceFilesStored || 0} refs filed to IP Vault.`, { id: toastId, duration: 6000 });
+        setShowFolderModal(false);
       } else {
         toast.error(res.error || 'Folder ingest failed — check folder path.', { id: toastId });
       }
-      setShowFolderModal(false);
-    } catch {
-      toast.error('Network error during folder ingest. Check server connection.', { id: toastId });
+    } catch (err: any) {
+      console.error('Folder ingest error:', err);
+      toast.error(`Network error: ${err.message || 'Check server connection.'}`, { id: toastId });
     } finally {
       setIsIngesting(false);
     }
   };
+
+  // Direct Browser File & Folder Upload Handler
+  const handleBrowserFilesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    setIsIngesting(true);
+    const toastId = toast.loading(`📁 Processing ${fileList.length} files from your device...`);
+
+    try {
+      const filesPayload: Array<{ name: string; content: string; isBase64?: boolean }> = [];
+
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        if (file.name.startsWith('.') || file.name.startsWith('~$')) continue;
+        const ext = file.name.split('.').pop()?.toLowerCase();
+
+        if (ext === 'docx') {
+          const base64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              const res = (reader.result as string) || '';
+              const b64 = res.split(',')[1] || '';
+              resolve(b64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+          filesPayload.push({ name: file.name, content: base64, isBase64: true });
+        } else if (['fountain', 'md', 'txt'].includes(ext || '')) {
+          const text = await file.text();
+          filesPayload.push({ name: file.name, content: text, isBase64: false });
+        }
+      }
+
+      if (filesPayload.length === 0) {
+        toast.error('No supported scripts (.fountain, .docx, .md) found in selected files.', { id: toastId });
+        setIsIngesting(false);
+        return;
+      }
+
+      const response = await fetch(`${apiBase}/api/v1/projects/ingest-files`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: filesPayload, defaultFormat: folderDefaultFormat }),
+      });
+
+      const res = await response.json().catch(() => ({
+        success: false,
+        error: `Server error HTTP ${response.status}`,
+      }));
+
+      if (res.success && res.projects && res.projects.length > 0) {
+        setAvailableProjects((prev) => {
+          const map = new Map();
+          prev.forEach((p) => map.set(p.id, p));
+          res.projects.forEach((p: any) => {
+            if (p && p.id) {
+              map.set(p.id, {
+                id: p.id,
+                name: p.name || p.title || 'Imported Script',
+                format: p.format || folderDefaultFormat,
+                genre: 'Scripture-Based Drama',
+                description: p.sourceFile ? `Uploaded: ${p.sourceFile}` : 'TACF Upload',
+              });
+            }
+          });
+          const updated = Array.from(map.values());
+          try {
+            localStorage.setItem('arise_all_user_projects', JSON.stringify(updated));
+          } catch {}
+          return updated;
+        });
+        toast.success(`🎬 ${res.projectsCreated} scripts uploaded & imported! ${res.referenceFilesStored || 0} refs filed to IP Vault.`, { id: toastId, duration: 6000 });
+        setShowFolderModal(false);
+      } else {
+        toast.error(res.error || 'Failed to upload files.', { id: toastId });
+      }
+    } catch (err: any) {
+      console.error('File upload error:', err);
+      toast.error(`Upload error: ${err.message || 'Check server connection.'}`, { id: toastId });
+    } finally {
+      setIsIngesting(false);
+      if (folderInputRef.current) folderInputRef.current.value = '';
+      if (filesInputRef.current) filesInputRef.current.value = '';
+    }
+  };
+
 
   // Change format of an existing project (Film / TV Series / Short)
   const handleFormatChange = async (projId: string, newFormat: 'long_form' | 'short_form' | 'episodic_tv') => {
@@ -648,12 +754,13 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Info box */}
-                    <div className="p-3 bg-emerald-900/20 border border-emerald-700/30 rounded-xl text-[10px] text-emerald-300/70 font-mono leading-relaxed space-y-1">
-                      <p>• <span className="text-emerald-300">Auto-detected as TV Series:</span> filenames containing "series", "episode", "tv", "season", or "sabbath_class"</p>
-                      <p>• <span className="text-emerald-300">Agent routing:</span> .fountain → Script Room • .docx → Showrunner / Bible Room • .md → IP Vault</p>
-                      <p>• <span className="text-emerald-300">glorified_zion/</span> subfolder will also be scanned</p>
+                    <div className="p-3 bg-emerald-950/30 border border-emerald-700/30 rounded-xl text-[10px] text-emerald-300/70 font-mono leading-relaxed space-y-1">
+                      <p>• <span className="text-emerald-300 font-semibold">Auto-detected as TV Series:</span> filenames containing "series", "episode", "tv", "season", or "sabbath_class"</p>
+                      <p>• <span className="text-emerald-300 font-semibold">Agent routing:</span> .fountain → Script Room • .docx → Showrunner / Bible Room • .md → IP Vault</p>
+                      <p>• <span className="text-emerald-300 font-semibold">Automatic server discovery:</span> searches Mac local paths, Docker container, and synced cloud storage</p>
                     </div>
 
+                    {/* Action 1: Scan Server Path */}
                     <button
                       type="submit"
                       disabled={isIngesting}
@@ -667,10 +774,57 @@ const App: React.FC = () => {
                       ) : (
                         <>
                           <FolderOpen size={14} />
-                          <span>Ingest All Scripts as Projects</span>
+                          <span>Scan Folder Path &amp; Ingest All Scripts</span>
                         </>
                       )}
                     </button>
+
+                    {/* Divider */}
+                    <div className="flex items-center my-3 gap-2">
+                      <div className="h-px bg-emerald-700/30 flex-1"></div>
+                      <span className="text-[10px] font-mono text-emerald-400/60 uppercase">or select from device</span>
+                      <div className="h-px bg-emerald-700/30 flex-1"></div>
+                    </div>
+
+                    {/* Action 2: Direct Browser File / Folder Pickers */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {/* Hidden Folder Picker */}
+                      <input
+                        type="file"
+                        ref={folderInputRef}
+                        onChange={handleBrowserFilesUpload}
+                        {...({ webkitdirectory: '', directory: '', multiple: true } as any)}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => folderInputRef.current?.click()}
+                        disabled={isIngesting}
+                        className="py-2.5 px-3 bg-[#0a140a] hover:bg-[#122212] border border-emerald-600/40 text-emerald-300 font-mono text-xs rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+                      >
+                        <FolderOpen size={13} className="text-emerald-400" />
+                        <span>Pick Mac Folder</span>
+                      </button>
+
+                      {/* Hidden Multi-File Picker */}
+                      <input
+                        type="file"
+                        ref={filesInputRef}
+                        onChange={handleBrowserFilesUpload}
+                        multiple
+                        accept=".fountain,.docx,.md,.txt"
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => filesInputRef.current?.click()}
+                        disabled={isIngesting}
+                        className="py-2.5 px-3 bg-[#0a140a] hover:bg-[#122212] border border-emerald-600/40 text-emerald-300 font-mono text-xs rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+                      >
+                        <Upload size={13} className="text-emerald-400" />
+                        <span>Select Script Files</span>
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>
