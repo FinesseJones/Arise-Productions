@@ -619,13 +619,25 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
     return this.getProjectManifest(id);
   }
 
-  async createProject(projectData) {
-    const id = projectData.id || `proj-${Date.now()}`;
+  async createProject(projectData, format = 'long_form') {
+    let title = 'New Production';
+    let id = `proj-${Date.now()}`;
+    let fmt = format;
+
+    if (typeof projectData === 'string') {
+      title = projectData.trim() || 'New Production';
+    } else if (projectData && typeof projectData === 'object') {
+      title = projectData.title || projectData.name || 'New Production';
+      id = projectData.id || id;
+      fmt = projectData.format || format || 'long_form';
+    }
+
+    const cleanSlug = title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'production';
     const newProj = {
       id,
-      name: projectData.title || projectData.name || 'New Production',
-      slug: (projectData.title || projectData.name || 'production').toLowerCase().replace(/[^a-z0-9]/g, '-'),
-      format: projectData.format || 'long_form',
+      name: title,
+      slug: cleanSlug,
+      format: fmt,
       version: 1,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
