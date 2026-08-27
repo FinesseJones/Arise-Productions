@@ -219,6 +219,7 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 | **2026-08-27 12:15** | NVIDIA NIM Strict Mode & Permanent Key Storage | `backend/ai/nvidia-client.js`, `agent-runtime.js`, `mcp-workers.js` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 12:22** | Desktop Window Auto-Maximize & Responsive Header | `desktop/main.js`, `ShellLayout.tsx` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 12:29** | Dynamic Model Selector & Obsolete Cleanup | `ShellLayout.tsx`, `StudioDeskBriefing.tsx` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 12:34** | Sequential Single-Turn Tool Execution Fix | `agent-runtime.js`, `desktop/backend/agent/agent-runtime.js` | GitHub, Desktop, VPS | ✅ Verified |
 
 ---
 *© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.*

@@ -101,40 +101,39 @@ export async function runAgent(options = {}) {
   }
 
   for (let iteration = 0; iteration < 4; iteration += 1) {
-    // A) Standard OpenAI-format tool_calls
+    // A) Standard OpenAI-format tool_calls (Enforce single tool call execution per turn for NVIDIA NIM compatibility)
     if (result.tool_calls && result.tool_calls.length > 0) {
-      conversation.push(result.message || {
+      const toolCall = result.tool_calls[0];
+      conversation.push({
         role: 'assistant',
         content: result.text || '',
-        tool_calls: result.tool_calls,
+        tool_calls: [toolCall],
       });
 
-      for (const toolCall of result.tool_calls) {
-        const toolName = toolCall.function?.name;
-        let args = {};
-        try {
-          args = JSON.parse(toolCall.function?.arguments || '{}');
-        } catch (error) {
-          args = {};
-        }
+      const toolName = toolCall.function?.name;
+      let args = {};
+      try {
+        args = JSON.parse(toolCall.function?.arguments || '{}');
+      } catch (error) {
+        args = {};
+      }
 
-        try {
-          const toolResult = await executeAgentTool(toolName, args, { projectId, shotNumber });
-          executedActions.push({ id: `act-${Date.now()}`, tool: toolName, args, result: toolResult });
-          conversation.push({
-            role: 'tool',
-            tool_call_id: toolCall.id,
-            name: toolName,
-            content: JSON.stringify(toolResult),
-          });
-        } catch (error) {
-          conversation.push({
-            role: 'tool',
-            tool_call_id: toolCall.id,
-            name: toolName,
-            content: JSON.stringify({ status: 'ERROR', error: error.message }),
-          });
-        }
+      try {
+        const toolResult = await executeAgentTool(toolName, args, { projectId, shotNumber });
+        executedActions.push({ id: `act-${Date.now()}`, tool: toolName, args, result: toolResult });
+        conversation.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          name: toolName,
+          content: JSON.stringify(toolResult),
+        });
+      } catch (error) {
+        conversation.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          name: toolName,
+          content: JSON.stringify({ status: 'ERROR', error: error.message }),
+        });
       }
 
       result = await nvidia.generateCompletion({
