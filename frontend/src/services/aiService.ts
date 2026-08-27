@@ -35,7 +35,6 @@ export interface ChatResponse {
   actions?: AgentAction[];
 }
 
-const DEFAULT_NVIDIA_KEY = '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';
 const DEFAULT_MODEL = 'meta/llama-3.3-70b-instruct';
 
 export function getActiveApiKey(): string {
@@ -43,7 +42,7 @@ export function getActiveApiKey(): string {
     const saved = localStorage.getItem('arise_nvidia_api_key');
     if (saved && saved.startsWith('nvapi-')) return saved.trim();
   } catch {}
-  return DEFAULT_NVIDIA_KEY;
+  return '';
 }
 
 export function getActiveModel(): string {

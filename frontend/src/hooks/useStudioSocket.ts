@@ -29,7 +29,7 @@ export function useStudioSocket(options: UseStudioSocketOptions = {}) {
 
   const apiBase = getAPIBaseURL();
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(getMockProjectState(projectName));
-  const [isConnected, setIsConnected] = useState<boolean>(true); // Optimistically connected & powered on
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const [telemetry, setTelemetry] = useState<WorkerTelemetry | null>({
     message: '⚡ 4K Spatial Engine & NVIDIA AI Operational',
     progress: 100,
@@ -132,17 +132,18 @@ export function useStudioSocket(options: UseStudioSocketOptions = {}) {
       };
 
       ws.onclose = () => {
-        setIsConnected(true); // Keep local UI engine operational
+        setIsConnected(false);
         socketRef.current = null;
         if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
         reconnectTimeoutRef.current = setTimeout(connect, 1500);
       };
 
       ws.onerror = () => {
-        setIsConnected(true); // Keep local UI engine operational
+        setIsConnected(false);
+        setLastError('Unable to connect to the studio WebSocket gateway.');
       };
     } catch (err) {
-      setIsConnected(true);
+      setIsConnected(false);
       if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = setTimeout(connect, 2000);
     }

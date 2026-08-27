@@ -1282,7 +1282,7 @@ export enum ErrCode {
 // Get the API base URL from environment or use production default
 const getAPIURL = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  if (import.meta.env.PROD) return 'https://staging-unified3dproduction-dazi.encr.app';
+    if (typeof window !== 'undefined') return window.location.origin;
   return 'http://localhost:4000';
 };
 
