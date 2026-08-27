@@ -6,7 +6,10 @@
 [![GitHub Release](https://img.shields.io/badge/Release-v1.0.0-gold.svg)](https://github.com/FinesseJones/Arise-Productions)
 [![Architecture](https://img.shields.io/badge/Architecture-10_MCP_Workers-amber.svg)](./docs/ARCHITECTURE.md)
 [![Model](https://img.shields.io/badge/NVIDIA_NIM-Llama_3.3_70B_Instruct-purple.svg)](https://build.nvidia.com)
-[![Platform](https://img.shields.io/badge/Platforms-macOS_Desktop_|_Web_VPS-blue.svg)](http://2.25.113.26:4000)
+[![Live Web Studio](https://img.shields.io/badge/Live_Studio-http%3A%2F%2F2.25.113.26%3A4000-emerald.svg)](http://2.25.113.26:4000)
+
+> 🌐 **Live Interactive Web Studio:** [**http://2.25.113.26:4000**](http://2.25.113.26:4000)  
+> *Click above to open and test the full 14-room production studio suite, AI agents, 3D soundstages, and 10 MCP pipelines directly in your browser without installing anything.*
 
 ---
 
@@ -17,6 +20,8 @@ Experience the live action studio demonstration recorded directly from the runni
 [![Arise Production Studio Live Walkthrough Video](./docs/assets/arise_studio_demo_preview.gif)](./docs/assets/arise_studio_walkthrough_demo.mp4)
 
 > 🎬 **[▶️ Click here to Play/Download Full HD 1080p Live Action Demo Video (MP4)](./docs/assets/arise_studio_walkthrough_demo.mp4)**
+> 
+> 🌐 **[🔗 Open Live Web Studio Instance (2.25.113.26:4000)](http://2.25.113.26:4000)**
 
 ### 🧭 14-Module Step-by-Step Studio Guide
 
