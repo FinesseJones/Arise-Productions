@@ -3,11 +3,128 @@
     {
       "id": "proj-fatherless-child",
       "name": "A Fatherless Child",
-      "slug": "a-fatherless-child",
+      "slug": "proj-fatherless-child",
       "format": "long_form",
       "version": 1,
-      "created_at": "2026-08-24T05:19:22.859Z",
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "created_at": "2026-08-27T01:53:01.843Z",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god",
+      "name": "Armor Of God",
+      "slug": "proj-armor-of-god",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.843Z",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-awakened",
+      "name": "Awakened",
+      "slug": "proj-awakened",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.844Z",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer",
+      "name": "Joseph The Dreamer",
+      "slug": "proj-joseph-the-dreamer",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.844Z",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening",
+      "name": "The Awakening",
+      "slug": "proj-the-awakening",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.844Z",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant",
+      "name": "The Remnant",
+      "slug": "proj-the-remnant",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.844Z",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class",
+      "name": "Uncut Word: Sabbath Class Series",
+      "slug": "proj-uncut-word-sabbath-class",
+      "format": "episodic_tv",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.845Z",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare",
+      "name": "Fatherlessness And Spiritual Warfare",
+      "slug": "proj-fatherlessness-spiritual-warfare",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.845Z",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-film-script-portfolio",
+      "name": "Film Script Portfolio",
+      "slug": "proj-film-script-portfolio",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.846Z",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-la-film-school",
+      "name": "LA Film School Project",
+      "slug": "proj-la-film-school",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.847Z",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline",
+      "name": "Movie Script Outline",
+      "slug": "proj-movie-script-outline",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.847Z",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle",
+      "name": "Vicious Cycle",
+      "slug": "proj-vicious-cycle",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.847Z",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-echoes-of-past",
+      "name": "Echoes of the Past",
+      "slug": "proj-echoes-of-past",
+      "format": "short_form",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.848Z",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol",
+      "name": "Shadow Protocol",
+      "slug": "proj-shadow-protocol",
+      "format": "episodic_tv",
+      "version": 1,
+      "created_at": "2026-08-27T01:53:01.848Z",
+      "updated_at": "2026-08-27T01:53:01.848Z"
     }
   ],
   "shots": [
@@ -15,28 +132,379 @@
       "id": "proj-fatherless-child-shot-1",
       "projectId": "proj-fatherless-child",
       "shotNumber": 1,
-      "title": "Opening - Echoes of Absence",
-      "description": "Quiet morning in the neighborhood as memories and reflections set the emotional journey in motion.",
+      "title": "A Fatherless Child - Scene 1",
+      "description": "Opening sequence for A Fatherless Child",
       "durationFrames": 120,
-      "created_at": "2026-08-24T05:19:22.859Z"
+      "created_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2",
       "projectId": "proj-fatherless-child",
       "shotNumber": 2,
-      "title": "The Struggle & Turning Point",
-      "description": "Intimate, high-stakes dialogue confronting family truth, resilience, and personal identity.",
+      "title": "A Fatherless Child - Scene 2",
+      "description": "Core conflict for A Fatherless Child",
       "durationFrames": 120,
-      "created_at": "2026-08-24T05:19:22.859Z"
+      "created_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3",
       "projectId": "proj-fatherless-child",
       "shotNumber": 3,
-      "title": "Breakthrough & New Horizon",
-      "description": "Cinematic golden-hour tracking shot capturing newfound strength, redemption, and purpose.",
+      "title": "A Fatherless Child - Scene 3",
+      "description": "Climax for A Fatherless Child",
       "durationFrames": 120,
-      "created_at": "2026-08-24T05:19:22.859Z"
+      "created_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1",
+      "projectId": "proj-armor-of-god",
+      "shotNumber": 1,
+      "title": "Armor Of God - Scene 1",
+      "description": "Opening sequence for Armor Of God",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2",
+      "projectId": "proj-armor-of-god",
+      "shotNumber": 2,
+      "title": "Armor Of God - Scene 2",
+      "description": "Core conflict for Armor Of God",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3",
+      "projectId": "proj-armor-of-god",
+      "shotNumber": 3,
+      "title": "Armor Of God - Scene 3",
+      "description": "Climax for Armor Of God",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-awakened-shot-1",
+      "projectId": "proj-awakened",
+      "shotNumber": 1,
+      "title": "Awakened - Scene 1",
+      "description": "Opening sequence for Awakened",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2",
+      "projectId": "proj-awakened",
+      "shotNumber": 2,
+      "title": "Awakened - Scene 2",
+      "description": "Core conflict for Awakened",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3",
+      "projectId": "proj-awakened",
+      "shotNumber": 3,
+      "title": "Awakened - Scene 3",
+      "description": "Climax for Awakened",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1",
+      "projectId": "proj-joseph-the-dreamer",
+      "shotNumber": 1,
+      "title": "Joseph The Dreamer - Scene 1",
+      "description": "Opening sequence for Joseph The Dreamer",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2",
+      "projectId": "proj-joseph-the-dreamer",
+      "shotNumber": 2,
+      "title": "Joseph The Dreamer - Scene 2",
+      "description": "Core conflict for Joseph The Dreamer",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3",
+      "projectId": "proj-joseph-the-dreamer",
+      "shotNumber": 3,
+      "title": "Joseph The Dreamer - Scene 3",
+      "description": "Climax for Joseph The Dreamer",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1",
+      "projectId": "proj-the-awakening",
+      "shotNumber": 1,
+      "title": "The Awakening - Scene 1",
+      "description": "Opening sequence for The Awakening",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2",
+      "projectId": "proj-the-awakening",
+      "shotNumber": 2,
+      "title": "The Awakening - Scene 2",
+      "description": "Core conflict for The Awakening",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3",
+      "projectId": "proj-the-awakening",
+      "shotNumber": 3,
+      "title": "The Awakening - Scene 3",
+      "description": "Climax for The Awakening",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1",
+      "projectId": "proj-the-remnant",
+      "shotNumber": 1,
+      "title": "The Remnant - Scene 1",
+      "description": "Opening sequence for The Remnant",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2",
+      "projectId": "proj-the-remnant",
+      "shotNumber": 2,
+      "title": "The Remnant - Scene 2",
+      "description": "Core conflict for The Remnant",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3",
+      "projectId": "proj-the-remnant",
+      "shotNumber": 3,
+      "title": "The Remnant - Scene 3",
+      "description": "Climax for The Remnant",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1",
+      "projectId": "proj-uncut-word-sabbath-class",
+      "shotNumber": 1,
+      "title": "Uncut Word: Sabbath Class Series - Scene 1",
+      "description": "Opening sequence for Uncut Word: Sabbath Class Series",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2",
+      "projectId": "proj-uncut-word-sabbath-class",
+      "shotNumber": 2,
+      "title": "Uncut Word: Sabbath Class Series - Scene 2",
+      "description": "Core conflict for Uncut Word: Sabbath Class Series",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3",
+      "projectId": "proj-uncut-word-sabbath-class",
+      "shotNumber": 3,
+      "title": "Uncut Word: Sabbath Class Series - Scene 3",
+      "description": "Climax for Uncut Word: Sabbath Class Series",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "projectId": "proj-fatherlessness-spiritual-warfare",
+      "shotNumber": 1,
+      "title": "Fatherlessness And Spiritual Warfare - Scene 1",
+      "description": "Opening sequence for Fatherlessness And Spiritual Warfare",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "projectId": "proj-fatherlessness-spiritual-warfare",
+      "shotNumber": 2,
+      "title": "Fatherlessness And Spiritual Warfare - Scene 2",
+      "description": "Core conflict for Fatherlessness And Spiritual Warfare",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "projectId": "proj-fatherlessness-spiritual-warfare",
+      "shotNumber": 3,
+      "title": "Fatherlessness And Spiritual Warfare - Scene 3",
+      "description": "Climax for Fatherlessness And Spiritual Warfare",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1",
+      "projectId": "proj-film-script-portfolio",
+      "shotNumber": 1,
+      "title": "Film Script Portfolio - Scene 1",
+      "description": "Opening sequence for Film Script Portfolio",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2",
+      "projectId": "proj-film-script-portfolio",
+      "shotNumber": 2,
+      "title": "Film Script Portfolio - Scene 2",
+      "description": "Core conflict for Film Script Portfolio",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3",
+      "projectId": "proj-film-script-portfolio",
+      "shotNumber": 3,
+      "title": "Film Script Portfolio - Scene 3",
+      "description": "Climax for Film Script Portfolio",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1",
+      "projectId": "proj-la-film-school",
+      "shotNumber": 1,
+      "title": "LA Film School Project - Scene 1",
+      "description": "Opening sequence for LA Film School Project",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2",
+      "projectId": "proj-la-film-school",
+      "shotNumber": 2,
+      "title": "LA Film School Project - Scene 2",
+      "description": "Core conflict for LA Film School Project",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3",
+      "projectId": "proj-la-film-school",
+      "shotNumber": 3,
+      "title": "LA Film School Project - Scene 3",
+      "description": "Climax for LA Film School Project",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1",
+      "projectId": "proj-movie-script-outline",
+      "shotNumber": 1,
+      "title": "Movie Script Outline - Scene 1",
+      "description": "Opening sequence for Movie Script Outline",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2",
+      "projectId": "proj-movie-script-outline",
+      "shotNumber": 2,
+      "title": "Movie Script Outline - Scene 2",
+      "description": "Core conflict for Movie Script Outline",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3",
+      "projectId": "proj-movie-script-outline",
+      "shotNumber": 3,
+      "title": "Movie Script Outline - Scene 3",
+      "description": "Climax for Movie Script Outline",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1",
+      "projectId": "proj-vicious-cycle",
+      "shotNumber": 1,
+      "title": "Vicious Cycle - Scene 1",
+      "description": "Opening sequence for Vicious Cycle",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2",
+      "projectId": "proj-vicious-cycle",
+      "shotNumber": 2,
+      "title": "Vicious Cycle - Scene 2",
+      "description": "Core conflict for Vicious Cycle",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3",
+      "projectId": "proj-vicious-cycle",
+      "shotNumber": 3,
+      "title": "Vicious Cycle - Scene 3",
+      "description": "Climax for Vicious Cycle",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1",
+      "projectId": "proj-echoes-of-past",
+      "shotNumber": 1,
+      "title": "Echoes of the Past - Scene 1",
+      "description": "Opening sequence for Echoes of the Past",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2",
+      "projectId": "proj-echoes-of-past",
+      "shotNumber": 2,
+      "title": "Echoes of the Past - Scene 2",
+      "description": "Core conflict for Echoes of the Past",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3",
+      "projectId": "proj-echoes-of-past",
+      "shotNumber": 3,
+      "title": "Echoes of the Past - Scene 3",
+      "description": "Climax for Echoes of the Past",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1",
+      "projectId": "proj-shadow-protocol",
+      "shotNumber": 1,
+      "title": "Shadow Protocol - Scene 1",
+      "description": "Opening sequence for Shadow Protocol",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2",
+      "projectId": "proj-shadow-protocol",
+      "shotNumber": 2,
+      "title": "Shadow Protocol - Scene 2",
+      "description": "Core conflict for Shadow Protocol",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3",
+      "projectId": "proj-shadow-protocol",
+      "shotNumber": 3,
+      "title": "Shadow Protocol - Scene 3",
+      "description": "Climax for Shadow Protocol",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T01:53:01.848Z"
     }
   ],
   "statuses": [
@@ -46,19 +514,8 @@
       "stageId": "script",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "job-script-1787774876122",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-26T20:08:02.297Z",
-        "jobId": "job-script-1787774876122",
-        "worker": "ScriptBreak",
-        "completedAt": "2026-08-26T20:08:02.297Z",
-        "outputSummary": "**Scene Breakdown:**\n\n* **Location:** INT. STUDIO SOUNDSTAGE - DAY\n* **Slugline:** Director coordinates with AI camera team.\n\n**Character Dialogue Blocks:** None (this is a non-dia",
-        "aiModel": "meta/llama-3.3-70b-instruct"
-      },
-      "updated_at": "2026-08-26T20:08:02.297Z"
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:structure",
@@ -66,19 +523,8 @@
       "stageId": "structure",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "job-structure-1787729024741",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-26T07:24:30.146Z",
-        "jobId": "job-structure-1787729024741",
-        "worker": "Cork Board",
-        "completedAt": "2026-08-26T07:24:30.146Z",
-        "outputSummary": "Narrative structure generated: 3 Acts, 8 Index Cards, Emotional Arc Solved.",
-        "aiModel": "meta/llama-3.1-70b-instruct"
-      },
-      "updated_at": "2026-08-26T07:24:30.146Z"
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:plan",
@@ -87,13 +533,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-plan-1",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:previs",
@@ -102,13 +542,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-previs-1",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:motion",
@@ -117,13 +551,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-motion-1",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:boards",
@@ -132,13 +560,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-boards-1",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:prompt",
@@ -146,19 +568,8 @@
       "stageId": "prompt",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "job-prompt-1787774882299",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-26T20:08:14.858Z",
-        "jobId": "job-prompt-1787774882299",
-        "worker": "Slate Prompt",
-        "completedAt": "2026-08-26T20:08:14.856Z",
-        "outputSummary": "**Cinematic Wide Foundry Sequence Prompt Slate**\n\n**Negative Prompt Guidelines:**\n\n1. Avoid explicit or graphic content.\n2. Do not include any copyrighted materials or trademarks.\n [Live Local ComfyUI Linked @ :8188]",
-        "aiModel": "meta/llama-3.3-70b-instruct"
-      },
-      "updated_at": "2026-08-26T20:08:14.858Z"
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:dailies",
@@ -166,19 +577,8 @@
       "stageId": "dailies",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "job-dailies-1787774894859",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-26T20:08:15.565Z",
-        "jobId": "job-dailies-1787774894859",
-        "worker": "Circle Take",
-        "completedAt": "2026-08-26T20:08:15.565Z",
-        "outputSummary": "Dailies rendered & reviewed: 4K 24FPS DCI MP4 compiled -> /storage/ingested/dailies_shot_1_1787774895061.mp4. Take 1 selected as Circle Take winner.",
-        "aiModel": "NVIDIA-NIM-Llama-3.1-70B"
-      },
-      "updated_at": "2026-08-26T20:08:15.565Z"
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:sound",
@@ -186,19 +586,8 @@
       "stageId": "sound",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "job-sound-1787775439668",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-26T20:17:20.069Z",
-        "jobId": "job-sound-1787775439668",
-        "worker": "Stem Studio",
-        "completedAt": "2026-08-26T20:17:20.069Z",
-        "outputSummary": "5.1 Dolby Atmos Stem Matrix compiled: Dialogue (Open-Source Kokoro/XTTS), Foley, Music, and SFX stems locked at -24.0 LKFS loudness standards. Zero cloud dependency.",
-        "aiModel": "NVIDIA-NIM-Llama-3.1-70B"
-      },
-      "updated_at": "2026-08-26T20:17:20.069Z"
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-1:edit",
@@ -207,13 +596,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-edit-1",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:script",
@@ -222,13 +605,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-script-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:structure",
@@ -237,13 +614,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-structure-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:plan",
@@ -252,13 +623,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-plan-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:previs",
@@ -267,13 +632,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-previs-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:motion",
@@ -282,13 +641,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-motion-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:boards",
@@ -297,13 +650,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-boards-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:prompt",
@@ -312,13 +659,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-prompt-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:dailies",
@@ -327,13 +668,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-dailies-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:sound",
@@ -342,13 +677,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-sound-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-2:edit",
@@ -357,13 +686,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-edit-2",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:script",
@@ -372,13 +695,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-script-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:structure",
@@ -387,13 +704,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-structure-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:plan",
@@ -402,13 +713,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-plan-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:previs",
@@ -417,13 +722,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-previs-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:motion",
@@ -432,13 +731,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-motion-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:boards",
@@ -447,13 +740,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-boards-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:prompt",
@@ -462,13 +749,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-prompt-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:dailies",
@@ -477,13 +758,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-dailies-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:sound",
@@ -492,13 +767,7 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-sound-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
     },
     {
       "id": "proj-fatherless-child-shot-3:edit",
@@ -507,13 +776,3517 @@
       "state": "DONE",
       "statusChar": "🟢",
       "outputHash": "hash-edit-3",
-      "telemetry": {
-        "fps": 60,
-        "computeNodes": 4,
-        "gpuEngine": "Unreal Engine 5.4 / NVIDIA NIM",
-        "timestamp": "2026-08-24T05:19:22.859Z"
-      },
-      "updated_at": "2026-08-24T05:19:22.859Z"
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:script",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:structure",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:plan",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:previs",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:motion",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:boards",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:prompt",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:dailies",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:sound",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-1:edit",
+      "shotId": "proj-armor-of-god-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:script",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:structure",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:plan",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:previs",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:motion",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:boards",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:prompt",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:dailies",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:sound",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-2:edit",
+      "shotId": "proj-armor-of-god-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:script",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:structure",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:plan",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:previs",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:motion",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:boards",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:prompt",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:dailies",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:sound",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-armor-of-god-shot-3:edit",
+      "shotId": "proj-armor-of-god-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.843Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:script",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:structure",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:plan",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:previs",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:motion",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:boards",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:prompt",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:dailies",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:sound",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-1:edit",
+      "shotId": "proj-awakened-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:script",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:structure",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:plan",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:previs",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:motion",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:boards",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:prompt",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:dailies",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:sound",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-2:edit",
+      "shotId": "proj-awakened-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:script",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:structure",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:plan",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:previs",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:motion",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:boards",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:prompt",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:dailies",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:sound",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-awakened-shot-3:edit",
+      "shotId": "proj-awakened-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:script",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:structure",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:plan",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:previs",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:motion",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:boards",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:prompt",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:dailies",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:sound",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-1:edit",
+      "shotId": "proj-joseph-the-dreamer-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:script",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:structure",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:plan",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:previs",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:motion",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:boards",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:prompt",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:dailies",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:sound",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-2:edit",
+      "shotId": "proj-joseph-the-dreamer-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:script",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:structure",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:plan",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:previs",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:motion",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:boards",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:prompt",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:dailies",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:sound",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-joseph-the-dreamer-shot-3:edit",
+      "shotId": "proj-joseph-the-dreamer-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:script",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:structure",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:plan",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:previs",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:motion",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:boards",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:prompt",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:dailies",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:sound",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-1:edit",
+      "shotId": "proj-the-awakening-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:script",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:structure",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:plan",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:previs",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:motion",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:boards",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:prompt",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:dailies",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:sound",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-2:edit",
+      "shotId": "proj-the-awakening-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:script",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:structure",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:plan",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:previs",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:motion",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:boards",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:prompt",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:dailies",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:sound",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-awakening-shot-3:edit",
+      "shotId": "proj-the-awakening-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:script",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:structure",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:plan",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:previs",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:motion",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:boards",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:prompt",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:dailies",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:sound",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-1:edit",
+      "shotId": "proj-the-remnant-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:script",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:structure",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:plan",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:previs",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:motion",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:boards",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:prompt",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:dailies",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:sound",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-2:edit",
+      "shotId": "proj-the-remnant-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:script",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:structure",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:plan",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:previs",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:motion",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:boards",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:prompt",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:dailies",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:sound",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-the-remnant-shot-3:edit",
+      "shotId": "proj-the-remnant-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.844Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:script",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:structure",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:plan",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:previs",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:motion",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:boards",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:prompt",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:dailies",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:sound",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-1:edit",
+      "shotId": "proj-uncut-word-sabbath-class-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:script",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:structure",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:plan",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:previs",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:motion",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:boards",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:prompt",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:dailies",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:sound",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-2:edit",
+      "shotId": "proj-uncut-word-sabbath-class-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:script",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:structure",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:plan",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:previs",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:motion",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:boards",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:prompt",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:dailies",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:sound",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-uncut-word-sabbath-class-shot-3:edit",
+      "shotId": "proj-uncut-word-sabbath-class-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:script",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:structure",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:plan",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:previs",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:motion",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:boards",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:prompt",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:dailies",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:sound",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-1:edit",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:script",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:structure",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:plan",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:previs",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:motion",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:boards",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:prompt",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:dailies",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:sound",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-2:edit",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:script",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:structure",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:plan",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:previs",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:motion",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:boards",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:prompt",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:dailies",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:sound",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-fatherlessness-spiritual-warfare-shot-3:edit",
+      "shotId": "proj-fatherlessness-spiritual-warfare-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.845Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:script",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:structure",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:plan",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:previs",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:motion",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:boards",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:prompt",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:dailies",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:sound",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-1:edit",
+      "shotId": "proj-film-script-portfolio-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:script",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:structure",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:plan",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:previs",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:motion",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:boards",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:prompt",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:dailies",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:sound",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-2:edit",
+      "shotId": "proj-film-script-portfolio-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:script",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:structure",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:plan",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:previs",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:motion",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:boards",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:prompt",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:dailies",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:sound",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-film-script-portfolio-shot-3:edit",
+      "shotId": "proj-film-script-portfolio-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.846Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:script",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:structure",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:plan",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:previs",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:motion",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:boards",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:prompt",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:dailies",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:sound",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-1:edit",
+      "shotId": "proj-la-film-school-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:script",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:structure",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:plan",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:previs",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:motion",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:boards",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:prompt",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:dailies",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:sound",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-2:edit",
+      "shotId": "proj-la-film-school-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:script",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:structure",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:plan",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:previs",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:motion",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:boards",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:prompt",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:dailies",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:sound",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-la-film-school-shot-3:edit",
+      "shotId": "proj-la-film-school-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:script",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:structure",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:plan",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:previs",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:motion",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:boards",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:prompt",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:dailies",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:sound",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-1:edit",
+      "shotId": "proj-movie-script-outline-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:script",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:structure",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:plan",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:previs",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:motion",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:boards",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:prompt",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:dailies",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:sound",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-2:edit",
+      "shotId": "proj-movie-script-outline-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:script",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:structure",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:plan",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:previs",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:motion",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:boards",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:prompt",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:dailies",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:sound",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-movie-script-outline-shot-3:edit",
+      "shotId": "proj-movie-script-outline-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:script",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:structure",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:plan",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:previs",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:motion",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:boards",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:prompt",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:dailies",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:sound",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-1:edit",
+      "shotId": "proj-vicious-cycle-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:script",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:structure",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:plan",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:previs",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:motion",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:boards",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:prompt",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:dailies",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:sound",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-2:edit",
+      "shotId": "proj-vicious-cycle-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:script",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:structure",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:plan",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:previs",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:motion",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:boards",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:prompt",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:dailies",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:sound",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-vicious-cycle-shot-3:edit",
+      "shotId": "proj-vicious-cycle-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.847Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:script",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:structure",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:plan",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:previs",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:motion",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:boards",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:prompt",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:dailies",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:sound",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-1:edit",
+      "shotId": "proj-echoes-of-past-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:script",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:structure",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:plan",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:previs",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:motion",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:boards",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:prompt",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:dailies",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:sound",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-2:edit",
+      "shotId": "proj-echoes-of-past-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:script",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:structure",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:plan",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:previs",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:motion",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:boards",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:prompt",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:dailies",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:sound",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-echoes-of-past-shot-3:edit",
+      "shotId": "proj-echoes-of-past-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:script",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:structure",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:plan",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:previs",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:motion",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:boards",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:prompt",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:dailies",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:sound",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-1:edit",
+      "shotId": "proj-shadow-protocol-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:script",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:structure",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:plan",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:previs",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:motion",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:boards",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:prompt",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:dailies",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:sound",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-2:edit",
+      "shotId": "proj-shadow-protocol-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:script",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:structure",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:plan",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:previs",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:motion",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:boards",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:prompt",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:dailies",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:sound",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-shadow-protocol-shot-3:edit",
+      "shotId": "proj-shadow-protocol-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T01:53:01.848Z"
     }
   ],
   "scripts": [
@@ -753,11 +4526,11 @@
     }
   ],
   "sessionState": {
-    "lastActiveProjectId": "proj-fatherless-child",
+    "lastActiveProjectId": "proj-shadow-protocol",
     "lastActiveStageId": "script",
     "lastActiveView": "stage",
-    "updated_at": "2026-08-27T01:32:02.616Z"
+    "updated_at": "2026-08-27T01:47:04.176Z"
   },
   "auditLogs": [],
-  "saved_at": "2026-08-27T01:32:02.617Z"
+  "saved_at": "2026-08-27T01:53:01.848Z"
 }
