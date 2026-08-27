@@ -35,7 +35,7 @@ export const agentToolDefinitions = [
     type: 'function',
     function: {
       name: 'get_story_bible',
-      description: 'Retrieve the complete production manifest and story bible for a project, including all shot titles, descriptions, format metadata, and current 10-stage completion statuses.',
+      description: 'Retrieve the complete production manifest, story bible, logline, themes, character dossiers, and current 10-stage completion statuses for a project.',
       parameters: {
         type: 'object',
         properties: {
@@ -45,6 +45,59 @@ export const agentToolDefinitions = [
           },
         },
         required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'update_story_bible',
+      description: 'Save and persist real updates to the project\'s official Story Bible in the database (logline, themes, synopsis, genre, tone, acts, beats, or characters). This immediately updates the production database and UI Pitch Bible in real time.',
+      parameters: {
+        type: 'object',
+        properties: {
+          projectId: { type: 'string', description: 'The project ID' },
+          title: { type: 'string', description: 'Updated title of the production' },
+          logline: { type: 'string', description: 'The official updated logline' },
+          themes: { type: 'string', description: 'Thematic core of the series/film' },
+          synopsis: { type: 'string', description: 'Expanded story synopsis' },
+          genres: { type: 'array', items: { type: 'string' }, description: 'Genres array' },
+          tone: { type: 'string', description: 'Tone and aesthetic description' },
+          acts: { type: 'array', description: '3-Act structure breakdown' },
+          characters: { type: 'array', description: 'Updated character dossiers array' },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'update_characters',
+      description: 'Save and persist real updates to the project\'s Principal Character Dossiers in the database. This updates the live casting sheet and Hollywood Pitch Bible in real time.',
+      parameters: {
+        type: 'object',
+        properties: {
+          projectId: { type: 'string', description: 'The project ID' },
+          characters: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                role: { type: 'string' },
+                age: { type: 'number' },
+                personality: { type: 'string' },
+                archetypes: { type: 'array', items: { type: 'string' } },
+                arcType: { type: 'string' },
+                backstory: { type: 'string' },
+              },
+              required: ['name'],
+            },
+            description: 'Array of character objects with name, role, age, personality, archetypes, and backstory',
+          },
+        },
+        required: ['characters'],
       },
     },
   },
@@ -284,12 +337,21 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
 
     case 'get_story_bible': {
       const manifest = await db.getProjectManifest(projectId);
+      const storyBible = await db.getStoryBible(projectId);
       if (manifest) {
         return {
           status: 'SUCCESS',
           projectId,
           projectName: manifest.projectName,
           format: manifest.format,
+          title: storyBible.title || manifest.projectName,
+          logline: storyBible.logline,
+          themes: storyBible.themes,
+          genres: storyBible.genres,
+          tone: storyBible.tone,
+          audience: storyBible.audience,
+          characters: storyBible.characters || [],
+          acts: storyBible.acts || [],
           totalShots: manifest.shots?.length || 0,
           shots: manifest.shots?.map(s => ({
             shotNumber: s.shotNumber,
@@ -302,6 +364,27 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
         status: 'ERROR',
         projectId,
         error: `Project "${projectId}" not found in studio database.`,
+      };
+    }
+
+    case 'update_story_bible': {
+      const updated = await db.saveStoryBible(projectId, args);
+      return {
+        status: 'SUCCESS',
+        projectId,
+        message: `Official Story Bible updated and persisted for "${updated.title || projectId}".`,
+        storyBible: updated,
+      };
+    }
+
+    case 'update_characters': {
+      const chars = args.characters || [];
+      const updated = await db.saveCharacters(projectId, chars);
+      return {
+        status: 'SUCCESS',
+        projectId,
+        message: `Saved ${chars.length} character dossiers directly to the production database.`,
+        characters: updated.characters || chars,
       };
     }
 

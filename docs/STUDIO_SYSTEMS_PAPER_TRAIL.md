@@ -221,6 +221,20 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 | **2026-08-27 12:29** | Dynamic Model Selector & Obsolete Cleanup | `ShellLayout.tsx`, `StudioDeskBriefing.tsx` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 12:34** | Sequential Single-Turn Tool Execution Fix | `agent-runtime.js`, `desktop/backend/agent/agent-runtime.js` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 14:28** | Context Continuity, 24-Turn Memory Depth & Frontend Fallback Elimination | `agent-runtime.js`, `server.js`, `DepartmentAgentsHub.tsx` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 15:13** | Live Story Bible & Character Persistence Architecture | `client.js`, `server.js`, `tools.js`, `ProductionPitchDeckModal.tsx`, `projectData.ts` | GitHub, Desktop, VPS | ✅ Verified |
+
+---
+
+## 14. Live Story Bible & Character Manifest Persistence Architecture
+
+### 14.1 Zero-Simulation Policy:
+- Artificial, canned responses or "pretending to save" have been systematically eliminated across both backend and frontend layers.
+- Real tools (`update_story_bible`, `update_characters`, `get_story_bible`) allow AI agents (Scribe Vance, Showrunner Sterling, Architect Vance) to directly modify and persist story data into the production database.
+
+### 14.2 Database & API Sync:
+- Real database methods: `getStoryBible(projectId)`, `saveStoryBible(projectId, data)`, `getCharacters(projectId)`, `saveCharacters(projectId, chars)` on `StudioDatabase`.
+- REST endpoints: `GET /api/v1/projects/story-bible`, `POST /api/v1/projects/story-bible`, `GET /api/v1/projects/characters`, `POST /api/v1/projects/characters`.
+- `ProductionPitchDeckModal.tsx` dynamically loads live backend data on mount, supports real-time editing with live database persistence, and exports Markdown/PDF with canonical series lore.
 
 ---
 *© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.*

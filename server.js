@@ -1041,6 +1041,52 @@ app.post('/api/v1/session/state', (req, res) => {
   res.json({ success: true, sessionState });
 });
 
+// GET /api/v1/projects/story-bible - Retrieve live Story Bible for project
+app.get('/api/v1/projects/story-bible', async (req, res) => {
+  try {
+    const projectId = await resolveProjectId(req.query.projectId);
+    const storyBible = await db.getStoryBible(projectId);
+    res.json({ success: true, storyBible });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST / PUT /api/v1/projects/story-bible - Save / update live Story Bible for project
+app.all('/api/v1/projects/story-bible', async (req, res) => {
+  if (req.method !== 'POST' && req.method !== 'PUT') return res.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    const projectId = await resolveProjectId(req.body.projectId || req.query.projectId);
+    const storyBible = await db.saveStoryBible(projectId, req.body);
+    res.json({ success: true, storyBible });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/projects/characters - Retrieve live characters for project
+app.get('/api/v1/projects/characters', async (req, res) => {
+  try {
+    const projectId = await resolveProjectId(req.query.projectId);
+    const characters = await db.getCharacters(projectId);
+    res.json({ success: true, characters });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST / PUT /api/v1/projects/characters - Save / update live characters for project
+app.all('/api/v1/projects/characters', async (req, res) => {
+  if (req.method !== 'POST' && req.method !== 'PUT') return res.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    const projectId = await resolveProjectId(req.body.projectId || req.query.projectId);
+    const characters = await db.saveCharacters(projectId, req.body.characters || req.body);
+    res.json({ success: true, characters });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET /api/v1/projects/script - Retrieve saved screenplay for project & shot
 app.get('/api/v1/projects/script', async (req, res) => {
   const projectId = await resolveProjectId(req.query.projectId);

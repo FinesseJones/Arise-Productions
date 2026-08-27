@@ -7,7 +7,110 @@
       "format": "long_form",
       "version": 1,
       "created_at": "2026-08-27T01:53:01.843Z",
-      "updated_at": "2026-08-27T01:53:01.843Z"
+      "updated_at": "2026-08-27T20:12:43.075Z",
+      "storyBible": {
+        "projectId": "proj-fatherless-child",
+        "projectName": "A Fatherless Child",
+        "title": "proj-fatherless-child",
+        "logline": "",
+        "themes": "",
+        "genres": "[]",
+        "tone": "",
+        "audience": "Four-Quadrant Theatrical (PG-13)",
+        "format": "episodic_tv",
+        "acts": "[]",
+        "characters": "[{\"name\": \"Ayanna Jackson\", \"role\": \"Lead Protagonist\", \"age\": 25, \"personality\": \"\", \"archetypes\": [], \"arcType\": \"\", \"backstory\": \"\"}, {\"name\": \"Malachi Davis\", \"role\": \"Lead Protagonist\", \"age\": 27, \"personality\": \"\", \"archetypes\": [], \"arcType\": \"\", \"backstory\": \"\"}]",
+        "updated_at": "2026-08-27T20:12:43.075Z",
+        "synopsis": ""
+      },
+      "characters": [
+        {
+          "id": "c1",
+          "name": "Ayanna Jackson",
+          "role": "Protagonist",
+          "age": 25,
+          "occupation": "Social Worker / Case Manager (East District Family Services)",
+          "personality": "Caring, fiercely determined, independent, but emotionally guarded. Struggles to trust men in authority due to her father walking out when she was seven.",
+          "archetypes": [
+            "Hero",
+            "Caregiver",
+            "Seeker"
+          ],
+          "arcType": "Positive Arc",
+          "backstory": "Raised by her mother Leila after her father abandoned the family. Has channeled her pain into defending vulnerable single-parent households."
+        },
+        {
+          "id": "c2",
+          "name": "Malachi Davis",
+          "role": "Protagonist",
+          "age": 27,
+          "occupation": "Community Organizer / Director of East District Youth Recreation Center",
+          "personality": "Charismatic, confident, fiercely loyal, and protective. Carries the weight of being a surrogate father figure to an entire neighborhood of boys.",
+          "archetypes": [
+            "Hero",
+            "Sage",
+            "Warrior"
+          ],
+          "arcType": "Positive Arc",
+          "backstory": "Grew up without a father; transformed his local neighborhood recreation center into a sanctuary where kids are never abandoned."
+        },
+        {
+          "id": "c3",
+          "name": "Leila Jackson",
+          "role": "Mentor",
+          "age": 52,
+          "occupation": "Faith Leader & Community Pillar",
+          "personality": "Resilient, faith-anchored woman who worked double shifts to support Ayanna and her brother.",
+          "archetypes": [
+            "Caregiver",
+            "Sage"
+          ],
+          "arcType": "Flat Arc",
+          "backstory": "Ayanna's mother who carries the quiet grief of her husband's departure while maintaining deep spiritual faith."
+        },
+        {
+          "id": "c4",
+          "name": "Nia Davis",
+          "role": "Supporting",
+          "age": 50,
+          "occupation": "Local Business Owner",
+          "personality": "Independent, sharp-witted, fiercely proud mother of Malachi.",
+          "archetypes": [
+            "Ruler",
+            "Caregiver"
+          ],
+          "arcType": "Flat Arc",
+          "backstory": "Malachi's mother who worked two jobs to keep him off the street and guide him to leadership."
+        },
+        {
+          "id": "c5",
+          "name": "Tanesha Lee",
+          "role": "Supporting",
+          "age": 25,
+          "occupation": "Youth Counselor & Ayanna's Confidante",
+          "personality": "Energetic, loyal, sharp-witted friend who provides honesty and humor.",
+          "archetypes": [
+            "Jester",
+            "Caregiver"
+          ],
+          "arcType": "Flat Arc",
+          "backstory": "Ayanna's best friend since childhood who keeps her grounded when work becomes overwhelming."
+        },
+        {
+          "id": "c6",
+          "name": "Tyler Brown",
+          "role": "Supporting",
+          "age": 27,
+          "occupation": "Youth Basketball Coach",
+          "personality": "Malachi's right-hand brother and co-director at the center.",
+          "archetypes": [
+            "Warrior",
+            "Creator"
+          ],
+          "arcType": "Flat Arc",
+          "backstory": "Helps run the recreational leagues and stands with Malachi against city rezoning."
+        }
+      ]
     },
     {
       "id": "proj-armor-of-god",
@@ -4808,10 +4911,10 @@
       "title": "A Fatherless Child",
       "format": "feature_film",
       "runtimeEstimate": "115 Minutes",
-      "logline": "When an aspiring architectural restorer discovers her absent father vanished while fighting a predatory developer, she teams up with an estranged brother to defend their historic family foundry.",
+      "logline": "In the East District urban community, a determined social worker and a passionate youth center director confront generational cycles of paternal absence, standing together to protect vulnerable families and preserve their community sanctuary from predatory redevelopment.",
       "hook": "Dual-lead emotional mystery confronting corporate gentrification, generational resilience, and architectural heritage.",
-      "coreConflict": "Devon & Sean (Heritage) vs. Vale Holdings (Corporate Gentrification).",
-      "thematicEngine": "Roots do not define you—choices do. The enduring power of generational legacy and community truth.",
+      "coreConflict": "Ayanna Jackson & Malachi Davis (Sanctuary) vs. City Rezoning & Paternal Absence.",
+      "thematicEngine": "Paternal absence, generational healing, community sanctuary, faith, and emotional resilience.",
       "structureBlueprint": "Act 1: The Porch Discovery & Eviction -> Act 2A: The Investigative Alliance -> Act 2B: Midpoint Blueprint Heist -> Act 3: Midnight Injunction & Showdown.",
       "targetAudience": "Prestige Drama / Theatrical Feature / Streamer Tentpole",
       "marketComps": "Erin Brockovich x Fences x The Last Black Man in San Francisco",
@@ -4825,7 +4928,7 @@
         "Dual-Lead"
       ],
       "created_at": "2026-08-26T19:44:20.907Z",
-      "updated_at": "2026-08-26T19:44:20.907Z",
+      "updated_at": "2026-08-27T19:56:10.868Z",
       "history": [
         {
           "timestamp": "2026-08-26T19:44:20.907Z",
@@ -5000,14 +5103,23 @@
       "stageId": "script",
       "shotNumber": 1,
       "timestamp": "2026-08-27T19:27:14.795Z"
+    },
+    {
+      "id": "act-1787861563083-6jc0",
+      "projectId": "proj-fatherless-child",
+      "type": "story_bible_updated",
+      "summary": "Story Bible updated: proj-fatherless-child (Logline & 271 characters persisted)",
+      "stageId": null,
+      "shotNumber": null,
+      "timestamp": "2026-08-27T20:12:43.083Z"
     }
   ],
   "sessionState": {
     "lastActiveProjectId": "proj-fatherless-child",
     "lastActiveStageId": "script",
     "lastActiveView": "stage",
-    "updated_at": "2026-08-27T17:33:44.719Z"
+    "updated_at": "2026-08-27T20:12:31.701Z"
   },
   "auditLogs": [],
-  "saved_at": "2026-08-27T19:27:14.795Z"
+  "saved_at": "2026-08-27T20:12:43.083Z"
 }

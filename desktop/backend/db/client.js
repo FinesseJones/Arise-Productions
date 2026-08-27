@@ -615,17 +615,193 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
       };
     });
 
+    const storyBible = await this.getStoryBible(projectId);
+
     return {
       projectName: project.name,
       projectId: project.id,
       version: project.version || 1,
       format: project.format || 'long_form',
       shots: shotsWithStatus,
+      storyBible,
+      characters: storyBible.characters || [],
     };
   }
 
   async listProjects() {
     return Array.from(this.projects.values());
+  }
+
+  // --- Live Story Bible & Character Manifest Methods ---
+  async getStoryBible(projectId = 'proj-fatherless-child') {
+    if (!projectId) projectId = 'proj-fatherless-child';
+    const project = this.projects.get(projectId) || {};
+    
+    if (project.storyBible) {
+      return {
+        projectId,
+        projectName: project.name || 'A Fatherless Child',
+        ...project.storyBible,
+        characters: project.characters || project.storyBible.characters || [],
+      };
+    }
+
+    // Default canonical bible for A Fatherless Child and template fallback for others
+    const isFatherless = projectId.includes('fatherless');
+    const defaultBible = {
+      projectId,
+      projectName: project.name || (isFatherless ? 'A Fatherless Child' : 'Arise Production'),
+      title: project.name || (isFatherless ? 'A Fatherless Child' : 'Arise Production'),
+      logline: isFatherless
+        ? 'In the East District urban community, a determined social worker and a passionate youth center director confront generational cycles of paternal absence, standing together to protect vulnerable families and preserve their community sanctuary from predatory redevelopment.'
+        : `An epic cinematic journey exploring high-stakes human truth and resilience in ${project.name || 'Arise Production'}.`,
+      themes: isFatherless
+        ? 'Paternal absence, generational healing, community sanctuary, faith, and emotional resilience.'
+        : 'Courage, truth, transformation, and legacy.',
+      genres: isFatherless ? ['Drama', 'Family', 'Faith'] : ['Drama', 'Cinema'],
+      tone: isFatherless ? 'Emotionally grounded, warm, poetic realism' : 'Cinematic, compelling, high-contrast realism',
+      audience: 'Four-Quadrant Theatrical (PG-13)',
+      format: project.format || 'episodic_tv',
+      acts: isFatherless ? [
+        { act: 'Act I', title: 'The Weight of Absence & The Courtyard', description: 'Ayanna balances an overwhelming caseload while Malachi opens the youth recreation center. Their paths cross with an unspoken shared understanding of growing up fatherless.' },
+        { act: 'Act II', title: 'The Eviction & The Rezoning Threat', description: 'Ayanna investigates an endangered family while Malachi discovers the city planning commission intends to rezone and shutter the youth center.' },
+        { act: 'Act III', title: 'A Shared Stand & Generational Healing', description: 'Ayanna and Malachi join forces to rally the neighborhood, proving that breaking generational cycles requires unconditional community solidarity.' }
+      ] : [
+        { act: 'Act I', title: 'The Setup', description: 'Introduction to world, characters, and initial catalyst.' },
+        { act: 'Act II', title: 'The Crucible', description: 'Rising stakes, trials, and midpoint revelation.' },
+        { act: 'Act III', title: 'The Climax', description: 'Final confrontation and thematic resolution.' }
+      ],
+      characters: isFatherless ? [
+        {
+          id: 'c1',
+          name: 'Ayanna Jackson',
+          role: 'Protagonist',
+          age: 25,
+          occupation: 'Social Worker / Case Manager (East District Family Services)',
+          personality: 'Caring, fiercely determined, independent, but emotionally guarded. Struggles to trust men in authority due to her father walking out when she was seven.',
+          archetypes: ['Hero', 'Caregiver', 'Seeker'],
+          arcType: 'Positive Arc',
+          backstory: 'Raised by her mother Leila after her father abandoned the family. Has channeled her pain into defending vulnerable single-parent households.',
+        },
+        {
+          id: 'c2',
+          name: 'Malachi Davis',
+          role: 'Protagonist',
+          age: 27,
+          occupation: 'Community Organizer / Director of East District Youth Recreation Center',
+          personality: 'Charismatic, confident, fiercely loyal, and protective. Carries the weight of being a surrogate father figure to an entire neighborhood of boys.',
+          archetypes: ['Hero', 'Sage', 'Warrior'],
+          arcType: 'Positive Arc',
+          backstory: 'Grew up without a father; transformed his local neighborhood recreation center into a sanctuary where kids are never abandoned.',
+        },
+        {
+          id: 'c3',
+          name: 'Leila Jackson',
+          role: 'Supporting',
+          age: 52,
+          occupation: 'Faith Leader & Community Pillar',
+          personality: 'Resilient, faith-anchored woman who worked double shifts to support Ayanna and her brother.',
+          archetypes: ['Caregiver', 'Sage'],
+          arcType: 'Flat Arc',
+          backstory: 'Ayanna\'s mother who carries the quiet grief of her husband\'s departure while maintaining deep spiritual faith.',
+        },
+        {
+          id: 'c4',
+          name: 'Nia Davis',
+          role: 'Supporting',
+          age: 50,
+          occupation: 'Local Business Owner',
+          personality: 'Independent, sharp-witted, fiercely proud mother of Malachi.',
+          archetypes: ['Ruler', 'Caregiver'],
+          arcType: 'Flat Arc',
+          backstory: 'Malachi\'s mother who worked two jobs to keep him off the street and guide him to leadership.',
+        },
+        {
+          id: 'c5',
+          name: 'Tanesha Lee',
+          role: 'Supporting',
+          age: 25,
+          occupation: 'Youth Counselor & Ayanna\'s Confidante',
+          personality: 'Energetic, loyal, sharp-witted friend who provides honesty and humor.',
+          archetypes: ['Jester', 'Caregiver'],
+          arcType: 'Flat Arc',
+          backstory: 'Ayanna\'s best friend since childhood who keeps her grounded when work becomes overwhelming.',
+        },
+        {
+          id: 'c6',
+          name: 'Tyler Brown',
+          role: 'Supporting',
+          age: 27,
+          occupation: 'Youth Basketball Coach',
+          personality: 'Malachi\'s right-hand brother and co-director at the center.',
+          archetypes: ['Warrior', 'Creator'],
+          arcType: 'Flat Arc',
+          backstory: 'Helps run the recreational leagues and stands with Malachi against city rezoning.',
+        }
+      ] : [
+        { id: 'c1', name: 'Lead Protagonist', role: 'Protagonist', age: 26, personality: 'Determined and courageous.', archetypes: ['Hero'], arcType: 'Positive Arc' },
+        { id: 'c2', name: 'Mentor Steward', role: 'Mentor', age: 55, personality: 'Wise and experienced.', archetypes: ['Sage'], arcType: 'Flat Arc' }
+      ],
+      updated_at: new Date().toISOString(),
+    };
+
+    project.storyBible = defaultBible;
+    project.characters = defaultBible.characters;
+    this.projects.set(projectId, project);
+    this._saveToDisk();
+    return defaultBible;
+  }
+
+  async saveStoryBible(projectId = 'proj-fatherless-child', bibleData = {}) {
+    if (!projectId) projectId = 'proj-fatherless-child';
+    const project = this.projects.get(projectId) || {
+      id: projectId,
+      name: bibleData.projectName || bibleData.title || 'A Fatherless Child',
+      slug: projectId,
+      format: 'long_form',
+      version: 1,
+      created_at: new Date().toISOString(),
+    };
+
+    const currentBible = project.storyBible || await this.getStoryBible(projectId);
+    const updatedBible = {
+      ...currentBible,
+      ...bibleData,
+      projectId,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (bibleData.characters && Array.isArray(bibleData.characters)) {
+      project.characters = bibleData.characters;
+      updatedBible.characters = bibleData.characters;
+    }
+
+    project.storyBible = updatedBible;
+    project.updated_at = new Date().toISOString();
+    this.projects.set(projectId, project);
+    this._saveToDisk();
+
+    if (typeof this.logActivity === 'function') {
+      this.logActivity(projectId, {
+        type: 'story_bible_updated',
+        summary: `Story Bible updated: ${bibleData.title || project.name} (Logline & ${updatedBible.characters?.length || 0} characters persisted)`,
+      });
+    }
+
+    this.emit('story_bible_saved', { projectId, storyBible: updatedBible });
+    return updatedBible;
+  }
+
+  async getCharacters(projectId = 'proj-fatherless-child') {
+    const bible = await this.getStoryBible(projectId);
+    return bible.characters || [];
+  }
+
+  async saveCharacters(projectId = 'proj-fatherless-child', characters = []) {
+    if (!Array.isArray(characters)) characters = [];
+    const bible = await this.getStoryBible(projectId);
+    bible.characters = characters;
+    return this.saveStoryBible(projectId, bible);
   }
 
   // Save / update a project by id — merges with existing data and persists to disk
