@@ -1,16 +1,16 @@
 [
   {
-    "id": "mem-core-1",
-    "category": "Project Vision",
-    "title": "Arise Production Studio Standards",
-    "content": "Production pipeline adheres to Hollywood 10-Stage framework with real-time 4K 3D Soundstage, ACEScg color workflows, and 5.1 Atmos spatial audio standards.",
-    "timestamp": "2026-08-27T01:32:02.619Z"
+    "id": "mem-fc-core-1",
+    "category": "Character Lore & Cast",
+    "title": "A Fatherless Child - Ensemble Roster",
+    "content": "Protagonists: Ayanna Jackson (25, Social Worker, raised by single mom Leila Jackson, father absent) & Malachi Davis (27, Community Organizer/Youth Mentor, raised by Nia Davis, father absent). Supporting: Leila Jackson, Nia Davis, Tanesha Lee (Ayanna best friend), Tyler Brown (Malachi friend). Setting: Urban development community, all Black American cast.",
+    "timestamp": "2026-08-27T16:25:05.105Z"
   },
   {
-    "id": "mem-core-2",
-    "category": "Brand Identity",
-    "title": "The AI Content Foundry Aesthetics",
-    "content": "Dark cinematic tech-noir studio theme with golden amber, deep purple, and cyber magenta lighting palettes.",
-    "timestamp": "2026-08-27T01:32:02.619Z"
+    "id": "mem-fc-core-2",
+    "category": "Series Premise",
+    "title": "A Fatherless Child - Thematic Engine",
+    "content": "Explores the emotional, psychological, and generational impacts of absent fathers across an urban community, following Ayanna and Malachi as they break generational cycles and restore family identity.",
+    "timestamp": "2026-08-27T16:25:05.106Z"
   }
 ]
