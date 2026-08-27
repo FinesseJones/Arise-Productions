@@ -10,6 +10,41 @@
 
 ---
 
+## 📺 Master Studio Video Walkthrough & Interactive Demo
+
+Watch the complete, end-to-end studio demonstration video showing how to use all 14 modules, 10 virtual soundstage stages, and distribution tools in **Arise Production Studio**:
+
+<p align="center">
+  <a href="./docs/assets/arise_studio_walkthrough_demo.mp4">
+    <img src="./docs/assets/arise_studio_demo_preview.gif" alt="Arise Production Studio Walkthrough Demo" width="900" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);" />
+  </a>
+</p>
+
+<p align="center">
+  <b>▶️ <a href="./docs/assets/arise_studio_walkthrough_demo.mp4">Click to Download & Play Master 1080p 60FPS Walkthrough Video (MP4)</a></b>
+</p>
+
+### 🧭 14-Module Step-by-Step Studio Guide
+
+| Module | Stage / Room | Key Capabilities & User Actions |
+| :--- | :--- | :--- |
+| **01** | **Studio Overview** | Enterprise virtual studio engine, Blackmagic Pocket Cinema Camera 4K (BMPCC 4K) optical solvers, ACEScg color science. |
+| **02** | **10-Stage Framework** | Real-time stage navigation, interactive 3D soundstage viewports, and stage progress telemetry (🟢 / 🟡 / ⚪). |
+| **03** | **00 Idea Lab & Ingest** | Social link ingestion (YouTube/TikTok/IG), script folder batch discovery, and Showrunner Sterling live pitch dissection. |
+| **04** | **Stage 01: ScriptBreak** | Full Fountain screenplay editor, real-time pagination, scripture alignment, and AI Script Doctor. |
+| **05** | **Stage 02: Cork Board** | 3-Act narrative spine, dynamic beat cards, and NVIDIA NIM Llama 3.1 70B one-click beat generation. |
+| **06** | **Stage 03: Master Canvas** | ACEScg AP1 color profiles, lighting contrast ratios (4:1 Key/Shadow), and Unreal Engine 5.4 look-dev calibration. |
+| **07** | **Stage 04: Blockout 3D** | Physical BMPCC 4K sensor simulation, 24–85mm prime lens trajectories, and DaVinci Resolve / Unreal Live Link bridges. |
+| **08** | **Stage 05: Motion Previs** | 52-point skeletal kinematics, ragdoll physics solvers, velocity damping, and 60 FPS keyframe interpolation. |
+| **09** | **Stage 06: Diffusion Slate** | Continuity-locked prompt packs for Midjourney v6, FLUX.1 Pro, SDXL Turbo, and HyperFrames. |
+| **10** | **Stage 07: Dailies QC** | Quality Gate scoring (1.0–10.0), likeness locking, circle take selection, and micro-jitter artifact analysis. |
+| **11** | **Stage 08: Stem Studio** | 4-track audio stem mixing console, spatial ambient Foley, and EBU R128 -24.0 LKFS broadcast loudness compliance. |
+| **12** | **Stage 09: Conform & Edit** | Multi-cam NLE timeline, EDL/XML/FCPXML sync, and real-time Kodak 2383 3D film print LUT shaders. |
+| **13** | **Stage 10: Distribution** | Multi-agent timecoded video commentary, Hollywood Electronic Press Kit (EPK), and forensic DRM screeners. |
+| **14** | **Enterprise Sync** | 3-Way automated synchronization across GitHub (`Arise-Productions`), Desktop App (`/Applications`), and Cloud VPS (`2.25.113.26`). |
+
+---
+
 ## 🏛️ Executive Studio Overview
 
 **Arise Production Studio** is a unified, end-to-end virtual production workstation and multi-agent creative studio designed for independent filmmakers, showrunners, and production companies. It integrates **14 dedicated creative rooms**, **10 Model Context Protocol (MCP) production microservices**, **13 autonomous tool-calling departmental AI agents**, a real-time **Three.js 3D Soundstage**, and native bridges for **Unreal Engine 5**, **ComfyUI**, **FFmpeg**, **Hyperframes**, **OpenMontage**, and **DaVinci Resolve**.
