@@ -55,15 +55,18 @@ Return a valid JSON object strictly matching this schema:
   }
 }`;
 
-    const res = await nvidia.generateCompletion({ prompt });
     let data = null;
-    if (res.success && res.text) {
-      try {
+    try {
+      const res = await Promise.race([
+        nvidia.generateCompletion({ prompt }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('AI generation timeout')), 6000)),
+      ]);
+      if (res && res.success && res.text) {
         const match = res.text.match(/\{[\s\S]*\}/);
         if (match) data = JSON.parse(match[0]);
-      } catch (e) {
-        console.warn('[DistributionEngine] JSON parse error in generatePressKit');
       }
+    } catch (e) {
+      console.warn('[DistributionEngine] Fast-path fallback activated for press kit:', e.message);
     }
 
     if (!data) {
@@ -166,13 +169,18 @@ Generate a valid JSON object with:
 3. "festivalCircuit": [array of targets: festival, tier, premiereWindow, submissionDeadline, strategicGoal],
 4. "presaleTerritories": [array of regions: territory, buyerTargets, estimatedValuation, status]`;
 
-    const res = await nvidia.generateCompletion({ prompt });
     let data = null;
-    if (res.success && res.text) {
-      try {
+    try {
+      const res = await Promise.race([
+        nvidia.generateCompletion({ prompt }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('AI generation timeout')), 6000)),
+      ]);
+      if (res && res.success && res.text) {
         const match = res.text.match(/\{[\s\S]*\}/);
         if (match) data = JSON.parse(match[0]);
-      } catch (e) {}
+      }
+    } catch (e) {
+      console.warn('[DistributionEngine] Fast-path fallback activated for release strategy:', e.message);
     }
 
     if (!data) {
@@ -235,13 +243,18 @@ Return a valid JSON object:
   "actionableTweak": "1 specific recommendation for the filmmaker"
 }`;
 
-    const res = await nvidia.generateCompletion({ prompt });
     let data = null;
-    if (res.success && res.text) {
-      try {
+    try {
+      const res = await Promise.race([
+        nvidia.generateCompletion({ prompt }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('AI generation timeout')), 6000)),
+      ]);
+      if (res && res.success && res.text) {
         const match = res.text.match(/\{[\s\S]*\}/);
         if (match) data = JSON.parse(match[0]);
-      } catch (e) {}
+      }
+    } catch (e) {
+      console.warn('[DistributionEngine] Fast-path fallback activated for video commentary:', e.message);
     }
 
     if (!data) {

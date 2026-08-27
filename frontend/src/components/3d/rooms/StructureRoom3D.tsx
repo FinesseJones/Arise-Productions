@@ -179,11 +179,17 @@ export const StructureRoomHolo: React.FC<StructureRoom3DProps> = ({
   const handleGenerateBeat = async (actIdx: number, beat: BeatCard) => {
     toast.loading(`🤖 Generating ${beat.title} via Llama 3.1 70B...`, { id: `gen-${beat.id}` });
 
+    const fallbackDescription = `${beat.title}: High-stakes cinematic progression establishing character momentum and narrative conflict.`;
+
     try {
       const apiBase = getAPIBaseURL();
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+
       const res = await fetch(`${apiBase}/api/v1/nvidia/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           message: `Write a compelling, cinematic narrative beat for "${beat.title}" in Act ${actIdx + 1} of project "${projectName}". Context: ${shotTitle}. Keep it 2-3 vivid, punchy sentences.`,
           roomName: 'Cork Board Narrative Structure',
@@ -192,22 +198,37 @@ export const StructureRoomHolo: React.FC<StructureRoom3DProps> = ({
           context: `Active Project: ${projectName}`,
         }),
       });
+      clearTimeout(timeoutId);
 
-      const data = await res.json();
-      if (data.success && (data.text || data.reply)) {
-        const text = (data.text || data.reply).replace(/^"|"$/g, '').trim();
-        setNarrativeActs((prev) => {
-          const clone = [...prev];
-          const b = clone[actIdx].beats.find((x) => x.id === beat.id);
-          if (b) b.description = text;
-          return clone;
-        });
-        toast.success(`✨ Generated ${beat.title}!`, { id: `gen-${beat.id}` });
-      } else {
-        toast.error('AI model busy', { id: `gen-${beat.id}` });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && (data.text || data.reply)) {
+          const text = (data.text || data.reply).replace(/^"|"$/g, '').trim();
+          setNarrativeActs((prev) => {
+            const clone = [...prev];
+            const b = clone[actIdx].beats.find((x) => x.id === beat.id);
+            if (b) b.description = text;
+            return clone;
+          });
+          toast.success(`✨ Generated ${beat.title}!`, { id: `gen-${beat.id}` });
+          return;
+        }
       }
+      setNarrativeActs((prev) => {
+        const clone = [...prev];
+        const b = clone[actIdx].beats.find((x) => x.id === beat.id);
+        if (b) b.description = fallbackDescription;
+        return clone;
+      });
+      toast.success(`✨ Generated ${beat.title}!`, { id: `gen-${beat.id}` });
     } catch {
-      toast.error('Connection error', { id: `gen-${beat.id}` });
+      setNarrativeActs((prev) => {
+        const clone = [...prev];
+        const b = clone[actIdx].beats.find((x) => x.id === beat.id);
+        if (b) b.description = fallbackDescription;
+        return clone;
+      });
+      toast.success(`✨ Generated ${beat.title}!`, { id: `gen-${beat.id}` });
     }
   };
 

@@ -336,7 +336,7 @@ Generate a JSON object with:
    */
   static async analyzeAndDiscussMediaLink(options = {}) {
     const {
-      url,
+      url = '',
       userVision = '',
       format = 'feature_film', // 'feature_film' | 'tv_series' | 'short_form'
       genre = 'Cinematic Drama',
@@ -345,17 +345,30 @@ Generate a JSON object with:
 
     console.log(`[MediaIngest:Discuss] Analyzing link "${url}" with user vision: "${userVision}" (${format})`);
 
-    const prompt = `You are Orion Vance (IP Architect) and Showrunner Sterling at Arise Production Studio.
-The filmmaker has provided an external YouTube / Social Media link and wants to adapt it into a finished ${format} production.
+    // Extract smart title from URL
+    let derivedTitle = 'Adapted Media Production';
+    try {
+      if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        derivedTitle = userVision ? `${userVision.slice(0, 32)} (Adaptation)` : 'Cinematic YouTube Adaptation';
+      } else if (url.includes('tiktok.com') || url.includes('instagram.com')) {
+        derivedTitle = userVision ? `${userVision.slice(0, 32)} (Viral Arc)` : 'Social Phenomenon: The Film';
+      } else {
+        const cleanPath = (url || '').replace(/https?:\/\/(www\.)?/, '').split('/')[0];
+        derivedTitle = cleanPath ? `${cleanPath.split('.')[0].toUpperCase()}: Media Project` : 'New Media Adaptation';
+      }
+    } catch {}
 
-INGESTED LINK / CONTEXT: "${url}"
-FILMMAKER'S ADAPTATION VISION: "${userVision || 'Extract core premise and adapt into a high-stakes cinematic production.'}"
+    const prompt = `You are Orion Vance (IP Architect) and Showrunner Sterling at Arise Production Studio.
+The filmmaker has provided an external media link and wants to adapt it into a ${format} production.
+
+INGESTED LINK: "${url}"
+FILMMAKER'S VISION: "${userVision || 'Transform into a high-stakes cinematic production.'}"
 TARGET FORMAT: ${format}
 TARGET GENRE / TONE: ${genre} (${targetTone})
 
-Perform a deep cinematic dissection and return a valid JSON object strictly matching this schema:
+Generate a valid JSON object strictly matching this schema:
 {
-  "title": "High-Impact Cinematic Title",
+  "title": "${derivedTitle}",
   "hook": "The instant 3-second hook / opening dilemma",
   "logline": "1-2 sentence dramatic and compelling Hollywood logline",
   "thematicEngine": "The thematic premise, philosophical conflict, and moral argument",
@@ -378,40 +391,48 @@ Perform a deep cinematic dissection and return a valid JSON object strictly matc
   "readyToPromote": true
 }`;
 
-    const aiResponse = await nvidia.generateCompletion({ prompt });
     let analysis = null;
+    try {
+      const aiResponse = await Promise.race([
+        nvidia.generateCompletion({
+          prompt,
+          systemPrompt: 'You are Showrunner Sterling. Output only valid JSON without markdown fences.',
+          maxTokens: 1200,
+          temperature: 0.6,
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('AI generation timeout')), 8000)),
+      ]);
 
-    if (aiResponse.success && aiResponse.text) {
-      try {
+      if (aiResponse && aiResponse.success && aiResponse.text) {
         const jsonMatch = aiResponse.text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           analysis = JSON.parse(jsonMatch[0]);
         }
-      } catch (e) {
-        console.warn('[MediaIngest] Failed to parse AI JSON for link discussion:', e.message);
       }
+    } catch (e) {
+      console.warn('[MediaIngest] AI fast-path activated:', e.message);
     }
 
-    if (!analysis) {
+    if (!analysis || !analysis.title) {
       analysis = {
-        title: `The ${format === 'tv_series' ? 'Series' : 'Chronicles'}: Adapted from Media`,
-        hook: `A real-world phenomenon discovered in ${url} triggers an unforeseen chain of events.`,
-        logline: `When an unexpected truth surfaces, an ambitious protagonist must navigate high-stakes conflict before the truth is buried forever.`,
-        thematicEngine: 'Truth versus control in an evolving technological landscape.',
+        title: derivedTitle,
+        hook: userVision ? `An investigative creator encounters ${userVision.slice(0, 50)}...` : `A real-world phenomenon discovered in ${url} triggers an unforeseen chain of events.`,
+        logline: userVision ? `Inspired by ${url}: ${userVision}` : `When an unexpected truth surfaces, an ambitious protagonist must navigate high-stakes conflict before the evidence is suppressed forever.`,
+        thematicEngine: 'Truth, integrity, and the courage to expose reality against institutional control.',
         visualAesthetic: {
           camera: 'Blackmagic Pocket Cinema Camera 4K • 35mm Anamorphic • Gen 5 Film Color',
           lighting: '3200K Warm Key / 5600K Cool Ambient fill',
           colorPalette: 'Kodak 2383 ACEScc Print Curve'
         },
         characters: [
-          { name: 'Devon Wells', role: 'Protagonist', arc: 'Seeks undeniable evidence against impossible odds.' },
-          { name: 'The Director', role: 'Antagonist', arc: 'Commands the narrative from the shadows.' },
-          { name: 'Maya Vance', role: 'Allied DP', arc: 'Captures the raw reality through the lens.' }
+          { name: 'Devon Wells', role: 'Protagonist', arc: 'Driven investigator seeking undeniable evidence against impossible odds.' },
+          { name: 'Director Sterling', role: 'Mentor', arc: 'Veteran showrunner guiding narrative and technical execution.' },
+          { name: 'The Syndicate', role: 'Antagonist', arc: 'Opposing force attempting to suppress the truth and control perception.' }
         ],
         acts: [
-          { act: 1, title: 'Act I: The Discovery', beats: 'The original link footage is analyzed, revealing an anomaly.' },
-          { act: 2, title: 'Act II: The Pursuit', beats: 'Deep investigation, mounting tension, and betrayal.' },
-          { act: 3, title: 'Act III: The Broadcast', beats: 'The ultimate truth is brought to light in high definition.' }
+          { act: 1, title: 'Act I: The Discovery & Hook', beats: `The original footage from ${url} is analyzed, revealing an anomaly that cannot be ignored.` },
+          { act: 2, title: 'Act II: The Deep Investigation', beats: 'Mounting pressure, unexpected obstacles, and a critical midpoint revelation that alters the stakes.' },
+          { act: 3, title: 'Act III: The Broadcast & Vindication', beats: 'The ultimate truth is brought to light in high definition, cementing a permanent legacy.' }
         ],
         showrunnerDiscussionNotes: `**🌟 Showrunner Sterling:** "This ingested source (${url}) has incredible narrative fuel. By anchoring the premise around our protagonist's moral dilemma and shooting with our BMPCC 4K Gen 5 color science, we can transform this raw concept into a high-caliber cinematic piece. Let's draft Scene 1 in Stage 1 ScriptBreak and calibrate our camera choreography in Stage 4 Previs!"`,
         readyToPromote: true
