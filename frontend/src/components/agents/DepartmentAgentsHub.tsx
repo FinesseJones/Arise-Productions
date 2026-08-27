@@ -295,7 +295,7 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
           return [...filtered, res.userMessage, res.assistantMessage];
         });
       } else {
-        const fallbackReply = generateDynamicAgentResponse(textToSend, currentAgent, projectName);
+        const fallbackReply = getDepartmentalFallbackResponse(currentAgent, textToSend);
         const fallbackAssistantMsg: ChatMessage = {
           id: `ai-${Date.now()}`,
           role: 'assistant',
@@ -307,7 +307,7 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
         setMessages((prev) => [...prev, fallbackAssistantMsg]);
       }
     } catch (err: any) {
-      const fallbackReply = generateDynamicAgentResponse(textToSend, currentAgent, projectName);
+      const fallbackReply = getDepartmentalFallbackResponse(currentAgent, textToSend);
       const fallbackAssistantMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
         role: 'assistant',

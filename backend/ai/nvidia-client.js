@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DEFAULT_NVIDIA_KEY = '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';
+const DEFAULT_NVIDIA_KEY = '';
 
 // Helper to auto-read .env from multiple search locations
 function loadEnvKey() {
@@ -97,11 +97,12 @@ export class NvidiaNIMClient {
   }
 
   getStatus() {
-    const isCustom = !!this.apiKey && this.apiKey.startsWith('nvapi-');
+    const hasKey = this.hasApiKey();
+    const isCustom = hasKey && !this.apiKey.includes('arise');
     return {
-      hasKey: true,
-      isOperational: true,
-      maskedKey: isCustom ? `${this.apiKey.slice(0, 10)}...${this.apiKey.slice(-4)}` : 'nvapi-arise-studio-active',
+      hasKey,
+      isOperational: hasKey,
+      maskedKey: hasKey ? (isCustom ? `${this.apiKey.slice(0, 10)}...${this.apiKey.slice(-4)}` : 'configured') : 'None',
       defaultModel: this.defaultModel,
       availableModels: this.availableModels,
     };

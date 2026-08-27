@@ -155,7 +155,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   // Fetch NVIDIA NIM Key Status & default model on mount
   useEffect(() => {
     fetch(`${apiBase}/api/v1/nvidia/status`)
-      .then((r) => r.json())
+        .then((r) => r.json())
       .then((data) => {
         if (data.success) {
           setHasKey(data.hasKey);
@@ -169,15 +169,15 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   // Handle Model Selection change
   const handleSelectModel = async (modelId: string) => {
     setDefaultModel(modelId);
-    try {
-      await fetch(`${apiBase}/api/v1/nvidia/model`, {
+      try {
+      await fetch(`${apiBase}/api/v1/nvidia/set-model`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ modelId }),
       });
       toast.success(`Switched default inference to ${modelId.split('/')[1] || modelId}`);
     } catch {
-      toast.error('Failed to update NVIDIA model preference');
+        toast.error('Failed to update NVIDIA model preference');
     }
   };
 
@@ -187,7 +187,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
     if (!apiKeyInput.trim()) return;
 
     try {
-      const res = await fetch(`${apiBase}/api/v1/nvidia/key`, {
+      const res = await fetch(`${apiBase}/api/v1/nvidia/set-key`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ apiKey: apiKeyInput.trim() }),

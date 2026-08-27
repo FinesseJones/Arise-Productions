@@ -42,13 +42,60 @@ export async function runAgent(options = {}) {
 
   // 2. Direct High-Fidelity Chat Generation
   console.log(`[AgentRuntime] 🚀 Generating agent reasoning via ${model}...`);
-  const result = await nvidia.generateCompletion({
-    messages,
+  const conversation = messages.slice();
+  let result = await nvidia.generateCompletion({
+    messages: conversation,
     systemPrompt,
+    tools: agentToolDefinitions,
     model,
     temperature,
     maxTokens,
   });
+
+  for (let iteration = 0; iteration < 4 && result.tool_calls?.length; iteration += 1) {
+    conversation.push(result.message || {
+      role: 'assistant',
+      content: result.text || '',
+      tool_calls: result.tool_calls,
+    });
+
+    for (const toolCall of result.tool_calls) {
+      const toolName = toolCall.function?.name;
+      let args = {};
+      try {
+        args = JSON.parse(toolCall.function?.arguments || '{}');
+      } catch (error) {
+        args = {};
+      }
+
+      try {
+        const toolResult = await executeAgentTool(toolName, args, { projectId, shotNumber });
+        executedActions.push({ id: `act-${Date.now()}`, tool: toolName, args, result: toolResult });
+        conversation.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          name: toolName,
+          content: JSON.stringify(toolResult),
+        });
+      } catch (error) {
+        conversation.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          name: toolName,
+          content: JSON.stringify({ status: 'ERROR', error: error.message }),
+        });
+      }
+    }
+
+    result = await nvidia.generateCompletion({
+      messages: conversation,
+      systemPrompt,
+      tools: agentToolDefinitions,
+      model,
+      temperature,
+      maxTokens,
+    });
+  }
 
   let replyText = result.text || result.reply || '';
   if (!replyText) {
