@@ -1279,11 +1279,36 @@ export enum ErrCode {
     Unauthenticated = "unauthenticated",
 }
 
-// Get the API base URL from environment or use production default
+// Get the API base URL from environment or use production default.
+// This mirrors the resolution logic in `lib/api.ts` (getAPIBaseURL) so that
+// every part of the studio agrees on where the backend lives — in dev (Vite
+// on 5055), in the Electron shell (file:// origin), and in production
+// (reverse-proxied on 80/443/4000). Previously this fell back to
+// `window.location.origin` directly, which pointed the client at the Vite
+// dev server or the Electron file:// origin instead of the backend on
+// port 4000, silently breaking every agent-facing screen that imports this
+// client (Dashboard, WritingRoom, ScriptEditor, EditingSuite,
+// PlatformOptimizer, ProjectDetail).
 const getAPIURL = () => {
-  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  if (import.meta.env.PROD) return 'https://staging-unified3dproduction-dazi.encr.app';
+  const envUrl = (import.meta.env as any).VITE_API_URL || (import.meta.env as any).VITE_API_BASE;
+  if (envUrl) return envUrl;
+
+  if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
+    const hostname = window.location.hostname || 'localhost';
+    const port = window.location.port;
+
+    // Backend port directly, or a standard deployed web port (80/443).
+    if (port === '4000' || port === '' || port === '80' || port === '443') {
+      return window.location.origin;
+    }
+
+    // Vite/dev server on any other port (5055, 5173, 3000, etc.) — route to backend.
+    return `${window.location.protocol}//${hostname}:4000`;
+  }
+
+  // Non-http origin (e.g. Electron's file://) or no window at all.
   return 'http://localhost:4000';
 };
 
 export default new Client(getAPIURL(), { requestInit: { credentials: "include" } });
+

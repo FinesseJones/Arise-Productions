@@ -48,6 +48,7 @@ import {
   Home,
   Plus,
   FolderOpen,
+  Gauge,
 } from 'lucide-react';
 import { ARISE_LOGO_BASE64 } from '../constants/branding';
 import { getAPIBaseURL } from '../lib/api';
@@ -102,6 +103,22 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
     typeof window !== 'undefined' ? localStorage.getItem('arise_studio_tier') || 'enterprise' : 'enterprise'
   );
 
+  // Performance Mode: disables the blurred glass-card effect stacked over the
+  // 3D canvas (rooms like Distribution stack a dozen+ at once). Auto-enables
+  // for users with prefers-reduced-motion set; otherwise persisted per-user.
+  const [perfMode, setPerfMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const saved = localStorage.getItem('arise_perf_mode');
+    if (saved !== null) return saved === 'lite';
+    return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.setAttribute('data-perf-mode', perfMode ? 'lite' : 'full');
+    localStorage.setItem('arise_perf_mode', perfMode ? 'lite' : 'full');
+  }, [perfMode]);
+
   // NVIDIA NIM Model & API Key State
   const [defaultModel, setDefaultModel] = useState<string>('meta/llama-3.1-70b-instruct');
   const [apiKeyInput, setApiKeyInput] = useState<string>('');
@@ -130,7 +147,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   };
 
   // Live WebSocket Connection to Central API Bridge
-  const { projectStatus, isConnected, telemetry, sendCommand } = useStudioSocket({
+  const { projectStatus, isConnected, lastError, telemetry, sendCommand } = useStudioSocket({
     projectId: effectiveProjectId,
     projectName,
   });
@@ -638,6 +655,42 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               {studioTier === 'enterprise' ? 'Enterprise' : studioTier === 'pro' ? 'Studio Pro' : 'Free Tier'}
             </span>
           </button>
+
+          {/* Performance Mode Toggle — drops the blurred glass effect (stacked over the live 3D canvas) for smoother frame rates */}
+          <button
+            type="button"
+            onClick={() => setPerfMode((v) => !v)}
+            className={`flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl border text-[11px] font-mono font-bold transition flex-shrink-0 cursor-pointer ${
+              perfMode
+                ? 'bg-sky-500/20 border-sky-500/50 text-sky-300'
+                : 'bg-[#1a0e36] hover:bg-[#271552] border-purple-800/60 text-amber-200'
+            }`}
+            title={perfMode ? 'Performance Mode is ON — glass blur disabled for smoother 3D rendering' : 'Turn on Performance Mode to disable glass blur effects for smoother 3D rendering'}
+          >
+            <Gauge size={12} className={perfMode ? 'text-sky-400' : 'text-amber-400'} />
+            <span className="hidden sm:inline">{perfMode ? 'Perf: Lite' : 'Perf: Full'}</span>
+          </button>
+
+          {/* Studio Bridge Connection Status — surfaces WS/agent connectivity that was previously silent */}
+          <div
+            className={`flex items-center space-x-1.5 px-2 sm:px-2.5 py-1 rounded-xl border text-[11px] font-mono font-bold transition flex-shrink-0 ${
+              isConnected
+                ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
+                : 'bg-red-500/15 border-red-500/50 text-red-300 animate-pulse'
+            }`}
+            title={
+              isConnected
+                ? 'Connected to Central Studio Bridge — agents are reachable'
+                : lastError || 'Unable to reach the studio bridge — agents will not respond until this reconnects'
+            }
+          >
+            <span
+              className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                isConnected ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]' : 'bg-red-400 shadow-[0_0_6px_rgba(248,113,113,0.8)]'
+              }`}
+            />
+            <span className="hidden sm:inline">{isConnected ? 'Bridge Online' : 'Bridge Offline'}</span>
+          </div>
 
           <div className="hidden 2xl:flex items-center space-x-1 text-[11px] text-amber-300/70 border-l border-amber-500/30 pl-2 flex-shrink-0">
             <span className="text-amber-400/60">Project:</span>

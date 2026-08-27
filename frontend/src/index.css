@@ -77,6 +77,30 @@ html, body {
   }
 }
 
+/* Performance Mode: rooms like DistributionRoom stack a dozen+ blurred glass
+   cards over a live Three.js canvas at once, which is a common cause of frame
+   drops on lower-end GPUs. Toggled via the header button (persisted in
+   localStorage) or automatically honored for prefers-reduced-motion users. */
+html[data-perf-mode="lite"] .amethyst-glass,
+html[data-perf-mode="lite"] .glass-card-4k {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: #140e2e;
+  transition: none;
+}
+html[data-perf-mode="lite"] .glass-card-4k:hover {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-card-4k,
+  .glass-card-4k:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+
 .specular-border {
   position: relative;
 }
