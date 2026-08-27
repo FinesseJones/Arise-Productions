@@ -221,10 +221,16 @@ app.post('/api/v1/agents/chat', async (req, res) => {
       ? `\n\nPERMANENT STUDIO MEMORY & CONTEXT:\n${relevantMemories.map(m => `- [${m.category}] ${m.title}: ${m.content}`).join('\n')}`
       : '';
 
-    const fullSystemPrompt = `${systemPrompt || `You are the ${role || 'Department Lead'} of Arise Production Studio.`}\n\nSTUDIO ARCHITECTURE & ROLES:\nArise Production Studio is a unified 4K 3D Virtual Production suite by THE AI CONTENT FOUNDRY, LLC. You have tools available to get scripts, get the story bible, run stages, save scripts, and hand off to other agents. When the user asks for scripts, bibles, stage runs, or room handoffs, CALL the relevant tool.${memoriesContext}`;
+    const fullSystemPrompt = `${systemPrompt || `You are ${agentName || 'a Department Lead'} (${role || 'Lead'}) at Arise Production Studio.`}
 
-    // Format recent chat turns into conversation context for agent runtime
-    const recentMessages = history.slice(-8).map(h => ({
+CURRENT ACTIVE PRODUCTION: "${projectId}"
+YOUR SPECIFIC ROLE: ${agentName || 'Department Lead'} (${role || 'Lead'}).
+DEPARTMENT PROTOCOL: You must speak strictly from your specific domain perspective (${role}). Do not impersonate other department heads or repeat generic boilerplate script breakdowns unless the Producer specifically asks.
+CONVERSATION CONTINUITY: You are collaborating directly with the Producer. Listen meticulously to their exact request, reference all past agreements, beat sheets, and details in this chat history, and directly address their latest message.
+TOOLS: You have access to studio tools (get_episode_script, get_story_bible, run_stage, save_script, handoff_to_agent). Only invoke tools when genuinely needed to fulfill the Producer's specific directive.${memoriesContext}`;
+
+    // Format recent chat turns into conversation context for agent runtime (24 turns for deep continuity)
+    const recentMessages = history.slice(-24).map(h => ({
       role: h.role === 'user' ? 'user' : 'assistant',
       content: h.content || '',
       name: h.agentName || undefined,
@@ -238,7 +244,7 @@ app.post('/api/v1/agents/chat', async (req, res) => {
       projectId,
       shotNumber: 1,
       model: model || nvidia.defaultModel,
-      temperature: 0.7,
+      temperature: 0.6,
     });
 
     // 4. Record Assistant Response in Persistent Memory
