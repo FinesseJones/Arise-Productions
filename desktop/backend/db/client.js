@@ -25,6 +25,8 @@ class StudioDatabase extends EventEmitter {
     this.chatHistories = new Map(); // key: `${projectId}:${stageId}`
     this.ideas = new Map(); // key: ideaId
     this.assets = new Map(); // key: assetId
+    this.briefings = new Map(); // key: `${projectId}:${type}` -> array of briefing entries
+    this.activityLog = []; // append-only studio activity events
     this.auditLogs = [];
     this.sessionState = {
       lastActiveProjectId: 'proj-fatherless-child',
@@ -57,6 +59,8 @@ class StudioDatabase extends EventEmitter {
           if (data.assets && Array.isArray(data.assets) && data.assets.length > 0) {
             data.assets.forEach((asset) => this.assets.set(asset.id, asset));
           }
+          if (data.briefings) data.briefings.forEach((b) => this.briefings.set(b.id, b.list));
+          if (data.activityLog) this.activityLog = data.activityLog.slice(-200);
           this._seedDefaultIdeas();
           this._seedDefaultAssets();
           if (data.sessionState) this.sessionState = { ...this.sessionState, ...data.sessionState };
@@ -246,6 +250,8 @@ class StudioDatabase extends EventEmitter {
         chatHistories: Array.from(this.chatHistories.entries()).map(([id, messages]) => ({ id, messages })),
         ideas: Array.from(this.ideas.values()),
         assets: Array.from(this.assets.values()),
+        briefings: Array.from(this.briefings.entries()).map(([id, list]) => ({ id, list })),
+        activityLog: this.activityLog.slice(-200),
         sessionState: this.sessionState,
         auditLogs: this.auditLogs.slice(-100),
         saved_at: new Date().toISOString(),
@@ -475,6 +481,71 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
     this.chatHistories.set(key, messages);
     this._saveToDisk();
     return { projectId, stageId, count: messages.length };
+  }
+
+  // --- Studio Desk Briefing Methods ---
+  saveBriefing(projectId, briefing = {}) {
+    const type = briefing.type || 'morning';
+    const key = `${projectId}:${type}`;
+    const list = this.briefings.get(key) || [];
+    const entry = {
+      id: `briefing-${type}-${Date.now()}`,
+      type,
+      date: briefing.date || new Date().toISOString(),
+      text: briefing.text || '',
+      highlights: briefing.highlights || null,
+    };
+    list.push(entry);
+    this.briefings.set(key, list.slice(-30)); // keep last 30 per type
+    this._saveToDisk();
+    this.emit('briefing_saved', entry);
+    return entry;
+  }
+
+  getLatestBriefing(projectId, type = null) {
+    if (type) {
+      const list = this.briefings.get(`${projectId}:${type}`) || [];
+      return list.length ? list[list.length - 1] : null;
+    }
+    const all = [
+      ...(this.briefings.get(`${projectId}:morning`) || []),
+      ...(this.briefings.get(`${projectId}:evening`) || []),
+    ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return all.length ? all[all.length - 1] : null;
+  }
+
+  getBriefings(projectId, type = null, limit = 10) {
+    if (type) return (this.briefings.get(`${projectId}:${type}`) || []).slice(-limit);
+    const all = [
+      ...(this.briefings.get(`${projectId}:morning`) || []),
+      ...(this.briefings.get(`${projectId}:evening`) || []),
+    ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return all.slice(-limit);
+  }
+
+  // --- Studio Activity Log Methods ---
+  logActivity(projectId, event = {}) {
+    const entry = {
+      id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      projectId,
+      type: event.type || 'event', // 'stage_run' | 'script_saved' | 'handoff'
+      summary: event.summary || '',
+      stageId: event.stageId || null,
+      shotNumber: event.shotNumber ?? null,
+      timestamp: new Date().toISOString(),
+    };
+    this.activityLog.push(entry);
+    this.activityLog = this.activityLog.slice(-200);
+    this._saveToDisk();
+    this.emit('activity_logged', entry);
+    return entry;
+  }
+
+  getRecentActivity(projectId, limit = 20) {
+    return this.activityLog
+      .filter((e) => !projectId || e.projectId === projectId)
+      .slice(-limit)
+      .reverse();
   }
 
   // --- Manifest Methods ---

@@ -12,6 +12,7 @@ import OriginalSuitesHub from './OriginalSuitesHub';
 import { ProductionPitchDeckModal } from './ProductionPitchDeckModal';
 import { StudioProUpgradeModal } from './StudioProUpgradeModal';
 import { StudioVideoTourModal } from './StudioVideoTourModal';
+import StudioDeskBriefing from './StudioDeskBriefing';
 import PlotRoom from '../pages/PlotRoom';
 import ActsRoom from '../pages/ActsRoom';
 import BeatsRoom from '../pages/BeatsRoom';
@@ -97,6 +98,18 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
   const [showVideoTourModal, setShowVideoTourModal] = useState<boolean>(false);
+  const [briefingType, setBriefingType] = useState<'morning' | 'evening' | null>(null);
+
+  // Auto-fire Morning Briefing once per day
+  useEffect(() => {
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      if (typeof window !== 'undefined' && localStorage.getItem('arise_last_morning_briefing') !== today) {
+        setBriefingType('morning');
+        localStorage.setItem('arise_last_morning_briefing', today);
+      }
+    } catch {}
+  }, []);
 
   // Active Studio Licensing Tier (Default: Enterprise $299/mo)
   const [studioTier, setStudioTier] = useState<string>(() =>
@@ -670,6 +683,23 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             <span>Bible</span>
           </button>
 
+          {/* Studio Desk Morning / Evening Briefing Buttons */}
+          <button
+            onClick={() => setBriefingType('morning')}
+            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
+            title="Open Morning Briefing from Studio Desk"
+          >
+            <span>☀️ Briefing</span>
+          </button>
+
+          <button
+            onClick={() => setBriefingType('evening')}
+            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[11px] font-mono transition shadow-sm flex-shrink-0 cursor-pointer"
+            title="End of Day Wrap from Studio Desk"
+          >
+            <span>🌙 Wrap Day</span>
+          </button>
+
           {/* NVIDIA NIM Free Tier Button */}
           <button
             onClick={() => setShowNvidiaModal(true)}
@@ -935,6 +965,15 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           </div>
         </div>
       </footer>
+
+      {/* Studio Desk Chief of Staff Morning / Evening Briefing Modal */}
+      {briefingType && (
+        <StudioDeskBriefing
+          projectId={effectiveProjectId}
+          type={briefingType}
+          onClose={() => setBriefingType(null)}
+        />
+      )}
 
       {/* Hollywood Production Pitch Bible & One-Pager Modal */}
       {showPitchBibleModal && (

@@ -143,7 +143,46 @@ app.post('/api/v1/nvidia/chat', async (req, res) => {
 });
 
 // ==============================================================================
-// 1B. PERSISTENT MULTI-AGENT BOARDROOM & STUDIO MEMORY ENDPOINTS
+// 1B. STUDIO DESK BRIEFING (CHIEF OF STAFF)
+// ==============================================================================
+
+const STUDIO_DESK_SYSTEM = `You are Studio Desk, the Chief of Staff for Arise Production Studio. You do not do production work yourself; you track studio state and brief the Producer.
+
+Always call your tools first (get_studio_status, get_recent_activity, get_last_briefing) to ground the briefing in real data. Never invent progress.
+
+Format the briefing in exactly three short sections with these headers:
+STATUS - one or two lines on where the project stands.
+BLOCKERS - specific shots/stages needing attention (say "None." if clear).
+PRIORITIES - the 2 to 3 things to focus on next, most important first.
+
+Keep it tight and executive.`;
+
+// POST /api/v1/briefing - Studio Desk morning/evening briefing
+app.post('/api/v1/briefing', async (req, res) => {
+  const { projectId = 'proj-fatherless-child', type = 'morning' } = req.body;
+  try {
+    const resolvedProjectId = await resolveProjectId(projectId);
+    const timeContext = type === 'evening'
+      ? 'It is the end of the working day. Summarize what changed today and what is queued for tomorrow.'
+      : 'It is the start of the day. Brief the Producer on where things stand and what to tackle first.';
+    const result = await runAgent({
+      messages: [{ role: 'user', content: `${timeContext} Produce the ${type} briefing for project ${resolvedProjectId}.` }],
+      systemPrompt: STUDIO_DESK_SYSTEM,
+      tools: agentToolDefinitions,
+      projectId: resolvedProjectId,
+      temperature: 0.4,
+    });
+    if (typeof db.saveBriefing === 'function') {
+      db.saveBriefing(resolvedProjectId, { type, date: new Date().toISOString(), text: result.reply });
+    }
+    res.json({ success: true, type, briefing: result.reply, actions: result.actions, model: result.model });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==============================================================================
+// 1C. PERSISTENT MULTI-AGENT BOARDROOM & STUDIO MEMORY ENDPOINTS
 // ==============================================================================
 
 // GET /api/v1/agents/history/:agentId - Get persistent chat history for an agent

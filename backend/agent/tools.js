@@ -150,6 +150,50 @@ export const agentToolDefinitions = [
       },
     },
   },
+  {
+    type: 'function',
+    function: {
+      name: 'get_studio_status',
+      description: 'Aggregated production status: total shots, per-stage completion across the 10 MCP stages, and any blocked/unstarted stages. Use this to brief the Producer.',
+      parameters: {
+        type: 'object',
+        properties: {
+          projectId: { type: 'string' },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'get_recent_activity',
+      description: 'Recent studio events (stages run, scripts saved, handoffs) to summarize what has happened recently.',
+      parameters: {
+        type: 'object',
+        properties: {
+          projectId: { type: 'string' },
+          limit: { type: 'integer' },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'get_last_briefing',
+      description: 'The most recent saved Studio Desk briefing, so you can note what changed since then.',
+      parameters: {
+        type: 'object',
+        properties: {
+          projectId: { type: 'string' },
+          type: { type: 'string', enum: ['morning', 'evening'] },
+        },
+        required: [],
+      },
+    },
+  },
 ];
 
 /**
@@ -264,6 +308,9 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
     case 'save_script': {
       const content = args.content || '';
       const saved = db.saveProjectScript(projectId, shotNumber, content);
+      if (typeof db.logActivity === 'function') {
+        db.logActivity(projectId, { type: 'script_saved', shotNumber, summary: `Saved script for shot ${shotNumber} (${content.length} chars)` });
+      }
       return {
         status: 'SUCCESS',
         projectId,
@@ -291,6 +338,9 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
       };
 
       const result = await worker.executeJob(job);
+      if (typeof db.logActivity === 'function') {
+        db.logActivity(projectId, { type: 'stage_run', stageId, shotNumber, summary: `Ran ${stageId} on shot ${shotNumber}` });
+      }
       return {
         status: 'SUCCESS',
         stageId,
@@ -303,12 +353,58 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
     case 'handoff_to_agent': {
       const stageId = args.stageId;
       const reason = args.reason || 'Workflow stage transition requested.';
+      if (typeof db.logActivity === 'function') {
+        db.logActivity(projectId, { type: 'handoff', stageId, summary: `Handoff to ${stageId}: ${reason}` });
+      }
       return {
         status: 'SUCCESS',
         action: 'HANDOFF',
         targetStageId: stageId,
         reason,
       };
+    }
+
+    case 'get_studio_status': {
+      const manifest = await db.getProjectManifest(projectId);
+      if (!manifest) return { status: 'ERROR', error: `Project "${projectId}" not found.` };
+      const STAGES = ['script', 'structure', 'plan', 'previs', 'motion', 'boards', 'prompt', 'dailies', 'sound', 'edit'];
+      const shots = manifest.shots || [];
+      const stageTally = {};
+      STAGES.forEach((s) => { stageTally[s] = { complete: 0, pending: 0 }; });
+      const blocked = [];
+      for (const shot of shots) {
+        for (const s of STAGES) {
+          const char = shot.status?.[s]?.statusChar || '⚪';
+          if (char === '🟢') stageTally[s].complete++; else stageTally[s].pending++;
+          if (char === '🔴') blocked.push({ shot: shot.shotNumber, stage: s });
+        }
+      }
+      return {
+        status: 'SUCCESS',
+        projectId,
+        projectName: manifest.projectName,
+        totalShots: shots.length,
+        stageCompletion: stageTally,
+        blocked,
+        shots: shots.map((sh) => ({ shotNumber: sh.shotNumber, title: sh.title })),
+      };
+    }
+
+    case 'get_recent_activity': {
+      const limit = Number(args.limit || 20);
+      if (typeof db.getRecentActivity === 'function') {
+        return { status: 'SUCCESS', projectId, events: await db.getRecentActivity(projectId, limit) };
+      }
+      const messages = db.getChatHistory ? db.getChatHistory(projectId, 'script') : [];
+      return { status: 'PARTIAL', projectId, note: 'No activity log yet; showing recent chat.', messages: (messages || []).slice(-limit) };
+    }
+
+    case 'get_last_briefing': {
+      if (typeof db.getLatestBriefing === 'function') {
+        const b = await db.getLatestBriefing(projectId, args.type);
+        return { status: b ? 'SUCCESS' : 'EMPTY', projectId, briefing: b || null };
+      }
+      return { status: 'EMPTY', projectId, note: 'Briefing persistence not implemented yet.' };
     }
 
     case 'dispatch_director_command': {
