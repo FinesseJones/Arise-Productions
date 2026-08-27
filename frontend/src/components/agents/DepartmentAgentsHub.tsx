@@ -156,116 +156,6 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
     loadMemories();
   }, [selectedAgentId, projectId, apiBase]);
 
-  // Deeply conversational, natural, and agentic departmental AI engine
-  const getDepartmentalFallbackResponse = (agent: DepartmentAgent, query: string): string => {
-    const q = query.toLowerCase().trim();
-    const isGreeting = q === 'hello' || q === 'hi' || q === 'hey' || q === 'greetings' || q.startsWith('hello') || q.startsWith('hi ') || q.startsWith('hey ');
-
-    // 0. SPECIALIZED DIRECTIVE: 7-Episode Series from YouTube / Scripture / Modern 2026 Black American Characters
-    if (q.includes('youtube') || q.includes('7 episode') || q.includes('7 episodic') || q.includes('scripture') || (q.includes('black american') && q.includes('dialogue')) || (q.includes('teacher') && q.includes('words'))) {
-      if (agent.id === 'showrunner' || agent.id === 'roundtable') {
-        return `🏛️ **Showrunner Sterling (Series Architecture & 7-Episode Master Bible):**\n\nUnderstood, Producer! We have locked in the foundational rules for this **7-Episode Modern 2026 Faith & Truth Series**:\n\n### 📜 **Core Creative Constraints:**\n1. **Setting & World:** Modern 2026 Urban America with all Black American lead characters.\n2. **Strict Dialogue Protocol:** **100% of spoken words and character dialogue are drawn VERBATIM from the scriptures recited and the teacher's discourse—zero outside invented dialogue.**\n3. **Visual & Dramatic Medium:** Dynamic 2026 cinematic realism (35mm Anamorphic, golden amber key with deep obsidian contrast).\n\n---\n\n### 📺 **7-Episode Episodic Arc & Scripture Roadmap:**\n\n• **Episode 1: "The Commission & The Awakened Heart"**\n  * *Focus:* The Teacher delivers the opening discourse; the disciples receive the foundational scripture.\n  * *Scripture Anchor:* Ezekiel 36:26 ("A new heart will I give you, and a new spirit will I put within you.")\n\n• **Episode 2: "The Straight and Narrow Path"**\n  * *Focus:* Modern 2026 youth encounter temptations and city pressures; confronting the weight of the law.\n  * *Scripture Anchor:* Matthew 7:13-14 ("Enter ye in at the strait gate...")\n\n• **Episode 3: "The Fire and The Crucible"**\n  * *Focus:* Severe personal trials, community division, and tests of faith across the family.\n  * *Scripture Anchor:* 1 Peter 1:7 ("That the trial of your faith, being much more precious than of gold...")\n\n• **Episode 4: "The Authority of the Spoken Word"**\n  * *Focus:* Midpoint confrontation with corporate and spiritual opposition using only recited sacred text.\n  * *Scripture Anchor:* Hebrews 4:12 ("For the word of God is quick, and powerful, and sharper than any two-edged sword...")\n\n• **Episode 5: "The Gathering of the Remnant"**\n  * *Focus:* Reconciliation between estranged brothers and sisters under the teacher's guidance.\n  * *Scripture Anchor:* Isaiah 11:11-12 ("And it shall come to pass in that day, that the Lord shall set his hand again...")\n\n• **Episode 6: "The Midnight Watch"**\n  * *Focus:* Dark Night of the Soul; unwavering prayer and endurance before breakthrough.\n  * *Scripture Anchor:* Psalm 130:5-6 ("My soul waiteth for the Lord more than they that watch for the morning...")\n\n• **Episode 7: "The Crown of Righteousness & The New Horizon"**\n  * *Focus:* Series finale; triumphant vindication and unbroken covenant fulfillment.\n  * *Scripture Anchor:* 2 Timothy 4:7-8 ("I have fought a good fight, I have finished my course, I have kept the faith...")\n\nShall I instruct Devon Wells to draft the Fountain scene pages for Episode 1?`;
-      }
-
-      if (agent.id === 'screenwriter' || agent.id === 'writer') {
-        return "✍️ **Devon Wells (Head Screenwriter):**\n\nHere is the official **Fountain Screenplay Scene** for **Episode 1**, adhering strictly to your rule: **Every single spoken word is drawn purely from the recited scripture and teacher references with zero outside words**:\n\n```fountain\nTitle: THE COVENANT OF TRUTH (EPISODE 1)\nFormat: 7-Part Limited Series\nCharacters: Modern 2026 Black Americans\nDialogue Constraint: Scripture & Teacher References Only\n\nEXT. MODERN CITY ROOFTOP - DAWN (2026)\n\nGolden sunlight streams between modern high-rises. MALIK (28, sharp, reflective) stands overlooking the metropolis. ELDER JOSIAH (60s, master teacher, carrying worn scriptures) joins him.\n\nELDER JOSIAH\n(speaking with steady reverence)\n\"Hear, O Israel: The Lord our God is one Lord. And thou shalt love the Lord thy God with all thine heart, and with all thy soul, and with all thy might.\"\n\nMALIK\n(turning, seeking truth)\n\"Wherewithal shall a young man cleanse his way?\"\n\nELDER JOSIAH\n\"By taking heed thereto according to thy word. With my whole heart have I sought thee: O let me not wander from thy commandments.\"\n\nMALIK\n\"Thy word have I hid in mine heart, that I might not sin against thee.\"\n\nELDER JOSIAH\n(pointing over the city)\n\"The law of the Lord is perfect, converting the soul: the testimony of the Lord is sure, making wise the simple.\"\n\nCUT TO:\n```\n\nWould you like me to generate Scene 2 or push this directly into **Stage 1 (Script Room)**?";
-      }
-
-      if (agent.id === 'director' || agent.id === 'cinematographer') {
-        return `🎬 **CineDirector Maya (DP):**\n\n• **Visual Framework:** Modern 2026 cinematic realism with high-contrast anamorphic primes (35mm T1.8 Cooke /i).\n• **Lighting Palette:** 3200K warm golden amber key representing divine illumination against deep 2026 tech-noir obsidian city backgrounds.\n• **Camera Rig:** Slow, reverent orbit tracking on actor dialogue deliveries to emphasize the weight of every recited scripture word.\n\nReady to conform these camera parameters to **Stage 4 (Blockout Previs)**.`;
-      }
-    }
-
-    // 1. Scribe Vance (Episodic TV Architect) & Devon Wells (Head Screenwriter)
-    if (agent.id === 'tv_architect' || agent.id === 'screenwriter' || agent.id === 'writer') {
-      if (isGreeting) {
-        return `Hey there! Scribe Vance here, standing by on **${projectName}**.\n\nWe have **Ayanna Jackson (25)** and **Malachi Davis (27)** locked as our lead protagonists alongside **Leila Jackson**, **Nia Davis**, **Tanesha Lee**, and **Tyler Brown**.\n\nAre we looking to walk through the entire episodic storyline, explore our character dynamics, or draft a specific scene? Tell me what's on your mind and I'm ready!`;
-      }
-
-      if (q.includes('character') || q.includes('protagonist') || q.includes('who they are') || q.includes('lives') || q.includes('name') || q.includes('father') || q.includes('ensemble') || q.includes('backstory')) {
-        return `👥 **Character Ensemble & Personal Backstories for "${projectName}"**\n\nHere is our locked character roster exploring the generational, emotional, and social weight of growing up without a father in the East District urban development:\n\n---\n\n### 🌟 **The Two Lead Protagonists:**\n\n1. **Ayanna Jackson (Age 25)**\n   * **Occupation:** Social Worker / Case Manager (East District Family Services)\n   * **Personality:** Caring, fiercely determined, independent, but emotionally guarded.\n   * **Her Life & Father's Absence:** Raised in a single-parent home by her mother, **Leila Jackson**, who worked tireless double shifts to support Ayanna and her younger brother. Her father abandoned the family when she was seven, leaving behind financial strain and an unspoken emotional void. Ayanna has channeled this pain into protecting other vulnerable families, often overextending herself to keep broken homes together.\n   * **Core Conflict:** She fears trusting men in authority and struggles with the vulnerability required for genuine intimacy.\n\n2. **Malachi Davis (Age 27)**\n   * **Occupation:** Community Organizer / Director of the East District Youth Center\n   * **Personality:** Charismatic, confident, fiercely loyal, and protective.\n   * **His Life & Father's Absence:** Grew up without a father figure in his life. His mother, **Nia Davis**, worked two jobs to keep him and his siblings off the street. As a teenager, Malachi felt lost and drifted near the street life before realizing the young boys around him needed someone who wouldn't walk out. He transformed the neighborhood gym into a sanctuary for fatherless youth.\n   * **Core Conflict:** Carries survivor's guilt and the immense pressure of trying to be a surrogate father figure to an entire neighborhood.\n\n---\n\n### 👥 **Supporting Characters & Family:**\n\n* **Leila Jackson (52 — Ayanna's Mother):** A resilient, faith-anchored woman who sacrificed her own dreams to give Ayanna and her brother a chance at stability. She carries the unspoken grief of her husband's departure.\n* **Nia Davis (50 — Malachi's Mother):** Independent, sharp-witted, and fiercely proud of the man Malachi has become, though she worries he takes on the neighborhood's burdens at the expense of his own life.\n* **Tanesha Lee (25 — Ayanna's Best Friend):** An energetic, loyal friend who provides balance, humor, and honest truth whenever Ayanna is carrying too much weight alone.\n* **Tyler Brown (27 — Malachi's Closest Friend):** Malachi's right-hand brother who helps coach the youth and keeps Malachi grounded when the city threatens to shut the center down.\n\n---\n\nWhere would you like to direct our next story beat? We can write **Scene 2 (Ayanna's first casework meeting)**, explore a dialogue between **Ayanna and Malachi**, or dive into the **unanswered letters from Ayanna's father**!`;
-      }
-
-      if (q.includes('episode') || q.includes('first episode') || q.includes('episode 1') || q.includes('what it is about') || q.includes('walk through') || q.includes('synopsis') || q.includes('story') || q.includes('pilot')) {
-        return `📖 **"${projectName}" — Pilot Episode Walkthrough: "The Weight of Absence"**\n\nHere is our complete narrative arc for Episode 1:\n\n---\n\n### 🎬 **Act 1: The Morning Routine & The Courtyard Meeting**\n* **Scene 1:** 07:30 AM in the East District housing development. Ayanna Jackson walks down the courtyard steps with a heavy caseload of single-parent intakes. She receives an unknown call from her estranged father's area code and silences it.\n* **Scene 2:** Across the courtyard, Malachi Davis opens the youth recreation center, ensuring neighborhood kids have a safe roof before school. Ayanna and Malachi cross paths—sharing a deep, unspoken understanding of what it means to grow up without a father.\n\n---\n\n### ⚡ **Act 2: The Pressure Escalates**\n* **Scene 3:** Ayanna visits an overwhelmed young mother facing eviction whose teenage son is skipping school to earn fast street money.\n* **Scene 4:** Malachi discovers the city planning commission is threatening to rezone and shut down the youth center unless they secure private funding.\n\n---\n\n### ⚔️ **Act 3: A Shared Stand**\n* **Scene 5:** Ayanna and Malachi join forces to protect the family and organize the community, realizing that breaking generational cycles requires standing together.\n\n---\n\nWould you like me to write out **Scene 2 in full Fountain screenplay format**, or refine the dialogue?`;
-      }
-
-      return `✍️ **Scribe Vance (Screenplay Draft for "${projectName}"):**\n\n\`\`\`fountain\n/* A FATHERLESS CHILD — SCENE 2 */\nEXT. EAST DISTRICT COMMUNITY CENTER - CONTINUOUS\n\nAyanna stops at the chain-link gate. Malachi spins the basketball, resting it on his hip.\n\nMALACHI\nMorning, Ms. Jackson. You're out here earlier than the city inspectors.\n\nAYANNA\n(a faint smile)\nSomebody's got to make sure the youth center doesn't get rezoned before noon, Mr. Davis.\n\nMALACHI\nThey can try. As long as these doors are open, these boys have a place to stand.\n\nAYANNA\n(looking at the kids inside)\nIt's more than a place to stand, Malachi. It's the only roof where nobody's walking out on them.\n\nMalachi's expression softens—a quiet moment of shared recognition.\n\nMALACHI\nThen we keep the doors open. No matter what it costs.\n\`\`\`\n\nWould you like me to push this directly into **Stage 1 (Script Room)** or continue drafting Scene 3?`;
-    }
-
-    // 2. Showrunner Sterling (Executive Producer & Showrunner)
-    if (agent.id === 'showrunner') {
-      if (isGreeting) {
-        return `Welcome to the executive suite! **${projectName}** has massive cinematic potential, and I'm tracking our production readiness across all 10 stages.\n\nWhere should we focus today? We can walk through our episodic arc, review character stakes, or audit our 10-stage production pipeline. What's your vision?`;
-      }
-      return `🌟 **Showrunner Sterling (Executive Producer):**\n\nRegarding "${query}":\n\n1. **Narrative Momentum:** Every scene must force our protagonist to make an active, irreversible choice.\n2. **Pacing:** The story moves swiftly from personal reflection to high-stakes conflict.\n3. **Production Readiness:** Stages 1-10 are synchronized to support this direction.\n\nShall I greenlight the script draft for this beat?`;
-    }
-
-    // 3. CineDirector Maya (Director of Photography & DP)
-    if (agent.id === 'director' || agent.id === 'cinematographer') {
-      if (isGreeting) {
-        return `Hey! Soundstage is ready and lit. I've been choreographing our Unreal Engine 5 CineCamera setups for **${projectName}**.\n\nWe have our 35mm anamorphic prime locked for environmental scale and the 85mm T1.8 standing by for intimate emotional coverage. Do you want to stage a camera move, configure our 3-point golden hour lighting, or map out dolly vectors for Scene 1?`;
-      }
-      return `🎬 **CineDirector Maya (Director of Photography):**\n\nHere is the camera staging and lighting solution for **${projectName}**:\n\n• **Lens Selection:** 35mm Anamorphic Prime (T1.8) for wide cinematic breadth\n• **Camera Motion:** Continuous low-angle dolly push with a subtle 4-axis gyro stabilization arc\n• **Lighting Design:** 4:1 Golden Hour Key (3200K warm amber) paired with atmospheric volumetric haze and cool blue bounce fill\n• **Depth of Field:** Focus locked at 2.4 meters with rack-focus tracking\n\nI can push these camera coordinates directly into our **Stage 4 (Blockout Previs)** right now. Would you like me to render a camera preview?`;
-    }
-
-    // 4. Architect Vance (Production Designer & Art Director)
-    if (agent.id === 'art_director') {
-      if (isGreeting) {
-        return `Hello! Welcome to LookDev. I've been pulling together our ACEScg color swatches and PBR texture maps for **${projectName}**.\n\nThe royal amber, tech-noir obsidian, and weathered wood textures give our sets a tangible, lived-in luxury. What environment or prop styling would you like to build out today?`;
-      }
-      return `🎨 **Architect Vance (Production Designer):**\n\nHere is the spatial aesthetic and material package for **${projectName}**:\n\n• **ACEScg Palette:** Deep Obsidian (#0A0614), Amber Gold (#F59E0B), Weathered Denim (#2A3B5C), Warm Linen (#E2BA86)\n• **PBR Material Roughness:** Floor planks at 0.65 roughness with micro-scratches; brass hardware at 0.20 roughness with 0.85 metallicity\n• **Atmosphere:** Volumetric mist density at 0.04 with dust motes illuminated by window light shafts\n\nThis will give our 3D soundstage rich textural realism. Would you like me to lock this palette into **Stage 3 (Master Canvas)**?`;
-    }
-
-    // 5. Kinetics Kai (3D Kinematics & Animation Rigging)
-    if (agent.id === 'animator' || agent.id === 'mocap') {
-      if (isGreeting) {
-        return `Hey! The 52-point mocap volume is calibrated and tracking cleanly at 60 FPS for **${projectName}**.\n\nI'm fine-tuning our characters' physical weight transfer, natural breathing cycles, and posture. Are we working on physical actor blocking, action choreography, or subtle dialogue mannerisms today?`;
-      }
-      return `⚡ **Kinetics Kai (Kinematics Specialist):**\n\n• **Rig Solver:** 52-Point Full-Body Biomechanical Kinematics\n• **Motion Vectors:** 60.00 FPS sub-frame interpolation with natural center-of-mass weight shifting\n• **Secondary Dynamics:** Chaos Cloth simulation enabled on jackets and hair with 15% air resistance damping\n• **Physicality:** Grounded footsteps with dynamic heel-to-toe contact\n\nEverything is synced with the virtual camera rig. Ready to send this motion solve to **Stage 5 (Motion Rig)**!`;
-    }
-
-    // 6. Synthetix Nova (VFX & Prompt Engineer)
-    if (agent.id === 'vfx_prompt') {
-      if (isGreeting) {
-        return `Greetings! Generative diffusion neural pipeline is online. I have our FLUX.1 Dev and SDXL prompt slates loaded with IP-Adapter likeness weights for **${projectName}**.\n\nWhat visual prompt matrices, negative token shields, or storyboard slates should we craft?`;
-      }
-      return `⚡ **Synthetix Nova (Prompt Architect):**\n\nHere is the 4K photorealistic prompt matrix for **${projectName}**:\n\n• **Positive Prompt:**\n"Cinematic 35mm film still of lead protagonist in ${projectName}, natural golden hour sunlight streaming across detailed face, authentic skin pores, volumetric haze, masterpiece, 8k resolution, photorealistic studio lighting, ACEScg color space, Kodak 2383 stock."\n• **Negative Shield:**\n"blurry, cartoon, 3d render plastic, low quality, oversaturated, deformed hands, extra limbs, watermark."\n• **ControlNet Depth Weight:** 0.85 | **IP-Adapter Face Lock:** @lead_actor_v1 (0.90)\n\nPrompt pack is ready to deploy to **Stage 7 (Prompt Slate)**!`;
-    }
-
-    // 7. Colorist Cole (Post-Production Lead Editor)
-    if (agent.id === 'editor') {
-      if (isGreeting) {
-        return `Hey! Editorial timeline and DaVinci MCP color wheels are standing by for **${projectName}**.\n\nThe ACEScc color science and Kodak 2383 film print emulation curves are dialed in. Are we conforming scene cuts today, fine-tuning our Lift/Gamma/Gain wheels, or prepping an export deliverable?`;
-      }
-      return `🎞️ **Colorist Cole (Finishing Editor):**\n\n• **Timeline Format:** 4K DCI (4096x2160) @ 24.000 FPS\n• **Color Science:** ACEScc with Kodak 2383 Film Print Emulation LUT\n• **3-Way CDL Matrix:** Lift [-0.02, 0.00, 0.03], Gamma [1.00, 0.98, 0.96], Gain [1.04, 1.00, 0.95]\n• **Editorial Pace:** Cuts conformed on emotional dialogue breath points for maximum rhythm.\n\nReady to conform these cuts into **Stage 9 (DaVinci MCP)**!`;
-    }
-
-    // 8. Acoustic Axel (Sound Supervisor & Audio Engineer)
-    if (agent.id === 'sound' || agent.id === 'audio') {
-      if (isGreeting) {
-        return `Hey! Sound stage is listening for **${projectName}**. All 4 stem channels (Dialogue, Foley, Score, LFE) are patched and calibrated to broadcast -24.0 LKFS.\n\nDo you want to balance our dialogue stems, design spatial 5.1 Dolby Atmos sound placement, or compose an emotional score cue for the scene?`;
-      }
-      return `🎧 **Acoustic Axel (Sound Supervisor):**\n\n• **Dialogue Stem (Center Channel):** Cleaned and warmed with dynamic EQ at -24.0 LKFS.\n• **Spatial Foley (Stereo L/R):** Environmental ambience, footsteps, atmospheric room tone.\n• **Score Cue:** Warm uplifting harmonic score in stereo wide.\n• **LFE Channel:** 35 Hz low-frequency impact on scene transition.\n\nStems are balanced and ready to mix into **Stage 10 (Stem Studio)**!`;
-    }
-
-    // 9. Studio Executive Round Table
-    if (agent.id === 'roundtable') {
-      if (isGreeting) {
-        return `🏛️ **Studio Executive Round Table:**\n\n**🌟 Showrunner Sterling:** "Welcome, Producer! The entire executive team is assembled. We're ready to workshop the series bible, plot arcs, and episodic structure for **${projectName}**."\n\n**✍️ Devon Wells (Screenwriter):** "I have our character profiles and screenplay drafts standing by."\n\n**🎬 CineDirector Maya (DP):** "Visual framing and virtual soundstage cameras are prepped."\n\nWhere would you like to direct the team first?`;
-      }
-
-      return `🏛️ **Studio Executive Round Table:**\n\n**🌟 Showrunner Sterling:** "We have aligned our focus on your directive: '${query}'. This directly informs our narrative roadmap."\n\n**✍️ Devon Wells (Screenwriter):** "I'm adjusting the screenplay dialogue and scene stakes to reflect these exact parameters."\n\n**🎬 CineDirector Maya (DP):** "Visual composition and camera vectors are configured to emphasize these character beats."\n\n**🌟 Showrunner Sterling:** "Would you like us to push these changes into the **01 Plot Room** or continue drafting the scene in **Stage 1 (ScriptBreak)**?"`;
-    }
-
-    // 10. Arise Co-Pilot (Master Assistant)
-    if (isGreeting) {
-      return `Hello! I'm your **Arise Co-Pilot**, standing by across all 14 rooms and 10 production stages of **${projectName}**.\n\nAll systems are powered on and synced. Whether you want to develop the plot, write dialogue, stage camera angles, or dispatch a full pipeline workflow, I'm right here with you. What would you like to create first?`;
-    }
-
-    return `🦅 **Arise Co-Pilot:**\n\nI've processed your directive: "${query}".\n\n### Production Status for "${projectName}":\n- **Writing & Structure:** Screenplay and character arcs are locked and active.\n- **3D Virtual Soundstage:** Previs camera tracks and lighting rigs are calibrated.\n- **Department Assets:** Prompts, storyboard panels, and audio stems are synchronized.\n\nI can dispatch this task across all relevant rooms immediately. Would you like me to proceed?`;
-  };
-
   // Send message to Agent
   const handleSendMessage = async (customPrompt?: string) => {
     const textToSend = customPrompt || inputMessage;
@@ -295,7 +185,7 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
           systemPrompt: currentAgent.systemPrompt,
           projectId,
         }),
-      }).then((r) => r.json()).catch(() => null);
+      }).then((r) => r.json()).catch((e) => ({ success: false, error: e.message || 'Fetch failed' }));
 
       if (res && res.success && res.assistantMessage && res.assistantMessage.content) {
         if (res.actions && res.actions.length > 0) {
@@ -319,28 +209,27 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
           return [...filtered, res.userMessage, res.assistantMessage];
         });
       } else {
-        const fallbackReply = getDepartmentalFallbackResponse(currentAgent, textToSend);
-        const fallbackAssistantMsg: ChatMessage = {
-          id: `ai-${Date.now()}`,
+        const errorContent = res?.error || res?.assistantMessage?.content || 'Unable to get response from AI agent. Please check your NVIDIA NIM connection in Settings.';
+        const errorAssistantMsg: ChatMessage = {
+          id: `err-${Date.now()}`,
           role: 'assistant',
-          content: fallbackReply,
+          content: `⚠️ **AI Agent Notice:** ${errorContent}`,
           agentName: currentAgent.name,
           timestamp: new Date().toISOString(),
-          metadata: { model: 'Llama 3.1 70B (Studio Engine)' },
+          metadata: { model: 'API Notice' },
         };
-        setMessages((prev) => [...prev, fallbackAssistantMsg]);
+        setMessages((prev) => [...prev, errorAssistantMsg]);
       }
     } catch (err: any) {
-      const fallbackReply = getDepartmentalFallbackResponse(currentAgent, textToSend);
-      const fallbackAssistantMsg: ChatMessage = {
-        id: `ai-${Date.now()}`,
+      const errorAssistantMsg: ChatMessage = {
+        id: `err-${Date.now()}`,
         role: 'assistant',
-        content: fallbackReply,
+        content: `⚠️ **Network Error:** ${err.message || 'Failed to reach Arise backend.'}`,
         agentName: currentAgent.name,
         timestamp: new Date().toISOString(),
-        metadata: { model: 'Llama 3.1 70B (Studio Engine)' },
+        metadata: { model: 'Network Error' },
       };
-      setMessages((prev) => [...prev, fallbackAssistantMsg]);
+      setMessages((prev) => [...prev, errorAssistantMsg]);
     } finally {
       setIsLoading(false);
     }

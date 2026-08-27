@@ -172,7 +172,7 @@ export async function runAgent(options = {}) {
         });
         conversation.push({
           role: 'user',
-          content: `[Tool Execution Result for ${toolName}]: ${JSON.stringify(toolResult)}\n\nNow, provide a direct, natural, conversational response to the Producer discussing the characters, story development, and next steps in natural English. Do not output raw JSON.`,
+          content: `[Tool Execution Result for "${toolName}"]: ${JSON.stringify(toolResult)}\n\nPlease proceed and directly address my previous message in your assigned department role using this data. Do not repeat prior canned responses or output raw JSON.`,
         });
 
         result = await nvidia.generateCompletion({

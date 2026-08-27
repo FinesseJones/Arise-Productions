@@ -559,15 +559,15 @@
       "stageId": "script",
       "state": "DONE",
       "statusChar": "🟢",
-      "outputHash": "dir-job-1787850857535",
-      "updated_at": "2026-08-27T17:14:18.001Z",
+      "outputHash": "job-script-1787858830700",
+      "updated_at": "2026-08-27T19:27:14.785Z",
       "telemetry": {
-        "jobId": "dir-job-1787850857535",
+        "jobId": "job-script-1787858830700",
         "worker": "ScriptBreak",
-        "timestamp": "2026-08-27T17:14:18.001Z",
-        "completedAt": "2026-08-27T17:14:18.001Z",
-        "outputSummary": "Screenplay parsed: 3 scenes, 4 characters, 12 dialogue blocks identified.",
-        "aiModel": "meta/llama-3.3-70b-instruct"
+        "timestamp": "2026-08-27T19:27:14.785Z",
+        "completedAt": "2026-08-27T19:27:14.785Z",
+        "outputSummary": "**Scene Breakdown:**\n\n* **Location:** INT. STUDIO SOUNDSTAGE - DAY\n* **Slugline:** Director coordinates with AI camera team.\n* **Dialogue Blocks:** None mentioned, but this scene i",
+        "aiModel": "meta/llama-3.2-11b-vision-instruct"
       }
     },
     {
@@ -4991,7 +4991,17 @@
     }
   ],
   "briefings": [],
-  "activityLog": [],
+  "activityLog": [
+    {
+      "id": "act-1787858834795-vvze",
+      "projectId": "proj-fatherless-child",
+      "type": "stage_run",
+      "summary": "Ran script on shot 1",
+      "stageId": "script",
+      "shotNumber": 1,
+      "timestamp": "2026-08-27T19:27:14.795Z"
+    }
+  ],
   "sessionState": {
     "lastActiveProjectId": "proj-fatherless-child",
     "lastActiveStageId": "script",
@@ -4999,5 +5009,5 @@
     "updated_at": "2026-08-27T17:33:44.719Z"
   },
   "auditLogs": [],
-  "saved_at": "2026-08-27T17:33:44.732Z"
+  "saved_at": "2026-08-27T19:27:14.795Z"
 }
