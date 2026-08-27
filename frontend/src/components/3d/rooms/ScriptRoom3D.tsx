@@ -98,14 +98,38 @@ export const ScriptRoomHolo: React.FC<ScriptRoom3DProps> = ({
         setScreenplay(generateDynamicScript(projectName, shotNumber, shotTitle));
       }
     } catch {}
-  }, [projectName, shotNumber, storageKey, shotTitle]);
 
-  const handleSave = () => {
+    // Fetch master screenplay text from backend API
+    const apiBase = getAPIBaseURL();
+    fetch(`${apiBase}/api/v1/projects/script?projectId=${encodeURIComponent(cleanSlug)}&shotNumber=${shotNumber}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.scriptContent && data.scriptContent.trim().length > 0) {
+          setScreenplay(data.scriptContent);
+          try {
+            localStorage.setItem(storageKey, data.scriptContent);
+          } catch {}
+        }
+      })
+      .catch(() => {});
+  }, [projectName, shotNumber, storageKey, shotTitle, cleanSlug]);
+
+  const handleSave = async () => {
     try {
       localStorage.setItem(storageKey, screenplay);
-      toast.success('💾 Screenplay saved to studio session!');
+      const apiBase = getAPIBaseURL();
+      await fetch(`${apiBase}/api/v1/projects/script`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: cleanSlug,
+          shotNumber,
+          scriptContent: screenplay,
+        }),
+      });
+      toast.success('💾 Screenplay saved to studio session & master database!');
     } catch {
-      toast.error('Failed to save screenplay');
+      toast.error('Saved locally to session');
     }
   };
 

@@ -87,6 +87,54 @@ export function getProjectPlot(projectName: string): ProjectPlotProfile {
     };
   }
 
+  if (pLower.includes('armor')) {
+    return {
+      title: projectName,
+      logline: 'Based on Ephesians 6:11 and Romans 1: An inner-city young man confronted with generational fatherlessness discovers the spiritual armor necessary to stand against principalities and powers.',
+      themes: 'Spiritual protection, biblical manhood, righteous defense, and truth over deceit.',
+      storyTypes: ['Overcoming The Monster', 'Rebirth'],
+      genres: ['Drama', 'Faith', 'Spiritual Warfare'],
+      tone: 'Cinematic, hard-hitting, scripture-anchored realism',
+      audience: 'General Theatrical (PG-13)',
+    };
+  }
+
+  if (pLower.includes('joseph')) {
+    return {
+      title: projectName,
+      logline: 'From betrayal into Egyptian bondage to divine elevation and familial reconciliation: The definitive cinematic journey of Joseph.',
+      themes: 'Providence, divine destiny, forgiveness, and generational preservation.',
+      storyTypes: ['Rags to Riches', "Hero's Journey"],
+      genres: ['Biblical Epic', 'Drama', 'Historical'],
+      tone: 'Epic, emotionally soaring, sacred majesty',
+      audience: 'All Audiences (PG)',
+    };
+  }
+
+  if (pLower.includes('sabbath') || pLower.includes('uncut')) {
+    return {
+      title: projectName,
+      logline: 'Precept upon precept, line upon line: An episodic docuseries unveiling the unadulterated scriptures, prophecies, and ancient covenants.',
+      themes: 'Scripture fidelity, ancient heritage, divine law, and prophetic truth.',
+      storyTypes: ['Voyage & Return', 'Whodunit'],
+      genres: ['Docuseries', 'Episodic', 'Faith'],
+      tone: 'Deeply revelatory, scholarly, profound authority',
+      audience: 'General (PG)',
+    };
+  }
+
+  if (pLower.includes('awakened') || pLower.includes('awakening')) {
+    return {
+      title: projectName,
+      logline: 'A profound journey of spiritual awakening, identity, and standing firm in scripture against unseen worldly pressures.',
+      themes: 'Spiritual identity, awakening from deception, covenant heritage, and courage.',
+      storyTypes: ["Hero's Journey", 'Rebirth'],
+      genres: ['Drama', 'Spiritual Thriller', 'Faith'],
+      tone: 'Provocative, urgent, illuminating realism',
+      audience: 'General Theatrical (PG-13)',
+    };
+  }
+
   // Dynamic Generator for any custom project
   return {
     title: projectName || 'New Studio Production',
@@ -487,6 +535,71 @@ PATEL (over encrypted earpiece)
 Maya inserts the encrypted data drive. A progress bar ticks rapidly: 42%... 78%... 100%.
 
 RED EMERGENCY LIGHTS STROBE SUDDENLY.
+
+CUT TO:`;
+  }
+
+  if (pLower.includes('armor')) {
+    return `EXT. URBAN FOUNDRY PORCH - MORNING (EPISODE 1)
+
+Sunlight cuts through amber industrial haze. DEVON (19, resolute, wearing work boots and a weathered coat) tightens his toolbelt.
+
+MARCUS (40s, foundry mentor, holding a worn Bible opened to Ephesians 6)
+(calm, commanding authority)
+"Finally, my brethren, be strong in the Lord, and in the power of his might. Put on the whole armor of God, that ye may be able to stand against the wiles of the devil."
+
+DEVON
+(looking out across the city skyline)
+"They tore down my father's shop. They think without a foundation, we fall."
+
+MARCUS
+(placing a steady hand on Devon's shoulder)
+"For we wrestle not against flesh and blood, Devon, but against principalities, against powers, against the rulers of the darkness of this world. Stand therefore, having your loins girt about with truth."
+
+DEVON
+"And the breastplate of righteousness."
+
+DEVON takes a deep breath, grips his scriptural notebook, and steps into the city.
+
+CUT TO:`;
+  }
+
+  if (pLower.includes('joseph')) {
+    return `EXT. CANAANITE WILDERNESS - DAY
+
+Golden desert heat shimmers across the plains. JOSEPH (17, dressed in a tunic of many vibrant colors) stands beside his father ISRAEL.
+
+ISRAEL
+"Thy brethren feed the flock in Shechem: come, and I will send thee unto them."
+
+JOSEPH
+"Here am I, my father."
+
+JOSEPH journeys across the rugged valley toward the hills of Dothan. In the distance, his brothers watch his approach, their faces darkened with envy.
+
+JUDAH
+(watching the silhouette on the horizon)
+"Behold, this dreamer cometh."
+
+JOSEPH approaches with open arms, unaware of the pit awaiting him.
+
+CUT TO:`;
+  }
+
+  if (pLower.includes('sabbath') || pLower.includes('uncut')) {
+    return `INT. TACF BIBLE STUDY HALL - EVENING
+
+A large oak conference table covered with Hebrew and Greek lexicons, ancient maps of the Levant, and canonical scripture scrolls.
+
+THE TEACHER (authoritative, pointing to Isaiah 28:10 on the board)
+"For precept must be upon precept, precept upon precept; line upon line, line upon line; here a little, and there a little."
+
+STUDENTS take notes as historical manuscripts illuminate on the holographic projection wall.
+
+THE TEACHER
+"We do not teach the traditions of men. We open the sacred records from Genesis to Revelation, letting the Word interpret the Word."
+
+A spotlight illuminates the ancient Torah parchment.
 
 CUT TO:`;
   }
