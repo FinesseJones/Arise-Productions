@@ -688,7 +688,9 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             {mainView === 'ideas' && (
               <IdeaRoom
                 onPromoteToProject={(newPid, newName) => {
-                  if (onChangeProject) onChangeProject();
+                  if (onSelectProject) {
+                    onSelectProject(newPid, newName);
+                  }
                   setMainView('stage');
                   onStageSelect('script');
                 }}

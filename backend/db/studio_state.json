@@ -125,6 +125,15 @@
       "version": 1,
       "created_at": "2026-08-27T01:53:01.848Z",
       "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf",
+      "name": "YouTube: rOTXfP4EG_0 Production",
+      "slug": "proj-mtb1edgu-glaf",
+      "format": "long_form",
+      "version": 1,
+      "created_at": "2026-08-27T04:43:01.062Z",
+      "updated_at": "2026-08-27T04:43:01.062Z"
     }
   ],
   "shots": [
@@ -505,6 +514,42 @@
       "description": "Climax for Shadow Protocol",
       "durationFrames": 120,
       "created_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1",
+      "projectId": "proj-mtb1edgu-glaf",
+      "shotNumber": 1,
+      "title": "Act I: YouTube: rOTXfP4EG_0 Production - World Establishment",
+      "description": "Cinematic world-building and introduction to the world of \"YouTube: rOTXfP4EG_0 Production\".",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2",
+      "projectId": "proj-mtb1edgu-glaf",
+      "shotNumber": 2,
+      "title": "Act II-A: Rising Stakes & Threshold Crossing",
+      "description": "Rising stakes, trials, new allies, and entering the danger zone.",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3",
+      "projectId": "proj-mtb1edgu-glaf",
+      "shotNumber": 3,
+      "title": "Act II-B: Crisis & The Dark Night",
+      "description": "Major obstacle, personal sacrifice, and dramatic turning point.",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4",
+      "projectId": "proj-mtb1edgu-glaf",
+      "shotNumber": 4,
+      "title": "Act III: Final Climax & Resolution",
+      "description": "Epic confrontation, emotional resolution, and triumphant finish.",
+      "durationFrames": 120,
+      "created_at": "2026-08-27T04:43:01.062Z"
     }
   ],
   "statuses": [
@@ -4287,6 +4332,366 @@
       "statusChar": "🟢",
       "outputHash": "hash-edit-3",
       "updated_at": "2026-08-27T01:53:01.848Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:script",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:structure",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:plan",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:previs",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:motion",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:boards",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:prompt",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:dailies",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:sound",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-1:edit",
+      "shotId": "proj-mtb1edgu-glaf-shot-1",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-1",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:script",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:structure",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:plan",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:previs",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:motion",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:boards",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:prompt",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:dailies",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:sound",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-2:edit",
+      "shotId": "proj-mtb1edgu-glaf-shot-2",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-2",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:script",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:structure",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:plan",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:previs",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:motion",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:boards",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:prompt",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:dailies",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:sound",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-3:edit",
+      "shotId": "proj-mtb1edgu-glaf-shot-3",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-3",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:script",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "script",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-script-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:structure",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "structure",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-structure-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:plan",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "plan",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-plan-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:previs",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "previs",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-previs-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:motion",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "motion",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-motion-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:boards",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "boards",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-boards-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:prompt",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "prompt",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-prompt-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:dailies",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "dailies",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-dailies-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:sound",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "sound",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-sound-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
+    },
+    {
+      "id": "proj-mtb1edgu-glaf-shot-4:edit",
+      "shotId": "proj-mtb1edgu-glaf-shot-4",
+      "stageId": "edit",
+      "state": "DONE",
+      "statusChar": "🟢",
+      "outputHash": "hash-edit-4",
+      "updated_at": "2026-08-27T04:43:01.062Z"
     }
   ],
   "scripts": [
@@ -4566,11 +4971,11 @@
     }
   ],
   "sessionState": {
-    "lastActiveProjectId": "proj-shadow-protocol",
+    "lastActiveProjectId": "proj-mtb1edgu-glaf",
     "lastActiveStageId": "script",
     "lastActiveView": "stage",
     "updated_at": "2026-08-27T01:47:04.176Z"
   },
   "auditLogs": [],
-  "saved_at": "2026-08-27T02:10:20.844Z"
+  "saved_at": "2026-08-27T04:43:01.062Z"
 }
