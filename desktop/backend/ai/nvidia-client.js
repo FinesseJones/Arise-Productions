@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DEFAULT_NVIDIA_KEY = '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';
+const DEFAULT_NVIDIA_KEY = '';
 
 // Helper to auto-read .env from multiple search locations
 function loadEnvKey() {
@@ -50,10 +50,11 @@ export class NvidiaNIMClient {
   constructor(apiKey = loadEnvKey()) {
     this.apiKey = apiKey || loadEnvKey();
     this.baseUrl = 'https://integrate.api.nvidia.com';
-    this.defaultModel = 'meta/llama-3.2-11b-vision-instruct';
+    this.defaultModel = 'meta/llama-3.3-70b-instruct';
     this.availableModels = [
-      { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct (Default)', description: 'Fast, high-fidelity multimodal parsing, screenplay logic, and tool execution' },
-      { id: 'meta/llama-3.2-90b-vision-instruct', name: 'Llama 3.2 90B Vision Instruct', description: 'Visual multimodal parsing for shot references and storyboard frames' },
+      { id: 'meta/llama-3.3-70b-instruct', name: 'Llama 3.3 70B Instruct (Flagship)', description: 'Industry-leading flagship for deep screenplay narrative, character development, and complex tool execution' },
+      { id: 'meta/llama-3.1-70b-instruct', name: 'Llama 3.1 70B Instruct', description: 'Deep reasoning, rich dialogue, and production pipeline execution' },
+      { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct', description: 'Fast, high-fidelity multimodal parsing, screenplay logic, and visual analysis' },
       { id: 'mistralai/mistral-7b-instruct-v0.3', name: 'Mistral 7B Instruct v0.3', description: 'Fast European powerhouse for screenplay beats and dialogue' },
       { id: 'deepseek-ai/deepseek-v4-flash-0731', name: 'DeepSeek V4 Flash', description: 'Ultra-fast sub-second generation for real-time live script brainstorming' },
     ];
@@ -97,11 +98,12 @@ export class NvidiaNIMClient {
   }
 
   getStatus() {
-    const isCustom = !!this.apiKey && this.apiKey.startsWith('nvapi-');
+    const hasKey = this.hasApiKey();
+    const isCustom = hasKey && !this.apiKey.includes('arise');
     return {
-      hasKey: true,
-      isOperational: true,
-      maskedKey: isCustom ? `${this.apiKey.slice(0, 10)}...${this.apiKey.slice(-4)}` : 'nvapi-arise-studio-active',
+      hasKey,
+      isOperational: hasKey,
+      maskedKey: hasKey ? (isCustom ? `${this.apiKey.slice(0, 10)}...${this.apiKey.slice(-4)}` : 'configured') : 'None',
       defaultModel: this.defaultModel,
       availableModels: this.availableModels,
     };
