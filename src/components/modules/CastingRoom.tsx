@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getAPIBaseURL } from "@/lib/api";
 
 // Types for casting data
 interface CastingProfile {
@@ -59,11 +60,12 @@ export default function CastingRoom() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/casting/analyze', {
+      const apiBase = getAPIBaseURL();
+      const response = await fetch(`${apiBase}/casting/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          character_name: characterName || 'Devon (Lead Protagonist)',
+          character_name: characterName || 'Lead Protagonist',
           project_type: projectType,
           budget_range: budgetRange,
           analysis_type: activeTab,
@@ -78,69 +80,14 @@ export default function CastingRoom() {
           return;
         }
       }
-    } catch (err) {
-      console.warn('[CastingRoom] Backend analysis fallback:', err);
+      const errJson = await response.json().catch(() => ({}));
+      toast.error(`⚠️ Casting analysis failed: ${errJson.error || 'Failed to connect to AI engine'}`);
+    } catch (err: any) {
+      console.error('[CastingRoom] Backend analysis error:', err);
+      toast.error(`⚠️ Casting analysis failed: ${err.message || 'API connection error'}`);
+    } finally {
+      setLoading(false);
     }
-
-    // Dynamic High-Fidelity Character Analysis Fallback
-    const targetName = characterName || "Devon (Lead Protagonist)";
-    const realisticAnalysis = {
-      casting: {
-        character_name: targetName,
-        age_range: "19-24",
-        physical_description: "Expressive, thoughtful demeanor with an intense emotional presence. Grounded posture carrying quiet strength.",
-        personality_traits: ["Resilient", "Introspective", "Artistic", "Determined", "Protective"],
-        key_scenes: [
-          "Opening monologue on the porch confronting childhood memories",
-          "Emotional confrontation with family mentor over legacy and independence",
-          "Climactic breakthrough choosing self-worth and purpose"
-        ],
-        suggested_actors: [
-          "Nuanced dramatic actor with deep emotional vulnerability",
-          "Expressive theater-trained lead with authentic charisma",
-          "Grounded naturalistic performer"
-        ],
-        casting_notes: `Cast an actor who can embody ${targetName}'s resilience and subtle emotional complexity without melodrama.`
-      },
-      budget: {
-        total_estimated_cost: "$1.8M",
-        breakdown: {
-          cast: "$620K",
-          crew: "$510K",
-          equipment: "$320K",
-          post_production: "$240K",
-          miscellaneous: "$110K"
-        },
-        savings_opportunities: [
-          "Leverage natural ambient neighborhood lighting for authentic atmosphere",
-          "Optimize soundstage studio shooting schedule to reduce rental days"
-        ],
-        risk_factors: [
-          "Emotional scene pacing requiring adequate rehearsal time",
-          "Multi-location day-to-night transitions"
-        ]
-      },
-      schedule: {
-        total_production_days: 35,
-        pre_production: "6 weeks",
-        principal_photography: "5 weeks",
-        post_production: "8 weeks",
-        key_milestones: [
-          "Script & Character Polish: Week 2",
-          "Cast Chemistry Read & Lock: Week 4",
-          "Principal Soundstage & Location Shooting: Weeks 7-11",
-          "DaVinci 4K Grade & Dolby Atmos Mix: Weeks 14-19"
-        ],
-        critical_path: [
-          "Lead actor emotional resonance",
-          "Spatial audio scoring conform",
-          "ACEScc color palette calibration"
-        ]
-      }
-    };
-
-    setResult(realisticAnalysis[activeTab]);
-    setLoading(false);
   };
 
   const renderCastingResults = (data: CastingProfile) => (

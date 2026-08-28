@@ -1,6 +1,9 @@
+import React, { useState } from 'react';
 import { Sparkles, Info, AlertCircle, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAPIBaseURL } from '../lib/api';
+
+import { getProjectActs, getProjectPlot } from '../lib/projectData';
 
 export type GenerateFieldProps = {
   label: string;
@@ -33,6 +36,49 @@ export function GenerateField({
   const [error, setError] = useState<string | null>(null);
   const [lastGenerated, setLastGenerated] = useState<boolean>(false);
 
+  // Extract project name from context string
+  const extractProjectName = (): string => {
+    if (!context) return 'Production';
+    const match = context.match(/Project:\s*([^\n,]+)/i) || context.match(/Active Project:\s*([^\n,]+)/i);
+    if (match && match[1]) return match[1].trim();
+    return context.replace(/Studio Department:.*$/i, '').trim() || 'Production';
+  };
+
+  const getFallbackText = (): string => {
+    const proj = extractProjectName();
+    const lLower = label.toLowerCase();
+
+    if (lLower.includes('teaser') || lLower.includes('cold open')) {
+      return getProjectActs(proj).teaser;
+    }
+    if (lLower.includes('act 1')) {
+      return getProjectActs(proj).act1;
+    }
+    if (lLower.includes('act 2a')) {
+      return getProjectActs(proj).act2A;
+    }
+    if (lLower.includes('act 2b')) {
+      return getProjectActs(proj).act2B;
+    }
+    if (lLower.includes('act 3')) {
+      return getProjectActs(proj).act3;
+    }
+    if (lLower.includes('logline')) {
+      return getProjectPlot(proj).logline;
+    }
+    if (lLower.includes('theme')) {
+      return getProjectPlot(proj).themes;
+    }
+    if (lLower.includes('tone')) {
+      return getProjectPlot(proj).tone;
+    }
+    if (lLower.includes('audience')) {
+      return getProjectPlot(proj).audience;
+    }
+
+    return `Cinematic, elevated ${label} crafted for "${proj}". High emotional stakes, rigorous narrative progression, and distinct visual atmosphere.`;
+  };
+
   async function handleGenerate() {
     setLoading(true);
     setError(null);
@@ -40,9 +86,13 @@ export function GenerateField({
 
     try {
       const apiBase = getAPIBaseURL();
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
       const res = await fetch(`${apiBase}/api/v1/nvidia/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           message: `Generate the "${label}" for this film/production project. Instructions/Placeholder: "${placeholder ?? ''}". ${
             value ? `Current draft to refine and elevate: "${value}"` : ''
@@ -50,9 +100,19 @@ export function GenerateField({
           roomName,
           role,
           stageId,
-          context: context || `Active Project: A Fatherless Child | Department: ${roomName}`,
+          context: context || `Studio Department: ${roomName}`,
         }),
       });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Non-JSON response');
+      }
 
       const data = await res.json();
       if (!data.success) {
@@ -60,13 +120,16 @@ export function GenerateField({
       }
 
       const generatedText = (data.text || data.reply || '').replace(/^"|"$/g, '').trim();
-      onChange(generatedText);
-      setLastGenerated(true);
-      toast.success(`✨ Generated ${label}!`);
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : 'Something went wrong';
-      setError(errMsg);
-      toast.error(`Failed to generate ${label}: ${errMsg}`);
+      if (generatedText) {
+        onChange(generatedText);
+        setLastGenerated(true);
+        toast.success(`✨ Generated ${label}!`);
+      } else {
+        throw new Error(data.error || 'Empty response from AI engine');
+      }
+    } catch (err: any) {
+      console.error(`[GenerateField] Failed to generate ${label}:`, err);
+      toast.error(`⚠️ Generation failed: ${err.message || 'API connection error'}`);
     } finally {
       setLoading(false);
     }

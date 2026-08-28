@@ -65,7 +65,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
       timestamp: 'Today, 2:45 PM',
       author: 'Screenwriter AI (NVIDIA NIM)',
       status: 'Locked',
-      preview: `EXT. ${projectStatus.projectName.toUpperCase()} - SCENE 1\n${projectStatus.shots?.[0]?.description || `The opening world of ${projectStatus.projectName} unfolds with full visual scope and character setup.`}`,
+      preview: `EXT. ${(projectStatus?.projectName || "PRODUCTION").toUpperCase()} - SCENE 1\n${projectStatus.shots?.[0]?.description || `The opening world of ${projectStatus.projectName} unfolds with full visual scope and character setup.`}`,
     },
     {
       id: 'art-002',
@@ -109,7 +109,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
       timestamp: 'Today, 4:40 PM',
       author: 'OpenMontage & Editorial AI',
       status: 'Conformed',
-      preview: `001  AX       V     C        00:00:00:00 00:00:08:12 00:00:00:00 00:00:08:12\n* FROM CLIP NAME: ${cleanSlug.toUpperCase()}_SHOT01_TAKE03`,
+      preview: `001  AX       V     C        00:00:00:00 00:00:08:12 00:00:00:00 00:00:08:12\n* FROM CLIP NAME: ${(cleanSlug || "SLUG").toUpperCase()}_SHOT01_TAKE03`,
     },
     {
       id: 'art-006',
@@ -125,6 +125,25 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
   ]);
 
   // Live generation action log history
+  const [formatFilter, setFormatFilter] = useState<'all' | 'feature_film' | 'short_form' | 'tv_series'>('all');
+  const [liveAssets, setLiveAssets] = useState<any[]>([]);
+
+  // Fetch real assets from backend
+  const loadLiveAssets = async () => {
+    try {
+      const apiBase = getAPIBaseURL();
+      const url = formatFilter === 'all' ? `${apiBase}/api/v1/assets` : `${apiBase}/api/v1/assets?format=${formatFilter}`;
+      const res = await fetch(url).then((r) => r.json());
+      if (res && res.success && Array.isArray(res.assets)) {
+        setLiveAssets(res.assets);
+      }
+    } catch (e) {}
+  };
+
+  React.useEffect(() => {
+    loadLiveAssets();
+  }, [formatFilter]);
+
   const [historyLogs, setHistoryLogs] = useState([
     { time: '19:33:11', dept: 'System', text: 'WebSocket connected to Central API Bridge (:4000/ws)' },
     { time: '19:33:10', dept: 'System', text: 'Live File Watcher initialized on storage/watch_folder' },
@@ -143,29 +162,60 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
       let dept = 'General Production';
       let docType = 'Production Artifact';
 
-      if (['fountain', 'fdx', 'pdf', 'txt'].includes(ext)) {
+      if (['fountain', 'fdx', 'pdf', 'txt', 'docx'].includes(ext)) {
         dept = 'Screenwriting';
         docType = ext === 'fountain' ? 'Screenplay (.fountain)' : 'Script Document';
       } else if (['edl', 'xml', 'fcpxml'].includes(ext)) {
         dept = 'Editorial & Conform';
         docType = 'DaVinci Timeline EDL';
-      } else if (['cube', 'look'].includes(ext)) {
+      } else if (['cube', 'look', 'cdl'].includes(ext)) {
         dept = 'Color & Mastering';
         docType = '3D 33-point Color LUT';
-      } else if (['wav', 'mp3', 'flac', 'aac'].includes(ext)) {
+      } else if (['wav', 'mp3', 'flac', 'aac', 'm4a', 'ogg', 'aiff'].includes(ext)) {
         dept = 'Sound & Scoring';
         docType = 'Audio Stem Track';
-      } else if (['png', 'jpg', 'jpeg', 'webp', 'exr'].includes(ext)) {
+      } else if (['png', 'jpg', 'jpeg', 'webp', 'exr', 'hdr', 'tiff', 'svg'].includes(ext)) {
         dept = 'Generative Prompt & Style';
         docType = 'Visual Reference Texture';
-      } else if (['json', 'fbx', 'obj', 'usd', 'usda'].includes(ext)) {
+      } else if (['mp4', 'mov', 'mkv', 'avi', 'webm', 'braw', 'prores'].includes(ext)) {
         dept = 'Virtual Cinematography';
-        docType = '3D Spatial Camera Manifest';
+        docType = '4K Video Master / Camera RAW';
+      } else if (['json', 'fbx', 'obj', 'usd', 'usda', 'usdz', 'gltf', 'glb', 'blend', 'abc'].includes(ext)) {
+        dept = 'Virtual Cinematography';
+        docType = '3D Spatial Asset / Model Rig';
       }
 
       const sizeStr = file.size > 1024 * 1024
         ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
         : `${Math.round(file.size / 1024)} KB`;
+
+      // Read base64 to send to backend asset storage
+      const b64Reader = new FileReader();
+      b64Reader.onload = async (ev) => {
+        const fileData = ev.target?.result as string;
+        try {
+          const apiBase = getAPIBaseURL();
+          await fetch(`${apiBase}/api/v1/assets/upload`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: file.name,
+              projectId: cleanSlug,
+              format: formatFilter === 'all' ? 'feature_film' : formatFilter,
+              category: dept.toLowerCase().includes('script') ? 'script' : dept.toLowerCase().includes('sound') ? 'audio' : dept.toLowerCase().includes('character') ? 'character' : dept.toLowerCase().includes('color') ? 'color_lut' : dept.toLowerCase().includes('cine') ? 'video' : 'environment',
+              assetType: ['wav', 'mp3', 'flac', 'aac', 'm4a'].includes(ext) ? 'audio' : ['mp4', 'mov', 'braw', 'prores', 'mkv'].includes(ext) ? 'video' : ['cube', 'look'].includes(ext) ? 'lut' : ['fountain', 'txt', 'pdf', 'fdx'].includes(ext) ? 'script' : ['obj', 'fbx', 'gltf', 'glb', 'blend', 'usd'].includes(ext) ? 'model3d' : 'image',
+              fileData,
+              filename: file.name,
+              uploaded_by: 'Creator (You)',
+            }),
+          });
+          toast.success(`✅ Successfully vaulted ${file.name} (${sizeStr})`);
+          loadLiveAssets();
+        } catch (e) {
+          console.warn('Asset upload error:', e);
+        }
+      };
+      b64Reader.readAsDataURL(file);
 
       // Read text if it's a screenplay / data file
       if (['fountain', 'txt', 'json', 'edl'].includes(ext)) {
@@ -173,7 +223,6 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
         reader.onload = (e) => {
           const text = e.target?.result as string;
           if (text) {
-            // If screenplay, save to script cache & backend
             if (ext === 'fountain' || ext === 'txt') {
               try {
                 localStorage.setItem(`arise_script_${cleanSlug}_shot_1`, text);
@@ -203,7 +252,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
         timestamp: 'Just now',
         author: 'User Ingested (Master Vault)',
         status: 'Synchronized',
-        preview: `Ingested document: ${file.name} | Calibrated for ${dept} pipeline in production ${projectStatus.projectName}.`,
+        preview: `Ingested document: ${file.name} | Stored in backend storage/assets/ for production ${projectStatus.projectName}.`,
       };
 
       setVaultItems((prev) => [newItem, ...prev]);
@@ -213,12 +262,12 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
         {
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
           dept: dept.split(' ')[0],
-          text: `Ingested & Synchronized "${file.name}" to ${dept}`,
+          text: `Ingested & Synchronized "${file.name}" to ${dept} storage vault`,
         },
         ...prev,
       ]);
 
-      toast.success(`✨ INGESTED: "${file.name}" synced with ${dept}!`, { duration: 4000 });
+      toast.success(`💾 "${file.name}" stored in Asset Vault & synchronized!`, { icon: '📦', duration: 4000 });
     });
   };
 
@@ -284,10 +333,10 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
         <div className="flex items-center space-x-3">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-black text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/20"
+            className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-black font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/25"
           >
-            <UploadCloud size={15} />
-            <span>Upload Document</span>
+            <UploadCloud size={16} />
+            <span>⚡ Upload Any Asset Format</span>
           </button>
           <input
             ref={fileInputRef}
@@ -295,7 +344,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
             multiple
             onChange={(e) => handleFilesIngested(e.target.files)}
             className="hidden"
-            accept=".fountain,.fdx,.pdf,.json,.wav,.mp3,.cube,.edl,.xml,.png,.jpg,.jpeg,.txt"
+            accept="*/*"
           />
 
           <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
@@ -334,7 +383,7 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
               className={`border-2 border-dashed rounded-3xl p-6 sm:p-8 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-3 relative overflow-hidden backdrop-blur-md ${
                 isDragging
                   ? 'border-amber-400 bg-amber-500/15 scale-[1.01] shadow-2xl shadow-amber-500/30'
-                  : 'border-purple-800/60 bg-[#140e2e]/60 hover:bg-[#140e2e]/90 hover:border-amber-500/50 shadow-xl'
+                  : 'border-amber-500/40 bg-[#140e2e]/70 hover:bg-[#140e2e]/95 hover:border-amber-400 shadow-xl'
               }`}
             >
               <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-lg shadow-amber-500/20">
@@ -342,29 +391,35 @@ export const DataVaultAndHistory: React.FC<DataVaultProps> = ({ projectStatus })
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-100 tracking-wide">
-                  Drag & Drop Any Production Document Here, or <span className="text-amber-400 underline">Browse Files</span>
+                  Drag & Drop <strong className="text-amber-300">ANY Media or Asset Format</strong> Here, or <span className="text-amber-400 underline">Browse Files</span>
                 </h3>
-                <p className="text-xs text-slate-400 mt-1 max-w-xl mx-auto">
-                  Automatically parses and synchronizes to your 10 AI departments. Supported formats:
+                <p className="text-xs text-slate-400 mt-1 max-w-2xl mx-auto">
+                  Automatically parses and registers into your 16 AI departments and persistent disk storage. Fully supports all major Hollywood file standards:
                 </p>
               </div>
 
               {/* Supported Format Pills */}
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1 font-mono text-[10px]">
-                <span className="px-2.5 py-1 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60">
-                  📝 .fountain / .fdx (Screenplay)
-                </span>
-                <span className="px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-800/60">
-                  🎬 .edl / .xml (Timeline Cuts)
-                </span>
-                <span className="px-2.5 py-1 rounded-full bg-rose-950/80 text-rose-300 border border-rose-800/60">
-                  🎨 .cube (3D Color LUT)
+                <span className="px-2.5 py-1 rounded-full bg-red-950/80 text-red-300 border border-red-800/60">
+                  🎬 Video: .mp4 / .mov / .mkv / .braw / .prores
                 </span>
                 <span className="px-2.5 py-1 rounded-full bg-teal-950/80 text-teal-300 border border-teal-800/60">
-                  🎙️ .wav / .mp3 (Audio & Voice)
+                  🎙️ Audio: .wav / .mp3 / .flac / .aac / .m4a / stems
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-indigo-950/80 text-indigo-300 border border-indigo-800/60">
+                  🖼️ Images: .png / .jpg / .webp / .exr / textures
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60">
+                  📝 Screenplay: .fountain / .fdx / .pdf / .txt / .docx
                 </span>
                 <span className="px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
-                  🎥 .json / .fbx (Camera & 3D)
+                  🧊 3D Models: .obj / .fbx / .gltf / .glb / .usd / .blend
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-rose-950/80 text-rose-300 border border-rose-800/60">
+                  🎨 Color LUT: .cube / .look / .cdl
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-800/60">
+                  🎞️ Timelines: .edl / .xml / .fcpxml
                 </span>
               </div>
             </div>

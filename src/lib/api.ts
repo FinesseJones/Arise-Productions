@@ -7,13 +7,18 @@ export const getAPIBaseURL = (): string => {
   if (typeof window !== 'undefined') {
     const envUrl = (import.meta as any).env?.VITE_API_URL || (import.meta as any).env?.VITE_API_BASE;
     if (envUrl) return envUrl;
+
     if (window.location.protocol.startsWith('http')) {
-      // If developing with Vite dev server port 5002/5003, point to backend on 4000
-      if (window.location.port === '5002' || window.location.port === '5003') {
-        return `${window.location.protocol}//${window.location.hostname}:4000`;
+      const hostname = window.location.hostname || 'localhost';
+      const port = window.location.port;
+
+      // If running directly on backend port 4000 or on standard web ports 80/443 (e.g. deployed VPS domain)
+      if (port === '4000' || port === '' || port === '80' || port === '443') {
+        return window.location.origin;
       }
-      // Production VPS / Custom Domain / Docker container: same origin
-      return window.location.origin;
+
+      // If developing on Vite/Next dev server (5173, 5002, 5003, 3000, etc.), route to backend on 4000
+      return `${window.location.protocol}//${hostname}:4000`;
     }
   }
   return 'http://localhost:4000';
@@ -23,12 +28,17 @@ export const getWSBaseURL = (): string => {
   if (typeof window !== 'undefined') {
     const envWs = (import.meta as any).env?.VITE_WS_URL;
     if (envWs) return envWs;
+
     if (window.location.protocol.startsWith('http')) {
       const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      if (window.location.port === '5002' || window.location.port === '5003') {
-        return `${proto}//${window.location.hostname}:4000/ws`;
+      const hostname = window.location.hostname || 'localhost';
+      const port = window.location.port;
+
+      if (port === '4000' || port === '' || port === '80' || port === '443') {
+        return `${proto}//${window.location.host}/ws`;
       }
-      return `${proto}//${window.location.host}/ws`;
+
+      return `${proto}//${hostname}:4000/ws`;
     }
   }
   return 'ws://localhost:4000/ws';
