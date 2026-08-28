@@ -1,46 +1,148 @@
 'use client';
-import React, { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useMemo } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { StageKey } from '../../types/types';
 import { roomKits } from './roomKits';
+import HeroProps from './HeroProps';
 
-// Guaranteed baseline test cube & floor
-const LitHeroCube: React.FC<{ accent: string }> = ({ accent }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+// Target Camera Positions & LookAt Targets for each of the Stages
+const STAGE_CAMERA_VANTAGE: Record<
+  string,
+  { position: [number, number, number]; target: [number, number, number]; fov: number }
+> = {
+  script: { position: [0, 1.2, 5.8], target: [0, 0, 0], fov: 50 },
+  structure: { position: [-1.8, 1.6, 6.2], target: [-0.4, 0.2, 0], fov: 52 },
+  plan: { position: [1.4, 2.2, 5.6], target: [0.2, 0.4, 0], fov: 48 },
+  previs: { position: [0, 0.8, 4.6], target: [0, 0.1, 0], fov: 45 },
+  motion: { position: [2.2, 1.4, 5.5], target: [0.4, 0, 0], fov: 50 },
+  boards: { position: [-1.5, 1.0, 6.0], target: [-0.3, 0.1, 0], fov: 52 },
+  prompt: { position: [0, 1.8, 5.2], target: [0, 0.3, 0], fov: 48 },
+  dailies: { position: [0, 0.5, 5.8], target: [0, 0.1, 0], fov: 50 },
+  sound: { position: [-1.2, 1.5, 5.4], target: [-0.2, 0.3, 0], fov: 48 },
+  audio: { position: [-1.2, 1.5, 5.4], target: [-0.2, 0.3, 0], fov: 48 },
+  edit: { position: [1.2, 1.1, 5.2], target: [0.3, 0.2, 0], fov: 48 },
+};
 
-  useFrame((_, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += delta * 0.6;
-      meshRef.current.rotation.y += delta * 0.9;
+// Smooth Fly-To CineCamera Controller with Interactive Mouse Parallax
+const CineCameraController: React.FC<{
+  stageId: string;
+  shotNumber: number;
+  allowOrbit?: boolean;
+}> = ({ stageId, shotNumber, allowOrbit = false }) => {
+  const { camera } = useThree();
+  const targetConfig = STAGE_CAMERA_VANTAGE[stageId] || STAGE_CAMERA_VANTAGE.script;
+
+  const baseTargetPos = useMemo(() => {
+    const [x, y, z] = targetConfig.position;
+    const shotOffset = ((shotNumber % 3) - 1) * 0.25;
+    return new THREE.Vector3(x + shotOffset, y, z);
+  }, [stageId, shotNumber, targetConfig]);
+
+  const targetLook = useMemo(() => {
+    const [lx, ly, lz] = targetConfig.target;
+    return new THREE.Vector3(lx, ly, lz);
+  }, [targetConfig]);
+
+  const currentLookAt = useRef<THREE.Vector3>(new THREE.Vector3(0, 0, 0));
+
+  useFrame((state, delta) => {
+    if (!allowOrbit) {
+      const mouseX = state.pointer.x * 0.5;
+      const mouseY = state.pointer.y * 0.3;
+
+      const breathX = Math.sin(state.clock.elapsedTime * 0.5) * 0.06;
+      const breathY = Math.cos(state.clock.elapsedTime * 0.7) * 0.04;
+
+      const dynamicTarget = new THREE.Vector3(
+        baseTargetPos.x + mouseX + breathX,
+        baseTargetPos.y + mouseY + breathY,
+        baseTargetPos.z
+      );
+
+      const lerpFactor = Math.min(delta * 3.5, 0.1);
+      camera.position.lerp(dynamicTarget, lerpFactor);
+
+      const dynamicLookAt = new THREE.Vector3(
+        targetLook.x + mouseX * 0.2,
+        targetLook.y + mouseY * 0.15,
+        targetLook.z
+      );
+      currentLookAt.current.lerp(dynamicLookAt, lerpFactor);
+      camera.lookAt(currentLookAt.current);
     }
   });
 
+  return allowOrbit ? (
+    <OrbitControls
+      enableDamping
+      dampingFactor={0.05}
+      maxPolarAngle={Math.PI / 2 + 0.1}
+      minDistance={2}
+      maxDistance={15}
+    />
+  ) : null;
+};
+
+// Dynamic Soundstage Floor with PBR Reflectance
+const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
+  const ringRef1 = useRef<THREE.Mesh>(null);
+  const ringRef2 = useRef<THREE.Mesh>(null);
+  const ringRef3 = useRef<THREE.Mesh>(null);
+
+  const kit = roomKits[stageId] || roomKits.script;
+  const primaryGold = kit.accent || '#f59e0b';
+  const secondaryAmber = '#d97706';
+  const royalPurple = '#7e22ce';
+
+  useFrame((state, delta) => {
+    if (ringRef1.current) ringRef1.current.rotation.z += delta * 0.12;
+    if (ringRef2.current) ringRef2.current.rotation.z -= delta * 0.08;
+    if (ringRef3.current) ringRef3.current.rotation.z += delta * 0.05;
+  });
+
   return (
-    <group position={[0, 0, 0]}>
-      {/* Centered Lit Rotating Cube */}
-      <mesh ref={meshRef} position={[0, 0, 0]}>
-        <boxGeometry args={[1.6, 1.6, 1.6]} />
+    <group position={[0, -2.15, 0]}>
+      {/* Reflective Dark Stage Floor */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[100, 100]} />
         <meshStandardMaterial
-          color={accent || '#f59e0b'}
-          metalness={0.7}
+          color="#04020a"
           roughness={0.25}
-          emissive={accent || '#f59e0b'}
-          emissiveIntensity={0.25}
+          metalness={0.85}
         />
       </mesh>
 
-      {/* Cyber Grid Floor */}
-      <gridHelper args={[30, 30, accent || '#f59e0b', '#2a164d']} position={[0, -1.8, 0]} />
+      {/* Cyber Grid Lines */}
+      <gridHelper
+        args={[80, 80, primaryGold, '#1f103d']}
+        position={[0, 0.01, 0]}
+      />
 
-      {/* Solid Floor Plane */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.81, 0]}>
-        <planeGeometry args={[40, 40]} />
-        <meshStandardMaterial color="#060312" roughness={0.3} metalness={0.6} />
+      {/* Animated Counter-Rotating Rings */}
+      <mesh ref={ringRef1} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[3.6, 3.8, 48]} />
+        <meshBasicMaterial color={primaryGold} transparent opacity={0.65} />
+      </mesh>
+
+      <mesh ref={ringRef2} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[7.4, 7.6, 48]} />
+        <meshBasicMaterial color={secondaryAmber} transparent opacity={0.45} />
+      </mesh>
+
+      <mesh ref={ringRef3} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[11.6, 11.8, 48]} />
+        <meshBasicMaterial color={royalPurple} transparent opacity={0.35} />
       </mesh>
     </group>
   );
+};
+
+const LIGHT: Record<string, { key: string; fill: string }> = {
+  warm: { key: '#fef08a', fill: '#f59e0b' },
+  cool: { key: '#dbeafe', fill: '#06b6d4' },
+  magenta: { key: '#fbcfe8', fill: '#ec4899' },
 };
 
 export interface Room3DProps {
@@ -61,11 +163,12 @@ export const Room3D: React.FC<Room3DProps> = ({
   quality = 'performance',
 }) => {
   const kit = roomKits[stageId] || roomKits.script;
+  const light = LIGHT[kit.lightTemp] || LIGHT.warm;
 
   return (
     <div className="relative w-full h-full min-h-[380px] bg-[#05030a] overflow-hidden rounded-2xl flex items-center justify-center">
       <Canvas
-        camera={{ position: [0, 1.4, 4.8], fov: 50 }}
+        camera={{ position: [0, 1.2, 5.8], fov: 50 }}
         gl={{
           antialias: false,
           powerPreference: 'high-performance',
@@ -75,28 +178,32 @@ export const Room3D: React.FC<Room3DProps> = ({
         }}
         className="w-full h-full"
       >
-        <color attach="background" args={['#070414']} />
-        
-        {/* Simple Standard Lighting with Zero Postprocessing/HDRI Overhead */}
-        <ambientLight intensity={0.9} color="#ffffff" />
-        <directionalLight position={[5, 8, 5]} intensity={1.8} color="#fef08a" />
-        <pointLight position={[-5, 4, 3]} intensity={1.2} color={kit.accent || '#ec4899'} />
-        <pointLight position={[5, -2, -3]} intensity={0.8} color="#06b6d4" />
+        <color attach="background" args={['#060410']} />
 
-        {/* Baseline Rotating Lit Cube */}
-        <LitHeroCube accent={kit.accent} />
+        {/* 3-Point Hollywood Studio Lighting */}
+        <ambientLight intensity={0.65} color="#e9d5ff" />
+        <directionalLight position={[6, 8, 6]} intensity={1.8} color={light.key} />
+        <pointLight position={[-6, 4, 4]} intensity={1.2} color={light.fill} />
+        <pointLight position={[0, 7, -6]} intensity={2.0} color={kit.accent} />
 
-        {allowOrbit && <OrbitControls enableDamping />}
+        {/* Interactive Camera Controller with Mouse Parallax & Orbit */}
+        <CineCameraController stageId={stageId} shotNumber={shotNumber} allowOrbit={allowOrbit} />
+
+        {/* 3D Soundstage Floor */}
+        <DynamicSoundstageFloor stageId={stageId} />
+
+        {/* Real Grounded Hero Props from Kit */}
+        <HeroProps kit={kit} />
       </Canvas>
 
       {/* 4K 60FPS Spatial Soundstage Watermark */}
       <div className="absolute bottom-3 left-3 z-10 pointer-events-none flex items-center space-x-2 bg-[#090518]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/40 text-[10px] font-mono text-amber-200 shadow-lg">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400" />
-        <span className="font-bold">BASELINE 3D ENGINE ACTIVE</span>
+        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-sm shadow-amber-400" />
+        <span className="font-bold">ARISE 4K UHD</span>
         <span className="text-purple-400">•</span>
         <span className="text-amber-300 font-semibold">{kit.label.toUpperCase()}</span>
         <span className="text-purple-400">•</span>
-        <span className="text-slate-400 font-mono">[LIT CUBE TEST]</span>
+        <span className="text-slate-400 font-mono">[STAGE 1: PROPS & LIGHTS]</span>
       </div>
     </div>
   );
