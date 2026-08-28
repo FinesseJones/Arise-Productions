@@ -244,6 +244,26 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
               } catch {}
             }
             if (isMounted) setMessages(parsed);
+
+            // Auto-migrate local history to server DB
+            try {
+              fetch(`${apiBase}/api/v1/projects/chat/sync`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  projectId: projectName,
+                  stageId,
+                  messages: parsed.map((m: any) => ({
+                    role: (m.sender === 'user' || m.role === 'user') ? 'user' : 'assistant',
+                    content: m.text || m.content || '',
+                    timestamp: m.timestamp,
+                    model: m.model,
+                    actions: m.actions,
+                  })),
+                }),
+              }).catch(() => {});
+            } catch {}
+
             return;
           }
         }

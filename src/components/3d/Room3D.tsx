@@ -1,11 +1,29 @@
 'use client';
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, Suspense, Component, type ReactNode } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Environment, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { StageKey } from '../../types/types';
 import { roomKits } from './roomKits';
 import HeroProps from './HeroProps';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+
+// --- Step 4: HDRI fallback helpers ---
+function ProceduralLightingFallback() {
+  return (<>
+    <ambientLight intensity={0.4} />
+    <directionalLight position={[5, 8, 5]} intensity={1.2} castShadow />
+    <hemisphereLight args={['#ffffff', '#444444', 0.6]} />
+  </>)
+}
+class EnvErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false }
+  static getDerivedStateFromError() { return { hasError: true } }
+  componentDidCatch(err: unknown) { console.error('HDRI failed, using procedural lighting:', err) }
+  render() { return this.state.hasError ? this.props.fallback : this.props.children }
+}
+
+
 
 // Target Camera Positions & LookAt Targets for each of the Stages
 const STAGE_CAMERA_VANTAGE: Record<
@@ -180,6 +198,18 @@ export const Room3D: React.FC<Room3DProps> = ({
       >
         <color attach="background" args={['#060410']} />
 
+        {/* Step 4 — HDRI environment */}
+        <EnvErrorBoundary fallback={<ProceduralLightingFallback />}>
+          <Suspense fallback={<ProceduralLightingFallback />}>
+            <Environment files="/hdri/studio.hdr" resolution={64} />
+          </Suspense>
+        </EnvErrorBoundary>
+
+
+        {/* Step 5 — Fog + Sparkles */}
+        <fogExp2 attach="fog" args={['#0a0a0a', 0.012]} />
+        <Sparkles count={40} scale={6} size={2} speed={0.2} opacity={0.4} />
+
         {/* 3-Point Hollywood Studio Lighting */}
         <ambientLight intensity={0.75} color="#ffffff" />
         <directionalLight position={[5, 7, 5]} intensity={1.8} color={light.key} />
@@ -194,6 +224,13 @@ export const Room3D: React.FC<Room3DProps> = ({
 
         {/* Real Grounded Hero Props from Kit Centered at Eye Level */}
         <HeroProps kit={kit} />
+
+        {/* Step 6 — postprocessing: Bloom + Vignette only */}
+        <EffectComposer multisampling={0}>
+          <Bloom intensity={0.6} luminanceThreshold={0.8} luminanceSmoothing={0.2} mipmapBlur />
+          <Vignette eskil={false} offset={0.3} darkness={0.6} />
+        </EffectComposer>
+
       </Canvas>
 
       {/* 4K 60FPS Spatial Soundstage Watermark */}

@@ -104,6 +104,54 @@ export const agentToolDefinitions = [
   {
     type: 'function',
     function: {
+      name: 'save_beats',
+      description: 'Save and persist a list of narrative story beats (beat sheet outline) into the production database and official Story Bible for a project.',
+      parameters: {
+        type: 'object',
+        properties: {
+          projectId: {
+            type: 'string',
+            description: 'The unique ID of the target project',
+          },
+          beats: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                act: { type: 'string' },
+                title: { type: 'string' },
+                description: { type: 'string' },
+              },
+              required: ['title', 'description'],
+            },
+            description: 'Array of beat objects containing act, title, and description',
+          },
+        },
+        required: ['beats'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'get_beats',
+      description: 'Retrieve the saved chronological story beats (beat sheet outline) from the database for a project.',
+      parameters: {
+        type: 'object',
+        properties: {
+          projectId: {
+            type: 'string',
+            description: 'The unique ID of the target project',
+          },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
       name: 'save_script',
       description: 'Save and persist a revised or newly written Hollywood Fountain screenplay into the production database for a specific shot.',
       parameters: {
@@ -385,6 +433,27 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
         projectId,
         message: `Saved ${chars.length} character dossiers directly to the production database.`,
         characters: updated.characters || chars,
+      };
+    }
+
+    case 'save_beats': {
+      const beats = args.beats || [];
+      const saved = await db.saveBeats(projectId, beats);
+      return {
+        status: 'SUCCESS',
+        projectId,
+        message: `Successfully persisted ${beats.length} beats to the production Story Bible.`,
+        beats: saved,
+      };
+    }
+
+    case 'get_beats': {
+      const beats = await db.getBeats(projectId);
+      return {
+        status: 'SUCCESS',
+        projectId,
+        count: beats.length,
+        beats,
       };
     }
 

@@ -22,40 +22,110 @@ export function BeatsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom
   const [beats, setBeats] = useState<BeatItem[]>(() => {
     return getProjectBeats(projectName);
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     const slug = (projectName || 'Production').replace(/[^a-zA-Z0-9]/g, '_');
     const storageKey = `arise_beats_${slug}`;
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const normalized: BeatItem[] = parsed.map((item, i) => {
-            if (typeof item === 'string') {
-              return {
-                id: `beat-${i + 1}`,
-                act: `Act ${Math.min(3, Math.floor(i / 3) + 1)}`,
-                title: `${i + 1}. Beat`,
-                description: item,
-              };
-            }
-            return {
-              id: item?.id || `beat-${i + 1}`,
-              act: item?.act || 'Act 1',
-              title: item?.title || `${i + 1}. Story Beat`,
-              description: item?.description || '',
-            };
-          });
-          setBeats(normalized);
+    const apiBase = getAPIBaseURL();
+
+    const fetchBeats = async () => {
+      // 1. Fetch live beats from server DB
+      try {
+        const res = await fetch(`${apiBase}/api/v1/projects/beats?projectId=${encodeURIComponent(projectName)}`);
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.beats) && data.beats.length > 0) {
+          if (isMounted) {
+            setBeats(data.beats);
+            try {
+              localStorage.setItem(storageKey, JSON.stringify(data.beats));
+            } catch {}
+          }
           return;
         }
+      } catch (err) {
+        console.warn('[BeatsRoom] Server beats fetch failed, checking local cache:', err);
       }
+
+      // 2. Fallback to localStorage and auto-migrate to server DB
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const normalized: BeatItem[] = parsed.map((item, i) => {
+              if (typeof item === 'string') {
+                return {
+                  id: `beat-${i + 1}`,
+                  act: `Act ${Math.min(3, Math.floor(i / 3) + 1)}`,
+                  title: `${i + 1}. Beat`,
+                  description: item,
+                };
+              }
+              return {
+                id: item?.id || `beat-${i + 1}`,
+                act: item?.act || 'Act 1',
+                title: item?.title || `${i + 1}. Story Beat`,
+                description: item?.description || '',
+              };
+            });
+            if (isMounted) setBeats(normalized);
+
+            // Auto-migrate to server DB
+            try {
+              fetch(`${apiBase}/api/v1/projects/beats`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ projectId: projectName, beats: normalized }),
+              }).catch(() => {});
+            } catch {}
+
+            return;
+          }
+        }
+      } catch {}
+
+      // 3. Fallback to default canonical project beats
+      const defaultBeats = getProjectBeats(projectName);
+      if (isMounted) {
+        setBeats(defaultBeats);
+        // Persist default beats to server DB
+        try {
+          fetch(`${apiBase}/api/v1/projects/beats`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ projectId: projectName, beats: defaultBeats }),
+          }).catch(() => {});
+        } catch {}
+      }
+    };
+
+    fetchBeats();
+    return () => {
+      isMounted = false;
+    };
+  }, [projectName]);
+
+  const persistBeats = async (updatedBeats: BeatItem[]) => {
+    const slug = (projectName || 'Production').replace(/[^a-zA-Z0-9]/g, '_');
+    const storageKey = `arise_beats_${slug}`;
+    const apiBase = getAPIBaseURL();
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(updatedBeats));
     } catch {}
 
-    const defaultBeats = getProjectBeats(projectName);
-    setBeats(defaultBeats);
-  }, [projectName]);
+    try {
+      await fetch(`${apiBase}/api/v1/projects/beats`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: projectName, beats: updatedBeats }),
+      });
+    } catch (err) {
+      console.warn('[BeatsRoom] Error persisting beats to server:', err);
+    }
+  };
 
   const handleAddBeat = () => {
     const newBeat: BeatItem = {
@@ -64,13 +134,30 @@ export function BeatsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom
       title: `${beats.length + 1}. New Story Beat`,
       description: 'Describe the dramatic action and stakes for this beat...',
     };
-    setBeats([...beats, newBeat]);
-    toast.success('Added new beat to story sheet!');
+    const updated = [...beats, newBeat];
+    setBeats(updated);
+    persistBeats(updated);
+    toast.success('Added and saved new beat to story sheet!');
   };
 
   const handleDeleteBeat = (id: string) => {
-    setBeats(beats.filter((b) => b.id !== id));
+    const updated = beats.filter((b) => b.id !== id);
+    setBeats(updated);
+    persistBeats(updated);
     toast.success('Beat removed');
+  };
+
+  const handleSaveBeats = async () => {
+    setIsSaving(true);
+    const toastId = toast.loading('💾 Persisting beats to Story Bible...');
+    try {
+      await persistBeats(beats);
+      toast.success('✅ Beat sheet outline persisted to server DB!', { id: toastId });
+    } catch {
+      toast.error('Failed to persist beats', { id: toastId });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleGenerateAllBeats = async () => {
@@ -138,6 +225,15 @@ export function BeatsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom
           </div>
 
           <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={handleSaveBeats}
+              disabled={isSaving}
+              className="flex items-center space-x-1.5 rounded-xl border border-emerald-500/50 bg-emerald-950/60 hover:bg-emerald-900/60 px-3 py-1.5 text-xs font-mono text-emerald-200 font-bold transition shadow-sm"
+            >
+              <span>{isSaving ? '💾 Saving...' : '💾 Save Beats'}</span>
+            </button>
+
             <button
               type="button"
               onClick={handleGenerateAllBeats}

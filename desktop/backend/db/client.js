@@ -257,6 +257,12 @@ class StudioDatabase extends EventEmitter {
         saved_at: new Date().toISOString(),
       };
       fs.writeFileSync(STATE_FILE_PATH, JSON.stringify(data, null, 2), 'utf-8');
+
+      // Also persist to storage/studio_state.json backup if storage folder exists
+      const storageDir = path.resolve(process.cwd(), 'storage');
+      if (fs.existsSync(storageDir)) {
+        fs.writeFileSync(path.join(storageDir, 'studio_state.json'), JSON.stringify(data, null, 2), 'utf-8');
+      }
     } catch (err) {
       console.error(`[Database] Error saving state to disk: ${err.message}`);
     }
@@ -802,6 +808,62 @@ Devon opens a notebook filled with hand-drawn plans, architectural sketches, and
     const bible = await this.getStoryBible(projectId);
     bible.characters = characters;
     return this.saveStoryBible(projectId, bible);
+  }
+
+  async getBeats(projectId = 'proj-fatherless-child') {
+    if (!projectId) projectId = 'proj-fatherless-child';
+    const bible = await this.getStoryBible(projectId);
+    if (bible.beats && Array.isArray(bible.beats) && bible.beats.length > 0) {
+      return bible.beats;
+    }
+    const isFatherless = projectId.includes('fatherless');
+    const defaultBeats = isFatherless ? [
+      { id: 'beat-1', act: 'Act 1', title: '1. Opening Image - The Porch & The Absence', description: 'Ayanna on the porch overlooking the East District, confronting the emotional cost of paternal absence.' },
+      { id: 'beat-2', act: 'Act 1', title: '2. Theme Stated - Legacy vs Choices', description: 'Leila reminds Ayanna that roots don\'t define destiny, but choices build community legacy.' },
+      { id: 'beat-3', act: 'Act 1', title: '3. Set-Up - East District Caseload', description: 'Ayanna balances overburdened single-parent cases while Malachi opens the youth recreation center.' },
+      { id: 'beat-4', act: 'Act 1', title: '4. Catalyst - Demolition & Rezoning Notice', description: 'City council notice arrives announcing the rezoning and demolition of Malachi\'s youth center.' },
+      { id: 'beat-5', act: 'Act 1', title: '5. Debate - Guarded Hearts', description: 'Ayanna questions whether her caseload is symptom or cause; Malachi refuses to surrender the sanctuary.' },
+      { id: 'beat-6', act: 'Act 2', title: '6. Break into Two - The Unspoken Alliance', description: 'Ayanna and Malachi join forces to investigate the real estate shell corporation behind the eviction.' },
+      { id: 'beat-7', act: 'Act 2', title: '7. B Story - Mentorship & The Mirror', description: 'Ayanna mentors a young boy whose father just walked out, mirroring her own childhood wound.' },
+      { id: 'beat-8', act: 'Act 2', title: '8. Midpoint - The Historic Blueprints', description: 'Uncovering the lost architectural blueprints proving the youth center sits on deed-restricted community trust land.' },
+      { id: 'beat-9', act: 'Act 2', title: '9. Bad Guys Close In - The Injunction', description: 'Developer accelerates the demolition deadline and pressures the zoning board to revoke the center\'s permit.' },
+      { id: 'beat-10', act: 'Act 2', title: '10. All Is Lost - The Padlocked Sanctuary', description: 'A cease-and-desist is served, padlocking the center doors as rain falls on the neighborhood.' },
+      { id: 'beat-11', act: 'Act 2', title: '11. Dark Night of the Soul - Confronting the Wound', description: 'Ayanna confronts her anger toward her absent father, realizing strength comes from community solidarity.' },
+      { id: 'beat-12', act: 'Act 3', title: '12. Break into Three - The Neighborhood Assembly', description: 'Ayanna and Malachi rally every family, church elder, and youth in a midnight strategy session.' },
+      { id: 'beat-13', act: 'Act 3', title: '13. Climax - The City Hall Hearing', description: 'The community packs the zoning commission hearing, presenting the original founding deed.' },
+      { id: 'beat-14', act: 'Act 3', title: '14. Resolution - The Injunction Granted', description: 'Demolition halted permanently; the youth center is granted historic cultural sanctuary status.' },
+      { id: 'beat-15', act: 'Act 3', title: '15. Final Image - New Foundations', description: 'Ayanna and Malachi stand together as neighborhood children paint a mural celebrating generational fatherhood.' }
+    ] : [
+      { id: 'beat-1', act: 'Act 1', title: '1. Opening Image', description: 'World and character introduction.' },
+      { id: 'beat-2', act: 'Act 1', title: '2. Inciting Incident', description: 'Core conflict begins.' },
+      { id: 'beat-3', act: 'Act 2', title: '3. Midpoint Reversal', description: 'Major stakes escalation.' },
+      { id: 'beat-4', act: 'Act 3', title: '4. Climax', description: 'Ultimate confrontation and truth revealed.' },
+      { id: 'beat-5', act: 'Act 3', title: '5. Final Image', description: 'Transformed new equilibrium.' }
+    ];
+
+    bible.beats = defaultBeats;
+    const project = this.projects.get(projectId);
+    if (project) {
+      project.storyBible = bible;
+      this.projects.set(projectId, project);
+    }
+    this._saveToDisk();
+    return defaultBeats;
+  }
+
+  async saveBeats(projectId = 'proj-fatherless-child', beats = []) {
+    if (!projectId) projectId = 'proj-fatherless-child';
+    if (!Array.isArray(beats)) beats = [];
+    const bible = await this.getStoryBible(projectId);
+    bible.beats = beats;
+    await this.saveStoryBible(projectId, bible);
+    if (typeof this.logActivity === 'function') {
+      this.logActivity(projectId, {
+        type: 'beats_saved',
+        summary: `Saved ${beats.length} narrative story beats to Story Bible`,
+      });
+    }
+    return beats;
   }
 
   // Save / update a project by id — merges with existing data and persists to disk

@@ -1118,6 +1118,29 @@ app.all('/api/v1/projects/characters', async (req, res) => {
   }
 });
 
+// GET /api/v1/projects/beats - Retrieve live story beats for project
+app.get('/api/v1/projects/beats', async (req, res) => {
+  try {
+    const projectId = await resolveProjectId(req.query.projectId);
+    const beats = await db.getBeats(projectId);
+    res.json({ success: true, beats });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST / PUT /api/v1/projects/beats - Save / update live story beats for project
+app.all('/api/v1/projects/beats', async (req, res) => {
+  if (req.method !== 'POST' && req.method !== 'PUT') return res.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    const projectId = await resolveProjectId(req.body.projectId || req.query.projectId);
+    const beats = await db.saveBeats(projectId, req.body.beats || req.body);
+    res.json({ success: true, beats });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET /api/v1/projects/script - Retrieve saved screenplay for project & shot
 app.get('/api/v1/projects/script', async (req, res) => {
   const projectId = await resolveProjectId(req.query.projectId);
@@ -1142,6 +1165,21 @@ app.get('/api/v1/projects/chat', async (req, res) => {
   const stageId = req.query.stageId || 'script';
   const messages = db.getChatHistory(projectId, stageId);
   res.json({ success: true, messages });
+});
+
+// POST /api/v1/projects/chat/sync - Migrate / Synchronize client-side chat messages to server DB
+app.post('/api/v1/projects/chat/sync', async (req, res) => {
+  try {
+    const { stageId = 'script', messages = [] } = req.body;
+    const projectId = await resolveProjectId(req.body.projectId);
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return res.json({ success: true, count: 0, message: 'No messages to sync' });
+    }
+    const result = db.saveChatHistory(projectId, stageId, messages);
+    res.json({ success: true, count: messages.length, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // POST /api/v1/projects/chat - Live AI Co-Pilot Generation & Message Persistence

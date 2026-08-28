@@ -365,7 +365,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
               {showProjectDropdown && (
                 <div
-                  className="absolute left-0 mt-2 w-72 bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                  className="fixed left-0 mt-2 w-72 top-[64px] bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
                   style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.9), 0 0 24px rgba(245, 158, 11, 0.35)' }}
                 >
                   <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
@@ -430,7 +430,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
               {showRoomDropdown && (
                 <div
-                  className="absolute left-0 mt-2 w-72 bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                  className="fixed left-0 mt-2 w-72 top-[64px] bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
                   style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.9), 0 0 24px rgba(245, 158, 11, 0.35)' }}
                 >
                   <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
