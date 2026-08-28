@@ -25,6 +25,7 @@ import { unrealConnector } from './backend/services/unreal-connector.js';
 import { comfyBridge } from './backend/workers/comfy-bridge.js';
 import { audioEngine } from './backend/services/audio-engine.js';
 import { DistributionEngine } from './backend/services/distribution-engine.js';
+import { openMontageConnector } from './backend/services/openmontage-connector.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1406,6 +1407,37 @@ app.post('/api/v1/dcc/blackmagic/slate', async (req, res) => {
   try {
     const result = await blackmagicConnector.setSlateMetadata(req.body || {});
     res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/blackmagic/discover - Auto-discover Blackmagic Pocket Cameras on LAN / USB
+app.post('/api/v1/dcc/blackmagic/discover', async (req, res) => {
+  try {
+    const result = await blackmagicConnector.discoverCameras();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/editorial/export-timeline - Generate DaVinci Resolve FCPXML / EDL export package
+app.post('/api/v1/editorial/export-timeline', async (req, res) => {
+  try {
+    const { projectId = 'proj-fatherless-child', shots = [], style = 'cinematic-conform' } = req.body || {};
+    const effectiveShots = shots.length > 0 ? shots : db.getShots(projectId);
+    const montage = await openMontageConnector.buildMontageTimeline(effectiveShots, style);
+    const projectDesc = blackmagicConnector.generateDaVinciProjectDescriptor({ title: projectId });
+    
+    res.json({
+      success: true,
+      projectId,
+      shotsCount: effectiveShots.length,
+      edlContent: montage.edlContent,
+      daVinciProject: projectDesc,
+      copyright: '© 2026 Arise Productions, LLC • All Rights Reserved',
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

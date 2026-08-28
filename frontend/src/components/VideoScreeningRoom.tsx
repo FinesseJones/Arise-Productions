@@ -319,17 +319,59 @@ export const VideoScreeningRoom: React.FC<VideoScreeningRoomProps> = ({ projectS
             ))}
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3 text-xs">
             <h4 className="font-bold text-slate-300 flex items-center gap-1.5">
               <Sparkles size={13} className="text-amber-400" />
               <span>Camera & Color Scopes</span>
             </h4>
             <div className="space-y-1 text-[11px] font-mono text-slate-400">
               <p>• Color Space: <strong className="text-slate-200">ACEScg / Rec.709</strong></p>
-              <p>• Gamma: <strong className="text-slate-200">2.4 Film Emulation</strong></p>
-              <p>• Unreal Camera: <strong className="text-slate-200">CineCam 35mm f/1.8</strong></p>
-              <p>• Audio Conform: <strong className="text-slate-200">5.1 Surround Stems</strong></p>
+              <p>• Camera Science: <strong className="text-slate-200">Blackmagic Gen 5 BRAW</strong></p>
+              <p>• CineCamera: <strong className="text-slate-200">35mm Prime f/1.8</strong></p>
+              <p>• Audio Loudness: <strong className="text-slate-200">-24.0 LKFS Broadcast</strong></p>
             </div>
+
+            <button
+              onClick={async () => {
+                const toastId = toast.loading('🎬 Compiling DaVinci Resolve Timeline (ACEScc)...');
+                try {
+                  const apiBase = typeof window !== 'undefined'
+                    ? (window.location.port === '5173' || window.location.port === '3000'
+                        ? `http://${window.location.hostname}:4000`
+                        : '')
+                    : '';
+                  const res = await fetch(`${apiBase}/api/v1/editorial/export-timeline`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      projectId: projectStatus.projectId || 'proj-fatherless-child',
+                      shots: projectStatus.shots || [],
+                    }),
+                  });
+                  const data = await res.json();
+                  if (data && data.success && data.edlContent) {
+                    const blob = new Blob([data.edlContent], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `${(projectStatus.projectName || 'Arise_Production').replace(/[^a-zA-Z0-9]/g, '_')}_DaVinci_Timeline.edl`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    toast.success('✨ Exported DaVinci Resolve EDL Timeline!', { id: toastId });
+                  } else {
+                    toast.error('Failed to compile timeline', { id: toastId });
+                  }
+                } catch {
+                  toast.error('Export request failed', { id: toastId });
+                }
+              }}
+              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:opacity-90 text-black font-extrabold flex items-center justify-center space-x-2 shadow-lg shadow-amber-500/20 transition text-xs"
+            >
+              <Download size={14} />
+              <span>Export DaVinci Resolve Timeline</span>
+            </button>
           </div>
         </div>
       </div>

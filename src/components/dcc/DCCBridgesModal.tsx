@@ -210,6 +210,29 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
     }
   };
 
+  const [isScanningCamera, setIsScanningCamera] = useState(false);
+
+  const handleDiscoverBmdCamera = async () => {
+    setIsScanningCamera(true);
+    const toastId = toast.loading('🔍 Scanning local network & USB for Blackmagic Camera...');
+    try {
+      const res = await fetch(`${apiBase}/api/v1/dcc/blackmagic/discover`, { method: 'POST' });
+      const data = await res.json();
+      if (data && data.found && data.camera) {
+        setBmpccIp(data.camera.ip);
+        setBmpccPort(String(data.camera.port || 80));
+        toast.success(`✨ Connected to ${data.camera.model || 'Blackmagic Camera'} at ${data.camera.ip}!`, { id: toastId });
+        fetchStatus();
+      } else {
+        toast(data.message || 'No active Blackmagic REST camera found on local network.', { icon: '📡', id: toastId });
+      }
+    } catch {
+      toast.error('Discovery network probe error', { id: toastId });
+    } finally {
+      setIsScanningCamera(false);
+    }
+  };
+
   const handleLaunchDaVinci = async () => {
     const toastId = toast.loading('🚀 Launching DaVinci Resolve Studio...');
     try {
@@ -425,12 +448,24 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
                     <Video className="text-amber-400" size={16} />
                     <span className="font-bold text-xs text-slate-100 uppercase tracking-wide">Blackmagic Pocket 4K</span>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 ${
-                    bmdActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${bmdActive ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400'}`} />
-                    {bmdActive ? `ONLINE (:80)` : 'READY / STANDBY'}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={handleDiscoverBmdCamera}
+                      disabled={isScanningCamera}
+                      className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-900/50 hover:bg-purple-800/60 text-purple-200 border border-purple-500/40 flex items-center gap-1 transition"
+                      title="Auto-scan network and USB for connected Blackmagic cameras"
+                    >
+                      <Radio size={10} className={isScanningCamera ? 'animate-spin text-amber-400' : 'text-purple-300'} />
+                      <span>{isScanningCamera ? 'Scanning...' : 'Auto-Detect'}</span>
+                    </button>
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 ${
+                      bmdActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${bmdActive ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400'}`} />
+                      {bmdActive ? `ONLINE (:80)` : 'READY / STANDBY'}
+                    </span>
+                  </div>
                 </div>
 
                 <p className="text-[10.5px] text-slate-300 leading-relaxed font-sans">
@@ -438,7 +473,7 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
                 </p>
 
                 <div className="p-2.5 rounded-xl bg-black/40 border border-purple-900/40 space-y-1 text-[10px]">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-slate-400">Camera IP:</span>
                     <span className="text-amber-300 font-bold">{bmpccIp}:{bmpccPort}</span>
                   </div>

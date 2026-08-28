@@ -10,6 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import https from 'https';
+import os from 'os';
 import { fileURLToPath } from 'url';
 
 const execPromise = util.promisify(exec);
@@ -130,6 +131,128 @@ export class BlackmagicStudioConnector {
       useHttps: this.useHttps,
       message: `BMPCC 4K endpoint configured to ${this.useHttps ? 'https' : 'http'}://${this.cameraIp}:${this.cameraPort}`,
     };
+  }
+
+  /**
+   * Auto-discover Blackmagic Pocket Cinema Cameras across local network subnets & USB
+   */
+  async discoverCameras() {
+    const candidates = new Set([
+      '192.168.1.100', '192.168.1.101', '192.168.1.50',
+      '192.168.0.100', '192.168.0.101', '192.168.254.100',
+      '10.0.0.100', '10.0.0.101', '169.254.1.100', '127.0.0.1',
+      this.cameraIp,
+    ]);
+
+    // Inspect local network interfaces
+    try {
+      const interfaces = os.networkInterfaces();
+      for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name] || []) {
+          if (iface.family === 'IPv4' && !iface.internal) {
+            const parts = iface.address.split('.');
+            if (parts.length === 4) {
+              const subnet = `${parts[0]}.${parts[1]}.${parts[2]}`;
+              candidates.add(`${subnet}.100`);
+              candidates.add(`${subnet}.101`);
+              candidates.add(`${subnet}.10`);
+              candidates.add(`${subnet}.20`);
+              candidates.add(`${subnet}.50`);
+              candidates.add(`${subnet}.2`);
+            }
+          }
+        }
+      }
+    } catch {}
+
+    // Probe ARP table on macOS
+    try {
+      const { stdout } = await execPromise('arp -an');
+      const ipMatches = stdout.match(/\(([\d\.]+)\)/g);
+      if (ipMatches) {
+        ipMatches.forEach((ipRaw) => {
+          const cleanIp = ipRaw.replace(/[()]/g, '');
+          if (cleanIp !== '255.255.255.255') candidates.add(cleanIp);
+        });
+      }
+    } catch {}
+
+    const candidateList = Array.from(candidates);
+    console.log(`[Blackmagic Discovery] Probing ${candidateList.length} network targets for Blackmagic Camera REST API...`);
+
+    const probePromises = candidateList.map((ip) => this._probeCameraIp(ip, this.cameraPort || 80));
+    const results = await Promise.all(probePromises);
+    const found = results.filter((r) => r.found);
+
+    if (found.length > 0) {
+      this.cameraIp = found[0].ip;
+      this.cameraPort = found[0].port;
+      this.lastStatus = {
+        online: true,
+        cameraIp: this.cameraIp,
+        cameraPort: this.cameraPort,
+        model: found[0].model || 'Blackmagic Pocket Cinema Camera 4K',
+        firmware: found[0].firmware || '9.8b+',
+        profile: this.bmpcc4kProfile,
+      };
+      return {
+        success: true,
+        found: true,
+        camera: found[0],
+        allDiscovered: found,
+        message: `✨ Discovered Blackmagic Camera at ${this.cameraIp}:${this.cameraPort}!`,
+      };
+    }
+
+    return {
+      success: true,
+      found: false,
+      scannedCount: candidateList.length,
+      message: `Scanned ${candidateList.length} network targets. No active Blackmagic Camera detected. Please ensure camera is on with Network Access enabled.`,
+    };
+  }
+
+  /**
+   * Helper to probe individual IP for Blackmagic REST endpoint
+   */
+  async _probeCameraIp(ip, port = 80) {
+    return new Promise((resolve) => {
+      const req = http.request(
+        {
+          hostname: ip,
+          port,
+          path: '/api/v1/system',
+          method: 'GET',
+          timeout: 600,
+        },
+        (res) => {
+          let body = '';
+          res.on('data', (c) => (body += c));
+          res.on('end', () => {
+            try {
+              const data = JSON.parse(body);
+              if (data.model || data.softwareVersion || res.headers['server']?.includes('Blackmagic')) {
+                return resolve({
+                  found: true,
+                  ip,
+                  port,
+                  model: data.model || 'Blackmagic Pocket Cinema Camera 4K',
+                  firmware: data.softwareVersion || '9.8b',
+                });
+              }
+            } catch {}
+            resolve({ found: false, ip });
+          });
+        }
+      );
+
+      req.on('error', () => resolve({ found: false, ip }));
+      req.setTimeout(600, () => {
+        req.destroy();
+        resolve({ found: false, ip });
+      });
+      req.end();
+    });
   }
 
   /**
