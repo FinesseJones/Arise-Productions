@@ -61,3 +61,5 @@ Saved/
 # Build artifacts
 *.tsbuildinfo
 .dyad/
+scratch/
+Arise-Productions/
