@@ -107,32 +107,26 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Load chat history when switching agent or project with instant localStorage fallback
+  // Load chat history when switching agent or project with strict agent thread isolation
   const loadChatHistory = async (agentId: string) => {
-    // 1. Instant local history restore so messages are never wiped
+    // 1. Immediately reset messages to avoid displaying previous agent's messages
+    setMessages([]);
+
+    // 2. Load agent-specific local history for this project
     try {
-      const keysToTry = [
-        `arise_chat_${projectId}_${agentId}`,
-        `arise_chat_proj-fatherless-child_${agentId}`,
-        `arise_chat_default_${agentId}`,
-        `arise_chat_${agentId}`,
-      ];
-      for (const k of keysToTry) {
-        const saved = localStorage.getItem(k);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setMessages(parsed);
-            break;
-          }
+      const saved = localStorage.getItem(`arise_chat_${projectId}_${agentId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
         }
       }
     } catch {}
 
-    // 2. Fetch latest synced history from backend server
+    // 3. Fetch latest synced history from backend server
     try {
       const res = await fetch(`${apiBase}/api/v1/agents/history/${agentId}?projectId=${projectId}`).then((r) => r.json());
-      if (res && res.success && Array.isArray(res.history) && res.history.length > 0) {
+      if (res && res.success && Array.isArray(res.history)) {
         setMessages(res.history);
         try {
           localStorage.setItem(`arise_chat_${projectId}_${agentId}`, JSON.stringify(res.history));

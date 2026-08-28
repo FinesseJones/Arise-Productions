@@ -214,11 +214,25 @@ app.post('/api/v1/agents/chat', async (req, res) => {
       agentName: 'Producer (User)'
     }, projectId);
 
-    // 2. Fetch Relevant Memories & Recent Chat History
+    // 2. Fetch Relevant Memories, Shared Production Activity/Handoffs & Story Bible
     const history = agentMemory.getHistory(agentId, projectId);
     const relevantMemories = agentMemory.searchRelevantMemories(message);
     const memoriesContext = relevantMemories.length > 0
       ? `\n\nPERMANENT STUDIO MEMORY & CONTEXT:\n${relevantMemories.map(m => `- [${m.category}] ${m.title}: ${m.content}`).join('\n')}`
+      : '';
+
+    // Fetch latest shared production activity and agent handoffs across all rooms
+    const recentActivity = (typeof db.getRecentActivity === 'function')
+      ? db.getRecentActivity(projectId, 6)
+      : [];
+    const handoffsContext = recentActivity.length > 0
+      ? `\n\nSHARED STUDIO PRODUCTION ACTIVITY & RECENT ROOM HANDOFFS:\n${recentActivity.map(a => `- [${a.type}] ${a.summary} (${new Date(a.timestamp).toLocaleTimeString()})`).join('\n')}`
+      : '';
+
+    // Fetch canonical live Story Bible & Characters from database
+    const storyBible = await db.getStoryBible(projectId);
+    const bibleContext = storyBible
+      ? `\n\nCANONICAL PRODUCTION STORY BIBLE & CHARACTERS:\n- Title: "${storyBible.title}"\n- Logline: "${storyBible.logline}"\n- Characters: ${storyBible.characters?.map(c => `${c.name} (${c.role}${c.age ? `, Age ${c.age}` : ''}): ${c.personality}`).join(' | ')}`
       : '';
 
     const fullSystemPrompt = `${systemPrompt || `You are ${agentName || 'a Department Lead'} (${role || 'Lead'}) at Arise Production Studio.`}
@@ -226,8 +240,9 @@ app.post('/api/v1/agents/chat', async (req, res) => {
 CURRENT ACTIVE PRODUCTION: "${projectId}"
 YOUR SPECIFIC ROLE: ${agentName || 'Department Lead'} (${role || 'Lead'}).
 DEPARTMENT PROTOCOL: You must speak strictly from your specific domain perspective (${role}). Do not impersonate other department heads or repeat generic boilerplate script breakdowns unless the Producer specifically asks.
+CROSS-ROOM AWARENESS & HANDOFFS: You work collaboratively with the other department heads in Arise Production Studio. Use the shared activity logs and story bible below to pick up seamlessly where previous rooms left off (e.g. referencing approved scripts, characters, or stage runs).
 CONVERSATION CONTINUITY: You are collaborating directly with the Producer. Listen meticulously to their exact request, reference all past agreements, beat sheets, and details in this chat history, and directly address their latest message.
-TOOLS: You have access to studio tools (get_episode_script, get_story_bible, run_stage, save_script, handoff_to_agent). Only invoke tools when genuinely needed to fulfill the Producer's specific directive.${memoriesContext}`;
+TOOLS: You have access to studio tools (get_episode_script, get_story_bible, update_story_bible, update_characters, run_stage, save_script, handoff_to_agent). Only invoke tools when genuinely needed to fulfill the Producer's specific directive.${handoffsContext}${bibleContext}${memoriesContext}`;
 
     // Format recent chat turns into conversation context for agent runtime (24 turns for deep continuity)
     const recentMessages = history.slice(-24).map(h => ({

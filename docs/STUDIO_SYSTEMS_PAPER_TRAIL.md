@@ -222,6 +222,7 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 | **2026-08-27 12:34** | Sequential Single-Turn Tool Execution Fix | `agent-runtime.js`, `desktop/backend/agent/agent-runtime.js` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 14:28** | Context Continuity, 24-Turn Memory Depth & Frontend Fallback Elimination | `agent-runtime.js`, `server.js`, `DepartmentAgentsHub.tsx` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 15:13** | Live Story Bible & Character Persistence Architecture | `client.js`, `server.js`, `tools.js`, `ProductionPitchDeckModal.tsx`, `projectData.ts` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 20:47** | Department Room Chat Isolation & Cross-Room Handoff Context | `DepartmentAgentsHub.tsx`, `server.js`, `agent_conversations.json` | GitHub, Desktop, VPS | ✅ Verified |
 
 ---
 
@@ -235,6 +236,20 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 - Real database methods: `getStoryBible(projectId)`, `saveStoryBible(projectId, data)`, `getCharacters(projectId)`, `saveCharacters(projectId, chars)` on `StudioDatabase`.
 - REST endpoints: `GET /api/v1/projects/story-bible`, `POST /api/v1/projects/story-bible`, `GET /api/v1/projects/characters`, `POST /api/v1/projects/characters`.
 - `ProductionPitchDeckModal.tsx` dynamically loads live backend data on mount, supports real-time editing with live database persistence, and exports Markdown/PDF with canonical series lore.
+
+---
+
+## 15. Department Room Chat Isolation & Cross-Room Handoff Protocol
+
+### 15.1 Individual Room Thread Isolation:
+- Each department lead (Scribe Vance, Showrunner Sterling, Architect Vance, CineDirector Maya, Kinetics Kai, Synthetix Nova, Colorist Cole, Acoustic Axel) maintains their own isolated chat history thread keyed by `${projectId}:${agentId}`.
+- Switching rooms resets UI messages and loads strictly that agent's conversation thread without cross-contamination.
+
+### 15.2 Shared Studio Context & Proactive Handoffs:
+- Every agent is injected with:
+  1. **Shared Studio Activity & Department Handoffs:** Chronological log of recent stage runs, scripts saved, and handoff notices from prior rooms.
+  2. **Canonical Story Bible & Character Roster:** Shared project title, logline, themes, and characters so all rooms operate on the same creative foundation.
+  3. **Stage Statuses:** Direct visibility into the completion of the 10 MCP production stages.
 
 ---
 *© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.*
