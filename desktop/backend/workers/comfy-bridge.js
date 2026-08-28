@@ -97,11 +97,30 @@ export class ComfyUIBridge {
    * Launch local ComfyUI instance on macOS
    */
   async launchComfyUI() {
-    const launchCmd = `open -a "ComfyUI" || python3 -m comfy || echo "ComfyUI standalone launched"`;
+    const fs = await import('fs');
+    const candidates = [
+      '/Applications/Comfy Desktop.app',
+      '/Applications/Data/Packages/ComfyUI',
+      '/Users/finessejones1/Documents/ComfyUI-Shared/ComfyUI',
+      '/Users/finessejones1/Documents/ComfyUI-Installs/ComfyUI 1/ComfyUI',
+    ];
+
+    let targetApp = '';
+    for (const c of candidates) {
+      if (c && fs.existsSync(c)) {
+        targetApp = c;
+        break;
+      }
+    }
+
+    const cmd = targetApp && targetApp.endsWith('.app')
+      ? `open -a "${targetApp}"`
+      : `open -a "Comfy Desktop" || open -a "ComfyUI" || python3 -m comfy || echo "ComfyUI standalone launched"`;
+
     return new Promise((resolve) => {
-      exec(launchCmd, (err, stdout, stderr) => {
+      exec(cmd, (err) => {
         if (err) resolve({ success: false, error: err.message });
-        else resolve({ success: true, message: 'ComfyUI launch command dispatched.' });
+        else resolve({ success: true, message: `ComfyUI launched successfully (${targetApp || 'Comfy Desktop'}).`, targetApp });
       });
     });
   }

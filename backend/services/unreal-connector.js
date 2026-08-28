@@ -92,24 +92,40 @@ export class UnrealEngineConnector {
   }
 
   /**
-   * Launch Unreal Engine 5 Editor on macOS
+   * Launch Unreal Engine 5 Editor / Epic Games Launcher on macOS
    */
   async launchEditor(projectPath = '') {
-    const cmd = projectPath
-      ? `open -a "${this.appPath}" --args "${projectPath}"`
-      : `open -a "${this.appPath}"`;
+    const fs = await import('fs');
+    const candidates = [
+      this.appPath,
+      '/Applications/Epic Games Launcher.app',
+      '/Users/Shared/UnrealEngine/Launcher/Unreal Engine.app',
+      '/Applications/UnrealEditor.app',
+      '/Applications/Unreal Engine.app',
+    ];
+
+    let targetApp = '';
+    for (const c of candidates) {
+      if (c && fs.existsSync(c)) {
+        targetApp = c;
+        break;
+      }
+    }
+
+    const cmd = targetApp
+      ? (projectPath ? `open -a "${targetApp}" --args "${projectPath}"` : `open -a "${targetApp}"`)
+      : `open -a "Epic Games Launcher" || open -a "UnrealEditor" || open -a "Unreal Engine"`;
 
     return new Promise((resolve) => {
-      exec(cmd, (err, stdout, stderr) => {
+      exec(cmd, (err) => {
         if (err) {
-          // Fallback to searching standard Unreal locations
-          const fallbackCmd = 'open -a "UnrealEditor"';
-          exec(fallbackCmd, (err2) => {
-            if (err2) resolve({ success: false, error: err.message });
-            else resolve({ success: true, message: 'Unreal Engine 5 launching via default path...' });
-          });
+          resolve({ success: false, error: err.message });
         } else {
-          resolve({ success: true, message: `Unreal Engine 5 launching from ${this.appPath}...` });
+          resolve({
+            success: true,
+            message: `Unreal Engine launched successfully (${targetApp || 'Epic Games Launcher'}).`,
+            targetApp,
+          });
         }
       });
     });

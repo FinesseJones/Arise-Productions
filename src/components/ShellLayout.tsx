@@ -298,7 +298,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   return (
     <div className="flex flex-col h-screen h-[100dvh] bg-[#080512] text-slate-100 overflow-hidden font-sans">
       {/* Top Studio Header & Telemetry Bar (4K Glassmorphic Specular Theme) */}
-      <header className="flex items-center justify-between px-2 sm:px-4 py-1.5 sm:py-2 bg-[#09041a]/95 border-b border-amber-500/30 select-none flex-shrink-0 backdrop-blur-2xl specular-border z-30 shadow-2xl gap-1.5 sm:gap-2 w-full max-w-full overflow-x-auto no-scrollbar">
+      <header className="flex items-center justify-between px-3 sm:px-5 py-2 bg-[#09041a]/95 border-b border-amber-500/30 select-none flex-shrink-0 backdrop-blur-2xl specular-border z-30 shadow-2xl gap-2 w-full">
         {/* Left Side: Arise Logo, Title, and Front of Studio Navigation */}
         <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
           <button
@@ -338,10 +338,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             <button
               type="button"
               onClick={onChangeProject}
-              className="px-2 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap cursor-pointer"
+              className="px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap cursor-pointer"
               title="Return to Front of Studio & All Projects"
             >
-              <Home size={12} />
+              <Home size={13} />
               <span className="hidden xl:inline">Front</span>
             </button>
 
@@ -353,60 +353,67 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                   setShowProjectDropdown((prev) => !prev);
                   setShowRoomDropdown(false);
                 }}
-                className={`px-2 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-sm ${
                   showProjectDropdown
                     ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black border border-amber-300'
                     : 'bg-[#150a2e] hover:bg-[#200f45] text-amber-200 border border-amber-500/50'
                 }`}
                 title="Switch Active Production"
               >
-                <Film size={12} className={showProjectDropdown ? 'text-black' : 'text-amber-400'} />
-                <span className="truncate max-w-[90px] sm:max-w-[140px]">{projectName}</span>
-                <ChevronDown size={11} className={`transition-transform duration-200 ${showProjectDropdown ? 'rotate-180 text-black' : 'text-amber-400/80'}`} />
+                <Film size={13} className={showProjectDropdown ? 'text-black' : 'text-amber-400'} />
+                <span className="truncate max-w-[110px] sm:max-w-[160px] font-bold">{projectName}</span>
+                <ChevronDown size={12} className={`transition-transform duration-200 ${showProjectDropdown ? 'rotate-180 text-black' : 'text-amber-400/80'}`} />
               </button>
 
               {showProjectDropdown && (
-                <div
-                  className="fixed left-0 mt-2 w-72 top-[64px] bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
-                  style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.9), 0 0 24px rgba(245, 158, 11, 0.35)' }}
-                >
-                  <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
-                    <span className="text-[10px] uppercase font-mono font-black tracking-widest text-amber-400">
-                      Select Active Production
-                    </span>
-                    <span className="text-[9px] font-mono text-amber-300/80 font-bold">{availableProjects.length} Titles</span>
-                  </div>
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowProjectDropdown(false)}
+                  />
+                  <div
+                    className="absolute left-0 mt-2 w-80 top-full bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                    style={{ boxShadow: '0 16px 48px rgba(0, 0, 0, 0.95), 0 0 24px rgba(245, 158, 11, 0.4)' }}
+                  >
+                    <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
+                      <span className="text-[10px] uppercase font-mono font-black tracking-widest text-amber-400">
+                        Select Active Production
+                      </span>
+                      <span className="text-[9px] font-mono text-amber-300/80 font-bold">{availableProjects.length} Titles</span>
+                    </div>
 
-                  <div className="space-y-1 max-h-64 overflow-y-auto custom-scrollbar text-[11px] font-mono">
-                    {availableProjects.map((p) => {
-                      const isCurrent = p.id === effectiveProjectId;
-                      return (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => {
-                            if (onSelectProject) onSelectProject(p.id, p.name);
-                            setShowProjectDropdown(false);
-                          }}
-                          className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition cursor-pointer ${
-                            isCurrent
-                              ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/30'
-                              : 'hover:bg-amber-500/20 text-slate-200 hover:text-amber-200 border border-transparent hover:border-amber-500/40'
-                          }`}
-                        >
-                          <div className="truncate pr-2">
-                            <div className="font-bold truncate">{p.name}</div>
-                          </div>
-                          <span className={`text-[8px] uppercase px-1.5 py-0.5 rounded font-bold flex-shrink-0 ${
-                            isCurrent ? 'bg-black/20 text-black' : 'bg-purple-950/80 text-amber-300 border border-purple-700/50'
-                          }`}>
-                            {p.format === 'episodic_tv' ? 'TV' : 'Film'}
-                          </span>
-                        </button>
-                      );
-                    })}
+                    <div className="space-y-1 max-h-72 overflow-y-auto custom-scrollbar text-[11px] font-mono">
+                      {availableProjects.map((p) => {
+                        const isCurrent = p.id === effectiveProjectId;
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              if (onSelectProject) onSelectProject(p.id, p.name);
+                              setShowProjectDropdown(false);
+                            }}
+                            className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition cursor-pointer ${
+                              isCurrent
+                                ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/30'
+                                : 'hover:bg-amber-500/20 text-slate-200 hover:text-amber-200 border border-transparent hover:border-amber-500/40'
+                            }`}
+                          >
+                            <div className="truncate pr-2">
+                              <div className="font-bold truncate">{p.name}</div>
+                              {p.genre && <div className="text-[9px] opacity-70 truncate">{p.genre}</div>}
+                            </div>
+                            <span className={`text-[8px] uppercase px-1.5 py-0.5 rounded font-bold flex-shrink-0 ${
+                              isCurrent ? 'bg-black/20 text-black' : 'bg-purple-950/80 text-amber-300 border border-purple-700/50'
+                            }`}>
+                              {p.format === 'episodic_tv' ? 'TV' : 'Film'}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
 
@@ -418,65 +425,71 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                   setShowRoomDropdown((prev) => !prev);
                   setShowProjectDropdown(false);
                 }}
-                className={`px-2 py-1 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-sm ${
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-sm ${
                   showRoomDropdown
                     ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black border border-amber-300'
                     : 'bg-[#1f133f] hover:bg-[#2d1b5a] text-amber-300 border border-amber-500/50'
                 }`}
                 title="Open Studio Rooms & Stages Menu"
               >
-                <Menu size={12} className={showRoomDropdown ? 'text-black' : 'text-amber-400'} />
+                <Menu size={13} className={showRoomDropdown ? 'text-black' : 'text-amber-400'} />
                 <span>Rooms</span>
-                <ChevronDown size={11} className={`transition-transform duration-200 ${showRoomDropdown ? 'rotate-180 text-black' : 'text-amber-400/80'}`} />
+                <ChevronDown size={12} className={`transition-transform duration-200 ${showRoomDropdown ? 'rotate-180 text-black' : 'text-amber-400/80'}`} />
               </button>
 
               {showRoomDropdown && (
-                <div
-                  className="fixed left-0 mt-2 w-72 top-[64px] bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
-                  style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.9), 0 0 24px rgba(245, 158, 11, 0.35)' }}
-                >
-                  <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
-                    <span className="text-[10px] uppercase font-mono font-black tracking-widest text-amber-400">
-                      Studio Navigation Menu
-                    </span>
-                  </div>
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowRoomDropdown(false)}
+                  />
+                  <div
+                    className="absolute left-0 mt-2 w-80 top-full bg-[#0d0722]/98 border-2 border-amber-500/60 rounded-2xl shadow-2xl backdrop-blur-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                    style={{ boxShadow: '0 16px 48px rgba(0, 0, 0, 0.95), 0 0 24px rgba(245, 158, 11, 0.4)' }}
+                  >
+                    <div className="flex items-center justify-between px-2 py-1.5 border-b border-amber-500/30 mb-2">
+                      <span className="text-[10px] uppercase font-mono font-black tracking-widest text-amber-400">
+                        Studio Navigation Menu
+                      </span>
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-1 text-[11px] font-mono">
-                    {[
-                      { id: 'agents', name: 'Command Center', icon: '🏛️' },
-                      { id: 'stage', name: '3D Soundstage', icon: '🎬' },
-                      { id: 'ideas', name: '00: Ideas', icon: '💡' },
-                      { id: 'plot', name: '01: Plot Room', icon: '📖' },
-                      { id: 'characters', name: '02: Cast Room', icon: '🎭' },
-                      { id: 'acts', name: '03: Acts Room', icon: '📑' },
-                      { id: 'beats', name: '04: Beats Room', icon: '⚡' },
-                      { id: 'architecture', name: '3D Campus', icon: '🏢' },
-                      { id: 'screening', name: 'Screening Room', icon: '📽️' },
-                      { id: 'suites', name: 'Original Suites', icon: '🎛️' },
-                      { id: 'vault', name: 'Memory Vault', icon: '🗄️' },
-                      { id: 'distribution', name: '05: Distribution', icon: '🌐' },
-                    ].map((room) => (
-                      <button
-                        key={room.id}
-                        type="button"
-                        onClick={() => {
-                          setMainView(room.id as any);
-                          setShowRoomDropdown(false);
-                        }}
-                        className={`flex items-center justify-between p-2 rounded-xl text-left transition cursor-pointer ${
-                          mainView === room.id
-                            ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/30'
-                            : 'hover:bg-amber-500/20 text-slate-200 hover:text-amber-200 border border-transparent hover:border-amber-500/40'
-                        }`}
-                      >
-                        <div className="flex items-center gap-1.5 truncate">
-                          <span className="text-sm">{room.icon}</span>
-                          <span className="truncate text-[10.5px] font-semibold">{room.name}</span>
-                        </div>
-                      </button>
-                    ))}
+                    <div className="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+                      {[
+                        { id: 'agents', name: 'Command Center', icon: '🏛️' },
+                        { id: 'stage', name: '3D Soundstage', icon: '🎬' },
+                        { id: 'ideas', name: '00: Ideas', icon: '💡' },
+                        { id: 'plot', name: '01: Plot Room', icon: '📖' },
+                        { id: 'characters', name: '02: Cast Room', icon: '🎭' },
+                        { id: 'acts', name: '03: Acts Room', icon: '📑' },
+                        { id: 'beats', name: '04: Beats Room', icon: '⚡' },
+                        { id: 'architecture', name: '3D Campus', icon: '🏢' },
+                        { id: 'screening', name: 'Screening Room', icon: '📽️' },
+                        { id: 'suites', name: 'Original Suites', icon: '🎛️' },
+                        { id: 'vault', name: 'Memory Vault', icon: '🗄️' },
+                        { id: 'distribution', name: '05: Distribution', icon: '🌐' },
+                      ].map((room) => (
+                        <button
+                          key={room.id}
+                          type="button"
+                          onClick={() => {
+                            setMainView(room.id as any);
+                            setShowRoomDropdown(false);
+                          }}
+                          className={`flex items-center justify-between p-2 rounded-xl text-left transition cursor-pointer ${
+                            mainView === room.id
+                              ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/30'
+                              : 'hover:bg-amber-500/20 text-slate-200 hover:text-amber-200 border border-transparent hover:border-amber-500/40'
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="text-sm">{room.icon}</span>
+                            <span className="truncate text-[10.5px] font-semibold">{room.name}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
           </div>
