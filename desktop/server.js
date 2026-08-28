@@ -21,6 +21,8 @@ import { agentMemory } from './backend/db/agent-memory.js';
 import { runAgent } from './backend/agent/agent-runtime.js';
 import { agentToolDefinitions } from './backend/agent/tools.js';
 import { blackmagicConnector } from './backend/services/blackmagic-connector.js';
+import { unrealConnector } from './backend/services/unreal-connector.js';
+import { comfyBridge } from './backend/workers/comfy-bridge.js';
 import { audioEngine } from './backend/services/audio-engine.js';
 import { DistributionEngine } from './backend/services/distribution-engine.js';
 
@@ -1274,6 +1276,116 @@ app.post('/api/v1/cicd/gate', async (req, res) => {
   try {
     const report = await CICDQualityGate.runQualityGate(projectId);
     res.json({ success: true, report });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==============================================================================
+// 1.5. EXTERNAL DCC BRIDGES (UNREAL ENGINE 5, COMFYUI, DAVINCI, AUDIO)
+// ==============================================================================
+
+// GET /api/v1/dcc/status - Live Connectivity & Telemetry for all external DCC tools
+app.get('/api/v1/dcc/status', async (req, res) => {
+  try {
+    const [ue5Status, comfyStatus] = await Promise.all([
+      unrealConnector.checkEngineStatus(),
+      comfyBridge.checkServerStatus(),
+    ]);
+
+    const audioStatus = audioEngine.getEngineStatus();
+    const blackmagicStatus = blackmagicConnector.getStatus ? blackmagicConnector.getStatus() : { active: false };
+
+    res.json({
+      success: true,
+      timestamp: new Date().toISOString(),
+      bridges: {
+        unrealEngine: ue5Status,
+        comfyUI: comfyStatus,
+        audioEngine: audioStatus,
+        blackmagic: blackmagicStatus,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/unreal/launch - Launch Unreal Engine 5 Editor on macOS
+app.post('/api/v1/dcc/unreal/launch', async (req, res) => {
+  try {
+    const { projectPath = '' } = req.body || {};
+    const result = await unrealConnector.launchEditor(projectPath);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/unreal/camera - Transmit Live Link CineCamera settings to Unreal Engine 5
+app.post('/api/v1/dcc/unreal/camera', async (req, res) => {
+  try {
+    const {
+      cameraName = 'CineCameraActor1',
+      focalLength = 35,
+      fstop = 2.8,
+      sensorWidth = 36.0,
+      sensorHeight = 24.0,
+      transform,
+    } = req.body || {};
+
+    const result = await unrealConnector.setCameraParameters({
+      cameraName,
+      focalLength,
+      fstop,
+      sensorWidth,
+      sensorHeight,
+      transform,
+    });
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/comfy/launch - Launch local ComfyUI instance
+app.post('/api/v1/dcc/comfy/launch', async (req, res) => {
+  try {
+    const result = await comfyBridge.launchComfyUI();
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/comfy/queue - Queue generative prompt workflow to ComfyUI
+app.post('/api/v1/dcc/comfy/queue', async (req, res) => {
+  try {
+    const { prompt } = req.body || {};
+    if (!prompt) return res.status(400).json({ success: false, error: 'Missing prompt workflow' });
+    const result = await comfyBridge.queuePrompt(prompt);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/config - Permanently configure DCC host & port settings
+app.post('/api/v1/dcc/config', async (req, res) => {
+  try {
+    const { unrealHost, unrealPort, unrealAppPath, comfyHost, comfyPort } = req.body || {};
+    if (unrealHost || unrealPort || unrealAppPath) {
+      unrealConnector.setConfig({ host: unrealHost, port: unrealPort, appPath: unrealAppPath });
+    }
+    if (comfyHost || comfyPort) {
+      comfyBridge.setConfig({ host: comfyHost, port: comfyPort });
+    }
+    res.json({
+      success: true,
+      message: 'DCC bridge configuration updated successfully.',
+      unreal: { host: unrealConnector.host, port: unrealConnector.port, appPath: unrealConnector.appPath },
+      comfy: { host: comfyBridge.host, port: comfyBridge.port },
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

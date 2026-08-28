@@ -12,6 +12,7 @@ import OriginalSuitesHub from './OriginalSuitesHub';
 import { ProductionPitchDeckModal } from './ProductionPitchDeckModal';
 import { StudioProUpgradeModal } from './StudioProUpgradeModal';
 import { StudioVideoTourModal } from './StudioVideoTourModal';
+import { DCCBridgesModal } from './dcc/DCCBridgesModal';
 import StudioDeskBriefing from './StudioDeskBriefing';
 import PlotRoom from '../pages/PlotRoom';
 import ActsRoom from '../pages/ActsRoom';
@@ -97,6 +98,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   const [showPitchBibleModal, setShowPitchBibleModal] = useState<boolean>(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   const [showNvidiaModal, setShowNvidiaModal] = useState<boolean>(false);
+  const [showDCCModal, setShowDCCModal] = useState<boolean>(false);
   const [showVideoTourModal, setShowVideoTourModal] = useState<boolean>(false);
   const [briefingType, setBriefingType] = useState<'morning' | 'evening' | null>(null);
 
@@ -715,6 +717,16 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
             <span className="font-bold truncate max-w-[70px] hidden sm:inline">{defaultModel.split('/')[1] || 'Llama'}</span>
           </button>
 
+          {/* External DCC Bridges Button (Unreal Engine 5 & ComfyUI) */}
+          <button
+            onClick={() => setShowDCCModal(true)}
+            className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-[#150a2e] hover:bg-[#220f4b] text-amber-300 border border-amber-500/40 text-[11px] font-mono transition shadow-sm font-bold flex-shrink-0 cursor-pointer"
+            title="External DCC Bridges: Unreal Engine 5 & ComfyUI"
+          >
+            <Layers size={12} className="text-amber-400" />
+            <span className="hidden xl:inline">DCC Bridges</span>
+          </button>
+
           {/* Active Enterprise Tier License Badge */}
           <button
             onClick={() => setShowUpgradeModal(true)}
@@ -1068,6 +1080,12 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
       <StudioVideoTourModal
         isOpen={showVideoTourModal}
         onClose={() => setShowVideoTourModal(false)}
+      />
+
+      {/* External DCC Bridges Telemetry & Live Link Modal */}
+      <DCCBridgesModal
+        isOpen={showDCCModal}
+        onClose={() => setShowDCCModal(false)}
       />
     </div>
   );

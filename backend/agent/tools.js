@@ -5,6 +5,8 @@
 
 import { db } from '../db/client.js';
 import { mcpWorkers } from '../workers/mcp-workers.js';
+import { unrealConnector } from '../services/unreal-connector.js';
+import { comfyBridge } from '../workers/comfy-bridge.js';
 
 /**
  * OpenAI-compatible Tool Definitions for NVIDIA NIM (Llama 3.3 70B Instruct)
@@ -295,6 +297,78 @@ export const agentToolDefinitions = [
       },
     },
   },
+  {
+    type: 'function',
+    function: {
+      name: 'get_dcc_status',
+      description: 'Check live connection status and telemetry for external DCC tools: Unreal Engine 5 (Live Link Remote Control :30010) and ComfyUI (Generative Node Server :8188).',
+      parameters: {
+        type: 'object',
+        properties: {},
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'sync_ue5_camera',
+      description: 'Transmit real-time CineCamera focal length, aperture f-stop, sensor gate dimensions, and 3D spatial transform coordinates directly to an active Unreal Engine 5 project.',
+      parameters: {
+        type: 'object',
+        properties: {
+          cameraName: { type: 'string', description: 'Name of target CineCameraActor in UE5 (default: CineCameraActor1)' },
+          focalLength: { type: 'number', description: 'Focal length in millimeters (e.g. 24, 35, 50, 85)' },
+          fstop: { type: 'number', description: 'Aperture f-stop (e.g. 1.8, 2.8, 4.0)' },
+          sensorWidth: { type: 'number', description: 'Sensor width in mm (default: 36.0 for Full Frame)' },
+          sensorHeight: { type: 'number', description: 'Sensor height in mm (default: 24.0 for Full Frame)' },
+          transform: {
+            type: 'object',
+            properties: {
+              x: { type: 'number' },
+              y: { type: 'number' },
+              z: { type: 'number' },
+              pitch: { type: 'number' },
+              yaw: { type: 'number' },
+              roll: { type: 'number' },
+            },
+          },
+        },
+        required: ['focalLength'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'queue_comfy_generation',
+      description: 'Queue an image or video generation workflow to a local ComfyUI instance on port 8188.',
+      parameters: {
+        type: 'object',
+        properties: {
+          prompt: { type: 'object', description: 'Full ComfyUI node graph JSON prompt payload' },
+          positivePrompt: { type: 'string', description: 'Positive prompt description' },
+          negativePrompt: { type: 'string', description: 'Negative prompt description' },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'launch_dcc_tool',
+      description: 'Launch external creative software on macOS: Unreal Engine 5 or ComfyUI.',
+      parameters: {
+        type: 'object',
+        properties: {
+          tool: { type: 'string', enum: ['unreal', 'comfy'], description: 'Which software application to launch' },
+          projectPath: { type: 'string', description: 'Optional project file path' },
+        },
+        required: ['tool'],
+      },
+    },
+  },
 ];
 
 /**
@@ -576,6 +650,78 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
         status: 'SUCCESS',
         command: cmd,
         dispatchedStage: stage,
+        result,
+      };
+    }
+
+    case 'get_dcc_status': {
+      const [ue5, comfy] = await Promise.all([
+        unrealConnector.checkEngineStatus(),
+        comfyBridge.checkServerStatus(),
+      ]);
+      return {
+        status: 'SUCCESS',
+        unrealEngine: ue5,
+        comfyUI: comfy,
+        message: `UE5 is ${ue5.active ? '🟢 ONLINE' : '⚪ OFFLINE'} (:30010), ComfyUI is ${comfy.online ? '🟢 ONLINE' : '⚪ OFFLINE'} (:8188).`,
+      };
+    }
+
+    case 'sync_ue5_camera': {
+      const result = await unrealConnector.setCameraParameters({
+        cameraName: args.cameraName || 'CineCameraActor1',
+        focalLength: args.focalLength || 35,
+        fstop: args.fstop || 2.8,
+        sensorWidth: args.sensorWidth || 36.0,
+        sensorHeight: args.sensorHeight || 24.0,
+        transform: args.transform || { x: 0, y: 0, z: 100, pitch: 0, yaw: 0, roll: 0 },
+      });
+      if (typeof db.logActivity === 'function') {
+        db.logActivity(projectId, {
+          type: 'ue5_camera_sync',
+          summary: `Synced CineCamera ${args.focalLength}mm f/${args.fstop || 2.8} to Unreal Engine 5`,
+        });
+      }
+      return {
+        status: 'SUCCESS',
+        ue5Result: result,
+        message: `CineCamera parameters (${args.focalLength}mm, f/${args.fstop || 2.8}) dispatched to Unreal Engine 5.`,
+      };
+    }
+
+    case 'queue_comfy_generation': {
+      const prompt = args.prompt || {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": Math.floor(Math.random() * 1000000),
+            "steps": 25,
+            "cfg": 7.5,
+            "sampler_name": "euler",
+            "scheduler": "normal",
+            "denoise": 1.0
+          }
+        }
+      };
+      const result = await comfyBridge.queuePrompt(prompt);
+      return {
+        status: result.success ? 'SUCCESS' : 'WARNING',
+        comfyResult: result,
+        message: result.success ? 'Queued workflow prompt to ComfyUI.' : 'ComfyUI offline — prompt cached in project manifest.',
+      };
+    }
+
+    case 'launch_dcc_tool': {
+      const tool = args.tool || 'unreal';
+      let result;
+      if (tool === 'unreal') {
+        result = await unrealConnector.launchEditor(args.projectPath || '');
+      } else {
+        result = await comfyBridge.launchComfyUI();
+      }
+      return {
+        status: 'SUCCESS',
+        tool,
         result,
       };
     }
