@@ -76,10 +76,10 @@ export class NvidiaNIMClient {
   constructor(apiKey = loadEnvKey()) {
     this.apiKey = apiKey || loadEnvKey();
     this.baseUrl = 'https://integrate.api.nvidia.com';
-    this.defaultModel = 'meta/llama-3.2-11b-vision-instruct';
+    this.defaultModel = 'meta/llama-3.3-70b-instruct';
     this.availableModels = [
-      { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct (Active)', description: 'Fast, high-fidelity multimodal parsing, screenplay reasoning, and autonomous tool execution' },
-      { id: 'meta/llama-3.3-70b-instruct', name: 'Llama 3.3 70B Instruct', description: 'Deep screenplay narrative and complex tool execution' },
+      { id: 'meta/llama-3.3-70b-instruct', name: 'Llama 3.3 70B Instruct (Active)', description: 'Deep screenplay narrative, cinematic reasoning, and autonomous tool execution engine' },
+      { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct (Vision Tasks Only)', description: 'Multimodal vision parsing, storyboard analysis, and image inspection tasks' },
       { id: 'mistralai/mistral-7b-instruct-v0.3', name: 'Mistral 7B Instruct v0.3', description: 'Fast European powerhouse for screenplay beats and dialogue' },
     ];
   }
