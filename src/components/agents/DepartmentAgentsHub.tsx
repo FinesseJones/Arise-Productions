@@ -487,20 +487,15 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
             </div>
           </div>
 
-          {/* Optional 3D Holographic Stage Canvas - Compact & Responsive */}
+          {/* Hologram Toggle Indicator */}
           {show3DHologram && (
-            <div className="h-24 sm:h-28 w-full bg-gradient-to-b from-[#0a051c] to-[#05030c] border-b border-amber-500/20 relative flex-shrink-0">
-              <Canvas
-                camera={{ position: [0, 0.25, 3.8], fov: 40 }}
-                className="w-full h-full"
-              >
-                <ambientLight intensity={0.7} color="#fde047" />
-                <pointLight position={[3, 4, 3]} intensity={2.2} color="#fbbf24" />
-                <pointLight position={[-3, 2, 2]} intensity={1.5} color="#a855f7" />
-                <AgentHologram3D agent={currentAgent} />
-              </Canvas>
+            <div className="h-24 sm:h-28 w-full bg-gradient-to-b from-[#0a051c] to-[#05030c] border-b border-amber-500/20 relative flex-shrink-0 flex items-center justify-center">
+              <div className="flex items-center gap-2 text-xs font-mono text-amber-300">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
+                <span>HOLOGRAPHIC QUANTUM LINK ACTIVE</span>
+              </div>
               <div className="absolute top-1.5 right-2 pointer-events-none text-[8px] font-mono text-amber-400/80 bg-black/60 px-1.5 py-0.2 rounded border border-amber-500/30">
-                3D STAGE
+                AI TELEMETRY
               </div>
             </div>
           )}
