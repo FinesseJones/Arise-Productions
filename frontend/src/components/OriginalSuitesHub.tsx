@@ -103,18 +103,9 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
     setIsAnalyzingScript(true);
     const toastId = toast.loading('📖 AI Script Coverage: Analyzing thematic structure with Llama 3.1 70B...');
 
-    const fallbackAnalysis = {
-      genre: 'Cinematic Biblical / Historical Drama',
-      pacing: 'Dynamic 3-Act Structure with strong mid-point reversal and escalating stakes',
-      logline: `A high-concept cinematic journey in "${projectStatus.projectName}", exploring personal sacrifice and divine redemption.`,
-      strengths: ['Compelling character motivations and moral dilemmas', 'Authentic 35mm visual texture in scene headings', 'Strong dramatic tension between opposing forces'],
-      areas_for_improvement: ['Deepen the secondary antagonist’s motivation in Act 2', 'Expand visual symbolism in the climactic showdown scene'],
-      market_viability: 'High - Strong crossover appeal for theatrical and premium SVOD platforms',
-    };
-
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
 
       const res = await fetch(`${apiBase}/script/analyze`, {
         method: 'POST',
@@ -135,11 +126,10 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
           return;
         }
       }
-      setScriptAnalysis(fallbackAnalysis);
-      toast.success('✨ Script coverage analysis locked!', { id: toastId });
-    } catch {
-      setScriptAnalysis(fallbackAnalysis);
-      toast.success('✨ Script coverage analysis locked!', { id: toastId });
+      const errData = await res.json().catch(() => ({}));
+      toast.error(`⚠️ Script analysis failed: ${errData.error || 'Server error'}`, { id: toastId });
+    } catch (err: any) {
+      toast.error(`⚠️ Script analysis failed: ${err.message || 'Connection error'}`, { id: toastId });
     } finally {
       setIsAnalyzingScript(false);
     }
@@ -150,28 +140,16 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
     setIsAnalyzingCasting(true);
     const toastId = toast.loading('🎭 AI Casting Director: Matching talent profiles...');
 
-    const fallbackCasting = {
-      character_name: 'Devon (Lead Protagonist)',
-      archetype: 'The Reluctant Visionary',
-      age_range: '24-32',
-      key_traits: ['Commanding emotional presence', 'Tactile physicality', 'Intense vulnerability under pressure'],
-      suggested_matches: [
-        { name: 'Devon Wells (Arise Neural Persona)', likeness_score: '98.5%', voice_timbre: 'Rich Baritone, Grounded' },
-        { name: 'Marcus Vance', likeness_score: '94.2%', voice_timbre: 'Dynamic Tenor, Energetic' },
-      ],
-      director_notes: 'Focus on subtle micro-expressions rather than overt vocal theatrics for the Act 3 confrontation.',
-    };
-
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
 
       const res = await fetch(`${apiBase}/casting/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          character_name: 'Devon (Lead Protagonist)',
+          character_name: 'Lead Protagonist',
           project_type: 'Feature Film',
           budget_range: 'medium',
           scene_context: `${projectStatus.projectName} - Emotional coming-of-age drama`,
@@ -187,11 +165,10 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
           return;
         }
       }
-      setCastingAnalysis(fallbackCasting);
-      toast.success('🎭 Talent breakdown matched and locked!', { id: toastId });
-    } catch {
-      setCastingAnalysis(fallbackCasting);
-      toast.success('🎭 Talent breakdown matched and locked!', { id: toastId });
+      const errData = await res.json().catch(() => ({}));
+      toast.error(`⚠️ Casting analysis failed: ${errData.error || 'Server error'}`, { id: toastId });
+    } catch (err: any) {
+      toast.error(`⚠️ Casting analysis failed: ${err.message || 'Connection error'}`, { id: toastId });
     } finally {
       setIsAnalyzingCasting(false);
     }
@@ -202,23 +179,17 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
     setIsSearchingLocations(true);
     const toastId = toast.loading('📍 AI Location Scout: Finding production spaces...');
 
-    const fallbackLocations = [
-      { id: 'loc-1', name: 'Historic Amber Porch & Urban Brownstone', address: 'Studio Backlot Stage 4', daily_rate: '$1,800/day', permit_status: 'Pre-Approved', lighting_quality: 'Natural Golden Hour (West-facing 3200K)' },
-      { id: 'loc-2', name: 'Metropolitan Horizon Rooftop', address: 'Downtown High-Rise East Stage', daily_rate: '$2,500/day', permit_status: 'Cleared for Night Shoots', lighting_quality: 'High-Contrast Neon & Sky Spill' },
-      { id: 'loc-3', name: 'Virtual Soundstage LED Volume', address: 'Arise Production Soundstage A', daily_rate: 'Included (In-House)', permit_status: 'Instant Live Link', lighting_quality: 'Full ACEScg Color DMX Control' },
-    ];
-
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
 
       const res = await fetch(`${apiBase}/locations/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          query: `Porch and urban neighborhood for ${projectStatus.projectName}`,
-          location_type: 'Exterior Porch & Living Room Workspace',
+          query: `Key cinematic locations for ${projectStatus.projectName}`,
+          location_type: 'Exterior & Interior Soundstage Backlot',
         }),
       });
       clearTimeout(timeoutId);
@@ -231,11 +202,10 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
           return;
         }
       }
-      setLocations(fallbackLocations);
-      toast.success(`📍 Found ${fallbackLocations.length} scouted production locations!`, { id: toastId });
-    } catch {
-      setLocations(fallbackLocations);
-      toast.success(`📍 Found ${fallbackLocations.length} scouted production locations!`, { id: toastId });
+      const errData = await res.json().catch(() => ({}));
+      toast.error(`⚠️ Location search failed: ${errData.error || 'Server error'}`, { id: toastId });
+    } catch (err: any) {
+      toast.error(`⚠️ Location search failed: ${err.message || 'Connection error'}`, { id: toastId });
     } finally {
       setIsSearchingLocations(false);
     }
@@ -246,23 +216,16 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
     setIsGeneratingStoryboard(true);
     const toastId = toast.loading('🎬 AI Cinematographer: Generating 4-shot storyboard...');
 
-    const fallbackStoryboard = [
-      { shot: 1, type: 'Extreme Wide / Crane Down', lens: '24mm Prime', framing: 'Establishing skyline at dawn, slow push toward the window', notes: 'BMPCC 4K @ ISO 400 • Kodak 2383' },
-      { shot: 2, type: 'Medium Two-Shot', lens: '35mm Prime', framing: 'Protagonist and mentor in heated conversation', notes: '4:1 lighting ratio, shallow depth of field' },
-      { shot: 3, type: 'Over-The-Shoulder Close-Up', lens: '50mm Anamorphic', framing: 'Tight reaction on lead protagonist realizing the betrayal', notes: 'Micro eye-light flare in amber' },
-      { shot: 4, type: 'Dynamic Low-Angle Track', lens: '35mm Tracking Dolly', framing: 'Lead exits into the corridor, camera tracking backward', notes: 'Fast motion blur locked at 180° shutter' },
-    ];
-
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
 
       const res = await fetch(`${apiBase}/storyboard/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          scene_title: `${projectStatus.projectName} - Porch Confrontation`,
+          scene_title: `${projectStatus.projectName} - Dramatic Confrontation`,
           total_shots: 4,
         }),
       });
@@ -276,11 +239,10 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
           return;
         }
       }
-      setStoryboardData(fallbackStoryboard);
-      toast.success('🎬 4-shot storyboard camera sequence generated!', { id: toastId });
-    } catch {
-      setStoryboardData(fallbackStoryboard);
-      toast.success('🎬 4-shot storyboard camera sequence generated!', { id: toastId });
+      const errData = await res.json().catch(() => ({}));
+      toast.error(`⚠️ Storyboard generation failed: ${errData.error || 'Server error'}`, { id: toastId });
+    } catch (err: any) {
+      toast.error(`⚠️ Storyboard generation failed: ${err.message || 'Connection error'}`, { id: toastId });
     } finally {
       setIsGeneratingStoryboard(false);
     }
@@ -291,24 +253,9 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
     setIsGeneratingCallSheet(true);
     const toastId = toast.loading('📋 AI 1st AD: Generating Call Sheet & Shooting Schedule...');
 
-    const fallbackCallSheet = {
-      production_name: projectStatus.projectName || 'Arise Production',
-      shoot_day: 1,
-      total_days: 18,
-      call_time: '06:30 AM',
-      sunrise: '06:12 AM',
-      sunset: '07:48 PM',
-      location: 'Stage 1 Soundstage & Backlot Exterior',
-      nearest_hospital: 'Cedars-Sinai Medical Center',
-      scenes: [
-        { scene: '1A', set: 'INT. WORKSPACE - MORNING', cast: ['Devon', 'Maya'], pages: '2 3/8', notes: 'Camera track setup on 35mm Prime' },
-        { scene: '2', set: 'EXT. STREET - DAY', cast: ['Devon', 'Antagonist'], pages: '1 4/8', notes: 'Natural golden light window 4:30 PM' },
-      ],
-    };
-
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
 
       const res = await fetch(`${apiBase}/callsheet/generate`, {
         method: 'POST',
@@ -329,11 +276,10 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
           return;
         }
       }
-      setCallSheet(fallbackCallSheet);
-      toast.success('📋 Production call sheet generated!', { id: toastId });
-    } catch {
-      setCallSheet(fallbackCallSheet);
-      toast.success('📋 Production call sheet generated!', { id: toastId });
+      const errData = await res.json().catch(() => ({}));
+      toast.error(`⚠️ Call sheet generation failed: ${errData.error || 'Server error'}`, { id: toastId });
+    } catch (err: any) {
+      toast.error(`⚠️ Call sheet generation failed: ${err.message || 'Connection error'}`, { id: toastId });
     } finally {
       setIsGeneratingCallSheet(false);
     }

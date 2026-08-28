@@ -226,6 +226,7 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 | **2026-08-27 21:28** | Arise Director Console & 10-Stage / 14-Room Architecture System Map | `DirectorAgent.tsx`, `StageWorkspace.tsx`, `Interactive3DRoom.tsx`, `STUDIO_SYSTEMS_PAPER_TRAIL.md` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 21:56** | Igloo-Grade 3D Room Shared Shell & Per-Room Procedural Kits | `@react-three/postprocessing`, `roomKits.ts`, `HeroProps.tsx`, `Room3D.tsx`, `Interactive3DRoom.tsx` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 22:11** | Real Handoff Navigation & Cross-Client Server-Synced Chat History | `RoomAIChat.tsx`, `StageWorkspace.tsx`, `ShellLayout.tsx`, `server.js` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 22:15** | Comprehensive Zero-Simulation & Truthful API Error Protocol | `DirectorAgent.tsx`, `aiService.ts`, `GenerateField.tsx`, `OriginalSuitesHub.tsx`, `CastingRoom.tsx` | GitHub, Desktop, VPS | ✅ Verified |
 
 ---
 
@@ -342,6 +343,27 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 - Single source of truth is maintained in `StudioDatabase` via `GET /api/v1/projects/chat?projectId={projectId}&stageId={stageId}` and `POST /api/v1/projects/chat`.
 - On room mount, `RoomAIChat.tsx` fetches server-side history first, seamlessly syncing conversation threads between the browser web app and the macOS Electron desktop app.
 - LocalStorage is maintained strictly as a resilient offline cache.
+
+---
+
+## 19. Zero-Simulation AI Execution & Permanent API Key Reliability
+
+### 19.1 Elimination of All Simulated Fallbacks:
+- Systematically searched and purged all hardcoded, canned text templates across:
+  - `DirectorAgent.tsx`: Removed `Instant High-Fidelity Director Intelligence Fallback` which previously returned hardcoded animatic/prompt/dailies text when offline. All commands now execute real neural reasoning through `/api/v1/nvidia/chat`.
+  - `aiService.ts`: Removed `generateDynamicAssistantResponse` containing obsolete hardcoded character scripts.
+  - `GenerateField.tsx`: Replaced `getFallbackText()` mock insertion with authentic error toasts.
+  - `OriginalSuitesHub.tsx`: Purged `fallbackAnalysis`, `fallbackCasting`, `fallbackLocations`, `fallbackStoryboard`, and `fallbackCallSheet` mock objects.
+  - `CastingRoom.tsx`: Removed `realisticAnalysis` mock dictionary.
+
+### 19.2 Permanent Multi-Layer API Key Integrity:
+- Active NVIDIA NIM key (`nvapi-...`) is permanently read and persisted across 5 distinct system layers:
+  1. `~/.arise_nvidia_key`
+  2. `~/.arise.env`
+  3. `.env` & `desktop/.env`
+  4. `backend/db/nvidia_config.json`
+  5. `desktop/backend/db/nvidia_config.json`
+- `hasApiKey()` strictly validates `key.startsWith('nvapi-')` with zero mock flags (`hasKey: true`, `isOperational: true`).
 
 ---
 *© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.*

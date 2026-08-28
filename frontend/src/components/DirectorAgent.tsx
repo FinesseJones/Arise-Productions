@@ -32,9 +32,6 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({
   const [isExpanded, setIsExpanded] = useState(true);
 
   const generateDirectorAIResponse = async (cmd: string): Promise<string> => {
-    const q = cmd.toLowerCase();
-
-    // Try backend AI endpoint
     try {
       const res = await fetch(`${apiBase}/api/v1/nvidia/chat`, {
         method: 'POST',
@@ -44,29 +41,23 @@ const DirectorAgent: React.FC<DirectorAgentProps> = ({
           roomName: 'Director Executive Suite',
           role: 'Executive Film Director & Showrunner',
           stageId: activeStage || 'script',
-          context: `Active command: ${cmd}`,
+          context: `Active studio directive: "${cmd}"`,
         }),
-      }).then((r) => r.json()).catch(() => null);
+      });
 
-      if (res && res.success && res.text) {
-        return res.text;
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || `HTTP ${res.status} error from Director Runtime`);
       }
-    } catch (e) {}
 
-    // Instant High-Fidelity Director Intelligence Fallback
-    if (q.includes('board scene') || q.includes('scene 1') || q.includes('storyboard')) {
-      return `🎬 **Director Action Plan — Storyboard & Previs Execution:**\n\n• **Command:** "${cmd}"\n• **Status:** Pipeline chain executed across Stages 1-4 (Script $\\rightarrow$ Structure $\\rightarrow$ Plan $\\rightarrow$ Blockout).\n• **Cinematography Notes:** 24mm anamorphic wide establishing shot resolved at 24.00 FPS. 3-point key/rim lighting calibrated to 4:1 golden hour contrast ratio.\n• **Animatic Locked:** Ready for render pass.`;
+      const json = await res.json();
+      if (json && (json.reply || json.text)) {
+        return json.reply || json.text;
+      }
+      throw new Error(json.error || 'Empty response from Director AI');
+    } catch (err: any) {
+      return `⚠️ **Director Runtime Notice:**\n\nCould not execute real-time reasoning for "${cmd}": ${err.message || 'API connection failed'}. Please check your NVIDIA API Key in Studio Settings.`;
     }
-
-    if (q.includes('compile prompts') || q.includes('prompt')) {
-      return `✨ **Director Action Plan — Prompt Matrix Synthesis:**\n\n• **Command:** "${cmd}"\n• **FLUX.1 Dev Prompt:** "Cinematic 35mm film still of lead protagonist standing on weathered porch, warm amber dawn sunlight, volumetric dust particles, 8k resolution, photorealistic, ACEScg color space."\n• **ControlNet Depth Weight:** 0.85 | IP-Adapter Likeness: @lead_hero_v1 (Weight: 0.90)\n• **Status:** Continuity prompt packs deployed to Slate Room (Stage 7).`;
-    }
-
-    if (q.includes('review reshoots') || q.includes('dailies') || q.includes('reshoot')) {
-      return `🔄 **Director Action Plan — Dailies & Reshoot Loop:**\n\n• **Command:** "${cmd}"\n• **QC Analysis:** Circle Take inspection completed. Shot 2 flagged for ambient fill balance.\n• **Automated Feedback:** Parameters pushed upstream to Blockout 3D camera dolly and Prompt seed tracks.`;
-    }
-
-    return `🎬 **Arise Director Directive Executed:**\n\n"${cmd}" has been analyzed and dispatched through the Central API Bridge. All 10 soundstage tracks and 14 production rooms have updated their parameters to align with this direction.`;
   };
 
   const handleCommandSubmit = async (e: React.FormEvent) => {

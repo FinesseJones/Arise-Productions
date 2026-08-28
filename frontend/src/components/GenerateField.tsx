@@ -125,14 +125,11 @@ export function GenerateField({
         setLastGenerated(true);
         toast.success(`✨ Generated ${label}!`);
       } else {
-        throw new Error('Empty AI text');
+        throw new Error(data.error || 'Empty response from AI engine');
       }
-    } catch {
-      // Robust Studio Narrative Fallback
-      const fallback = getFallbackText();
-      onChange(fallback);
-      setLastGenerated(true);
-      toast.success(`✨ Generated ${label}!`);
+    } catch (err: any) {
+      console.error(`[GenerateField] Failed to generate ${label}:`, err);
+      toast.error(`⚠️ Generation failed: ${err.message || 'API connection error'}`);
     } finally {
       setLoading(false);
     }
