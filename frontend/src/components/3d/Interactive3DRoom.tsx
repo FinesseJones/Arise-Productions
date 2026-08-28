@@ -55,7 +55,7 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
   onSelectShot,
 }) => {
   const [allowOrbit, setAllowOrbit] = useState<boolean>(false);
-  const [quality, setQuality] = useState<'high' | 'performance'>('high');
+  const [quality, setQuality] = useState<'high' | 'performance'>('performance');
   const [activeCenterTab, setActiveCenterTab] = useState<'viewport3d' | 'storyboard' | 'screenplay' | 'lighting'>('viewport3d');
   const [focalLength, setFocalLength] = useState<string>('35mm Prime');
   const [isoSetting, setIsoSetting] = useState<number>(800);

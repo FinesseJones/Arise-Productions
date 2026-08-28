@@ -1,14 +1,14 @@
 'use client';
-import React, { useRef, useMemo, Component, ErrorInfo, ReactNode } from 'react';
+import React, { useRef, useMemo, useState, useEffect, Component, ErrorInfo, ReactNode } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, Lightformer, ContactShadows, OrbitControls, Sparkles } from '@react-three/drei';
-import { EffectComposer, Bloom, DepthOfField, Vignette, Noise } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, DepthOfField, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { StageKey } from '../../types/types';
 import { roomKits } from './roomKits';
 import HeroProps from './HeroProps';
 
-// Target Camera Positions & LookAt Targets for each of the 10 Stages
+// Target Camera Positions & LookAt Targets for each of the Stages
 const STAGE_CAMERA_VANTAGE: Record<
   string,
   { position: [number, number, number]; target: [number, number, number]; fov: number }
@@ -50,11 +50,11 @@ const CineCameraController: React.FC<{
 
   useFrame((state, delta) => {
     if (!allowOrbit) {
-      const mouseX = state.pointer.x * 0.6;
-      const mouseY = state.pointer.y * 0.4;
+      const mouseX = state.pointer.x * 0.5;
+      const mouseY = state.pointer.y * 0.3;
 
-      const breathX = Math.sin(state.clock.elapsedTime * 0.5) * 0.08;
-      const breathY = Math.cos(state.clock.elapsedTime * 0.7) * 0.06;
+      const breathX = Math.sin(state.clock.elapsedTime * 0.5) * 0.06;
+      const breathY = Math.cos(state.clock.elapsedTime * 0.7) * 0.04;
 
       const dynamicTarget = new THREE.Vector3(
         baseTargetPos.x + mouseX + breathX,
@@ -62,12 +62,12 @@ const CineCameraController: React.FC<{
         baseTargetPos.z
       );
 
-      const lerpFactor = Math.min(delta * 4.0, 0.12);
+      const lerpFactor = Math.min(delta * 3.5, 0.1);
       camera.position.lerp(dynamicTarget, lerpFactor);
 
       const dynamicLookAt = new THREE.Vector3(
-        targetLook.x + mouseX * 0.3,
-        targetLook.y + mouseY * 0.2,
+        targetLook.x + mouseX * 0.2,
+        targetLook.y + mouseY * 0.15,
         targetLook.z
       );
       currentLookAt.current.lerp(dynamicLookAt, lerpFactor);
@@ -86,6 +86,40 @@ const CineCameraController: React.FC<{
   ) : null;
 };
 
+// WebGL Context Loss Recovery Manager (prevents black screen on GPU exhaustion)
+const WebGLContextManager: React.FC<{ onContextLost?: () => void; onContextRestored?: () => void }> = ({
+  onContextLost,
+  onContextRestored,
+}) => {
+  const { gl } = useThree();
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    if (!canvas) return;
+
+    const handleContextLost = (event: Event) => {
+      event.preventDefault(); // Prevents Three.js / browser from permanently destroying the context
+      console.warn('[Room3D] WebGL Context Lost! Preventing default and initiating recovery...');
+      if (onContextLost) onContextLost();
+    };
+
+    const handleContextRestored = () => {
+      console.log('[Room3D] WebGL Context successfully Restored!');
+      if (onContextRestored) onContextRestored();
+    };
+
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
+    canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
+
+    return () => {
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
+      canvas.removeEventListener('webglcontextrestored', handleContextRestored);
+    };
+  }, [gl, onContextLost, onContextRestored]);
+
+  return null;
+};
+
 // 4K Dynamic Rotating Soundstage Floor with PBR Physical Reflectance
 const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
   const ringRef1 = useRef<THREE.Mesh>(null);
@@ -98,9 +132,9 @@ const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
   const royalPurple = '#7e22ce';
 
   useFrame((state, delta) => {
-    if (ringRef1.current) ringRef1.current.rotation.z += delta * 0.15;
-    if (ringRef2.current) ringRef2.current.rotation.z -= delta * 0.10;
-    if (ringRef3.current) ringRef3.current.rotation.z += delta * 0.06;
+    if (ringRef1.current) ringRef1.current.rotation.z += delta * 0.12;
+    if (ringRef2.current) ringRef2.current.rotation.z -= delta * 0.08;
+    if (ringRef3.current) ringRef3.current.rotation.z += delta * 0.05;
   });
 
   return (
@@ -110,11 +144,11 @@ const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
         <planeGeometry args={[100, 100]} />
         <meshPhysicalMaterial
           color="#04020a"
-          roughness={0.12}
-          metalness={0.92}
-          clearcoat={1.0}
-          clearcoatRoughness={0.06}
-          envMapIntensity={2.0}
+          roughness={0.16}
+          metalness={0.90}
+          clearcoat={0.8}
+          clearcoatRoughness={0.1}
+          envMapIntensity={1.6}
         />
       </mesh>
 
@@ -126,17 +160,17 @@ const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
 
       {/* Animated Counter-Rotating Concentric Stage Rings */}
       <mesh ref={ringRef1} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[3.6, 3.8, 64]} />
+        <ringGeometry args={[3.6, 3.8, 48]} />
         <meshBasicMaterial color={primaryGold} transparent opacity={0.65} />
       </mesh>
 
       <mesh ref={ringRef2} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[7.4, 7.6, 64]} />
+        <ringGeometry args={[7.4, 7.6, 48]} />
         <meshBasicMaterial color={secondaryAmber} transparent opacity={0.45} />
       </mesh>
 
       <mesh ref={ringRef3} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[11.6, 11.8, 64]} />
+        <ringGeometry args={[11.6, 11.8, 48]} />
         <meshBasicMaterial color={royalPurple} transparent opacity={0.35} />
       </mesh>
     </group>
@@ -151,11 +185,10 @@ const LIGHT: Record<string, { key: string; fill: string }> = {
 
 // Procedural Lightformer Rig Fallback (guarantees zero black void)
 const ProceduralLightformers: React.FC<{ light: { key: string; fill: string }; perf: boolean }> = ({ light, perf }) => (
-  <Environment resolution={perf ? 128 : 256}>
-    <Lightformer intensity={1.4} position={[0, 4, 3]} scale={[8, 4, 1]} color={light.key} />
-    <Lightformer intensity={0.9} position={[-4, 2, 2]} scale={[4, 4, 1]} color={light.fill} />
-    <Lightformer intensity={0.6} position={[4, 2, -3]} scale={[4, 4, 1]} color="#ffffff" />
-    <Lightformer intensity={0.4} position={[0, -2, 0]} scale={[10, 10, 1]} color="#1a0b36" />
+  <Environment resolution={perf ? 64 : 128}>
+    <Lightformer intensity={1.2} position={[0, 4, 3]} scale={[8, 4, 1]} color={light.key} />
+    <Lightformer intensity={0.8} position={[-4, 2, 2]} scale={[4, 4, 1]} color={light.fill} />
+    <Lightformer intensity={0.5} position={[4, 2, -3]} scale={[4, 4, 1]} color="#ffffff" />
   </Environment>
 );
 
@@ -191,7 +224,7 @@ class SafeHDRIEnvironment extends Component<HDRIProps, HDRIState> {
 
     return (
       <React.Suspense fallback={<ProceduralLightformers light={light} perf={perf} />}>
-        <Environment files="./hdri/studio.hdr" />
+        <Environment files="./hdri/studio.hdr" resolution={perf ? 64 : 128} />
       </React.Suspense>
     );
   }
@@ -214,26 +247,42 @@ export const Room3D: React.FC<Room3DProps> = ({
   shotNumber,
   children,
   allowOrbit = false,
-  quality = 'high',
+  quality = 'performance',
 }) => {
+  const [recoveryKey, setRecoveryKey] = useState<number>(0);
   const kit = roomKits[stageId] || roomKits.script;
   const light = LIGHT[kit.lightTemp] || LIGHT.warm;
   const perf = quality === 'performance';
 
+  const handleContextLost = () => {
+    // Graceful recovery trigger
+    setTimeout(() => setRecoveryKey((k) => k + 1), 500);
+  };
+
   return (
     <div className="relative w-full h-full min-h-[380px] bg-[#05030a] overflow-hidden rounded-2xl">
       <Canvas
-        shadows={!perf}
-        dpr={perf ? [1, 1.5] : [1, 2]}
+        key={`stage-canvas-${stageId}-${recoveryKey}`}
+        shadows={false}
+        dpr={perf ? [1, 1.2] : [1, 1.5]}
         gl={{
-          antialias: true,
+          powerPreference: 'high-performance',
+          antialias: false,
+          alpha: false,
+          stencil: false,
+          depth: true,
+          preserveDrawingBuffer: false,
+          failIfMajorPerformanceCaveat: false,
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.12,
+          toneMappingExposure: 1.15,
         }}
         camera={{ position: [0, 1.2, 5.8], fov: 50 }}
       >
         <color attach="background" args={['#060410']} />
         
+        {/* WebGL Context Loss Recovery Manager */}
+        <WebGLContextManager onContextLost={handleContextLost} />
+
         {/* Priority 3: Exponential Atmospheric Depth Fog */}
         <fogExp2 attach="fog" args={['#060312', 0.038]} />
 
@@ -242,24 +291,22 @@ export const Room3D: React.FC<Room3DProps> = ({
 
         {/* Subtle Atmospheric Dust Motes */}
         <Sparkles
-          count={perf ? 20 : 45}
+          count={perf ? 18 : 35}
           scale={14}
-          size={1.8}
-          speed={0.35}
-          opacity={0.3}
+          size={1.6}
+          speed={0.3}
+          opacity={0.28}
           color={kit.accent}
         />
 
-        <ambientLight intensity={0.4} color="#e9d5ff" />
+        <ambientLight intensity={0.45} color="#e9d5ff" />
         <directionalLight
           position={[6, 8, 6]}
-          intensity={1.6}
+          intensity={1.5}
           color={light.key}
-          castShadow={!perf}
-          shadow-mapSize={[1024, 1024]}
         />
-        <pointLight position={[-6, 4, 4]} intensity={1.1} color={light.fill} />
-        <spotLight position={[0, 7, -6]} intensity={2.2} color={kit.accent} angle={0.65} penumbra={0.8} />
+        <pointLight position={[-6, 4, 4]} intensity={1.0} color={light.fill} />
+        <spotLight position={[0, 7, -6]} intensity={2.0} color={kit.accent} angle={0.65} penumbra={0.8} />
 
         {/* Interactive Camera Controller with Mouse Parallax & Orbit */}
         <CineCameraController stageId={stageId} shotNumber={shotNumber} allowOrbit={allowOrbit} />
@@ -270,10 +317,10 @@ export const Room3D: React.FC<Room3DProps> = ({
         {!perf && (
           <ContactShadows
             position={[0, -2.14, 0]}
-            opacity={0.65}
-            scale={28}
-            blur={2.2}
-            far={5}
+            opacity={0.5}
+            scale={24}
+            blur={2.0}
+            far={4}
             color="#000000"
           />
         )}
@@ -284,21 +331,18 @@ export const Room3D: React.FC<Room3DProps> = ({
         {/* Optional Custom Room Overlays */}
         {children}
 
-        {/* Priority 5: Calibrated Igloo Postprocessing Stack */}
-        <EffectComposer enabled>
+        {/* Priority 5: Lightweight High-FPS Postprocessing Stack (Bloom + Vignette) */}
+        <EffectComposer enabled multisampling={0}>
           <Bloom
-            intensity={perf ? 0.25 : 0.45}
-            luminanceThreshold={0.7}
-            luminanceSmoothing={0.5}
+            intensity={perf ? 0.2 : 0.35}
+            luminanceThreshold={0.75}
+            luminanceSmoothing={0.6}
             mipmapBlur
           />
           {!perf ? (
-            <DepthOfField focusDistance={0.02} focalLength={0.035} bokehScale={1.3} />
-          ) : (
-            <></>
-          )}
-          <Vignette eskil={false} offset={0.3} darkness={0.65} />
-          {!perf ? <Noise opacity={0.015} /> : <></>}
+            <DepthOfField focusDistance={0.02} focalLength={0.035} bokehScale={1.1} />
+          ) : null}
+          <Vignette eskil={false} offset={0.3} darkness={0.6} />
         </EffectComposer>
       </Canvas>
 
