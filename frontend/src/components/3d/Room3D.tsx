@@ -211,6 +211,10 @@ export const Room3D: React.FC<Room3DProps> = ({
 
 
 
+        {/* Step 5 — Fog + Sparkles */}
+        <fogExp2 attach="fog" args={['#0a0a0a', 0.012]} />
+        <Sparkles count={40} scale={6} size={2} speed={0.2} opacity={0.4} />
+
         {/* 3-Point Hollywood Studio Lighting */}
         <ambientLight intensity={0.75} color="#ffffff" />
         <directionalLight position={[5, 7, 5]} intensity={1.8} color={light.key} />
