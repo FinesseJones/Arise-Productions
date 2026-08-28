@@ -60,6 +60,8 @@ export interface StudioMemory {
 interface DepartmentAgentsHubProps {
   projectName: string;
   projectId?: string;
+  activeStageId?: string;
+  onSelectStage?: (stageId: string) => void;
   onNavigateToRoom?: (roomKey: string) => void;
 }
 
@@ -83,6 +85,8 @@ const AgentHologram3D: React.FC<{ agent: DepartmentAgent }> = ({ agent }) => {
 export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
   projectName,
   projectId = 'default',
+  activeStageId = 'script',
+  onSelectStage,
   onNavigateToRoom,
 }) => {
   const apiBase = getAPIBaseURL();
@@ -341,8 +345,17 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
           </div>
         </div>
 
-        {/* Right Tools: 3D Hologram Toggle & Memory Vault */}
+        {/* Right Tools: 3D Soundstage Jump, 3D Hologram Toggle & Memory Vault */}
         <div className="flex items-center space-x-2 text-xs">
+          <button
+            onClick={() => onNavigateToRoom && onNavigateToRoom(activeStageId || 'script')}
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-500 text-black font-black text-[11px] font-mono transition shadow-lg shadow-amber-500/25 active:scale-95 cursor-pointer"
+            title="Launch 3D Soundstage Spatial Workspace"
+          >
+            <span>🎬</span>
+            <span>3D Soundstage</span>
+          </button>
+
           <button
             onClick={() => setShow3DHologram((prev) => !prev)}
             className={`flex items-center space-x-1 px-2.5 py-1 rounded-xl border text-[11px] font-mono transition ${
@@ -352,7 +365,7 @@ export const DepartmentAgentsHub: React.FC<DepartmentAgentsHubProps> = ({
             }`}
           >
             {show3DHologram ? <Eye size={12} className="text-amber-400" /> : <EyeOff size={12} className="text-purple-400" />}
-            <span>3D Stage {show3DHologram ? 'ON' : 'OFF'}</span>
+            <span>Hologram {show3DHologram ? 'ON' : 'OFF'}</span>
           </button>
 
           <button
