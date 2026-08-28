@@ -103,7 +103,7 @@ const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
   });
 
   return (
-    <group position={[0, -2.15, 0]}>
+    <group position={[0, -1.0, 0]}>
       {/* Reflective Dark Stage Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[100, 100]} />
@@ -116,23 +116,23 @@ const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
 
       {/* Cyber Grid Lines */}
       <gridHelper
-        args={[80, 80, primaryGold, '#1f103d']}
+        args={[60, 60, primaryGold, '#1f103d']}
         position={[0, 0.01, 0]}
       />
 
       {/* Animated Counter-Rotating Rings */}
       <mesh ref={ringRef1} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[3.6, 3.8, 48]} />
+        <ringGeometry args={[2.8, 3.0, 48]} />
         <meshBasicMaterial color={primaryGold} transparent opacity={0.65} />
       </mesh>
 
       <mesh ref={ringRef2} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[7.4, 7.6, 48]} />
+        <ringGeometry args={[5.6, 5.8, 48]} />
         <meshBasicMaterial color={secondaryAmber} transparent opacity={0.45} />
       </mesh>
 
       <mesh ref={ringRef3} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[11.6, 11.8, 48]} />
+        <ringGeometry args={[8.8, 9.0, 48]} />
         <meshBasicMaterial color={royalPurple} transparent opacity={0.35} />
       </mesh>
     </group>
@@ -168,7 +168,7 @@ export const Room3D: React.FC<Room3DProps> = ({
   return (
     <div className="relative w-full h-full min-h-[380px] bg-[#05030a] overflow-hidden rounded-2xl flex items-center justify-center">
       <Canvas
-        camera={{ position: [0, 1.2, 5.8], fov: 50 }}
+        camera={{ position: [0, 0.8, 4.4], fov: 48 }}
         gl={{
           antialias: false,
           powerPreference: 'high-performance',
@@ -181,18 +181,18 @@ export const Room3D: React.FC<Room3DProps> = ({
         <color attach="background" args={['#060410']} />
 
         {/* 3-Point Hollywood Studio Lighting */}
-        <ambientLight intensity={0.65} color="#e9d5ff" />
-        <directionalLight position={[6, 8, 6]} intensity={1.8} color={light.key} />
-        <pointLight position={[-6, 4, 4]} intensity={1.2} color={light.fill} />
-        <pointLight position={[0, 7, -6]} intensity={2.0} color={kit.accent} />
+        <ambientLight intensity={0.75} color="#ffffff" />
+        <directionalLight position={[5, 7, 5]} intensity={1.8} color={light.key} />
+        <pointLight position={[-5, 3, 3]} intensity={1.2} color={light.fill} />
+        <pointLight position={[0, 5, -4]} intensity={1.8} color={kit.accent} />
 
         {/* Interactive Camera Controller with Mouse Parallax & Orbit */}
         <CineCameraController stageId={stageId} shotNumber={shotNumber} allowOrbit={allowOrbit} />
 
-        {/* 3D Soundstage Floor */}
+        {/* 3D Soundstage Floor Grounded */}
         <DynamicSoundstageFloor stageId={stageId} />
 
-        {/* Real Grounded Hero Props from Kit */}
+        {/* Real Grounded Hero Props from Kit Centered at Eye Level */}
         <HeroProps kit={kit} />
       </Canvas>
 
