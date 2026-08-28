@@ -333,7 +333,7 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
     } catch {}
 
     try {
-      const modelId = localStorage.getItem('arise_selected_model') || 'meta/llama-3.3-70b-instruct';
+      const modelId = localStorage.getItem('arise_selected_model') || 'nvidia/nemotron-3-super-120b-a12b';
       const aiResult = await sendChatMessage({
         stageId,
         roomName,

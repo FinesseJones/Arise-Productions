@@ -76,11 +76,14 @@ export class NvidiaNIMClient {
   constructor(apiKey = loadEnvKey()) {
     this.apiKey = apiKey || loadEnvKey();
     this.baseUrl = 'https://integrate.api.nvidia.com';
-    this.defaultModel = 'meta/llama-3.3-70b-instruct';
+    this.defaultModel = 'nvidia/nemotron-3-super-120b-a12b';
     this.availableModels = [
-      { id: 'meta/llama-3.3-70b-instruct', name: 'Llama 3.3 70B Instruct (Active)', description: 'Deep screenplay narrative, cinematic reasoning, and autonomous tool execution engine' },
+      { id: 'nvidia/nemotron-3-super-120b-a12b', name: 'Nemotron-3-Super 120B (Active Flagship)', description: 'Primary agent brain — 128K context, high-end screenplay reasoning, and reliable autonomous tool calling' },
+      { id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning', name: 'Nemotron-3-Nano Reasoning 30B', description: 'Fast reasoning and rapid beat breakdown with full tool calling' },
+      { id: 'minimaxai/minimax-m3', name: 'MiniMax-M3 (Creative Narrative)', description: 'High-fidelity creative writing, dialogue pacing, and verified function calling' },
+      { id: 'moonshotai/kimi-k3', name: 'Moonshot Kimi K3 (Long Context)', description: 'Ultra-long context document analysis, bible ingestion, and tool execution' },
+      { id: 'google/diffusiongemma-26b-a4b-it', name: 'Google DiffusionGemma 26B', description: 'Generative prompt compilation and diffusion control tuning' },
       { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct (Vision Tasks Only)', description: 'Multimodal vision parsing, storyboard analysis, and image inspection tasks' },
-      { id: 'mistralai/mistral-7b-instruct-v0.3', name: 'Mistral 7B Instruct v0.3', description: 'Fast European powerhouse for screenplay beats and dialogue' },
     ];
   }
 

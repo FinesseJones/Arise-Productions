@@ -35,7 +35,7 @@ export interface ChatResponse {
   actions?: AgentAction[];
 }
 
-const DEFAULT_MODEL = 'meta/llama-3.3-70b-instruct';
+const DEFAULT_MODEL = 'nvidia/nemotron-3-super-120b-a12b';
 
 export function getActiveApiKey(): string {
   try {
