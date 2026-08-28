@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { StageKey } from '../../types/types';
 import { roomKits } from './roomKits';
 import HeroProps from './HeroProps';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 
 // --- Step 4: HDRI fallback helpers ---
 function ProceduralLightingFallback() {
@@ -204,12 +205,6 @@ export const Room3D: React.FC<Room3DProps> = ({
           </Suspense>
         </EnvErrorBoundary>
 
-        {/* Step 5 — fog + sparkles */}
-        <fogExp2 attach="fog" args={['#0a0a0a', 0.012]} />
-        <Sparkles count={40} scale={6} size={2} speed={0.2} opacity={0.4} />
-
-
-
 
         {/* Step 5 — Fog + Sparkles */}
         <fogExp2 attach="fog" args={['#0a0a0a', 0.012]} />
@@ -229,6 +224,13 @@ export const Room3D: React.FC<Room3DProps> = ({
 
         {/* Real Grounded Hero Props from Kit Centered at Eye Level */}
         <HeroProps kit={kit} />
+
+        {/* Step 6 — postprocessing: Bloom + Vignette only */}
+        <EffectComposer multisampling={0}>
+          <Bloom intensity={0.6} luminanceThreshold={0.8} luminanceSmoothing={0.2} mipmapBlur />
+          <Vignette eskil={false} offset={0.3} darkness={0.6} />
+        </EffectComposer>
+
       </Canvas>
 
       {/* 4K 60FPS Spatial Soundstage Watermark */}
