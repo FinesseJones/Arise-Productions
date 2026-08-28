@@ -78,7 +78,23 @@ fileWatcher.start();
 
 // Helper: Resolve active project dynamically
 async function resolveProjectId(explicitId) {
-  if (explicitId && explicitId !== 'default' && explicitId !== 'undefined') return explicitId;
+  if (explicitId && explicitId !== 'default' && explicitId !== 'undefined') {
+    if (typeof db.getProject === 'function') {
+      const p = db.getProject(explicitId);
+      if (p) return p.id;
+    }
+    if (typeof db.listProjects === 'function') {
+      const all = await db.listProjects();
+      const match = all.find(
+        (item) =>
+          item.id === explicitId ||
+          item.name?.toLowerCase() === explicitId.toLowerCase() ||
+          item.slug?.toLowerCase() === explicitId.toLowerCase()
+      );
+      if (match) return match.id;
+    }
+    return explicitId;
+  }
   const session = db.getSessionState();
   if (session) {
     if (session.lastActiveProjectId) return session.lastActiveProjectId;

@@ -793,6 +793,11 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 activeShotNumber={activeShotNumber}
                 onSelectStage={onStageSelect}
                 onSelectShot={setActiveShotNumber}
+                onHandoff={(targetStageId) => {
+                  if (onStageSelect) {
+                    onStageSelect(targetStageId);
+                  }
+                }}
               />
             )}
 

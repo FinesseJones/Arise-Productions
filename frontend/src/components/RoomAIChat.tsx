@@ -16,15 +16,18 @@ import {
   FileText,
   X,
   UploadCloud,
+  ArrowRight,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { sendChatMessage } from '../services/aiService';
+import { getAPIBaseURL } from '../lib/api';
 
 interface RoomAIChatProps {
   stageId: StageKey;
   roomName: string;
   projectName: string;
   shotNumber: number;
+  onHandoff?: (targetStageId: string, contextSummary?: string) => void;
 }
 
 interface Message {
@@ -128,6 +131,16 @@ const ROOM_ROLES: Record<string, { role: string; intro: string; quickPrompts: st
       'Generate orchestral tension score scratch track',
     ],
   },
+  audio: {
+    role: 'Sound Supervisor & Orchestral Composer AI',
+    intro: 'Welcome to the 5.1 Atmos Sound & Scoring Stage. I mix dialogue stems, design spatial Foley acoustics, and compose dynamic film scores.',
+    quickPrompts: [
+      'Generate 5.1 spatial Foley mix for ambient room tone',
+      'Isolate & denoise dialogue center channel',
+      'Synthesize ElevenLabs vocal stem for Lead Character',
+      'Generate orchestral tension score scratch track',
+    ],
+  },
   edit: {
     role: 'Master Colorist & Finishing Editor AI',
     intro: 'Welcome to the DaVinci Finishing Suite. I assemble EDL cuts, apply ACEScc color grading decision lists (CDL), and master final exports.',
@@ -145,29 +158,14 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
   roomName,
   projectName,
   shotNumber,
+  onHandoff,
 }) => {
   const roleConfig = ROOM_ROLES[stageId] || ROOM_ROLES.script;
-  const storageKey = `arise_chat_${projectName.replace(/[^a-zA-Z0-9]/g, '_')}_${stageId}`;
+  const cleanProject = projectName.replace(/[^a-zA-Z0-9]/g, '_');
+  const storageKey = `arise_chat_${cleanProject}_${stageId}`;
+  const apiBase = getAPIBaseURL();
 
-  const [messages, setMessages] = useState<Message[]>(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {}
-    return [
-      {
-        id: 'msg-1',
-        sender: 'ai',
-        text: roleConfig.intro,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        model: 'NVIDIA-Llama-3.1-70B',
-      },
-    ];
-  });
-
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [attachedFile, setAttachedFile] = useState<{ name: string; content: string; size: string } | null>(null);
@@ -175,35 +173,113 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load chat on stage or project change
+  // Load chat on stage or project change with Server-Side Sync & Handoff Ingestion
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setMessages(parsed);
+    let isMounted = true;
+
+    const loadHistoryAndHandoff = async () => {
+      // 1. Check for incoming cross-room handoff context
+      const handoffKey = `arise_handoff_${cleanProject}_${stageId}`;
+      const pendingHandoff = localStorage.getItem(handoffKey);
+      let incomingHandoffMsg: Message | null = null;
+
+      if (pendingHandoff) {
+        try {
+          const parsed = JSON.parse(pendingHandoff);
+          if (parsed && parsed.summary) {
+            incomingHandoffMsg = {
+              id: `handoff-${Date.now()}`,
+              sender: 'ai',
+              text: `🔄 **Incoming Handoff from ${parsed.fromRoom || parsed.fromStage}:**\n"${parsed.summary}"\n\nI have received the handoff context and am ready to execute our department workflow. How shall we proceed?`,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              model: 'Arise-Handoff-Bridge',
+            };
+            localStorage.removeItem(handoffKey);
+          }
+        } catch {}
+      }
+
+      // 2. Fetch server-side synced chat history (Single Source of Truth)
+      try {
+        const res = await fetch(
+          `${apiBase}/api/v1/projects/chat?projectId=${encodeURIComponent(projectName)}&stageId=${stageId}`
+        );
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.messages) && data.messages.length > 0) {
+          const serverHistory: Message[] = data.messages.map((m: any, idx: number) => ({
+            id: m.id || `srv-${idx}-${Date.now()}`,
+            sender: (m.role === 'user' || m.sender === 'user') ? 'user' : 'ai',
+            text: m.content || m.text || '',
+            timestamp: m.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            model: m.model || 'NVIDIA-Llama-3.1-70B',
+            actions: m.actions,
+          }));
+
+          if (incomingHandoffMsg) {
+            serverHistory.push(incomingHandoffMsg);
+          }
+
+          if (isMounted) {
+            setMessages(serverHistory);
+            try {
+              localStorage.setItem(storageKey, JSON.stringify(serverHistory));
+            } catch {}
+          }
           return;
         }
+      } catch (err) {
+        console.warn('[RoomAIChat] Server chat history unreachable, checking local cache:', err);
       }
-    } catch {}
 
-    const initialMsg: Message = {
-      id: `msg-${Date.now()}`,
-      sender: 'ai',
-      text: roleConfig.intro,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      model: 'NVIDIA-Llama-3.1-70B',
+      // 3. Fallback to local storage cache if server history was empty or unreachable
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            if (incomingHandoffMsg) {
+              parsed.push(incomingHandoffMsg);
+              try {
+                localStorage.setItem(storageKey, JSON.stringify(parsed));
+              } catch {}
+            }
+            if (isMounted) setMessages(parsed);
+            return;
+          }
+        }
+      } catch {}
+
+      // 4. Default fresh room welcome message
+      const defaultIntro: Message = {
+        id: `msg-${Date.now()}`,
+        sender: 'ai',
+        text: roleConfig.intro,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        model: 'NVIDIA-Llama-3.1-70B',
+      };
+
+      const initialList = incomingHandoffMsg ? [defaultIntro, incomingHandoffMsg] : [defaultIntro];
+      if (isMounted) {
+        setMessages(initialList);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(initialList));
+        } catch {}
+      }
     };
-    setMessages([initialMsg]);
-  }, [stageId, projectName, storageKey]);
+
+    loadHistoryAndHandoff();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [stageId, projectName, storageKey, apiBase, cleanProject]);
 
   // Auto-scroll to bottom on message updates
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  // Handle Document Ingestion / File Attachment inside Chat (Method 2)
+  // Handle Document Ingestion / File Attachment inside Chat
   const handleFileAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -214,7 +290,7 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const content = event.target?.result as string || '';
+      const content = (event.target?.result as string) || '';
       setAttachedFile({
         name: file.name,
         content: content.slice(0, 10000), // Cap preview at 10k chars
@@ -271,7 +347,7 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
         })),
       });
 
-      // Process any tool execution actions
+      // Process any tool execution actions (including REAL Handoff Navigation)
       if (aiResult.actions && aiResult.actions.length > 0) {
         aiResult.actions.forEach((act) => {
           if (act.tool === 'run_stage') {
@@ -283,7 +359,29 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
           } else if (act.tool === 'get_story_bible') {
             toast.success(`🏛️ Loaded project manifest & story bible!`, { icon: '📂' });
           } else if (act.tool === 'handoff_to_agent') {
-            toast(`🔄 Handoff to ${act.args?.stageId}: ${act.args?.reason || 'Stage handoff'}`, { icon: '🚀' });
+            const rawTarget = act.args?.stageId || act.args?.targetStage || act.args?.targetStageId || 'structure';
+            const targetStageId = String(rawTarget).toLowerCase().trim();
+            const handoffReason = act.args?.reason || `Completed work in ${roomName} (${stageId}) for ${projectName} (Shot ${shotNumber}). Ready for ${targetStageId.toUpperCase()}.`;
+
+            // Store pending handoff in target room's context storage
+            const targetHandoffKey = `arise_handoff_${cleanProject}_${targetStageId}`;
+            try {
+              localStorage.setItem(targetHandoffKey, JSON.stringify({
+                fromStage: stageId,
+                fromRoom: roomName,
+                summary: handoffReason,
+                timestamp: new Date().toISOString(),
+              }));
+            } catch {}
+
+            toast.success(`🚀 Handoff to ${targetStageId.toUpperCase()}: Navigating now...`, { icon: '🔄', duration: 2500 });
+
+            // Perform real room navigation
+            if (onHandoff) {
+              setTimeout(() => {
+                onHandoff(targetStageId, handoffReason);
+              }, 700);
+            }
           }
         });
       }
@@ -329,7 +427,7 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
     }
   };
 
-  const handleClearChat = () => {
+  const handleClearChat = async () => {
     const initialMsg: Message = {
       id: `msg-${Date.now()}`,
       sender: 'ai',
@@ -338,7 +436,9 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
       model: 'NVIDIA-Llama-3.1-70B',
     };
     setMessages([initialMsg]);
-    localStorage.setItem(storageKey, JSON.stringify([initialMsg]));
+    try {
+      localStorage.setItem(storageKey, JSON.stringify([initialMsg]));
+    } catch {}
   };
 
   return (
@@ -350,72 +450,95 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
             <Bot size={18} />
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wide">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-rose-200 to-amber-200 uppercase font-mono tracking-wider">
                 {roleConfig.role}
-              </h4>
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-sm shadow-rose-500" />
+              </h3>
+              <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono font-bold">
+                AUTONOMOUS
+              </span>
             </div>
-            <p className="text-[10px] text-rose-400/90 font-mono">
-              3D {roomName} • AI Co-Pilot (Method 2 Ingest Ready)
+            <p className="text-[10px] text-purple-300/70 font-mono">
+              Stage: <strong className="text-rose-300 uppercase">{stageId}</strong> • Shot {shotNumber}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <span className="text-[9px] px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800/60 font-mono font-bold">
-            NVIDIA NIM
-          </span>
+        <div className="flex items-center space-x-1.5">
           <button
             onClick={handleClearChat}
-            title="Clear & Reset Chat"
-            className="p-1.5 rounded-lg bg-purple-950/40 hover:bg-rose-950/60 text-purple-400 hover:text-rose-300 transition"
+            className="p-1.5 rounded-lg text-purple-400 hover:text-rose-400 hover:bg-purple-900/30 transition text-xs"
+            title="Reset Room Chat"
           >
-            <Trash2 size={13} />
+            <RotateCcw size={13} />
           </button>
         </div>
       </div>
 
-      {/* Messages Scroll Viewport */}
-      <div className="flex-grow p-4 overflow-y-auto space-y-4 text-xs font-sans">
-        {messages.map((m) => (
-          <div
-            key={m.id}
-            className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
+      {/* Quick Prompt Carousel Pills */}
+      <div className="px-3 py-2 bg-[#0a0618] border-b border-purple-900/30 flex items-center space-x-2 overflow-x-auto no-scrollbar flex-shrink-0">
+        <span className="text-[10px] text-purple-400/60 font-mono uppercase whitespace-nowrap flex items-center gap-1">
+          <Zap size={10} className="text-amber-400" /> Co-Pilot:
+        </span>
+        {roleConfig.quickPrompts.map((qp, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleSendMessage(qp)}
+            disabled={isTyping}
+            className="px-2.5 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-800/40 hover:border-purple-600 text-[10px] font-mono whitespace-nowrap transition cursor-pointer active:scale-95 disabled:opacity-50"
           >
-            <div className="flex items-center space-x-1.5 mb-1 text-[10px] text-purple-400/70 font-mono">
-              <span>{m.sender === 'user' ? 'You' : roleConfig.role}</span>
-              <span>•</span>
-              <span>{m.timestamp}</span>
-              {m.model && <span className="text-rose-400/90">({m.model.split('/')[1] || m.model})</span>}
-            </div>
+            {qp}
+          </button>
+        ))}
+      </div>
 
+      {/* Chat Messages Log Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3.5 custom-scrollbar bg-gradient-to-b from-[#0e0922] via-[#090518] to-[#0e0922]">
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+          >
             <div
-              className={`p-3.5 rounded-2xl max-w-[92%] leading-relaxed shadow-md ${
-                m.sender === 'user'
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-medium rounded-tr-none shadow-purple-900/40'
-                  : 'bg-[#140e2e] text-purple-100 border border-purple-900/60 rounded-tl-none font-mono text-[11px]'
+              className={`max-w-[88%] rounded-2xl p-3.5 text-xs font-sans leading-relaxed shadow-lg ${
+                msg.sender === 'user'
+                  ? 'bg-gradient-to-r from-purple-700 to-rose-700 text-white rounded-br-none border border-purple-500/40'
+                  : msg.text.startsWith('🔄 **Incoming Handoff')
+                  ? 'bg-[#1e1038] text-amber-200 border border-amber-500/50 shadow-amber-500/10'
+                  : 'bg-[#150e2e] text-purple-100 rounded-bl-none border border-purple-900/60'
               }`}
             >
-              {m.attachedFile && (
-                <div className="mb-2 p-2 rounded-xl bg-black/40 border border-white/20 flex items-center space-x-2 text-[10px] font-mono text-amber-300">
-                  <Paperclip size={12} />
-                  <span>Ingested File: <strong>{m.attachedFile.name}</strong> ({m.attachedFile.size})</span>
+              {/* Message Header */}
+              <div className="flex items-center justify-between gap-3 text-[10px] font-mono opacity-75 mb-1.5 pb-1 border-b border-white/10">
+                <span className="font-bold flex items-center gap-1">
+                  {msg.sender === 'user' ? <User size={11} /> : <Bot size={11} />}
+                  {msg.sender === 'user' ? 'Producer' : roleConfig.role.split(' ')[0]}
+                </span>
+                <span>{msg.timestamp}</span>
+              </div>
+
+              {/* Ingested File Tag */}
+              {msg.attachedFile && (
+                <div className="mb-2 p-2 rounded-lg bg-black/40 border border-purple-400/40 flex items-center space-x-2 text-[10px] font-mono text-purple-200">
+                  <FileText size={13} className="text-amber-400 flex-shrink-0" />
+                  <span className="truncate">{msg.attachedFile.name}</span>
+                  <span className="text-purple-400/60">({msg.attachedFile.size})</span>
                 </div>
               )}
-              <div className="whitespace-pre-wrap">{m.text}</div>
 
-              {m.actions && m.actions.length > 0 && (
-                <div className="mt-2.5 pt-2 border-t border-purple-800/40 space-y-1.5 font-mono text-[10px]">
-                  <div className="text-amber-400/90 font-semibold flex items-center gap-1">
-                    <Zap size={11} className="text-amber-400 animate-pulse" />
-                    <span>Autonomous Tool Actions Executed ({m.actions.length}):</span>
-                  </div>
-                  {m.actions.map((act, actIdx) => (
-                    <div key={actIdx} className="bg-black/40 px-2 py-1 rounded border border-purple-800/60 flex items-center justify-between text-purple-200">
-                      <span className="text-emerald-400 font-bold">⚡ {act.tool}</span>
-                      <span className="text-slate-400 truncate max-w-[180px]">{JSON.stringify(act.args)}</span>
-                      <span className="text-emerald-300">✓ Done</span>
+              {/* Main Message Text */}
+              <div className="whitespace-pre-wrap font-sans text-xs leading-relaxed">
+                {msg.text}
+              </div>
+
+              {/* Action Badges */}
+              {msg.actions && msg.actions.length > 0 && (
+                <div className="mt-2.5 pt-2 border-t border-purple-900/60 space-y-1">
+                  {msg.actions.map((act, i) => (
+                    <div key={i} className="flex items-center space-x-1.5 text-[10px] font-mono text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">
+                      <CheckCircle size={10} />
+                      <span>{act.tool}</span>
+                      <span className="text-emerald-500/60">({JSON.stringify(act.args || {})})</span>
                     </div>
                   ))}
                 </div>
@@ -425,95 +548,74 @@ export const RoomAIChat: React.FC<RoomAIChatProps> = ({
         ))}
 
         {isTyping && (
-          <div className="flex items-center space-x-2 text-xs text-rose-400 font-mono bg-[#140e2e] p-3 rounded-xl border border-purple-800/50 w-fit">
-            <Sparkles size={14} className="animate-spin text-purple-400" />
-            <span>{roleConfig.role} is thinking with NVIDIA NIM...</span>
+          <div className="flex items-center space-x-2 text-xs font-mono text-purple-300/80 p-2">
+            <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
+            <span>{roleConfig.role.split(' ')[0]} AI is computing directives & tools...</span>
           </div>
         )}
-
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Prompt Suggestion Chips */}
-      <div className="px-3 py-2 bg-[#140e2e]/90 border-t border-purple-900/50 overflow-x-auto flex-shrink-0">
-        <div className="flex items-center space-x-1.5 w-max">
-          <Zap size={12} className="text-rose-400 flex-shrink-0" />
-          {roleConfig.quickPrompts.map((qp, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => handleSendMessage(qp)}
-              className="px-3 py-1 rounded-full bg-[#1a123a] hover:bg-purple-900/60 text-purple-200 hover:text-rose-300 border border-purple-800/60 text-[10px] font-mono transition flex-shrink-0"
-            >
-              {qp}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Attached File Preview Chip */}
+      {/* File Ingestion Drawer Preview */}
       {attachedFile && (
-        <div className="px-3 py-1.5 bg-[#1a123a] border-t border-purple-900/50 flex items-center justify-between font-mono text-[11px] text-amber-300">
+        <div className="px-4 py-2 bg-[#120a2a] border-t border-purple-900/40 flex items-center justify-between text-xs font-mono text-purple-200">
           <div className="flex items-center space-x-2 truncate">
-            <Paperclip size={13} className="text-amber-400 flex-shrink-0" />
-            <span className="truncate">Attached for Ingestion: <strong>{attachedFile.name}</strong> ({attachedFile.size})</span>
+            <FileText size={14} className="text-amber-400 flex-shrink-0" />
+            <span className="truncate font-semibold">{attachedFile.name}</span>
+            <span className="text-purple-400/70">({attachedFile.size})</span>
           </div>
           <button
             onClick={() => setAttachedFile(null)}
-            className="p-1 text-purple-400 hover:text-rose-400"
+            className="p-1 rounded hover:bg-purple-900/40 text-purple-400 hover:text-rose-400 transition"
+            title="Remove attachment"
           >
-            <X size={13} />
+            <X size={14} />
           </button>
         </div>
       )}
 
-      {/* Multi-Line Spacious Input Form with File Attachment Button */}
-      <div className="p-3 bg-[#0e0922] border-t border-purple-900/50 flex-shrink-0">
-        <div className="flex items-end gap-2 bg-[#140e2e] border border-purple-800/60 rounded-2xl p-2 focus-within:border-rose-500 focus-within:ring-1 focus-within:ring-rose-500 transition">
-          {/* File Ingest Button (Method 2) */}
+      {/* Input Composer */}
+      <div className="p-3 bg-[#140e2e] border-t border-purple-900/50 flex-shrink-0">
+        <div className="flex items-center space-x-2">
+          {/* File Ingestion Button */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileAttach}
+            accept=".txt,.fountain,.md,.json,.pdf,.csv"
+            className="hidden"
+          />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            title="Attach / Ingest Document into AI Chat (.fountain, .edl, .cube, .wav, .json, .txt)"
-            className="p-2 text-purple-400 hover:text-amber-300 hover:bg-purple-950/60 rounded-xl transition flex-shrink-0"
+            className="p-2.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-300 border border-purple-800/40 hover:border-purple-600 transition text-xs flex-shrink-0 cursor-pointer"
+            title="Ingest screenplay, character sheet, or technical brief (.fountain, .txt, .md)"
           >
-            <Paperclip size={16} />
+            <Paperclip size={15} />
           </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileAttach}
-            className="hidden"
-            accept=".fountain,.fdx,.pdf,.json,.wav,.mp3,.cube,.edl,.xml,.txt,.png,.jpg"
-          />
 
+          {/* Text Area */}
           <textarea
             ref={textareaRef}
             rows={1}
-            placeholder={`Ask ${roleConfig.role.split('&')[0]} or attach document... (Enter to send)`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
+            placeholder={`Ask ${roleConfig.role.split(' ')[0]} AI or type directive... (Press Enter to send)`}
+            className="flex-1 bg-[#090518] text-purple-100 placeholder-purple-400/40 rounded-xl px-3.5 py-2 text-xs font-sans border border-purple-900/60 focus:border-rose-500/60 focus:outline-none resize-none min-h-[36px] max-h-24 custom-scrollbar"
             disabled={isTyping}
-            className="flex-grow bg-transparent text-purple-100 text-xs font-mono resize-none focus:outline-none placeholder:text-purple-400/50 max-h-36 min-h-[38px] py-1.5 px-2"
           />
 
+          {/* Send Button */}
           <button
             type="button"
             onClick={() => handleSendMessage()}
             disabled={isTyping || (!input.trim() && !attachedFile)}
-            className={`p-2.5 rounded-xl text-white font-bold transition shadow-md flex-shrink-0 ${
-              isTyping || (!input.trim() && !attachedFile)
-                ? 'bg-purple-950 text-purple-700 cursor-not-allowed'
-                : 'bg-gradient-to-r from-purple-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 shadow-rose-600/20'
-            }`}
+            className="p-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 text-white font-bold transition shadow-lg shadow-rose-600/30 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 cursor-pointer"
+            title="Send Directive"
           >
             <Send size={15} />
           </button>
-        </div>
-        <div className="flex items-center justify-between text-[10px] text-purple-400/60 font-mono mt-1.5 px-1">
-          <span>{projectName} • Shot {shotNumber}</span>
-          <span>Shift + Enter for new line • Enter to send</span>
         </div>
       </div>
     </div>

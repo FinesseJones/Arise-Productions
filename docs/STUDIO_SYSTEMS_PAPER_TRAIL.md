@@ -225,6 +225,7 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 | **2026-08-27 20:47** | Department Room Chat Isolation & Cross-Room Handoff Context | `DepartmentAgentsHub.tsx`, `server.js`, `agent_conversations.json` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 21:28** | Arise Director Console & 10-Stage / 14-Room Architecture System Map | `DirectorAgent.tsx`, `StageWorkspace.tsx`, `Interactive3DRoom.tsx`, `STUDIO_SYSTEMS_PAPER_TRAIL.md` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 21:56** | Igloo-Grade 3D Room Shared Shell & Per-Room Procedural Kits | `@react-three/postprocessing`, `roomKits.ts`, `HeroProps.tsx`, `Room3D.tsx`, `Interactive3DRoom.tsx` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 22:11** | Real Handoff Navigation & Cross-Client Server-Synced Chat History | `RoomAIChat.tsx`, `StageWorkspace.tsx`, `ShellLayout.tsx`, `server.js` | GitHub, Desktop, VPS | ✅ Verified |
 
 ---
 
@@ -326,6 +327,21 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 - Built-in `Quality: High` / `Quality: Performance` toggle in the 3D viewport header.
 - **High Mode:** Full Bloom mipmap blur, cinematic Depth of Field (bokehScale 2.2), subtle film grain, 2x DPR, contact shadows.
 - **Performance Mode:** Reduced DPR (1-1.5x), lightformers resolution optimized, DoF and noise bypassed for ultra-low latency rendering on integrated GPUs.
+
+---
+
+## 18. Real Handoff Navigation & Server-Side Synchronized Chat History
+
+### 18.1 Real Handoff Navigation (`RoomAIChat.tsx` -> `StageWorkspace.tsx` -> `ShellLayout.tsx`):
+- When an AI agent executes `handoff_to_agent(stageId, reason)`:
+  1. A structured handoff object (`fromStage`, `fromRoom`, `summary`, `timestamp`) is written into target room context (`arise_handoff_{project}_{targetStage}`).
+  2. The `onHandoff(targetStageId, summary)` callback cascades up to `ShellLayout.tsx` and triggers real active room switching.
+  3. When the target room mounts, it detects the pending handoff and prepends a greeting: `🔄 **Incoming Handoff from {fromRoom}:** "{summary}"` before clearing the queue.
+
+### 18.2 Server-Synced Chat History (Web + Desktop Parity):
+- Single source of truth is maintained in `StudioDatabase` via `GET /api/v1/projects/chat?projectId={projectId}&stageId={stageId}` and `POST /api/v1/projects/chat`.
+- On room mount, `RoomAIChat.tsx` fetches server-side history first, seamlessly syncing conversation threads between the browser web app and the macOS Electron desktop app.
+- LocalStorage is maintained strictly as a resilient offline cache.
 
 ---
 *© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.*

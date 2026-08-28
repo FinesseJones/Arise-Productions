@@ -15,6 +15,7 @@ interface StageWorkspaceProps {
   selectedShot?: number;
   activeShotNumber?: number;
   onSelectShot?: (shotNumber: number) => void;
+  onHandoff?: (targetStageId: string, contextSummary?: string) => void;
 }
 
 const StageWorkspace: React.FC<StageWorkspaceProps> = ({
@@ -26,6 +27,7 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
   selectedShot,
   activeShotNumber,
   onSelectShot,
+  onHandoff,
 }) => {
   const currentStage: Stage = stage || activeStage || STAGES[0];
   const [internalShot, setInternalShot] = useState<number>(1);
@@ -157,6 +159,7 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
             roomName={currentStage.name}
             projectName={projectStatus?.projectName || 'Arise Production'}
             shotNumber={activeShot}
+            onHandoff={onHandoff || ((target) => onSelectStage && onSelectStage(target))}
           />
         </div>
       </div>
