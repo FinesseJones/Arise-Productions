@@ -223,6 +223,7 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 | **2026-08-27 14:28** | Context Continuity, 24-Turn Memory Depth & Frontend Fallback Elimination | `agent-runtime.js`, `server.js`, `DepartmentAgentsHub.tsx` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 15:13** | Live Story Bible & Character Persistence Architecture | `client.js`, `server.js`, `tools.js`, `ProductionPitchDeckModal.tsx`, `projectData.ts` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 20:47** | Department Room Chat Isolation & Cross-Room Handoff Context | `DepartmentAgentsHub.tsx`, `server.js`, `agent_conversations.json` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 21:28** | Arise Director Console & 10-Stage / 14-Room Architecture System Map | `DirectorAgent.tsx`, `StageWorkspace.tsx`, `Interactive3DRoom.tsx`, `STUDIO_SYSTEMS_PAPER_TRAIL.md` | GitHub, Desktop, VPS | ✅ Verified |
 
 ---
 
@@ -250,6 +251,53 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
   1. **Shared Studio Activity & Department Handoffs:** Chronological log of recent stage runs, scripts saved, and handoff notices from prior rooms.
   2. **Canonical Story Bible & Character Roster:** Shared project title, logline, themes, and characters so all rooms operate on the same creative foundation.
   3. **Stage Statuses:** Direct visibility into the completion of the 10 MCP production stages.
+
+---
+
+## 16. Arise Director Console & 10-Stage / 14-Room Production Architecture
+
+### 16.1 The Arise Director Agent Prompt Console (Bottom Bar):
+- **Role:** Studio Master Orchestration Console & Pipeline Dispatcher.
+- **Functionality:** Dispatches multi-stage batch pipelines and executive directives studio-wide without requiring manual clicking across 14 individual rooms.
+- **Core Automation Workflows:**
+  - `board scene 1`: Executes a 4-stage pipeline chain (**Stage 01 Script $\rightarrow$ Stage 02 Structure $\rightarrow$ Stage 03 Plan $\rightarrow$ Stage 04 Previs**) to generate scene animatics and camera-locked storyboards.
+  - `compile prompts`: Synthesizes continuity-locked image prompts, FLUX.1 Dev parameters, and ControlNet depth weights for Stage 07 (Prompt Slate).
+  - `review reshoots`: Automates Quality-Control (QC) analysis on rendered dailies, flagging lighting balance and camera tracking anomalies for reshoot loops.
+  - *Natural Language Directives:* Accepts plain-English executive instructions (e.g. *"Write scene 2 where Ayanna confronts the city planner"*, *"Set key light to 4:1 golden hour on 35mm anamorphic"*).
+- **Executive Log Drawer:** Telemetry-backed response drawer displaying timestamp, active NIM model, and detailed action plans.
+
+### 16.2 The 14 Narrative & Pre-Production Rooms (Top Navbar / Navigation Dropdown):
+- **`00 IDEAS` (Idea Lab):** IP concept incubation, premise logging, and four-quadrant audience viability analysis.
+- **`01 PLOT` (Plot Room):** World-building rules, core dramatic conflicts, and thematic engines.
+- **`02 CAST` (Cast & Characters):** Principal character dossiers, archetypes, and IP-Adapter likeness tokens (e.g. `@ayanna_jackson_v1`, `@malachi_davis_v1`).
+- **`03 ACTS` & `04 BEATS`:** 3-Act structural beat sheets and 40-beat industry pacing curves.
+- **`05 SCREENING` (Screening Suite):** 4K theatrical playback for reviewing rendered cuts and camera blocking.
+- **`06 ARCHITECTURE`:** Soundstage blueprints and physical spatial set schematics.
+- **`07 SUITES`:** Departmental Suites hub.
+- **`08 VAULT`:** Studio-wide persistent database of all saved scripts, props, and activity logs.
+- **`09 DISTRIBUTION`:** Exporting master pitch bibles, one-pagers, and theatrical conform packages.
+- **`🏛️ COMMAND CENTER`:** 1-on-1 direct collaboration suites with specialized department leads.
+
+### 16.3 The 10 MCP Production Stages (3D Soundstage Workspace):
+1. **`01 SCRIPT`:** Generates formatted screenplay scenes in industry-standard Hollywood Fountain format.
+2. **`02 STRUCTURE`:** Computes narrative tension curves (35% $\rightarrow$ 95%) and beat milestones.
+3. **`03 PLAN`:** Designs spatial LookDev, PBR materials, and ACEScg color schemes.
+4. **`04 PREVIS`:** Configures 3D CineCameras, focal lengths (18mm, 35mm, 85mm), and 4:1 lighting ratios.
+5. **`05 MOTION`:** Animates actor blocking and 60fps kinematic movement.
+6. **`06 BOARDS`:** Renders high-contrast storyboard frames.
+7. **`07 PROMPT`:** Compiles FLUX.1 Dev and ControlNet depth prompt matrices.
+8. **`08 DAILIES`:** Manages circle take approvals, timeline logging, and reshoot queuing.
+9. **`09 COLOR`:** Applies DaVinci Resolve CDL color wheels and Kodak 2383 3D film print LUTs.
+10. **`10 SOUND`:** Mixes dialogue, foley, score, and 40Hz sub-bass into broadcast-compliant Dolby Atmos 5.1 stems (-24 LKFS).
+
+### 16.4 Scene Filmstrip Shot Cards (Inside 3D Viewport):
+- Provides per-shot granularity within the active scene:
+  - **Shot 1 (Opening Wide Master):** 18mm Ultra-Wide, 4.5s duration.
+  - **Shot 2 (Medium Over-the-Shoulder):** 35mm Prime, 3.2s duration.
+  - **Shot 3 (Close-Up Eye Tension):** 85mm Bokeh, 2.8s duration.
+  - **Shot 4 (Dynamic Tracking Dolly):** 24mm Wide, 6.0s duration.
+  - **Shot 5 (Anamorphic Low Angle):** 35mm Prime, 5.5s duration.
+- Selecting any shot card instantly switches the CineCamera focal length, lighting coordinates, and associated Fountain dialogue snippet.
 
 ---
 *© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.*
