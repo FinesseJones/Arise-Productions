@@ -24,16 +24,16 @@ import Room3D from './Room3D';
 import { generateDynamicScript } from '../../lib/projectData';
 
 // 10 Bespoke 3D Stage Rooms
-import { ScriptScene3D, ScriptRoomHolo } from './rooms/ScriptRoom3D';
-import { StructureScene3D, StructureRoomHolo } from './rooms/StructureRoom3D';
-import { PlanScene3D, PlanRoomHolo } from './rooms/PlanRoom3D';
-import { PrevisScene3D, PrevisRoomHolo } from './rooms/PrevisRoom3D';
-import { MotionScene3D, MotionRoomHolo } from './rooms/MotionRoom3D';
-import { BoardsScene3D, BoardsRoomHolo } from './rooms/BoardsRoom3D';
-import { PromptScene3D, PromptRoomHolo } from './rooms/PromptRoom3D';
-import { DailiesScene3D, DailiesRoomHolo } from './rooms/DailiesRoom3D';
-import { SoundScene3D, SoundRoomHolo } from './rooms/SoundRoom3D';
-import { EditScene3D, EditRoomHolo } from './rooms/EditRoom3D';
+import { ScriptRoomHolo } from './rooms/ScriptRoom3D';
+import { StructureRoomHolo } from './rooms/StructureRoom3D';
+import { PlanRoomHolo } from './rooms/PlanRoom3D';
+import { PrevisRoomHolo } from './rooms/PrevisRoom3D';
+import { MotionRoomHolo } from './rooms/MotionRoom3D';
+import { BoardsRoomHolo } from './rooms/BoardsRoom3D';
+import { PromptRoomHolo } from './rooms/PromptRoom3D';
+import { DailiesRoomHolo } from './rooms/DailiesRoom3D';
+import { SoundRoomHolo } from './rooms/SoundRoom3D';
+import { EditRoomHolo } from './rooms/EditRoom3D';
 
 export interface Interactive3DRoomProps {
   stageId: StageKey;
@@ -55,6 +55,7 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
   onSelectShot,
 }) => {
   const [allowOrbit, setAllowOrbit] = useState<boolean>(false);
+  const [quality, setQuality] = useState<'high' | 'performance'>('high');
   const [activeCenterTab, setActiveCenterTab] = useState<'viewport3d' | 'storyboard' | 'screenplay' | 'lighting'>('viewport3d');
   const [focalLength, setFocalLength] = useState<string>('35mm Prime');
   const [isoSetting, setIsoSetting] = useState<number>(800);
@@ -160,6 +161,21 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
           <button
             type="button"
             onClick={() => {
+              setQuality((q) => (q === 'high' ? 'performance' : 'high'));
+              toast.success(
+                quality === 'high'
+                  ? '⚡ 3D Graphics: Performance Mode Active'
+                  : '✨ 3D Graphics: Ultra High Fidelity Mode Active'
+              );
+            }}
+            className="px-2.5 py-1 rounded-lg text-[10px] font-mono border border-purple-800/40 text-purple-300 hover:text-white bg-[#160b33] transition"
+          >
+            {quality === 'high' ? 'Quality: High' : 'Quality: Performance'}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
               setAllowOrbit((prev) => !prev);
               toast(
                 allowOrbit
@@ -191,18 +207,8 @@ export const Interactive3DRoom: React.FC<Interactive3DRoomProps> = ({
               projectName={projectName}
               shotNumber={shotNumber}
               allowOrbit={allowOrbit}
-            >
-              {stageId === 'script' && <ScriptScene3D />}
-              {stageId === 'structure' && <StructureScene3D />}
-              {stageId === 'plan' && <PlanScene3D />}
-              {stageId === 'previs' && <PrevisScene3D />}
-              {stageId === 'motion' && <MotionScene3D />}
-              {stageId === 'boards' && <BoardsScene3D />}
-              {stageId === 'prompt' && <PromptScene3D />}
-              {stageId === 'dailies' && <DailiesScene3D />}
-              {(stageId === 'audio' || (stageId as string) === 'sound') && <SoundScene3D />}
-              {stageId === 'edit' && <EditScene3D />}
-            </Room3D>
+              quality={quality}
+            />
 
             {/* Proof-of-Ownership Arise Productions Watermark */}
             <div className="absolute top-3 right-3 z-20 flex items-center space-x-2 bg-black/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/50 shadow-xl shadow-amber-500/15 pointer-events-none">

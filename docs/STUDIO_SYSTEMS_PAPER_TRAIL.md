@@ -224,6 +224,7 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
 | **2026-08-27 15:13** | Live Story Bible & Character Persistence Architecture | `client.js`, `server.js`, `tools.js`, `ProductionPitchDeckModal.tsx`, `projectData.ts` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 20:47** | Department Room Chat Isolation & Cross-Room Handoff Context | `DepartmentAgentsHub.tsx`, `server.js`, `agent_conversations.json` | GitHub, Desktop, VPS | ✅ Verified |
 | **2026-08-27 21:28** | Arise Director Console & 10-Stage / 14-Room Architecture System Map | `DirectorAgent.tsx`, `StageWorkspace.tsx`, `Interactive3DRoom.tsx`, `STUDIO_SYSTEMS_PAPER_TRAIL.md` | GitHub, Desktop, VPS | ✅ Verified |
+| **2026-08-27 21:56** | Igloo-Grade 3D Room Shared Shell & Per-Room Procedural Kits | `@react-three/postprocessing`, `roomKits.ts`, `HeroProps.tsx`, `Room3D.tsx`, `Interactive3DRoom.tsx` | GitHub, Desktop, VPS | ✅ Verified |
 
 ---
 
@@ -298,6 +299,33 @@ The **Studio Desk** (`POST /api/v1/briefing`) operates as the Executive Chief of
   - **Shot 4 (Dynamic Tracking Dolly):** 24mm Wide, 6.0s duration.
   - **Shot 5 (Anamorphic Low Angle):** 35mm Prime, 5.5s duration.
 - Selecting any shot card instantly switches the CineCamera focal length, lighting coordinates, and associated Fountain dialogue snippet.
+
+---
+
+## 17. Igloo-Grade 3D Room Shell & Procedural Room Kit Architecture
+
+### 17.1 Unified Shared Shell (`Room3D.tsx`):
+- Powered by `@react-three/postprocessing` with dynamic Bloom, Depth of Field (DoF), Vignette, and Film Noise.
+- Procedural HDRI reflections generated on the fly via `@react-three/drei` `Environment` and `Lightformer` rigs without relying on external `.hdr` file downloads.
+- Preserves smooth Fly-To `CineCameraController` with mouse parallax and interactive `OrbitControls`.
+
+### 17.2 Per-Stage Procedural Room Kits (`roomKits.ts` & `HeroProps.tsx`):
+- Each of the 10 production rooms renders its own bespoke aesthetic, lighting temperature (`warm`, `cool`, `magenta`), and procedural 3D hero props:
+  - **Stage 01 Script:** Screenplay sheets, artisan desk, warm reading lamp (`#f59e0b`).
+  - **Stage 02 Structure:** Cork wall, index cards, narrative string lines (`#a855f7`).
+  - **Stage 03 Plan:** LookDev easel, color swatches, PBR material spheres (`#a855f7`).
+  - **Stage 04 Previs:** 35mm cine-camera rig, dolly track, light stand (`#06b6d4`).
+  - **Stage 05 Motion:** Kinematic skeleton node rig, mocap sensor markers (`#06b6d4`).
+  - **Stage 06 Boards:** Storyboard grid panels, animator pencil (`#f59e0b`).
+  - **Stage 07 Prompt:** Generative diffusion orb with floating prompt cards (`#34d399`).
+  - **Stage 08 Dailies:** Screening review monitor, circle take stack (`#ec4899`).
+  - **Stage 09 Color / Edit:** Multi-track EDL timeline, CDL color wheels, grade monitor (`#e11d48`).
+  - **Stage 10 Sound:** Spatial audio mixing console, acoustic waveforms, reference monitors (`#ec4899`).
+
+### 17.3 High / Performance Quality Toggle:
+- Built-in `Quality: High` / `Quality: Performance` toggle in the 3D viewport header.
+- **High Mode:** Full Bloom mipmap blur, cinematic Depth of Field (bokehScale 2.2), subtle film grain, 2x DPR, contact shadows.
+- **Performance Mode:** Reduced DPR (1-1.5x), lightformers resolution optimized, DoF and noise bypassed for ultra-low latency rendering on integrated GPUs.
 
 ---
 *© 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.*
