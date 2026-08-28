@@ -160,9 +160,9 @@ function setupNativeMenu() {
     {
       label: 'View',
       submenu: [
-        { role: 'reload' },
-        { role: 'forceReload' },
-        { role: 'toggleDevTools' },
+        { role: 'reload', accelerator: 'CmdOrCtrl+R' },
+        { role: 'forceReload', accelerator: 'CmdOrCtrl+Shift+R' },
+        { role: 'toggleDevTools', accelerator: 'CmdOrCtrl+Alt+I' },
         { type: 'separator' },
         { role: 'resetZoom' },
         { role: 'zoomIn' },
@@ -190,7 +190,7 @@ function setupNativeMenu() {
         },
         {
           label: 'Trigger Reshoot Loop Review',
-          accelerator: 'CmdOrCtrl+R',
+          accelerator: 'CmdOrCtrl+Shift+L',
           click: () => {
             mainWindow.webContents.send('trigger-agent-command', 'review reshoots');
           },
