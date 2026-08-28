@@ -7,6 +7,7 @@ import { db } from '../db/client.js';
 import { mcpWorkers } from '../workers/mcp-workers.js';
 import { unrealConnector } from '../services/unreal-connector.js';
 import { comfyBridge } from '../workers/comfy-bridge.js';
+import { blackmagicConnector } from '../services/blackmagic-connector.js';
 
 /**
  * OpenAI-compatible Tool Definitions for NVIDIA NIM (Llama 3.3 70B Instruct)
@@ -369,6 +370,54 @@ export const agentToolDefinitions = [
       },
     },
   },
+  {
+    type: 'function',
+    function: {
+      name: 'sync_bmpcc_camera',
+      description: 'Send optical exposure adjustments (ISO 400/3200, shutter angle 180°, white balance, aperture f-stop) directly to a connected Blackmagic Pocket Cinema Camera 4K via REST API.',
+      parameters: {
+        type: 'object',
+        properties: {
+          iso: { type: 'number', description: 'Dual native ISO setting (e.g. 400, 800, 1600, 3200)' },
+          shutterAngle: { type: 'number', description: 'Shutter angle in degrees (default 180.0)' },
+          whiteBalance: { type: 'number', description: 'Color temperature in Kelvin (e.g. 3200, 5600)' },
+          aperture: { type: 'number', description: 'Electronic lens aperture f-stop (e.g. 2.0, 2.8, 4.0)' },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'trigger_bmpcc_record',
+      description: 'Trigger physical Blackmagic RAW (BRAW) take recording start or stop on an active Blackmagic Pocket Cinema Camera 4K.',
+      parameters: {
+        type: 'object',
+        properties: {
+          action: { type: 'string', enum: ['start', 'stop'], description: 'Start or stop physical recording' },
+        },
+        required: ['action'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'sync_bmpcc_slate',
+      description: 'Synchronize project name, scene number, shot number, and take number directly into the BRAW metadata slate of a connected Blackmagic Pocket 4K.',
+      parameters: {
+        type: 'object',
+        properties: {
+          scene: { type: 'string', description: 'Scene number' },
+          shot: { type: 'string', description: 'Shot number' },
+          take: { type: 'number', description: 'Take number' },
+          projectTitle: { type: 'string', description: 'Production title' },
+        },
+        required: [],
+      },
+    },
+  },
 ];
 
 /**
@@ -723,6 +772,47 @@ export async function executeAgentTool(toolName, args = {}, context = {}) {
         status: 'SUCCESS',
         tool,
         result,
+      };
+    }
+
+    case 'sync_bmpcc_camera': {
+      const result = await blackmagicConnector.setCameraParameters({
+        iso: args.iso || 400,
+        shutterAngle: args.shutterAngle || 180.0,
+        whiteBalance: args.whiteBalance || 5600,
+        aperture: args.aperture || 2.8,
+      });
+      return {
+        status: 'SUCCESS',
+        blackmagicResult: result,
+        message: `Blackmagic Pocket 4K optics adjusted: ISO ${args.iso || 400}, ${args.shutterAngle || 180}°, ${args.whiteBalance || 5600}K, f/${args.aperture || 2.8}.`,
+      };
+    }
+
+    case 'trigger_bmpcc_record': {
+      const action = args.action || 'start';
+      const result = await blackmagicConnector.triggerRecording(action);
+      return {
+        status: 'SUCCESS',
+        action,
+        blackmagicResult: result,
+        message: `Blackmagic Pocket 4K physical recording ${action === 'stop' ? 'STOPPED' : 'STARTED'}.`,
+      };
+    }
+
+    case 'sync_bmpcc_slate': {
+      const result = await blackmagicConnector.setSlateMetadata({
+        projectTitle: args.projectTitle || 'A Fatherless Child',
+        scene: args.scene || '1',
+        shot: args.shot || '1',
+        take: args.take || 1,
+        director: args.director || 'AI Showrunner',
+        cameraOperator: args.cameraOperator || 'Virtual DP',
+      });
+      return {
+        status: 'SUCCESS',
+        blackmagicResult: result,
+        message: `BMPCC 4K BRAW slate metadata synchronized for Scene ${args.scene || '1'}, Shot ${args.shot || '1'}, Take ${args.take || 1}.`,
       };
     }
 

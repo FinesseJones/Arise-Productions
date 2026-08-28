@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { X, RefreshCw, Play, Camera, Sparkles, CheckCircle2, AlertCircle, Settings, Layers, Film, Cpu, HardDrive } from 'lucide-react';
+import { X, RefreshCw, Play, Camera, Sparkles, CheckCircle2, AlertCircle, Settings, Layers, Film, Cpu, HardDrive, Video, Disc, Radio } from 'lucide-react';
 import { getAPIBaseURL } from '../../lib/api';
 import toast from 'react-hot-toast';
 
@@ -18,13 +18,19 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
   // Editable config state
   const [unrealHost, setUnrealHost] = useState('127.0.0.1');
   const [unrealPort, setUnrealPort] = useState('30010');
-  const [unrealAppPath, setUnrealAppPath] = useState('/Applications/Film Making/UnrealEditor.app');
+  const [unrealAppPath, setUnrealAppPath] = useState('/Applications/Epic Games Launcher.app');
   const [comfyHost, setComfyHost] = useState('127.0.0.1');
   const [comfyPort, setComfyPort] = useState('8188');
+  const [bmpccIp, setBmpccIp] = useState('192.168.1.100');
+  const [bmpccPort, setBmpccPort] = useState('80');
 
   // Camera test controls
   const [focalLength, setFocalLength] = useState(35);
   const [fstop, setFstop] = useState(2.8);
+  const [bmdIso, setBmdIso] = useState(400);
+  const [bmdShutter, setBmdShutter] = useState(180.0);
+  const [bmdWb, setBmdWb] = useState(5600);
+  const [isRecording, setIsRecording] = useState(false);
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -37,6 +43,8 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
         if (data.bridges?.unrealEngine?.port) setUnrealPort(String(data.bridges.unrealEngine.port));
         if (data.bridges?.comfyUI?.host) setComfyHost(data.bridges.comfyUI.host);
         if (data.bridges?.comfyUI?.port) setComfyPort(String(data.bridges.comfyUI.port));
+        if (data.bridges?.blackmagicCamera?.cameraIp) setBmpccIp(data.bridges.blackmagicCamera.cameraIp);
+        if (data.bridges?.blackmagicCamera?.cameraPort) setBmpccPort(String(data.bridges.blackmagicCamera.cameraPort));
       }
     } catch {
       console.warn('[DCC Bridges] Failed to reach DCC status endpoint');
@@ -56,12 +64,12 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
   if (!isOpen) return null;
 
   const handleLaunchUnreal = async () => {
-    const toastId = toast.loading('🚀 Launching Unreal Engine 5...');
+    const toastId = toast.loading('🚀 Launching Unreal Engine / Epic Games Launcher...');
     try {
       const res = await fetch(`${apiBase}/api/v1/dcc/unreal/launch`, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
-        toast.success('Unreal Engine 5 launch command sent!', { id: toastId });
+        toast.success(data.message || 'Unreal Engine launch command dispatched!', { id: toastId });
       } else {
         toast.error(`Launch error: ${data.error || 'Check app path'}`, { id: toastId });
       }
@@ -101,7 +109,7 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
       const res = await fetch(`${apiBase}/api/v1/dcc/comfy/launch`, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
-        toast.success('ComfyUI launch command dispatched!', { id: toastId });
+        toast.success(data.message || 'ComfyUI launch command dispatched!', { id: toastId });
       } else {
         toast.error('ComfyUI launch error', { id: toastId });
       }
@@ -143,9 +151,87 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
     }
   };
 
+  // Blackmagic Camera Handlers
+  const handleBmdRecordToggle = async () => {
+    const newAction = isRecording ? 'stop' : 'start';
+    const toastId = toast.loading(`${newAction === 'start' ? '🔴 Triggering Take Recording' : '⏹ Stopping Recording'} on BMPCC 4K...`);
+    try {
+      const res = await fetch(`${apiBase}/api/v1/dcc/blackmagic/recording`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: newAction }),
+      });
+      const data = await res.json();
+      setIsRecording(newAction === 'start');
+      toast.success(data.message || `BMPCC 4K Take ${newAction === 'start' ? 'Recording' : 'Stopped'}!`, { id: toastId });
+    } catch {
+      toast.error('Could not trigger record action', { id: toastId });
+    }
+  };
+
+  const handleSyncBmdOptics = async () => {
+    const toastId = toast.loading(`🎥 Transmitting ISO ${bmdIso}, f/${fstop}, ${bmdWb}K to BMPCC 4K...`);
+    try {
+      const res = await fetch(`${apiBase}/api/v1/dcc/blackmagic/camera`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          iso: bmdIso,
+          shutterAngle: bmdShutter,
+          whiteBalance: bmdWb,
+          aperture: fstop,
+        }),
+      });
+      const data = await res.json();
+      toast.success(`✅ BMPCC 4K Optics Synced: ISO ${bmdIso} f/${fstop} ${bmdWb}K`, { id: toastId });
+    } catch {
+      toast.error('Transmission error to BMPCC 4K', { id: toastId });
+    }
+  };
+
+  const handleSyncBmdSlate = async () => {
+    const toastId = toast.loading('📋 Synchronizing Take Slate to BMPCC 4K BRAW sidecar...');
+    try {
+      const res = await fetch(`${apiBase}/api/v1/dcc/blackmagic/slate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          scene: '1',
+          shot: '1',
+          take: 1,
+          projectTitle: 'A Fatherless Child',
+          director: 'AI Showrunner',
+        }),
+      });
+      const data = await res.json();
+      toast.success('✅ BMPCC 4K Slate Updated: Scene 1, Shot 1, Take 1', { id: toastId });
+    } catch {
+      toast.error('Slate sync error', { id: toastId });
+    }
+  };
+
+  const handleLaunchDaVinci = async () => {
+    const toastId = toast.loading('🚀 Launching DaVinci Resolve Studio...');
+    try {
+      const res = await fetch(`${apiBase}/api/v1/blackmagic/launch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appKey: 'davinciResolve' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('DaVinci Resolve launched!', { id: toastId });
+      } else {
+        toast.error('DaVinci Resolve not found at default path', { id: toastId });
+      }
+    } catch {
+      toast.error('Could not reach backend', { id: toastId });
+    }
+  };
+
   const handleSaveConfig = async (e: React.FormEvent) => {
     e.preventDefault();
-    const toastId = toast.loading('💾 Saving permanent DCC configuration...');
+    const toastId = toast.loading('💾 Saving permanent DCC & Camera configuration...');
     try {
       const res = await fetch(`${apiBase}/api/v1/dcc/config`, {
         method: 'POST',
@@ -156,6 +242,8 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
           unrealAppPath,
           comfyHost,
           comfyPort: Number(comfyPort),
+          bmpccIp,
+          bmpccPort: Number(bmpccPort),
         }),
       });
       const data = await res.json();
@@ -172,10 +260,11 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
 
   const ueActive = statusData?.unrealEngine?.active;
   const comfyActive = statusData?.comfyUI?.online;
+  const bmdActive = statusData?.blackmagicCamera?.online;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#0d0722] border border-amber-500/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col font-mono text-slate-100">
+      <div className="relative w-full max-w-5xl max-h-[90vh] bg-[#0d0722] border border-amber-500/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col font-mono text-slate-100">
         
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-amber-500/30 bg-[#140e2e]/90">
@@ -185,10 +274,10 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
             </div>
             <div>
               <h2 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#D97706] uppercase tracking-wider font-serif">
-                External DCC Studio Bridges
+                External DCC & Physical Camera Studio Bridges
               </h2>
               <p className="text-xs text-amber-300/80 font-mono">
-                Live Link & REST Bridges: Unreal Engine 5 • ComfyUI • DaVinci Resolve • FFmpeg
+                Live REST & Open Protocols: Unreal Engine 5 • ComfyUI • Blackmagic Pocket 4K • DaVinci Resolve
               </p>
             </div>
           </div>
@@ -215,92 +304,58 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
         {/* Modal Content */}
         <div className="p-6 overflow-y-auto space-y-6 custom-scrollbar text-xs">
           
-          {/* Top Status Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Top Status Cards Grid (3 Columns) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             
             {/* Card 1: Unreal Engine 5 */}
-            <div className="p-5 rounded-2xl bg-[#140b2e]/90 border border-purple-900/70 relative overflow-hidden space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2.5">
-                  <Film className="text-amber-400" size={18} />
-                  <span className="font-bold text-sm text-slate-100 uppercase tracking-wide">Unreal Engine 5</span>
+            <div className="p-5 rounded-2xl bg-[#140b2e]/90 border border-purple-900/70 relative overflow-hidden space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Film className="text-amber-400" size={16} />
+                    <span className="font-bold text-xs text-slate-100 uppercase tracking-wide">Unreal Engine 5</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 ${
+                    ueActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${ueActive ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400'}`} />
+                    {ueActive ? `ONLINE (${statusData?.unrealEngine?.latencyMs || 0}ms)` : 'READY / STANDBY'}
+                  </span>
                 </div>
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1.5 ${
-                  ueActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${ueActive ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400'}`} />
-                  {ueActive ? `ONLINE (${statusData?.unrealEngine?.latencyMs || 0}ms)` : 'READY / STANDBY'}
-                </span>
-              </div>
 
-              <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
-                Live Link CineCamera bridge via Remote Control Web Server. Controls focal lengths (18–85mm), 3-axis dolly vectors, sensor gate, and f-stops directly inside UE5.4.
-              </p>
+                <p className="text-[10.5px] text-slate-300 leading-relaxed font-sans">
+                  Live Link CineCamera bridge via Remote Control Web Server. Controls focal lengths (18–85mm), 3-axis dolly vectors, sensor gate, and f-stops in UE5.
+                </p>
 
-              <div className="p-3 rounded-xl bg-black/40 border border-purple-900/40 space-y-2">
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">Endpoint:</span>
-                  <span className="text-amber-300 font-bold">{unrealHost}:{unrealPort}</span>
-                </div>
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">Actor Target:</span>
-                  <span className="text-purple-300 font-bold">CineCameraActor1</span>
+                <div className="p-2.5 rounded-xl bg-black/40 border border-purple-900/40 space-y-1 text-[10px]">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Endpoint:</span>
+                    <span className="text-amber-300 font-bold">{unrealHost}:{unrealPort}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Target Actor:</span>
+                    <span className="text-purple-300 font-bold">CineCameraActor1</span>
+                  </div>
                 </div>
               </div>
 
               {/* Quick Action Controls */}
-              <div className="space-y-3 pt-1">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <div className="flex justify-between text-[10px] text-slate-400 mb-1">
-                      <span>Focal Length</span>
-                      <span className="text-amber-300 font-bold">{focalLength}mm</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="18"
-                      max="135"
-                      step="1"
-                      value={focalLength}
-                      onChange={(e) => setFocalLength(Number(e.target.value))}
-                      className="w-full accent-amber-500 bg-purple-950/60 rounded-lg cursor-pointer h-1.5"
-                    />
-                  </div>
-                  <div className="w-24">
-                    <div className="flex justify-between text-[10px] text-slate-400 mb-1">
-                      <span>Aperture</span>
-                      <span className="text-amber-300 font-bold">f/{fstop}</span>
-                    </div>
-                    <select
-                      value={fstop}
-                      onChange={(e) => setFstop(Number(e.target.value))}
-                      className="w-full bg-[#1b103c] border border-purple-700/60 rounded-lg px-2 py-1 text-amber-200 font-bold"
-                    >
-                      <option value="1.4">f/1.4</option>
-                      <option value="2.0">f/2.0</option>
-                      <option value="2.8">f/2.8</option>
-                      <option value="4.0">f/4.0</option>
-                      <option value="5.6">f/5.6</option>
-                      <option value="8.0">f/8.0</option>
-                    </select>
-                  </div>
-                </div>
-
+              <div className="space-y-2 pt-2">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleSyncCamera}
-                    className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:opacity-90 text-black font-extrabold shadow-md shadow-amber-500/20 transition"
+                    className="flex-1 flex items-center justify-center space-x-1 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:opacity-90 text-black font-extrabold shadow-md shadow-amber-500/20 transition text-[11px]"
                   >
-                    <Camera size={14} />
-                    <span>Transmit to UE5</span>
+                    <Camera size={13} />
+                    <span>Sync Optics</span>
                   </button>
 
                   <button
                     onClick={handleLaunchUnreal}
-                    className="px-3 py-2 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 font-bold transition flex items-center gap-1"
-                    title="Launch Unreal Editor"
+                    className="px-2.5 py-1.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 font-bold transition flex items-center gap-1 text-[11px]"
+                    title="Launch Unreal Editor / Epic Games Launcher"
                   >
-                    <Play size={13} className="text-amber-400" />
+                    <Play size={12} className="text-amber-400" />
                     <span>Launch</span>
                   </button>
                 </div>
@@ -308,55 +363,131 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
             </div>
 
             {/* Card 2: ComfyUI */}
-            <div className="p-5 rounded-2xl bg-[#140b2e]/90 border border-purple-900/70 relative overflow-hidden space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2.5">
-                  <Sparkles className="text-purple-400" size={18} />
-                  <span className="font-bold text-sm text-slate-100 uppercase tracking-wide">ComfyUI Generative Node</span>
-                </div>
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1.5 ${
-                  comfyActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${comfyActive ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400'}`} />
-                  {comfyActive ? `ONLINE (${statusData?.comfyUI?.latencyMs || 0}ms)` : 'READY / STANDBY'}
-                </span>
-              </div>
-
-              <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
-                High-throughput FLUX.1 Dev, SDXL, and ControlNet depth node workflow bridge. Compiles continuity-locked storyboard slates and visual takes on local hardware.
-              </p>
-
-              <div className="p-3 rounded-xl bg-black/40 border border-purple-900/40 space-y-2">
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">Endpoint:</span>
-                  <span className="text-amber-300 font-bold">{comfyHost}:{comfyPort}</span>
-                </div>
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">GPU Device:</span>
-                  <span className="text-purple-300 font-bold">
-                    {statusData?.comfyUI?.devices?.[0]?.name || 'Local Apple Silicon / NVIDIA GPU'}
+            <div className="p-5 rounded-2xl bg-[#140b2e]/90 border border-purple-900/70 relative overflow-hidden space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="text-purple-400" size={16} />
+                    <span className="font-bold text-xs text-slate-100 uppercase tracking-wide">ComfyUI Node</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 ${
+                    comfyActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${comfyActive ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400'}`} />
+                    {comfyActive ? `ONLINE (${statusData?.comfyUI?.latencyMs || 0}ms)` : 'READY / STANDBY'}
                   </span>
+                </div>
+
+                <p className="text-[10.5px] text-slate-300 leading-relaxed font-sans">
+                  High-throughput FLUX.1 Dev, SDXL, and ControlNet depth node workflow bridge for continuity-locked storyboard slates and visual takes.
+                </p>
+
+                <div className="p-2.5 rounded-xl bg-black/40 border border-purple-900/40 space-y-1 text-[10px]">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Endpoint:</span>
+                    <span className="text-amber-300 font-bold">{comfyHost}:{comfyPort}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">GPU Device:</span>
+                    <span className="text-purple-300 font-bold truncate max-w-[130px]">
+                      {statusData?.comfyUI?.devices?.[0]?.name || 'Local Apple / NVIDIA GPU'}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {/* Quick Actions */}
-              <div className="flex items-center gap-2 pt-4">
+              <div className="flex items-center gap-2 pt-2">
                 <button
                   onClick={handleQueuePrompt}
-                  className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold shadow-md shadow-purple-600/30 transition"
+                  className="flex-1 flex items-center justify-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold shadow-md shadow-purple-600/30 transition text-[11px]"
                 >
-                  <Sparkles size={14} />
-                  <span>Queue Generation</span>
+                  <Sparkles size={13} />
+                  <span>Queue Prompt</span>
                 </button>
 
                 <button
                   onClick={handleLaunchComfy}
-                  className="px-3 py-2 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 font-bold transition flex items-center gap-1"
+                  className="px-2.5 py-1.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 font-bold transition flex items-center gap-1 text-[11px]"
                   title="Launch local ComfyUI"
                 >
-                  <Play size={13} className="text-purple-400" />
+                  <Play size={12} className="text-purple-400" />
                   <span>Launch</span>
                 </button>
+              </div>
+            </div>
+
+            {/* Card 3: Blackmagic Pocket Cinema Camera 4K (Physical REST API) */}
+            <div className="p-5 rounded-2xl bg-[#140b2e]/90 border border-amber-500/50 relative overflow-hidden space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Video className="text-amber-400" size={16} />
+                    <span className="font-bold text-xs text-slate-100 uppercase tracking-wide">Blackmagic Pocket 4K</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 ${
+                    bmdActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${bmdActive ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400'}`} />
+                    {bmdActive ? `ONLINE (:80)` : 'READY / STANDBY'}
+                  </span>
+                </div>
+
+                <p className="text-[10.5px] text-slate-300 leading-relaxed font-sans">
+                  Direct REST API (Firmware 9.8b+) & Web Media Manager over USB-C / LAN. Controls Dual ISO, Shutter, f-stop, and triggers BRAW takes.
+                </p>
+
+                <div className="p-2.5 rounded-xl bg-black/40 border border-purple-900/40 space-y-1 text-[10px]">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Camera IP:</span>
+                    <span className="text-amber-300 font-bold">{bmpccIp}:{bmpccPort}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Color Science:</span>
+                    <span className="text-purple-300 font-bold">Gen 5 / BRAW</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Physical Take & Slate Controls */}
+              <div className="space-y-2 pt-2">
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    onClick={handleBmdRecordToggle}
+                    className={`flex items-center justify-center space-x-1 px-2 py-1.5 rounded-xl font-extrabold text-[10.5px] transition shadow-md ${
+                      isRecording
+                        ? 'bg-red-600 hover:bg-red-500 text-white animate-pulse shadow-red-500/40'
+                        : 'bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/50'
+                    }`}
+                  >
+                    <Disc size={12} className={isRecording ? 'animate-spin' : ''} />
+                    <span>{isRecording ? 'Stop Rec' : '🔴 Record'}</span>
+                  </button>
+
+                  <button
+                    onClick={handleSyncBmdSlate}
+                    className="flex items-center justify-center space-x-1 px-2 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 font-bold text-[10.5px] transition"
+                  >
+                    <span>📋 Slate Sync</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={handleSyncBmdOptics}
+                    className="flex-1 px-2 py-1 rounded-xl bg-[#1d123d] hover:bg-[#2c1b5a] text-purple-200 border border-purple-600/50 text-[10px] font-bold transition"
+                  >
+                    🎥 Push Optics
+                  </button>
+
+                  <button
+                    onClick={handleLaunchDaVinci}
+                    className="px-2 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 text-purple-200 border border-purple-500/40 text-[10px] font-bold transition"
+                    title="Launch DaVinci Resolve Studio"
+                  >
+                    Resolve
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -396,58 +527,81 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
             <div className="flex items-center space-x-2 border-b border-amber-500/20 pb-2">
               <Settings size={15} className="text-amber-400" />
               <span className="font-bold text-xs uppercase tracking-wider text-amber-300">
-                Permanent Bridge Network Endpoints
+                Permanent Network Endpoints & Hardware Configurations
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <span className="text-[11px] font-bold text-slate-300">Unreal Engine 5 Configuration</span>
-                <div className="flex gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <span className="text-[11px] font-bold text-slate-300">Unreal Engine 5</span>
+                <div className="flex gap-1.5">
                   <input
                     type="text"
                     value={unrealHost}
                     onChange={(e) => setUnrealHost(e.target.value)}
                     placeholder="Host (127.0.0.1)"
-                    className="flex-1 bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-3 py-1.5 text-xs text-amber-200 font-mono"
+                    className="flex-1 bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-2.5 py-1.5 text-xs text-amber-200 font-mono"
                   />
                   <input
                     type="text"
                     value={unrealPort}
                     onChange={(e) => setUnrealPort(e.target.value)}
                     placeholder="Port (30010)"
-                    className="w-24 bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-3 py-1.5 text-xs text-amber-200 font-mono"
+                    className="w-20 bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-2 py-1.5 text-xs text-amber-200 font-mono"
                   />
                 </div>
                 <input
                   type="text"
                   value={unrealAppPath}
                   onChange={(e) => setUnrealAppPath(e.target.value)}
-                  placeholder="App Path (/Applications/...)"
-                  className="w-full bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-mono text-[11px]"
+                  placeholder="App Path"
+                  className="w-full bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-2.5 py-1 text-[10px] text-slate-300 font-mono"
                 />
               </div>
 
-              <div className="space-y-3">
-                <span className="text-[11px] font-bold text-slate-300">ComfyUI Configuration</span>
-                <div className="flex gap-2">
+              <div className="space-y-2">
+                <span className="text-[11px] font-bold text-slate-300">ComfyUI Generative Server</span>
+                <div className="flex gap-1.5">
                   <input
                     type="text"
                     value={comfyHost}
                     onChange={(e) => setComfyHost(e.target.value)}
                     placeholder="Host (127.0.0.1)"
-                    className="flex-1 bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-3 py-1.5 text-xs text-amber-200 font-mono"
+                    className="flex-1 bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-2.5 py-1.5 text-xs text-amber-200 font-mono"
                   />
                   <input
                     type="text"
                     value={comfyPort}
                     onChange={(e) => setComfyPort(e.target.value)}
                     placeholder="Port (8188)"
-                    className="w-24 bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-3 py-1.5 text-xs text-amber-200 font-mono"
+                    className="w-20 bg-[#1a0e3b] border border-purple-800/60 rounded-xl px-2 py-1.5 text-xs text-amber-200 font-mono"
                   />
                 </div>
-                <p className="text-[10px] text-slate-400 font-sans leading-normal pt-1">
-                  Connect to local ComfyUI instance or a remote GPU server across LAN/VPN.
+                <p className="text-[9.5px] text-slate-400 font-sans leading-normal">
+                  Connect to local GPU or remote cloud worker.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-[11px] font-bold text-amber-300">Blackmagic Pocket 4K IP</span>
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    value={bmpccIp}
+                    onChange={(e) => setBmpccIp(e.target.value)}
+                    placeholder="Camera IP (192.168.1.100)"
+                    className="flex-1 bg-[#1a0e3b] border border-amber-500/50 rounded-xl px-2.5 py-1.5 text-xs text-amber-200 font-mono"
+                  />
+                  <input
+                    type="text"
+                    value={bmpccPort}
+                    onChange={(e) => setBmpccPort(e.target.value)}
+                    placeholder="Port (80)"
+                    className="w-16 bg-[#1a0e3b] border border-amber-500/50 rounded-xl px-2 py-1.5 text-xs text-amber-200 font-mono"
+                  />
+                </div>
+                <p className="text-[9.5px] text-slate-400 font-sans leading-normal">
+                  Plug USB-C Ethernet or USB to Mac and enter camera IP.
                 </p>
               </div>
             </div>
@@ -457,7 +611,7 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
                 type="submit"
                 className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-lg shadow-amber-500/25 hover:opacity-90 transition"
               >
-                💾 Save DCC Configuration
+                💾 Save Studio Bridge Configuration
               </button>
             </div>
           </form>

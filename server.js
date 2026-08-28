@@ -1288,13 +1288,13 @@ app.post('/api/v1/cicd/gate', async (req, res) => {
 // GET /api/v1/dcc/status - Live Connectivity & Telemetry for all external DCC tools
 app.get('/api/v1/dcc/status', async (req, res) => {
   try {
-    const [ue5Status, comfyStatus] = await Promise.all([
+    const [ue5Status, comfyStatus, bmdStatus] = await Promise.all([
       unrealConnector.checkEngineStatus(),
       comfyBridge.checkServerStatus(),
+      blackmagicConnector.checkCameraStatus(),
     ]);
 
     const audioStatus = audioEngine.getEngineStatus();
-    const blackmagicStatus = blackmagicConnector.getStatus ? blackmagicConnector.getStatus() : { active: false };
 
     res.json({
       success: true,
@@ -1302,8 +1302,8 @@ app.get('/api/v1/dcc/status', async (req, res) => {
       bridges: {
         unrealEngine: ue5Status,
         comfyUI: comfyStatus,
+        blackmagicCamera: bmdStatus,
         audioEngine: audioStatus,
-        blackmagic: blackmagicStatus,
       },
     });
   } catch (err) {
@@ -1370,21 +1370,75 @@ app.post('/api/v1/dcc/comfy/queue', async (req, res) => {
   }
 });
 
+// POST /api/v1/dcc/blackmagic/config - Configure BMPCC 4K IP and Port
+app.post('/api/v1/dcc/blackmagic/config', (req, res) => {
+  try {
+    const result = blackmagicConnector.updateConfig(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/blackmagic/camera - Update physical camera optics (ISO, Shutter, WB, Iris)
+app.post('/api/v1/dcc/blackmagic/camera', async (req, res) => {
+  try {
+    const result = await blackmagicConnector.setCameraParameters(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/blackmagic/recording - Trigger physical take record start / stop
+app.post('/api/v1/dcc/blackmagic/recording', async (req, res) => {
+  try {
+    const { action = 'start' } = req.body || {};
+    const result = await blackmagicConnector.triggerRecording(action);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/dcc/blackmagic/slate - Sync take metadata to physical camera slate
+app.post('/api/v1/dcc/blackmagic/slate', async (req, res) => {
+  try {
+    const result = await blackmagicConnector.setSlateMetadata(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // POST /api/v1/dcc/config - Permanently configure DCC host & port settings
 app.post('/api/v1/dcc/config', async (req, res) => {
   try {
-    const { unrealHost, unrealPort, unrealAppPath, comfyHost, comfyPort } = req.body || {};
+    const {
+      unrealHost,
+      unrealPort,
+      unrealAppPath,
+      comfyHost,
+      comfyPort,
+      bmpccIp,
+      bmpccPort,
+    } = req.body || {};
+
     if (unrealHost || unrealPort || unrealAppPath) {
       unrealConnector.setConfig({ host: unrealHost, port: unrealPort, appPath: unrealAppPath });
     }
     if (comfyHost || comfyPort) {
       comfyBridge.setConfig({ host: comfyHost, port: comfyPort });
     }
+    if (bmpccIp || bmpccPort) {
+      blackmagicConnector.updateConfig({ cameraIp: bmpccIp, cameraPort: bmpccPort });
+    }
     res.json({
       success: true,
       message: 'DCC bridge configuration updated successfully.',
       unreal: { host: unrealConnector.host, port: unrealConnector.port, appPath: unrealConnector.appPath },
       comfy: { host: comfyBridge.host, port: comfyBridge.port },
+      blackmagic: { ip: blackmagicConnector.cameraIp, port: blackmagicConnector.cameraPort },
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

@@ -21,6 +21,7 @@ import CharactersRoom from '../pages/CharactersRoom';
 import IdeaRoom from '../pages/IdeaRoom';
 import DistributionRoom from '../pages/DistributionRoom';
 import DepartmentAgentsHub from './agents/DepartmentAgentsHub';
+import { StudioWatermark } from './common/StudioWatermark';
 import ErrorBoundary from './ErrorBoundary';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
@@ -944,6 +945,10 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 }}
               />
             )}
+            {/* Translucent Arise Productions Watermark Seal */}
+            <div className="absolute bottom-3 right-4 z-20 pointer-events-none">
+              <StudioWatermark variant="subtle" showCopyright={true} />
+            </div>
           </ErrorBoundary>
         </main>
 

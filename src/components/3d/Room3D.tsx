@@ -7,6 +7,7 @@ import { StageKey } from '../../types/types';
 import { roomKits } from './roomKits';
 import HeroProps from './HeroProps';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import { StudioWatermark } from '../common/StudioWatermark';
 
 // --- Step 4: HDRI fallback helpers ---
 function ProceduralLightingFallback() {
@@ -241,6 +242,11 @@ export const Room3D: React.FC<Room3DProps> = ({
         <span className="text-amber-300 font-semibold">{kit.label.toUpperCase()}</span>
         <span className="text-purple-400">•</span>
         <span className="text-slate-400 font-mono">[STAGE 1: PROPS & LIGHTS]</span>
+      </div>
+
+      {/* Arise Productions Proof-of-Ownership Watermark */}
+      <div className="absolute bottom-3 right-3 z-10 pointer-events-none">
+        <StudioWatermark variant="compact" showCopyright={true} />
       </div>
     </div>
   );

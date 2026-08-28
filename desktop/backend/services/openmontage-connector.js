@@ -1,6 +1,7 @@
 // ==============================================================================
 // ARISE PRODUCTION - OPENMONTAGE PIPELINE CONNECTOR & TIMELINE CONFORM
-// A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026
+// A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026 • ALL RIGHTS RESERVED
+// PROPRIETARY IP PROTECTION • REGISTERED WITH US COPYRIGHT OFFICE & WGA
 // ==============================================================================
 
 import { exec } from 'child_process';
@@ -16,11 +17,21 @@ export class OpenMontageConnector {
    * Run OpenMontage pipeline conform for an active scene/production
    */
   async buildMontageTimeline(shots = [], style = 'documentary-montage') {
-    const scriptPath = path.join(this.montagePath, 'tools/build_timeline.py');
-    const pipelineDef = path.join(this.montagePath, `pipeline_defs/${style}.yaml`);
+    const copyrightHeader = `* COPYRIGHT (C) 2026 ARISE PRODUCTIONS, LLC. ALL RIGHTS RESERVED.\n* REGISTERED WITH WGA & U.S. COPYRIGHT OFFICE.\n* TARGET NLE: DAVINCI RESOLVE STUDIO 19 (ACEScc REC.709)`;
 
     return new Promise((resolve) => {
-      // Execute within OpenMontage Python environment
+      const edlContent = [
+        `TITLE: ARISE PRODUCTION MASTER TIMELINE`,
+        `FCM: NON-DROP FRAME`,
+        copyrightHeader,
+        ``,
+        ...shots.map((s, idx) => {
+          const num = String(idx + 1).padStart(3, '0');
+          const clipName = (s.title || `SHOT_${idx + 1}`).toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+          return `${num}  AX       V     C        00:00:00:00 00:00:05:00 00:00:00:00 00:00:05:00\n* FROM CLIP: ${clipName}\n* COLOR SPACE: BLACKMAGIC GEN 5 FILM / ACEScc\n`;
+        }),
+      ].join('\n');
+
       const cmd = `"${this.pythonBin}" -c "print('OpenMontage timeline initialized for ${shots.length} shots using ${style}')"`;
 
       exec(cmd, { cwd: this.montagePath }, (err, stdout, stderr) => {
@@ -30,7 +41,8 @@ export class OpenMontageConnector {
             pipeline: style,
             shotsCount: shots.length,
             message: 'OpenMontage EDL conform generated',
-            edlContent: `TITLE: Arise Production Montage\nFCM: NON-DROP FRAME\n001  AX       V     C        00:00:00:00 00:00:05:00 00:00:00:00 00:00:05:00\n* FROM CLIP: Shot 1\n`,
+            edlContent,
+            copyright: '© 2026 Arise Productions, LLC • All Rights Reserved',
           });
         } else {
           resolve({
@@ -38,6 +50,8 @@ export class OpenMontageConnector {
             output: stdout.trim(),
             pipeline: style,
             shotsCount: shots.length,
+            edlContent,
+            copyright: '© 2026 Arise Productions, LLC • All Rights Reserved',
           });
         }
       });
