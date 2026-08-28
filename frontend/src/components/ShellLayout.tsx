@@ -955,6 +955,11 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <ShieldCheck size={12} className="text-emerald-400" />
               <span>NVIDIA NIM Free Tier: Active</span>
             </span>
+            <span className="text-slate-700">•</span>
+            <span className="px-2 py-0.5 rounded-md bg-purple-950/70 border border-purple-800/50 text-purple-300 font-bold flex items-center gap-1 shadow-sm" title="Live Build & Commit Stamp">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+              <span>BUILD: {((import.meta as any).env?.VITE_COMMIT_SHA || 'dev').toUpperCase()} • {(import.meta as any).env?.VITE_BUILD_TIME || 'live'}</span>
+            </span>
           </div>
         </div>
       </footer>

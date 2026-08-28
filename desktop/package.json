@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "setup": "node download-electron.js",
-    "prebuild": "rm -rf ui backend server.js storage && cp -R ../frontend/dist ./ui && cp -R ../backend ./backend && cp ../server.js ./server.js && (cp -R ../storage ./storage 2>/dev/null || true)",
+    "prebuild": "rm -rf ui backend server.js && cp -R ../frontend/dist ./ui && cp -R ../backend ./backend && cp ../server.js ./server.js && (mkdir -p ./storage && cp -n ../storage/* ./storage/ 2>/dev/null || true)",
     "start": "node download-electron.js && electron .",
     "build:mac": "npm run prebuild && electron-builder --mac dmg",
     "build:win": "npm run prebuild && electron-builder --win",

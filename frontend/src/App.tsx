@@ -995,9 +995,13 @@ const App: React.FC = () => {
               <p className="text-[11px] text-[#E2BA86]">
                 © 2026 Arise Production. A product of THE AI CONTENT FOUNDRY, LLC. All rights reserved.
               </p>
-              <p className="text-[10px] text-slate-500 font-mono">
-                Supports Long-Form, Short-Form (9:16), Episodic TV, and Social Media Ingestion.
-              </p>
+              <div className="flex items-center justify-center gap-2 text-[10px] text-slate-500 font-mono">
+                <span>Supports Long-Form, Short-Form (9:16), Episodic TV, and Social Media Ingestion.</span>
+                <span>•</span>
+                <span className="px-1.5 py-0.2 rounded bg-purple-950/60 border border-purple-800/40 text-purple-300 font-bold">
+                  BUILD: {((import.meta as any).env?.VITE_COMMIT_SHA || 'dev').toUpperCase()} • {(import.meta as any).env?.VITE_BUILD_TIME || 'live'}
+                </span>
+              </div>
             </footer>
           </div>
         ) : (

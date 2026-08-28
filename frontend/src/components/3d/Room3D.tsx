@@ -1,7 +1,7 @@
 'use client';
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, Component, ErrorInfo, ReactNode } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Environment, Lightformer, ContactShadows, OrbitControls } from '@react-three/drei';
+import { Environment, Lightformer, ContactShadows, OrbitControls, Sparkles } from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, Vignette, Noise } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { StageKey } from '../../types/types';
@@ -86,7 +86,7 @@ const CineCameraController: React.FC<{
   ) : null;
 };
 
-// 4K Dynamic Rotating Soundstage Floor & Animated Emitters
+// 4K Dynamic Rotating Soundstage Floor with PBR Physical Reflectance
 const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
   const ringRef1 = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
@@ -105,13 +105,16 @@ const DynamicSoundstageFloor: React.FC<{ stageId: string }> = ({ stageId }) => {
 
   return (
     <group position={[0, -2.15, 0]}>
-      {/* Reflective Dark Stage Floor Plane */}
+      {/* Reflective Dark Stage Floor Plane with Real PBR Clearcoat */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[100, 100]} />
-        <meshStandardMaterial
-          color="#030108"
-          roughness={0.15}
+        <meshPhysicalMaterial
+          color="#04020a"
+          roughness={0.12}
           metalness={0.92}
+          clearcoat={1.0}
+          clearcoatRoughness={0.06}
+          envMapIntensity={2.0}
         />
       </mesh>
 
@@ -146,6 +149,54 @@ const LIGHT: Record<string, { key: string; fill: string }> = {
   magenta: { key: '#fbcfe8', fill: '#ec4899' },
 };
 
+// Procedural Lightformer Rig Fallback (guarantees zero black void)
+const ProceduralLightformers: React.FC<{ light: { key: string; fill: string }; perf: boolean }> = ({ light, perf }) => (
+  <Environment resolution={perf ? 128 : 256}>
+    <Lightformer intensity={1.4} position={[0, 4, 3]} scale={[8, 4, 1]} color={light.key} />
+    <Lightformer intensity={0.9} position={[-4, 2, 2]} scale={[4, 4, 1]} color={light.fill} />
+    <Lightformer intensity={0.6} position={[4, 2, -3]} scale={[4, 4, 1]} color="#ffffff" />
+    <Lightformer intensity={0.4} position={[0, -2, 0]} scale={[10, 10, 1]} color="#1a0b36" />
+  </Environment>
+);
+
+// Resilient HDRI Environment Loader with Fallback
+interface HDRIProps {
+  light: { key: string; fill: string };
+  perf: boolean;
+}
+
+interface HDRIState {
+  hasError: boolean;
+}
+
+class SafeHDRIEnvironment extends Component<HDRIProps, HDRIState> {
+  constructor(props: HDRIProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(_: Error): HDRIState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.warn('[Room3D] HDRI Load notice, falling back to procedural rig:', error);
+  }
+
+  render(): ReactNode {
+    const { light, perf } = this.props;
+    if (this.state.hasError) {
+      return <ProceduralLightformers light={light} perf={perf} />;
+    }
+
+    return (
+      <React.Suspense fallback={<ProceduralLightformers light={light} perf={perf} />}>
+        <Environment files="./hdri/studio.hdr" />
+      </React.Suspense>
+    );
+  }
+}
+
 export interface Room3DProps {
   stageId: StageKey;
   roomName: string;
@@ -177,69 +228,77 @@ export const Room3D: React.FC<Room3DProps> = ({
         gl={{
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.05,
+          toneMappingExposure: 1.12,
         }}
         camera={{ position: [0, 1.2, 5.8], fov: 50 }}
       >
         <color attach="background" args={['#060410']} />
-        <fog attach="fog" args={['#060410', 9, 30]} />
+        
+        {/* Priority 3: Exponential Atmospheric Depth Fog */}
+        <fogExp2 attach="fog" args={['#060312', 0.038]} />
 
-        {/* Procedural HDRI — reflections with no external file to fail on */}
-        <Environment resolution={perf ? 128 : 256}>
-          <Lightformer intensity={1.2} position={[0, 3, 2]} scale={[8, 4, 1]} color={light.key} />
-          <Lightformer intensity={0.7} position={[-4, 1, 2]} scale={[3, 3, 1]} color={light.fill} />
-          <Lightformer intensity={0.5} position={[4, 1, -3]} scale={[3, 3, 1]} color="#ffffff" />
-        </Environment>
+        {/* Priority 1: Real Local Bundled HDRI with Zero-Failure Procedural Fallback */}
+        <SafeHDRIEnvironment light={light} perf={perf} />
 
-        <ambientLight intensity={0.35} color="#e9d5ff" />
+        {/* Subtle Atmospheric Dust Motes */}
+        <Sparkles
+          count={perf ? 20 : 45}
+          scale={14}
+          size={1.8}
+          speed={0.35}
+          opacity={0.3}
+          color={kit.accent}
+        />
+
+        <ambientLight intensity={0.4} color="#e9d5ff" />
         <directionalLight
           position={[6, 8, 6]}
-          intensity={1.5}
+          intensity={1.6}
           color={light.key}
           castShadow={!perf}
           shadow-mapSize={[1024, 1024]}
         />
-        <pointLight position={[-6, 4, 4]} intensity={1.0} color={light.fill} />
-        <spotLight position={[0, 7, -6]} intensity={2} color={kit.accent} angle={0.6} penumbra={0.8} />
+        <pointLight position={[-6, 4, 4]} intensity={1.1} color={light.fill} />
+        <spotLight position={[0, 7, -6]} intensity={2.2} color={kit.accent} angle={0.65} penumbra={0.8} />
 
         {/* Interactive Camera Controller with Mouse Parallax & Orbit */}
         <CineCameraController stageId={stageId} shotNumber={shotNumber} allowOrbit={allowOrbit} />
 
-        {/* 3D Soundstage Floor */}
+        {/* 3D Soundstage Floor with Reflectance */}
         <DynamicSoundstageFloor stageId={stageId} />
 
         {!perf && (
           <ContactShadows
-            position={[0, -2.15, 0]}
-            opacity={0.5}
-            scale={30}
-            blur={2.4}
-            far={6}
+            position={[0, -2.14, 0]}
+            opacity={0.65}
+            scale={28}
+            blur={2.2}
+            far={5}
             color="#000000"
           />
         )}
 
-        {/* Procedural Room Props from Kit */}
+        {/* Procedural Room Props from Kit with PBR meshPhysicalMaterial */}
         <HeroProps kit={kit} />
 
         {/* Optional Custom Room Overlays */}
         {children}
 
-        {/* Igloo Postprocessing Stack */}
+        {/* Priority 5: Calibrated Igloo Postprocessing Stack */}
         <EffectComposer enabled>
           <Bloom
-            intensity={perf ? 0.4 : 0.7}
-            luminanceThreshold={0.55}
-            luminanceSmoothing={0.9}
+            intensity={perf ? 0.25 : 0.45}
+            luminanceThreshold={0.7}
+            luminanceSmoothing={0.5}
             mipmapBlur
           />
           {!perf ? (
-            <DepthOfField focusDistance={0.012} focalLength={0.05} bokehScale={2.2} />
+            <DepthOfField focusDistance={0.02} focalLength={0.035} bokehScale={1.3} />
           ) : (
             <></>
           )}
-          <Vignette eskil={false} offset={0.25} darkness={0.75} />
-          {!perf ? <Noise opacity={0.025} /> : <></>}
+          <Vignette eskil={false} offset={0.3} darkness={0.65} />
+          {!perf ? <Noise opacity={0.015} /> : <></>}
         </EffectComposer>
       </Canvas>
 
