@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef, useMemo, Suspense, Component, type ReactNode } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls, Environment, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { StageKey } from '../../types/types';
 import { roomKits } from './roomKits';
@@ -203,6 +203,11 @@ export const Room3D: React.FC<Room3DProps> = ({
             <Environment files="/hdri/studio.hdr" resolution={64} />
           </Suspense>
         </EnvErrorBoundary>
+
+        {/* Step 5 — fog + sparkles */}
+        <fogExp2 attach="fog" args={['#0a0a0a', 0.012]} />
+        <Sparkles count={40} scale={6} size={2} speed={0.2} opacity={0.4} />
+
 
 
 
