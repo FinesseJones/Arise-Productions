@@ -1,16 +1,72 @@
 [
   {
-    "id": "mem-fc-core-1",
-    "category": "Character Lore & Cast",
-    "title": "A Fatherless Child - Ensemble Roster",
-    "content": "Protagonists: Ayanna Jackson (25, Social Worker, raised by single mom Leila Jackson, father absent) & Malachi Davis (27, Community Organizer/Youth Mentor, raised by Nia Davis, father absent). Supporting: Leila Jackson, Nia Davis, Tanesha Lee (Ayanna best friend), Tyler Brown (Malachi friend). Setting: Urban development community, all Black American cast.",
-    "timestamp": "2026-08-27T16:25:05.105Z"
+    "id": "mem-core-1",
+    "category": "Studio Pipeline",
+    "title": "Hollywood 10-Stage Virtual Production Framework",
+    "content": "Production pipeline strictly enforces the 10-Stage Studio Engine: 01 ScriptBreak -> 02 Cork Board Structure -> 03 Master Canvas Plan -> 04 Blockout 3D Previs -> 05 Hyperframes Motion -> 06 Storyboard Studio -> 07 Slate Prompt -> 08 Circle Take Dailies (FFmpeg MP4) -> 09 Stem Studio Audio -> 10 DaVinci Resolve Conform.",
+    "timestamp": "2026-08-28T12:00:00.000Z"
   },
   {
-    "id": "mem-fc-core-2",
-    "category": "Series Premise",
-    "title": "A Fatherless Child - Thematic Engine",
-    "content": "Explores the emotional, psychological, and generational impacts of absent fathers across an urban community, following Ayanna and Malachi as they break generational cycles and restore family identity.",
-    "timestamp": "2026-08-27T16:25:05.106Z"
+    "id": "mem-core-2",
+    "category": "Brand & Aesthetic",
+    "title": "The AI Content Foundry Cinematic Visual Identity",
+    "content": "Visual signature: Dark tech-noir luxury studio grade with golden amber specular highlights (#F59E0B / #FBBF24), deep cosmic purple (#09041a / #140e2e), and anamorphic lens flares. All 3D soundstages render at 24.00 FPS DCI timing with 4K specular reflection maps.",
+    "timestamp": "2026-08-28T12:05:00.000Z"
+  },
+  {
+    "id": "mem-core-3",
+    "category": "Story Architecture",
+    "title": "Canonical Narrative Arc: A Fatherless Child",
+    "content": "Master 15-Beat Save the Cat Structure locked: Devon Wells discovers his deceased father's unprocessed 16mm film reels. Themes: Generational reconciliation, identity, fatherly legacy, and spiritual resilience. Act 1 Setup leads to Midpoint Foundry Confrontation and Break into Three resolution.",
+    "timestamp": "2026-08-28T12:10:00.000Z"
+  },
+  {
+    "id": "mem-core-4",
+    "category": "Virtual Cinematography",
+    "title": "Unreal Engine 5 Live Link Remote Control (:30010)",
+    "content": "Permanent HTTP bridge to UE5 Remote Control Web Server at http://127.0.0.1:30010. Dispatches real-time CineCamera parameters (SetCurrentFocalLength 18-135mm, CurrentAperture f/1.4-f/8.0, Full Frame 36x24mm sensor gate, and 6-axis 3D dolly transforms) directly to /Game/Cinematics/CineCameraActor1.",
+    "timestamp": "2026-08-28T12:15:00.000Z"
+  },
+  {
+    "id": "mem-core-5",
+    "category": "Generative Video & Diffusion",
+    "title": "ComfyUI Local Generative Node Bridge (:8188)",
+    "content": "Direct socket/REST bridge to local ComfyUI instance at http://127.0.0.1:8188. Executes high-throughput FLUX.1 Dev, SDXL, and ControlNet depth workflows for continuity-locked storyboard slates, texture generation, and AI video animation takes.",
+    "timestamp": "2026-08-28T12:20:00.000Z"
+  },
+  {
+    "id": "mem-core-6",
+    "category": "Sound & Voice Synthesis",
+    "title": "Broadcast Audio Mastering & Open-Source Speech Engine",
+    "content": "All project dialogue and sound stems comply with -24.0 LKFS / LUFS EBU R128 broadcast loudness standards. Open-source Kokoro-82M and Coqui XTTS-v2 generate character voice dialogue at 48.0 kHz 24-bit WAV. 5.1 Dolby Atmos submix matrix splits Dialogue (C), Foley (L/R), Music (Surround), and LFE Sub (<120Hz).",
+    "timestamp": "2026-08-28T12:25:00.000Z"
+  },
+  {
+    "id": "mem-core-7",
+    "category": "Episodic Television",
+    "title": "Multi-Episode TV Series & Seasons Engine",
+    "content": "Supports full multi-season episodic television pipelines. Features Cold Open teaser generation, Act 1-5 structural breakdowns, A/B/C plotline tracking, character relationship matrices, and episodic cliffhanger pacing.",
+    "timestamp": "2026-08-28T12:30:00.000Z"
+  },
+  {
+    "id": "mem-core-8",
+    "category": "Editorial & Color",
+    "title": "DaVinci Resolve & OpenMontage Conform Timeline",
+    "content": "OpenMontage conform engine automatically compiles multi-shot dailies into industry-standard EDL (Edit Decision List) and Final Cut Pro XML sequences with ACEScc Rec.709 color profiling for instant roundtrip into DaVinci Resolve Studio and Adobe Premiere.",
+    "timestamp": "2026-08-28T12:35:00.000Z"
+  },
+  {
+    "id": "mem-core-9",
+    "category": "Agent Hierarchy",
+    "title": "16 Autonomous Department AI Agents Orchestration",
+    "content": "Autonomous department crew (Executive Showrunner, Film Director, Virtual DP, Sound Designer, Editor, VFX Supervisor, Script Supervisor) executes live tool calling (save_beats, sync_ue5_camera, queue_comfy_generation, get_dcc_status, execute_stage_run) with persistent multi-session memory.",
+    "timestamp": "2026-08-28T12:40:00.000Z"
+  },
+  {
+    "id": "mem-core-10",
+    "category": "Video Engine",
+    "title": "Native FFmpeg & Remotion Cinema Renderer",
+    "content": "Native system FFmpeg integration renders real 4K and 1080p 24.000 FPS DCI MP4 video cards and dailies directly to /storage/ingested/. Video files are immediately streamable in the 4K Screening Room and distributed across social and theatrical platforms.",
+    "timestamp": "2026-08-28T12:45:00.000Z"
   }
 ]
