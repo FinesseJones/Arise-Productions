@@ -14,6 +14,10 @@ services:
       - VITE_API_URL=
     volumes:
       - arise_data:/app/data
+      - ./frontend/dist:/app/frontend/dist
+      - ./backend:/app/backend
+      - ./server.js:/app/server.js
+      - ./storage:/app/storage
     networks:
       - default
       - caddy_net
