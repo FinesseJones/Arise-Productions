@@ -294,30 +294,52 @@ export function AudienceTheaterPortal({
                   : 'w-full max-w-sm aspect-[9/16]'
               }`}
             >
-              {/* Cinematic Background Canvas */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/30 via-[#070314] to-amber-950/20 flex items-center justify-center">
-                <div className="text-center space-y-4 p-6 select-none max-w-xl">
-                  <div className="w-20 h-20 mx-auto rounded-3xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center shadow-2xl shadow-amber-500/20">
-                    <Film className="w-10 h-10 text-amber-400 animate-pulse" />
-                  </div>
-                  <div>
-                    <span className="px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-[10px] font-mono text-amber-300 font-bold tracking-wide">
-                      {activeProject.format === 'episodic_tv' ? `EPISODE ${selectedEpisode}: ${episodes[selectedEpisode - 1]?.title || 'Echoes of Absence'}` : 'FEATURE FILM MASTER'}
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-slate-100 uppercase tracking-widest font-serif mt-2">
-                      {activeProject.name}
-                    </h2>
-                    <p className="text-xs text-amber-300/90 font-mono mt-1">
-                      4K DCI (3840x2160) • 24.000 FPS • Blackmagic Gen 5 Film Color Science • 5.1 Dolby Atmos
-                    </p>
+              {/* Real HTML5 4K Video Element */}
+              <video
+                ref={videoRef}
+                src="/videos/arise_studio_walkthrough_demo.mp4"
+                playsInline
+                loop
+                muted={isMuted}
+                onTimeUpdate={() => {
+                  if (videoRef.current) {
+                    setCurrentTime(videoRef.current.currentTime);
+                    if (videoRef.current.duration) setDuration(videoRef.current.duration);
+                  }
+                }}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                className={`w-full h-full object-cover transition-opacity duration-500 ${
+                  isPlaying ? 'opacity-100' : 'opacity-40'
+                }`}
+              />
+
+              {/* Cinematic Overlay Title Banner (When Paused) */}
+              {!isPlaying && (
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none">
+                  <div className="text-center space-y-3 p-6 max-w-xl">
+                    <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center shadow-2xl shadow-amber-500/20">
+                      <Film className="w-8 h-8 text-amber-400" />
+                    </div>
+                    <div>
+                      <span className="px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-[10px] font-mono text-amber-300 font-bold tracking-wide">
+                        {activeProject.format === 'episodic_tv' ? `EPISODE ${selectedEpisode}: ${episodes[selectedEpisode - 1]?.title || 'Echoes of Absence'}` : 'FEATURE FILM MASTER'}
+                      </span>
+                      <h2 className="text-2xl font-black text-slate-100 uppercase tracking-widest font-serif mt-2">
+                        {activeProject.name}
+                      </h2>
+                      <p className="text-xs text-amber-300/90 font-mono mt-1">
+                        4K DCI (3840x2160) • 24.000 FPS • Blackmagic Gen 5 Film Color • 5.1 Atmos
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Timecode & Resolution Overlays */}
               <div className="absolute top-4 left-4 z-20 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-purple-800/60 font-mono text-xs text-amber-300 font-bold flex items-center space-x-2">
                 <Clock size={12} className="text-amber-400" />
-                <span>TC: {formatTimecode(currentTime)} / 58:00</span>
+                <span>TC: {formatTimecode(currentTime)} / {formatTimecode(duration)}</span>
               </div>
 
               <div className="absolute top-4 right-4 z-20 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/40 font-mono text-[11px] text-emerald-400 font-bold flex items-center gap-1.5">
@@ -328,8 +350,13 @@ export function AudienceTheaterPortal({
               {/* Central Play Button */}
               {!isPlaying && (
                 <button
-                  onClick={() => setIsPlaying(true)}
-                  className="absolute z-20 w-20 h-20 rounded-full bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black flex items-center justify-center shadow-2xl hover:scale-110 transition duration-300 shadow-amber-500/40"
+                  onClick={() => {
+                    if (videoRef.current) {
+                      videoRef.current.play();
+                      setIsPlaying(true);
+                    }
+                  }}
+                  className="absolute z-20 w-20 h-20 rounded-full bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black flex items-center justify-center shadow-2xl hover:scale-110 transition duration-300 shadow-amber-500/40 cursor-pointer"
                   title="Play Feature"
                 >
                   <Play size={32} className="ml-1 fill-black" />

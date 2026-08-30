@@ -77,7 +77,7 @@ export function DistributionRoom({
   const [duration, setDuration] = useState<number>(120);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [selectedVideoSource, setSelectedVideoSource] = useState<string>(
-    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
+    '/videos/arise_studio_walkthrough_demo.mp4'
   );
 
   // Timestamp Commentary State

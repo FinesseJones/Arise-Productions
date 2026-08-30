@@ -73,6 +73,10 @@ app.use(express.json({ limit: '50mb' }));
 const distPath = path.join(__dirname, 'frontend/dist');
 app.use(express.static(distPath));
 
+// Serve real storage and video streaming assets
+app.use('/storage', express.static(path.join(__dirname, 'storage')));
+app.use('/videos', express.static(path.join(__dirname, 'frontend/public/videos')));
+
 // Attach WebSocket Gateway
 wsGateway.attachToServer(server);
 
@@ -615,7 +619,8 @@ app.post('/api/v1/distribution/press-kit', async (req, res) => {
 // POST /api/v1/distribution/screener - Generate Secure Watermarked Screener Package
 app.post('/api/v1/distribution/screener', (req, res) => {
   try {
-    const screener = DistributionEngine.generateScreenerPackage(req.body);
+    const host = `${req.protocol}://${req.get('host')}`;
+    const screener = DistributionEngine.generateScreenerPackage({ ...(req.body || {}), host });
     res.json({ success: true, screener });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
