@@ -642,6 +642,87 @@ app.post('/api/v1/distribution/video-commentary', async (req, res) => {
   }
 });
 
+// POST /api/v1/distribution/streaming-package - Generate Tier-1 OTT Platform Delivery Packages
+app.post('/api/v1/distribution/streaming-package', async (req, res) => {
+  try {
+    const packageData = await DistributionEngine.generateStreamingDeliveryPackage(req.body);
+    res.json({ success: true, ...packageData });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/distribution/social-pack - Generate Multi-Platform Social Media Campaign
+app.post('/api/v1/distribution/social-pack', async (req, res) => {
+  try {
+    const campaign = await DistributionEngine.generateSocialMediaCampaignPackage(req.body);
+    res.json({ success: true, ...campaign });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/distribution/render-social-clip - Render Real 9:16 / 1:1 Social Video Clip via FFmpeg
+app.post('/api/v1/distribution/render-social-clip', async (req, res) => {
+  try {
+    const result = await DistributionEngine.renderSocialVideoClip(req.body);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/audience/catalogue - Public Audience Streaming Catalogue
+app.get('/api/v1/audience/catalogue', (req, res) => {
+  try {
+    const projects = db.getProjects ? db.getProjects() : [];
+    res.json({ success: true, catalogue: projects });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/audience/reactions/:projectId - Get Audience Reactions (Claps, Fire, Ovation)
+app.get('/api/v1/audience/reactions/:projectId', (req, res) => {
+  try {
+    const reactions = DistributionEngine.getReactions(req.params.projectId);
+    res.json({ success: true, reactions });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/audience/reactions/:projectId - Add Audience Reaction
+app.post('/api/v1/audience/reactions/:projectId', (req, res) => {
+  try {
+    const { reactionType = 'applause' } = req.body;
+    const result = DistributionEngine.addReaction(req.params.projectId, reactionType);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/audience/reviews/:projectId - Get Audience Viewer Reviews
+app.get('/api/v1/audience/reviews/:projectId', (req, res) => {
+  try {
+    const reviews = DistributionEngine.getReviews(req.params.projectId);
+    res.json({ success: true, reviews });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/audience/reviews/:projectId - Submit Audience Viewer Review
+app.post('/api/v1/audience/reviews/:projectId', (req, res) => {
+  try {
+    const result = DistributionEngine.addReview(req.params.projectId, req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // POST /api/v1/projects/create - Create Long, Short, or Episodic TV production
 app.post('/api/v1/projects/create', async (req, res) => {
   try {

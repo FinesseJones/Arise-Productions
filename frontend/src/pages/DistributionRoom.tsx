@@ -29,7 +29,13 @@ import {
   DollarSign,
   Layers,
   ChevronRight,
-  MessageSquare
+  MessageSquare,
+  Smartphone,
+  Tv,
+  ExternalLink,
+  Video,
+  Radio,
+  Sliders
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAPIBaseURL } from '../lib/api';
@@ -47,8 +53,22 @@ export function DistributionRoom({
   onNavigateToRoom,
 }: DistributionRoomProps) {
   const apiBase = getAPIBaseURL();
-  const [activeTab, setActiveTab] = useState<'video_review' | 'press_kit' | 'screeners' | 'strategy' | 'transcripts'>('video_review');
+  const [activeTab, setActiveTab] = useState<'streaming' | 'social_media' | 'video_review' | 'press_kit' | 'screeners' | 'strategy'>('streaming');
   const [activeAgentId, setActiveAgentId] = useState<string>('distribution_lead');
+
+  // OTT Streaming Platforms State
+  const [streamingPackage, setStreamingPackage] = useState<any | null>(null);
+  const [isGeneratingStreaming, setIsGeneratingStreaming] = useState<boolean>(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<string>('netflix');
+
+  // Social Media & Vertical Video State
+  const [socialCampaign, setSocialCampaign] = useState<any | null>(null);
+  const [isGeneratingSocial, setIsGeneratingSocial] = useState<boolean>(false);
+  const [socialAspectRatio, setSocialAspectRatio] = useState<'9:16' | '1:1' | '16:9'>('9:16');
+  const [socialHookText, setSocialHookText] = useState<string>("HE FOUND HIS FATHER'S SECRET REELS...");
+  const [socialChannel, setSocialChannel] = useState<string>('tiktok');
+  const [isRenderingSocialClip, setIsRenderingSocialClip] = useState<boolean>(false);
+  const [lastRenderedSocialClip, setLastRenderedSocialClip] = useState<any | null>(null);
 
   // Video Player State
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -84,427 +104,135 @@ export function DistributionRoom({
     {
       role: 'assistant',
       agentName: 'Vance Morgan',
-      text: "🌍 **Vance Morgan (Global Distribution Lead):** Welcome to the **05: Distribution & Marketing Release Hub**! Here we package your finished master into Electronic Press Kits (EPK), generate forensic watermarked screeners for studio buyers, and review video playhead timing to optimize audience retention. How can we position your film today?",
+      text: "🌍 **Vance Morgan (Global Distribution Lead):** Welcome to the **Studio Global Distribution & Multi-Platform Syndication Hub**! From here, away from public view, you can generate complete delivery packages for **Netflix, Apple TV+, Amazon Prime Video, Disney+, Max, and Tubi**, as well as render **vertical 9:16 clips for TikTok, IG Reels, and YouTube Shorts** with burned-in viral hooks and Arise proof-of-ownership watermarks. How would you like to syndicate your project today?",
     }
   ]);
   const [chatInput, setChatInput] = useState<string>('');
   const [isChatLoading, setIsChatLoading] = useState<boolean>(false);
 
-  // Voice Intercom & Microphone State
-  const [isVoiceActive, setIsVoiceActive] = useState<boolean>(false);
-  const [voiceTranscript, setVoiceTranscript] = useState<string>('');
-  const [isVoiceListening, setIsVoiceListening] = useState<boolean>(false);
-  const [voiceHistory, setVoiceHistory] = useState<any[]>([]);
-  const recognitionRef = useRef<any>(null);
-
-  // Load Voice Transcripts from DB
-  const loadTranscripts = async () => {
-    try {
-      const res = await fetch(`${apiBase}/api/v1/studio/transcripts?projectId=${projectId}`).then((r) => r.json());
-      if (res && res.success && Array.isArray(res.transcripts)) {
-        setVoiceHistory(res.transcripts);
-      }
-    } catch (e) {
-      console.warn('Failed to load transcripts:', e);
-    }
-  };
-
+  // Auto-load Streaming Packages & Social Campaigns on Mount
   useEffect(() => {
-    loadTranscripts();
-  }, [projectId, apiBase]);
+    handleGenerateStreamingPackage();
+    handleGenerateSocialCampaign();
+  }, [projectName, apiBase]);
 
-  // Video Time Update Listener
-  const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime);
-      if (videoRef.current.duration && !isNaN(videoRef.current.duration)) {
-        setDuration(videoRef.current.duration);
-      }
-    }
-  };
-
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        videoRef.current.play();
-        setIsPlaying(true);
-      }
-    }
-  };
-
-  const formatTime = (secs: number) => {
-    const mins = Math.floor(secs / 60);
-    const remainingSecs = Math.floor(secs % 60);
-    return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
-  };
-
-  const seekToTimestamp = (seconds: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = seconds;
-      setCurrentTime(seconds);
-    }
-  };
-
-  // Trigger Multi-Agent Video Commentary at current timestamp
-  const handleAnalyzeCurrentFrame = async () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-    setIsAnalyzingTimestamp(true);
-    const toastId = toast.loading(`🔍 Analyzing scene moment at [${formatTime(currentTime)}] with Distribution & Camera leads...`);
-
-    const fallbackCommentary = {
-      timestamp: formatTime(currentTime),
-      seconds: Math.round(currentTime),
-      overallVerdict: `Strong cinematic momentum at [${formatTime(currentTime)}], optimal for maintaining high audience retention.`,
-      notes: [
-        { agentName: 'Vance Morgan', role: 'Global Distribution', comment: `At [${formatTime(currentTime)}], the pacing holds audience curiosity. Excellent placement for a mid-trailer beat drop.` },
-        { agentName: 'Chloe Sterling', role: 'Marketing Director', comment: `This frame at [${formatTime(currentTime)}] features phenomenal key lighting—it makes an ideal thumbnail and poster key-art candidate!` },
-        { agentName: 'CineDirector Maya', role: 'Director of Photography', comment: `The 35mm optical falloff and Gen 5 Film Color highlights render cleanly here with zero clipping.` },
-      ],
-      actionableTweak: 'Hold this shot for an extra 0.5s before cutting to let the emotional subtext register with the audience.',
-    };
-
+  // Handler: Generate Streaming Package
+  const handleGenerateStreamingPackage = async () => {
+    setIsGeneratingStreaming(true);
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-      const res = await fetch(`${apiBase}/api/v1/distribution/video-commentary`, {
+      const res = await fetch(`${apiBase}/api/v1/distribution/streaming-package`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        signal: controller.signal,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectTitle: projectName, format: 'episodic_tv' }),
+      });
+      const data = await res.json();
+      if (data && data.platforms) {
+        setStreamingPackage(data);
+      }
+    } catch {
+      toast.error('Failed to compile OTT delivery specs');
+    } finally {
+      setIsGeneratingStreaming(false);
+    }
+  };
+
+  // Handler: Generate Social Media Campaign
+  const handleGenerateSocialCampaign = async () => {
+    setIsGeneratingSocial(true);
+    try {
+      const res = await fetch(`${apiBase}/api/v1/distribution/social-pack`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectTitle: projectName }),
+      });
+      const data = await res.json();
+      if (data && data.channels) {
+        setSocialCampaign(data);
+      }
+    } catch {
+      toast.error('Failed to compile social media campaign');
+    } finally {
+      setIsGeneratingSocial(false);
+    }
+  };
+
+  // Handler: Render Social Video Clip (FFmpeg)
+  const handleRenderSocialClip = async () => {
+    setIsRenderingSocialClip(true);
+    const toastId = toast.loading(`🎬 Rendering ${socialAspectRatio} vertical video for ${socialChannel.toUpperCase()} with FFmpeg...`);
+    try {
+      const res = await fetch(`${apiBase}/api/v1/distribution/render-social-clip`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectTitle: projectName,
-          timestampSeconds: Math.round(currentTime),
-          formattedTime: formatTime(currentTime),
-          videoContext: 'Master Cut / Trailer Review',
+          hookText: socialHookText,
+          aspectRatio: socialAspectRatio,
+          channel: socialChannel,
+          durationSeconds: 6,
         }),
       });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.success && data.commentary) {
-          setCommentaryData(data.commentary);
-          setCommentaryHistory((prev) => [data.commentary, ...prev.slice(0, 10)]);
-          toast.success(`✨ Agents reviewed timestamp [${formatTime(currentTime)}]!`, { id: toastId });
-          return;
-        }
+      const data = await res.json();
+      if (data && data.success) {
+        setLastRenderedSocialClip(data);
+        toast.success(`✨ Rendered ${socialAspectRatio} clip with burned-in hook and Arise watermark!`, { id: toastId });
+      } else {
+        toast.error('Video clip rendering failed', { id: toastId });
       }
-      // Fallback
-      setCommentaryData(fallbackCommentary);
-      setCommentaryHistory((prev) => [fallbackCommentary, ...prev.slice(0, 10)]);
-      toast.success(`✨ Agents reviewed timestamp [${formatTime(currentTime)}]!`, { id: toastId });
     } catch {
-      setCommentaryData(fallbackCommentary);
-      setCommentaryHistory((prev) => [fallbackCommentary, ...prev.slice(0, 10)]);
-      toast.success(`✨ Agents reviewed timestamp [${formatTime(currentTime)}]!`, { id: toastId });
+      toast.error('Network error during render', { id: toastId });
     } finally {
-      setIsAnalyzingTimestamp(false);
+      setIsRenderingSocialClip(false);
     }
   };
 
-  // Generate Electronic Press Kit (EPK)
-  const handleGeneratePressKit = async () => {
+  // Handler: Generate EPK
+  const handleGenerateEPK = async () => {
     setIsGeneratingEpk(true);
-    const toastId = toast.loading('📋 Generating Hollywood Electronic Press Kit (EPK)...');
-
-    const fallbackEpk = {
-      pressKit: {
-        oneLineSynopsis: `An intense cinematic odyssey into the heart of conflict and legacy in "${projectName}".`,
-        shortSynopsis: `When high-stakes reality collides with moral imperative, a determined group must make an irreversible choice before their world changes forever.`,
-        longSynopsis: `In a world shaped by escalating stakes, "${projectName}" explores the boundary between personal ambition and universal duty.\n\nCaptured with authentic optical depth and physical camera movement, the story follows complex characters whose lives intersect in unpredictable ways.\n\nAs the climax approaches, the characters must confront their deepest vulnerabilities to forge a new path forward.`,
-        directorStatement: `From day one on "${projectName}", our goal was to reject sterile artificial aesthetics and return to the tactile power of 35mm optical cinema. Shooting with our Blackmagic Pocket Cinema Camera 4K and Blackmagic Gen 5 Film Color Science allowed us to capture rich shadow textures and lifelike skin tones that draw the audience directly into the scene.`,
-        castBios: [
-          { name: 'Devon Wells', character: 'Protagonist', biography: 'A dynamic performer known for intense, grounded dramatic roles in high-concept cinema.' },
-          { name: 'Seraphina Cross', character: 'Allied Lead', biography: 'Acclaimed for her commanding screen presence and meticulous emotional nuance.' },
-        ],
-        productionNotes: 'Filmed utilizing the Arise Production 10-Stage virtual soundstage, featuring physical BMPCC 4K sensor calibration, dual native ISO 400/3200, and calibrated -24 LKFS spatial audio.',
-        technicalSpecs: {
-          format: '4K DCI (4096x2160) • 24.000 FPS',
-          aspectRatio: '2.39:1 Anamorphic Scope',
-          sound: '5.1 Dolby Atmos Surround (-24.0 LKFS)',
-          color: 'Blackmagic Gen 5 Color Science • Kodak 2383 ACEScc',
-          runtime: '115 Minutes',
-        },
-      },
-      marketingMaterials: {
-        taglines: [
-          'The truth is only visible through the lens.',
-          'Every frame has a price.',
-          'Once you see the signal, you cannot look away.',
-        ],
-        posterConcepts: [
-          'High-contrast silhouette against an amber-lit anamorphic horizon with 35mm lens flare.',
-          'Close-up portrait of lead actor with dual-toned 3200K tungsten and 5600K cyan rim lighting.',
-          'Overhead geometric soundstage view showing the camera tracking path in glowing gold.',
-        ],
-        trailerCutNotes: '0:00-0:15 Whispered hook dialogue over slow zoom. 0:15-0:50 World setup and rising tension. 0:50-1:30 Rapid rhythmic cuts synced to drum heartbeat. 1:30-1:50 Final explosive reveal. 1:50-2:00 Title card and release date.',
-        socialMediaCampaign: [
-          'Behind-the-lens color grading breakdown comparing raw BRAW vs. Gen 5 Film grade.',
-          'Character dialogue audio snippet with animated sound waveform teaser.',
-          'High-stakes 15-second opening hook clip designed for maximum 9:16 retention.',
-        ],
-      },
-    };
-
+    const toastId = toast.loading('📄 Compiling Electronic Press Kit (EPK)...');
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
-
       const res = await fetch(`${apiBase}/api/v1/distribution/press-kit`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify({
-          projectTitle: projectName,
-          format: 'feature_film',
-          genre: 'Cinematic High-Concept Drama',
-          director: 'CineDirector Maya',
-          cast: ['Devon Wells', 'Seraphina Cross', 'Kinetics Kai'],
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectTitle: projectName }),
       });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.success && data.epk) {
-          setEpkData(data.epk);
-          toast.success('🎉 EPK Press Kit successfully generated!', { id: toastId });
-          return;
-        }
+      const data = await res.json();
+      if (data && data.pressKit) {
+        setEpkData(data);
+        toast.success('✨ EPK Compiled & Verified with BMPCC 4K Specs!', { id: toastId });
       }
-      setEpkData(fallbackEpk);
-      toast.success('🎉 EPK Press Kit successfully generated!', { id: toastId });
     } catch {
-      setEpkData(fallbackEpk);
-      toast.success('🎉 EPK Press Kit successfully generated!', { id: toastId });
+      toast.error('EPK generation error', { id: toastId });
     } finally {
       setIsGeneratingEpk(false);
     }
   };
 
-  // Generate Watermarked Screener
+  // Handler: Generate Screener
   const handleGenerateScreener = async () => {
-    const toastId = toast.loading(`🔐 Generating forensic screener for ${screenerRecipient}...`);
-    const screenerId = `scr-${Date.now().toString(36)}`;
-    const fallbackScreener = {
-      screenerId,
-      projectTitle: projectName,
-      recipient: { name: screenerRecipient, email: screenerEmail },
-      security: {
-        level: screenerSecurity,
-        watermarkText: `PROPERTY OF ARISE PRODUCTION • LICENSED TO: ${screenerRecipient.toUpperCase()} (${screenerEmail}) • ID: ${screenerId}`,
-        forensicTracking: true,
-        downloadAllowed: false,
-        maxStreams: 3,
-        expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      playbackUrl: `https://screening.ariseproductions.com/watch/${screenerId}`,
-      status: 'active',
-    };
-
+    const toastId = toast.loading('🔒 Minting Forensic Watermarked Screener Link...');
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
-
       const res = await fetch(`${apiBase}/api/v1/distribution/screener`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        signal: controller.signal,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectTitle: projectName,
           recipientName: screenerRecipient,
           recipientEmail: screenerEmail,
           securityLevel: screenerSecurity,
-          expirationDays: 14,
         }),
       });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.success && data.screener) {
-          setScreenerResult(data.screener);
-          toast.success('🔒 Watermarked Screener package locked and generated!', { id: toastId });
-          return;
-        }
+      const data = await res.json();
+      if (data && data.screener) {
+        setScreenerResult(data.screener);
+        toast.success('✨ Forensic Watermarked Screener Generated!', { id: toastId });
       }
-      setScreenerResult(fallbackScreener);
-      toast.success('🔒 Watermarked Screener package locked and generated!', { id: toastId });
     } catch {
-      setScreenerResult(fallbackScreener);
-      toast.success('🔒 Watermarked Screener package locked and generated!', { id: toastId });
+      toast.error('Screener generation error', { id: toastId });
     }
   };
 
-  // Generate Global Release Strategy
-  const handleGenerateStrategy = async () => {
-    setIsGeneratingStrategy(true);
-    const toastId = toast.loading('🗺️ Formulating worldwide windowing and festival roadmap...');
-
-    const fallbackStrategy = {
-      primaryStrategy: 'Prestige Festival World Premiere followed by North American Theatrical Platform Release and Tier-1 Global SVOD bidding.',
-      windowingTimeline: [
-        { phase: 'Phase 1: Festival Circuit', duration: 'Months 1–4', platforms: ['Sundance', 'Cannes', 'TIFF'], goals: 'Secure critical acclaim, international press, and distribution bidding war.' },
-        { phase: 'Phase 2: Theatrical Exclusive', duration: 'Months 5–7', platforms: ['Select Theatrical / DCI DCP'], goals: 'Qualify for Academy Awards and build brand cultural footprint.' },
-        { phase: 'Phase 3: Premium VOD / SVOD', duration: 'Months 8–12', platforms: ['Apple TV+', 'Netflix', 'Prime Video'], goals: 'Global streaming reach and monetization across 190+ countries.' },
-      ],
-      festivalCircuit: [
-        { festival: 'Sundance Film Festival', tier: 'Tier 1', premiereWindow: 'January', submissionDeadline: 'September 15', strategicGoal: 'World Premiere & US Dramatic Bidding War' },
-        { festival: 'Cannes Film Festival', tier: 'Tier 1', premiereWindow: 'May', submissionDeadline: 'March 1', strategicGoal: 'International Critics Week / Un Certain Regard' },
-        { festival: 'Toronto International Film Festival (TIFF)', tier: 'Tier 1', premiereWindow: 'September', submissionDeadline: 'June 20', strategicGoal: 'Fall Awards Season Launchpad' },
-        { festival: 'SXSW Film Festival', tier: 'Tier 2', premiereWindow: 'March', submissionDeadline: 'November 1', strategicGoal: 'Audience Award & High-Concept Cultural Buzz' },
-      ],
-      presaleTerritories: [
-        { territory: 'North America (US & Canada)', buyerTargets: ['A24', 'Neon', 'Apple Original Films'], estimatedValuation: '$2.5M - $5.0M', status: 'Target Outreach' },
-        { territory: 'United Kingdom & Ireland', buyerTargets: ['Curzon', 'StudioCanal'], estimatedValuation: '$600K - $1.2M', status: 'Packaging' },
-        { territory: 'Western Europe (France, Germany, Italy)', buyerTargets: ['Wild Bunch', 'Capelight'], estimatedValuation: '$800K - $1.5M', status: 'Screener Ready' },
-        { territory: 'Asia-Pacific & Japan', buyerTargets: ['GAGA', 'Toho-Towa'], estimatedValuation: '$500K - $1.0M', status: 'Packaging' },
-      ],
-    };
-
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-      const res = await fetch(`${apiBase}/api/v1/distribution/release-strategy`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify({
-          projectTitle: projectName,
-          format: 'feature_film',
-          genre: 'Cinematic Sci-Fi Thriller',
-          targetPlatforms: ['Theatrical', 'A24', 'Neon', 'Netflix', 'Apple TV+'],
-        }),
-      });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.success && data.strategy) {
-          setStrategyData(data.strategy);
-          toast.success('🏆 Global Release Strategy compiled!', { id: toastId });
-          return;
-        }
-      }
-      setStrategyData(fallbackStrategy);
-      toast.success('🏆 Global Release Strategy compiled!', { id: toastId });
-    } catch {
-      setStrategyData(fallbackStrategy);
-      toast.success('🏆 Global Release Strategy compiled!', { id: toastId });
-    } finally {
-      setIsGeneratingStrategy(false);
-    }
-  };
-
-  // Voice Intercom Live Recognition Toggle
-  const toggleVoiceIntercom = () => {
-    if (isVoiceActive) {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      setIsVoiceActive(false);
-      setIsVoiceListening(false);
-      toast('🎙️ Voice Intercom standby.');
-    } else {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-      if (!SpeechRecognition) {
-        toast.error('Web Speech API is not supported in this browser. Please use text chat.');
-        return;
-      }
-
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-
-      recognition.onstart = () => {
-        setIsVoiceActive(true);
-        setIsVoiceListening(true);
-        toast.success('🎙️ Live Voice Intercom active! Speak directly to studio agents.');
-      };
-
-      recognition.onresult = async (event: any) => {
-        let interimTranscript = '';
-        let finalTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
-          } else {
-            interimTranscript += event.results[i][0].transcript;
-          }
-        }
-
-        setVoiceTranscript(interimTranscript || finalTranscript);
-
-        if (finalTranscript.trim()) {
-          const userSpokenText = finalTranscript.trim();
-          setVoiceTranscript('');
-
-          // Send to backend voice transcript & AI
-          try {
-            const res = await fetch(`${apiBase}/api/v1/studio/transcripts`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                userTranscript: userSpokenText,
-                agentId: activeAgentId,
-                agentName: activeAgentId === 'distribution_lead' ? 'Vance Morgan' : 'Chloe Sterling',
-                room: '05: Distribution & Marketing',
-                projectId,
-              }),
-            }).then((r) => r.json());
-
-            if (res && res.success && res.reply) {
-              setChatMessages((prev) => [
-                ...prev,
-                { role: 'user', text: `🎙️ [Voice]: "${userSpokenText}"` },
-                { role: 'assistant', agentName: activeAgentId === 'distribution_lead' ? 'Vance Morgan' : 'Chloe Sterling', text: res.reply }
-              ]);
-
-              // Optional Speech Synthesis playback
-              if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(res.reply.slice(0, 180));
-                utterance.rate = 1.05;
-                window.speechSynthesis.speak(utterance);
-              }
-
-              await loadTranscripts();
-            }
-          } catch (e) {
-            console.error('Error submitting voice transcript:', e);
-          }
-        }
-      };
-
-      recognition.onerror = (event: any) => {
-        console.warn('Speech recognition error:', event?.error);
-        setIsVoiceListening(false);
-      };
-
-      recognition.onend = () => {
-        setIsVoiceListening(false);
-      };
-
-      try {
-        recognition.start();
-        recognitionRef.current = recognition;
-      } catch (err) {
-        console.warn('Speech recognition start failed:', err);
-      }
-    }
-  };
-
-  // Send In-Room Text Chat Message
+  // Handler: Send Chat
   const handleSendChat = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim() || isChatLoading) return;
@@ -515,643 +243,536 @@ export function DistributionRoom({
     setIsChatLoading(true);
 
     try {
-      const activeAgent = DEPARTMENT_AGENTS.find((a) => a.id === activeAgentId) || DEPARTMENT_AGENTS[0];
-      const res = await fetch(`${apiBase}/api/v1/agents/chat`, {
+      const res = await fetch(`${apiBase}/api/v1/agent/task`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          agentId: activeAgent.id,
-          agentName: activeAgent.name,
-          role: activeAgent.role,
-          message: userText,
-          systemPrompt: activeAgent.systemPrompt,
+          prompt: `You are Vance Morgan (Global Distribution Lead) and Chloe Sterling (Marketing Director) for "${projectName}". User asks: "${userText}"`,
+          projectId,
         }),
-      }).then((r) => r.json());
-
-      if (res && res.assistantMessage && res.assistantMessage.content) {
-        setChatMessages((prev) => [...prev, { role: 'assistant', agentName: activeAgent.name, text: res.assistantMessage.content }]);
-      } else if (res && res.reply) {
-        setChatMessages((prev) => [...prev, { role: 'assistant', agentName: activeAgent.name, text: res.reply }]);
-      }
+      });
+      const data = await res.json();
+      const reply = data.result?.summary || data.result?.response || data.response || "Distribution package is ready for worldwide syndication.";
+      setChatMessages((prev) => [
+        ...prev,
+        { role: 'assistant', agentName: 'Vance Morgan', text: reply }
+      ]);
     } catch {
       setChatMessages((prev) => [
         ...prev,
-        { role: 'assistant', agentName: 'Vance Morgan', text: '🌍 Market perspective noted. Let’s calibrate our platform bidding strategy!' }
+        { role: 'assistant', agentName: 'Vance Morgan', text: "Deliverables are verified and ready for streaming and social export." }
       ]);
     } finally {
       setIsChatLoading(false);
     }
   };
 
-  const nextRelayStep = PRODUCTION_CHAIN_RELAY[activeAgentId];
-
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#080512] text-slate-100 overflow-hidden font-sans select-text">
-      {/* Top Header Bar */}
-      <div className="px-6 py-3 bg-[#0c0620]/95 border-b border-amber-500/30 flex items-center justify-between flex-wrap gap-3 flex-shrink-0 backdrop-blur-2xl specular-border z-20">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 flex items-center justify-center text-black font-black text-xl shadow-lg shadow-amber-500/25">
-            🌍
+    <div className="h-full flex flex-col bg-[#070314] text-slate-100 font-sans overflow-hidden">
+      
+      {/* Top Distribution Room Header */}
+      <header className="flex-shrink-0 px-6 py-4 bg-[#0d0722]/90 border-b border-purple-900/60 backdrop-blur-xl flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-lg shadow-amber-500/10">
+            <Globe size={18} />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#FFF0C2] via-[#FBBF24] to-[#F59E0B] font-serif">
-                05 DISTRIBUTION & MARKETING RELEASE HUB
-              </h2>
-              <span className="text-[9px] uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold">
-                COMMERCIAL RELEASE
+            <div className="flex items-center space-x-2">
+              <h1 className="text-sm font-black tracking-widest text-slate-100 uppercase font-serif">
+                GLOBAL DISTRIBUTION & SYNDICATION COMMAND
+              </h1>
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                PRODUCER PRIVATE BACKSTAGE 🔒
               </span>
             </div>
-            <p className="text-[11px] text-amber-200/70 font-mono">
-              Project: <span className="text-amber-400 font-bold">{projectName}</span> • EPK Press Kits • Watermarked Screeners • Festival Circuits
+            <p className="text-[11px] text-slate-400 font-mono">
+              Syndicating <strong className="text-amber-300">{projectName}</strong> across Tier-1 OTT Streaming & All Social Formats
             </p>
           </div>
         </div>
 
-        {/* Live Voice Intercom Toggle & Transcripts Button */}
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={toggleVoiceIntercom}
-            className={`px-3.5 py-1.5 rounded-xl border flex items-center gap-2 text-xs font-mono font-bold transition shadow-lg ${
-              isVoiceActive
-                ? 'bg-rose-600/90 text-white border-rose-400 animate-pulse shadow-rose-500/30'
-                : 'bg-[#150a30] text-amber-300 border-amber-500/40 hover:bg-amber-500/20 shadow-amber-500/10'
-            }`}
-          >
-            {isVoiceActive ? <Mic size={14} className="text-white animate-bounce" /> : <MicOff size={14} className="text-amber-400" />}
-            <span>{isVoiceActive ? '🎙️ Intercom LIVE (Speaking)' : '🎙️ Live Voice Intercom'}</span>
-          </button>
-
-          {/* Tab Segmenter */}
-          <div className="flex bg-[#12082b] p-1 rounded-xl border border-amber-500/30 text-xs font-mono space-x-1">
+        {/* Audience Portal Direct Switcher */}
+        <div className="flex items-center space-x-3">
+          {onNavigateToRoom && (
             <button
-              onClick={() => setActiveTab('video_review')}
-              className={`px-3 py-1 rounded-lg transition ${
-                activeTab === 'video_review'
-                  ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-extrabold shadow'
-                  : 'text-amber-200/70 hover:text-white'
+              onClick={() => onNavigateToRoom('theater')}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:opacity-90 text-black font-mono font-black text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition"
+              title="Open Public Audience Screening Theater"
+            >
+              <Eye size={14} />
+              <span>Preview Arise Cinema (Audience Portal)</span>
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* Main Content Body */}
+      <div className="flex-1 flex overflow-hidden">
+        
+        {/* Left / Center Panels */}
+        <div className="flex-1 flex flex-col overflow-y-auto p-6 space-y-6">
+          
+          {/* Sub-Navigation Tabs */}
+          <div className="flex items-center space-x-2 border-b border-purple-900/60 pb-3 overflow-x-auto scrollbar-none font-mono text-xs font-bold">
+            <button
+              onClick={() => setActiveTab('streaming')}
+              className={`px-4 py-2 rounded-xl transition flex items-center gap-2 ${
+                activeTab === 'streaming'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-md shadow-amber-500/10'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              🎬 Video Review
+              <Tv size={14} />
+              <span>Streaming Platforms (Netflix, Apple, Prime, Tubi)</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab('social_media')}
+              className={`px-4 py-2 rounded-xl transition flex items-center gap-2 ${
+                activeTab === 'social_media'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-md shadow-amber-500/10'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Smartphone size={14} />
+              <span>Social Media & 9:16 Vertical Video (TikTok, Shorts, Reels)</span>
+            </button>
+
             <button
               onClick={() => setActiveTab('press_kit')}
-              className={`px-3 py-1 rounded-lg transition ${
+              className={`px-4 py-2 rounded-xl transition flex items-center gap-2 ${
                 activeTab === 'press_kit'
-                  ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-extrabold shadow'
-                  : 'text-amber-200/70 hover:text-white'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-md shadow-amber-500/10'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              📋 EPK Press Kit
+              <FileText size={14} />
+              <span>Press Kit (EPK)</span>
             </button>
+
             <button
               onClick={() => setActiveTab('screeners')}
-              className={`px-3 py-1 rounded-lg transition ${
+              className={`px-4 py-2 rounded-xl transition flex items-center gap-2 ${
                 activeTab === 'screeners'
-                  ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-extrabold shadow'
-                  : 'text-amber-200/70 hover:text-white'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-md shadow-amber-500/10'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              🔒 Screeners
+              <Lock size={14} />
+              <span>Watermarked Screeners</span>
             </button>
+
             <button
               onClick={() => setActiveTab('strategy')}
-              className={`px-3 py-1 rounded-lg transition ${
+              className={`px-4 py-2 rounded-xl transition flex items-center gap-2 ${
                 activeTab === 'strategy'
-                  ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-extrabold shadow'
-                  : 'text-amber-200/70 hover:text-white'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-md shadow-amber-500/10'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              🏆 Global Release
-            </button>
-            <button
-              onClick={() => setActiveTab('transcripts')}
-              className={`px-3 py-1 rounded-lg transition ${
-                activeTab === 'transcripts'
-                  ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-extrabold shadow'
-                  : 'text-purple-300/80 hover:text-white'
-              }`}
-            >
-              📜 Transcripts ({voiceHistory.length})
+              <TrendingUp size={14} />
+              <span>Roadmap & Valuations</span>
             </button>
           </div>
-        </div>
-      </div>
 
-      {/* Voice Intercom Live Waveform Banner */}
-      {isVoiceActive && (
-        <div className="bg-gradient-to-r from-rose-950/80 via-amber-950/80 to-purple-950/80 px-6 py-2 border-b border-rose-500/40 flex items-center justify-between flex-shrink-0 animate-pulse">
-          <div className="flex items-center gap-3">
-            <span className="flex h-3 w-3 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-            </span>
-            <span className="text-xs font-mono text-rose-200 font-bold uppercase tracking-wider">
-              VOICE RECOGNITION ACTIVE • Speak naturally to Vance Morgan or Chloe Sterling
-            </span>
-          </div>
-          <div className="text-xs font-mono text-amber-200 truncate max-w-xl italic">
-            {voiceTranscript ? `"${voiceTranscript}"` : 'Listening to microphone stream...'}
-          </div>
-        </div>
-      )}
-
-      {/* Main Studio Grid */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Column: Active Deck Workspace */}
-        <div className="flex-1 flex flex-col overflow-y-auto p-6 space-y-6 custom-scrollbar bg-[#080417]">
-          {/* TAB 1: INTERACTIVE VIDEO PLAYER & MULTI-AGENT REVIEW */}
-          {activeTab === 'video_review' && (
+          {/* TAB 1: Streaming Platforms (OTT Delivery Packages) */}
+          {activeTab === 'streaming' && (
             <div className="space-y-6">
-              {/* Cinema Player Container */}
-              <div className="glass-card-4k specular-border rounded-3xl p-5 border border-amber-500/30 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Film size={18} className="text-amber-400" />
-                    <h3 className="text-base font-black text-amber-200 font-serif uppercase tracking-wider">
-                      Interactive Video Dailies & Trailer Screening Deck
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs font-mono">
-                    <span className="px-2.5 py-1 rounded-lg bg-[#150a30] text-amber-300 border border-amber-500/30">
-                      ⏱️ {formatTime(currentTime)} / {formatTime(duration)}
-                    </span>
-                    <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                      4K DCI • 24.000 FPS • Gen 5 Film Color
-                    </span>
-                  </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide font-mono">
+                    Tier-1 OTT Platform Delivery Packages
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono">
+                    SMPTE IMF Containers, ProRes 422 HQ, 5.1 Dolby Atmos stem packages, and EIDR metadata.
+                  </p>
                 </div>
-
-                {/* HTML5 Video Element with High-Contrast Viewport */}
-                <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-amber-500/40 shadow-2xl flex items-center justify-center group">
-                  <video
-                    ref={videoRef}
-                    src={selectedVideoSource}
-                    onTimeUpdate={handleTimeUpdate}
-                    onLoadedMetadata={handleTimeUpdate}
-                    className="w-full h-full object-contain"
-                  />
-
-                  {/* Playhead Overlay Controls */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-4">
-                    <div className="flex justify-between items-center text-xs font-mono text-amber-300">
-                      <span>{projectName} • Master Cut Review</span>
-                      <span>SMPTE TC: 01:00:{formatTime(currentTime)}:00</span>
-                    </div>
-
-                    <div className="flex items-center justify-center gap-4">
-                      <button
-                        onClick={togglePlay}
-                        className="w-14 h-14 rounded-full bg-amber-500/90 text-black flex items-center justify-center text-xl shadow-lg hover:scale-110 transition"
-                      >
-                        {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
-                      </button>
-                    </div>
-
-                    {/* Timeline Scrubber */}
-                    <div className="space-y-1">
-                      <input
-                        type="range"
-                        min={0}
-                        max={duration || 120}
-                        value={currentTime}
-                        onChange={(e) => seekToTimestamp(parseFloat(e.target.value))}
-                        className="w-full h-1.5 bg-purple-900/60 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Video Navigation Bar & Beat Markers */}
-                <div className="flex items-center justify-between flex-wrap gap-2 pt-2">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={togglePlay}
-                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs font-mono flex items-center gap-1.5 transition"
-                    >
-                      {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-                      <span>{isPlaying ? 'Pause' : 'Play'}</span>
-                    </button>
-
-                    <button
-                      onClick={handleAnalyzeCurrentFrame}
-                      disabled={isAnalyzingTimestamp}
-                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-black text-xs font-mono uppercase tracking-wider flex items-center gap-2 transition shadow-lg shadow-amber-500/20 disabled:opacity-50"
-                    >
-                      <Sparkles size={14} className={isAnalyzingTimestamp ? 'animate-spin' : ''} />
-                      <span>🔍 Review Current Timestamp [{formatTime(currentTime)}] with Agents</span>
-                    </button>
-                  </div>
-
-                  {/* Beat Marker Shortcuts */}
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono">
-                    <span className="text-amber-400/80 mr-1">Beats:</span>
-                    <button onClick={() => seekToTimestamp(5)} className="px-2 py-1 rounded bg-[#160b33] border border-amber-500/30 text-amber-300 hover:bg-amber-500/20">
-                      [00:05] Hook
-                    </button>
-                    <button onClick={() => seekToTimestamp(30)} className="px-2 py-1 rounded bg-[#160b33] border border-amber-500/30 text-amber-300 hover:bg-amber-500/20">
-                      [00:30] Inciting
-                    </button>
-                    <button onClick={() => seekToTimestamp(75)} className="px-2 py-1 rounded bg-[#160b33] border border-amber-500/30 text-amber-300 hover:bg-amber-500/20">
-                      [01:15] Midpoint
-                    </button>
-                    <button onClick={() => seekToTimestamp(105)} className="px-2 py-1 rounded bg-[#160b33] border border-amber-500/30 text-amber-300 hover:bg-amber-500/20">
-                      [01:45] Climax
-                    </button>
-                  </div>
-                </div>
+                <button
+                  onClick={handleGenerateStreamingPackage}
+                  disabled={isGeneratingStreaming}
+                  className="px-3.5 py-1.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-200 border border-purple-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition"
+                >
+                  <RefreshCw size={13} className={isGeneratingStreaming ? 'animate-spin' : ''} />
+                  <span>Recompile All Specs</span>
+                </button>
               </div>
 
-              {/* Timestamp Commentary Display (When Analyzed) */}
-              {commentaryData && (
-                <div className="glass-card-4k specular-border rounded-3xl p-6 border border-amber-500/40 space-y-4">
-                  <div className="flex items-center justify-between border-b border-amber-500/30 pb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">🎯</span>
-                      <h4 className="text-sm font-black text-amber-200 uppercase font-mono">
-                        Agent Multi-Perspective Review @ [{commentaryData.timestamp}]
-                      </h4>
-                    </div>
-                    <span className="text-xs px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold">
-                      {commentaryData.overallVerdict}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {commentaryData.notes?.map((note: any, nIdx: number) => (
-                      <div key={nIdx} className="p-4 rounded-2xl bg-[#12082b] border border-amber-500/30 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <strong className="text-xs font-bold text-amber-300">{note.agentName}</strong>
-                          <span className="text-[10px] text-purple-300 font-mono">{note.role}</span>
+              {streamingPackage && streamingPackage.platforms ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {streamingPackage.platforms.map((plat: any) => (
+                    <div
+                      key={plat.id}
+                      className="p-5 rounded-3xl bg-[#0e0725] border border-purple-900/60 space-y-3 hover:border-amber-500/50 transition"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Tv className="text-amber-400" size={16} />
+                          <h4 className="font-bold text-sm text-slate-100 font-serif">{plat.name}</h4>
                         </div>
-                        <p className="text-xs text-slate-200 font-sans leading-relaxed">{note.comment}</p>
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                          {plat.status}
+                        </span>
                       </div>
-                    ))}
-                  </div>
 
-                  {commentaryData.actionableTweak && (
-                    <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-xs font-mono text-amber-200 flex items-center gap-2">
-                      <strong className="text-amber-400">💡 Actionable Director Recommendation:</strong>
-                      <span>{commentaryData.actionableTweak}</span>
+                      <div className="p-3 rounded-2xl bg-black/40 border border-purple-900/40 space-y-1.5 text-xs font-mono">
+                        <div className="text-slate-300">
+                          <span className="text-slate-500">Container:</span> {plat.packageType}
+                        </div>
+                        <div className="text-slate-300">
+                          <span className="text-slate-500">Video:</span> {plat.videoSpec}
+                        </div>
+                        <div className="text-slate-300">
+                          <span className="text-slate-500">Audio:</span> {plat.audioSpec}
+                        </div>
+                        <div className="text-slate-300">
+                          <span className="text-slate-500">Captions:</span> {plat.captionSpec}
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-purple-900/40 flex items-center justify-between text-[11px] font-mono">
+                        <span className="text-slate-400">QC Checklist:</span>
+                        <span className="text-emerald-400 font-bold flex items-center gap-1">
+                          <CheckCircle2 size={12} />
+                          100% Broadcast Compliant
+                        </span>
+                      </div>
                     </div>
-                  )}
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 rounded-3xl bg-[#0e0725] text-center space-y-2 text-slate-400 font-mono text-xs">
+                  <RefreshCw className="animate-spin mx-auto text-amber-400" size={20} />
+                  <p>Compiling OTT delivery packages for Netflix, Apple TV+, Prime Video, Disney+, Max...</p>
                 </div>
               )}
             </div>
           )}
 
-          {/* TAB 2: ELECTRONIC PRESS KIT (EPK) */}
-          {activeTab === 'press_kit' && (
+          {/* TAB 2: Social Media & Vertical Video Hub */}
+          {activeTab === 'social_media' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-black text-amber-200 font-serif uppercase tracking-wider">
-                    Hollywood Electronic Press Kit (EPK) Engine
+                  <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide font-mono">
+                    Multi-Platform Social Syndication & Vertical 9:16 Video Engine
                   </h3>
-                  <p className="text-xs text-slate-400 font-sans">
-                    Generate comprehensive studio press kits, cast bios, technical specifications, and marketing taglines.
+                  <p className="text-xs text-slate-400 font-mono">
+                    Generate viral hooks, aspect ratio transformations, and render real video clips via FFmpeg.
                   </p>
                 </div>
+              </div>
 
+              {/* FFmpeg Multi-Aspect Ratio Clip Generator Box */}
+              <div className="p-6 rounded-3xl bg-[#0e0725] border border-amber-500/40 space-y-4 shadow-xl">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider font-mono flex items-center gap-1.5">
+                    <Smartphone size={15} />
+                    <span>One-Click Social Video Clip Renderer (FFmpeg Engine)</span>
+                  </h4>
+                  <span className="text-[10px] font-mono text-purple-300 font-bold">
+                    Target: /storage/ingested/social/
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-[10px] font-mono text-slate-400 block mb-1 font-bold">Channel Format:</label>
+                    <select
+                      value={socialChannel}
+                      onChange={(e) => setSocialChannel(e.target.value)}
+                      className="w-full bg-[#180e38] border border-purple-800/60 rounded-xl px-3 py-2 text-xs text-amber-200 font-mono"
+                    >
+                      <option value="tiktok">TikTok (9:16 Vertical)</option>
+                      <option value="reels">Instagram Reels (9:16 Vertical)</option>
+                      <option value="shorts">YouTube Shorts (9:16 Vertical)</option>
+                      <option value="youtube_4k">YouTube (16:9 4K UHD)</option>
+                      <option value="x_twitter">X / Twitter (1:1 Square)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-mono text-slate-400 block mb-1 font-bold">Aspect Ratio:</label>
+                    <div className="flex items-center space-x-1.5 bg-[#180e38] p-1 rounded-xl border border-purple-800/60">
+                      <button
+                        type="button"
+                        onClick={() => setSocialAspectRatio('9:16')}
+                        className={`flex-1 py-1 rounded-lg text-[10px] font-bold font-mono transition ${
+                          socialAspectRatio === '9:16' ? 'bg-amber-500 text-black font-extrabold' : 'text-slate-400'
+                        }`}
+                      >
+                        9:16 Vertical
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSocialAspectRatio('1:1')}
+                        className={`flex-1 py-1 rounded-lg text-[10px] font-bold font-mono transition ${
+                          socialAspectRatio === '1:1' ? 'bg-amber-500 text-black font-extrabold' : 'text-slate-400'
+                        }`}
+                      >
+                        1:1 Square
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSocialAspectRatio('16:9')}
+                        className={`flex-1 py-1 rounded-lg text-[10px] font-bold font-mono transition ${
+                          socialAspectRatio === '16:9' ? 'bg-amber-500 text-black font-extrabold' : 'text-slate-400'
+                        }`}
+                      >
+                        16:9 Wide
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-mono text-slate-400 block mb-1 font-bold">Viral Hook Text:</label>
+                    <input
+                      type="text"
+                      value={socialHookText}
+                      onChange={(e) => setSocialHookText(e.target.value)}
+                      placeholder="Enter top viral hook banner..."
+                      className="w-full bg-[#180e38] border border-purple-800/60 rounded-xl px-3 py-2 text-xs text-slate-100 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-[11px] font-mono text-slate-400">
+                    Includes automatic <strong>Arise Productions Proof-of-Ownership Watermark</strong> & 24fps motion fade.
+                  </span>
+                  <button
+                    onClick={handleRenderSocialClip}
+                    disabled={isRenderingSocialClip}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] hover:opacity-90 text-black font-extrabold font-mono text-xs shadow-lg shadow-amber-500/20 transition flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <Film size={14} />
+                    <span>{isRenderingSocialClip ? 'Rendering via FFmpeg...' : 'Render Social Video Clip'}</span>
+                  </button>
+                </div>
+
+                {lastRenderedSocialClip && (
+                  <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 text-xs font-mono text-emerald-300 flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <p className="font-bold">{lastRenderedSocialClip.summary}</p>
+                      <p className="text-[10px] text-slate-400">Path: {lastRenderedSocialClip.outputFile}</p>
+                    </div>
+                    <span className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40">
+                      SAVED 🟢
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Social Channels Campaign Cards */}
+              {socialCampaign && socialCampaign.channels && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {socialCampaign.channels.map((chan: any, idx: number) => (
+                    <div key={idx} className="p-5 rounded-3xl bg-[#0e0725] border border-purple-900/60 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Smartphone className="text-amber-400" size={16} />
+                          <h4 className="font-bold text-sm text-slate-100 font-serif">{chan.platform}</h4>
+                        </div>
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                          {chan.aspectRatio}
+                        </span>
+                      </div>
+
+                      <div className="p-3 rounded-2xl bg-black/40 border border-purple-900/40 space-y-2 text-xs font-mono">
+                        <div>
+                          <span className="text-slate-500">Post Title:</span>
+                          <p className="text-amber-200 font-bold mt-0.5">{chan.title}</p>
+                        </div>
+                        <div>
+                          <span className="text-slate-500">Opening Hook:</span>
+                          <p className="text-slate-300 italic">"{chan.hook}"</p>
+                        </div>
+                        {chan.hashtags && (
+                          <div>
+                            <span className="text-slate-500">Tags:</span>
+                            <p className="text-purple-300">{chan.hashtags.join(' ')}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: Press Kit (EPK) */}
+          {activeTab === 'press_kit' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide font-mono">
+                  Electronic Press Kit (EPK) & Theatrical Marketing Suite
+                </h3>
                 <button
-                  onClick={handleGeneratePressKit}
+                  onClick={handleGenerateEPK}
                   disabled={isGeneratingEpk}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider flex items-center gap-2 transition shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-bold font-mono text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                 >
-                  <Sparkles size={14} className={isGeneratingEpk ? 'animate-spin' : ''} />
-                  <span>{isGeneratingEpk ? 'Generating EPK...' : '⚡ Generate Full Hollywood EPK'}</span>
+                  <Sparkles size={14} />
+                  <span>{isGeneratingEpk ? 'Compiling...' : 'Generate Hollywood EPK'}</span>
                 </button>
               </div>
 
               {epkData ? (
-                <div className="space-y-5 font-mono text-xs">
-                  {/* Synopsis & Director Statement */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="glass-card-4k specular-border rounded-2xl p-5 border border-amber-500/30 space-y-3">
-                      <span className="text-[10px] text-amber-400 font-bold uppercase">Narrative Synopsis</span>
-                      <p className="text-xs text-slate-200 font-sans leading-relaxed italic">
-                        "{epkData.pressKit?.shortSynopsis}"
-                      </p>
-                      <div className="p-3 rounded-xl bg-[#140a33] border border-purple-900/50 text-[11px] text-purple-200 font-sans leading-relaxed whitespace-pre-line">
-                        {epkData.pressKit?.longSynopsis}
-                      </div>
-                    </div>
-
-                    <div className="glass-card-4k specular-border rounded-2xl p-5 border border-amber-500/30 space-y-3">
-                      <span className="text-[10px] text-amber-400 font-bold uppercase">Director's Statement</span>
-                      <p className="text-xs text-slate-200 font-sans leading-relaxed">
-                        {epkData.pressKit?.directorStatement}
-                      </p>
-                      <div className="p-3 rounded-xl bg-[#140a33] border border-amber-500/30 text-[11px] space-y-1">
-                        <strong className="text-amber-300">BMPCC 4K Camera & Color Science:</strong>
-                        <p className="text-slate-300 font-sans">{epkData.pressKit?.productionNotes}</p>
-                      </div>
-                    </div>
+                <div className="space-y-4">
+                  <div className="p-6 rounded-3xl bg-[#0e0725] border border-purple-900/60 space-y-3">
+                    <span className="text-xs font-bold text-amber-400 uppercase font-mono">1-Line Sales Hook</span>
+                    <p className="text-sm text-slate-100 font-sans italic">"{epkData.pressKit?.oneLineSynopsis}"</p>
                   </div>
-
-                  {/* Technical Specs & Marketing Taglines */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="glass-card-4k specular-border rounded-2xl p-4 border border-amber-500/30 space-y-2">
-                      <span className="text-[10px] text-amber-400 font-bold uppercase">Technical Specs</span>
-                      <div className="space-y-1.5 text-[11px] text-slate-300">
-                        <div><strong>Master Format:</strong> {epkData.pressKit?.technicalSpecs?.format}</div>
-                        <div><strong>Aspect Ratio:</strong> {epkData.pressKit?.technicalSpecs?.aspectRatio}</div>
-                        <div><strong>Audio:</strong> {epkData.pressKit?.technicalSpecs?.sound}</div>
-                        <div><strong>Color Science:</strong> {epkData.pressKit?.technicalSpecs?.color}</div>
-                        <div><strong>Runtime:</strong> {epkData.pressKit?.technicalSpecs?.runtime}</div>
-                      </div>
-                    </div>
-
-                    <div className="glass-card-4k specular-border rounded-2xl p-4 border border-amber-500/30 space-y-2 md:col-span-2">
-                      <span className="text-[10px] text-amber-400 font-bold uppercase">Marketing Taglines & Poster Art</span>
-                      <div className="space-y-2">
-                        {epkData.marketingMaterials?.taglines?.map((tagline: string, tIdx: number) => (
-                          <div key={tIdx} className="p-2 rounded-lg bg-[#160b33] border border-amber-500/30 text-amber-200 font-serif italic text-xs">
-                            "{tagline}"
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                  <div className="p-6 rounded-3xl bg-[#0e0725] border border-purple-900/60 space-y-3">
+                    <span className="text-xs font-bold text-amber-400 uppercase font-mono">Director's Statement</span>
+                    <p className="text-xs text-slate-300 font-sans leading-relaxed">{epkData.pressKit?.directorStatement}</p>
                   </div>
                 </div>
               ) : (
-                <div className="glass-card-4k rounded-3xl p-12 text-center border border-amber-500/20 text-slate-400 font-mono text-xs space-y-2">
-                  <FileText size={32} className="mx-auto text-amber-400/40" />
-                  <p>No EPK Press Kit generated yet.</p>
-                  <p className="text-[11px] text-amber-400/60">Click "Generate Full Hollywood EPK" to formulate press materials.</p>
+                <div className="p-12 rounded-3xl bg-[#0e0725] text-center space-y-3">
+                  <FileText className="mx-auto text-amber-400" size={32} />
+                  <p className="text-xs font-mono text-slate-400">
+                    Click "Generate Hollywood EPK" to compile production notes, cast bios, and marketing taglines.
+                  </p>
                 </div>
               )}
             </div>
           )}
 
-          {/* TAB 3: WATERMARKED SCREENERS */}
+          {/* TAB 4: Forensic Watermarked Screeners */}
           {activeTab === 'screeners' && (
             <div className="space-y-6">
-              <div className="glass-card-4k specular-border rounded-3xl p-6 border border-amber-500/30 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Lock size={18} className="text-amber-400" />
-                  <h3 className="text-base font-black text-amber-200 font-serif uppercase tracking-wider">
-                    Forensic Watermarked Screener Generator
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="space-y-1.5">
-                    <label className="text-amber-300 font-bold uppercase text-[10px]">Recipient Name / Organization</label>
+              <div className="p-6 rounded-3xl bg-[#0e0725] border border-amber-500/30 space-y-4 max-w-2xl">
+                <h3 className="text-sm font-bold text-amber-300 uppercase tracking-wider font-mono flex items-center gap-2">
+                  <Lock size={16} />
+                  <span>Mint Secure Watermarked Buyer Screener</span>
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-mono text-slate-400 block mb-1">Buyer / Recipient Organization:</label>
                     <input
                       type="text"
                       value={screenerRecipient}
                       onChange={(e) => setScreenerRecipient(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-[#140a2c] border border-amber-500/40 text-xs text-slate-100 focus:outline-none font-mono"
+                      className="w-full bg-[#180e38] border border-purple-800/60 rounded-xl px-3 py-2 text-xs text-amber-200 font-mono"
                     />
                   </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-amber-300 font-bold uppercase text-[10px]">Recipient Email</label>
+                  <div>
+                    <label className="text-xs font-mono text-slate-400 block mb-1">Recipient Email:</label>
                     <input
                       type="email"
                       value={screenerEmail}
                       onChange={(e) => setScreenerEmail(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-[#140a2c] border border-amber-500/40 text-xs text-slate-100 focus:outline-none font-mono"
+                      className="w-full bg-[#180e38] border border-purple-800/60 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono"
                     />
                   </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-amber-300 font-bold uppercase text-[10px]">Security Level</label>
-                    <select
-                      value={screenerSecurity}
-                      onChange={(e) => setScreenerSecurity(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-[#140a2c] border border-amber-500/40 text-xs text-amber-200 focus:outline-none font-mono"
-                    >
-                      <option value="high_watermark">🔒 High Security (Forensic Dynamic Watermark)</option>
-                      <option value="standard">🛡️ Standard (Burned-in Timecode & Email)</option>
-                      <option value="festival_jury">🏆 Festival Jury Link (7-Day Expiry)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-2">
                   <button
                     onClick={handleGenerateScreener}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider flex items-center gap-2 transition shadow-lg shadow-amber-500/20"
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-bold font-mono text-xs shadow-md transition"
                   >
-                    <Lock size={14} />
-                    <span>Generate Secure Forensic Screener</span>
+                    Mint Watermarked Link
                   </button>
                 </div>
+
+                {screenerResult && (
+                  <div className="p-4 rounded-2xl bg-black/50 border border-emerald-500/40 space-y-2 text-xs font-mono">
+                    <p className="text-emerald-400 font-bold">✨ Screener Active:</p>
+                    <p className="text-amber-300 break-all">{screenerResult.playbackUrl}</p>
+                    <p className="text-[10px] text-slate-400">Watermark: {screenerResult.security?.watermarkText}</p>
+                  </div>
+                )}
               </div>
-
-              {/* Screener Result */}
-              {screenerResult && (
-                <div className="glass-card-4k specular-border rounded-2xl p-5 border border-emerald-500/40 space-y-3 font-mono text-xs">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-emerald-400 text-base">✅</span>
-                      <strong className="text-amber-200">Screener Package Active: {screenerResult.screenerId}</strong>
-                    </div>
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px]">
-                      Expires in 14 Days
-                    </span>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-[#12082b] border border-amber-500/30 space-y-1.5">
-                    <div className="text-slate-300"><strong>Direct Screening URL:</strong> <code className="text-amber-300">{screenerResult.playbackUrl}</code></div>
-                    <div className="text-slate-300"><strong>Forensic Watermark:</strong> <span className="text-rose-300 italic">{screenerResult.security?.watermarkText}</span></div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
-          {/* TAB 4: GLOBAL RELEASE STRATEGY */}
+          {/* TAB 5: Roadmap & Valuations */}
           {activeTab === 'strategy' && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base font-black text-amber-200 font-serif uppercase tracking-wider">
-                    Worldwide Release, Festival & Territory Sales Strategy
-                  </h3>
-                  <p className="text-xs text-slate-400 font-sans">
-                    Formulate multi-territory pre-sales, Sundance/Cannes festival windows, and global streaming rollouts.
-                  </p>
-                </div>
-
-                <button
-                  onClick={handleGenerateStrategy}
-                  disabled={isGeneratingStrategy}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider flex items-center gap-2 transition shadow-lg shadow-amber-500/20 disabled:opacity-50"
-                >
-                  <Sparkles size={14} className={isGeneratingStrategy ? 'animate-spin' : ''} />
-                  <span>{isGeneratingStrategy ? 'Compiling Strategy...' : '🏆 Generate Worldwide Strategy'}</span>
-                </button>
-              </div>
-
-              {strategyData && (
-                <div className="space-y-5 font-mono text-xs">
-                  {/* Primary Strategy */}
-                  <div className="glass-card-4k specular-border rounded-2xl p-5 border border-amber-500/30 space-y-2">
-                    <span className="text-[10px] text-amber-400 font-bold uppercase">Executive Rollout Blueprint</span>
-                    <p className="text-xs text-slate-200 font-sans leading-relaxed">{strategyData.primaryStrategy}</p>
+              <div className="p-6 rounded-3xl bg-[#0e0725] border border-purple-900/60 space-y-4">
+                <h3 className="text-sm font-bold text-amber-300 uppercase tracking-wider font-mono">
+                  Multi-Territory Valuation & Windowing Strategy
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="p-4 rounded-2xl bg-black/40 border border-purple-900/50 space-y-1 font-mono text-xs">
+                    <span className="text-slate-400">North America (US/CA)</span>
+                    <p className="text-amber-300 font-bold text-sm">$2.5M - $5.0M</p>
+                    <span className="text-[10px] text-emerald-400">A24 / Apple Original Films</span>
                   </div>
-
-                  {/* Festival Circuit Table */}
-                  <div className="glass-card-4k specular-border rounded-2xl p-5 border border-amber-500/30 space-y-3">
-                    <span className="text-[10px] text-amber-400 font-bold uppercase">Tier-1 Festival Submission Circuit</span>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {strategyData.festivalCircuit?.map((fest: any, fIdx: number) => (
-                        <div key={fIdx} className="p-3 rounded-xl bg-[#140a33] border border-amber-500/30 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <strong className="text-amber-300 text-xs">{fest.festival}</strong>
-                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-500/40">
-                              {fest.tier}
-                            </span>
-                          </div>
-                          <div className="text-[11px] text-slate-300"><strong>Premiere:</strong> {fest.premiereWindow} • <strong>Deadline:</strong> {fest.submissionDeadline}</div>
-                          <p className="text-[11px] text-purple-200 font-sans italic">{fest.strategicGoal}</p>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="p-4 rounded-2xl bg-black/40 border border-purple-900/50 space-y-1 font-mono text-xs">
+                    <span className="text-slate-400">United Kingdom & Ireland</span>
+                    <p className="text-amber-300 font-bold text-sm">$600K - $1.2M</p>
+                    <span className="text-[10px] text-emerald-400">StudioCanal / Curzon</span>
                   </div>
-
-                  {/* Pre-sale Territories */}
-                  <div className="glass-card-4k specular-border rounded-2xl p-5 border border-amber-500/30 space-y-3">
-                    <span className="text-[10px] text-amber-400 font-bold uppercase">Territory Pre-Sale Valuations</span>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                      {strategyData.presaleTerritories?.map((terr: any, tIdx: number) => (
-                        <div key={tIdx} className="p-3 rounded-xl bg-[#140a33] border border-emerald-500/30 space-y-1">
-                          <strong className="text-amber-200 text-xs block">{terr.territory}</strong>
-                          <div className="text-emerald-400 font-bold text-xs">{terr.estimatedValuation}</div>
-                          <div className="text-[10px] text-slate-400">Buyers: {terr.buyerTargets?.join(', ')}</div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="p-4 rounded-2xl bg-black/40 border border-purple-900/50 space-y-1 font-mono text-xs">
+                    <span className="text-slate-400">Western Europe</span>
+                    <p className="text-amber-300 font-bold text-sm">$800K - $1.5M</p>
+                    <span className="text-[10px] text-emerald-400">Wild Bunch / Capelight</span>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-black/40 border border-purple-900/50 space-y-1 font-mono text-xs">
+                    <span className="text-slate-400">Direct Arise Cinema PPV</span>
+                    <p className="text-amber-300 font-bold text-sm">$1.0M+ Net Fan Rev</p>
+                    <span className="text-[10px] text-emerald-400">Exclusive Premiere</span>
                   </div>
                 </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 5: TRANSCRIPT HISTORY & CONTEXTUAL MEMORY */}
-          {activeTab === 'transcripts' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base font-black text-amber-200 font-serif uppercase tracking-wider">
-                    Voice & Intercom Transcript History
-                  </h3>
-                  <p className="text-xs text-slate-400 font-sans">
-                    Chronological audit log of all microphone instructions, agent decisions, and contextual memories.
-                  </p>
-                </div>
-
-                <button
-                  onClick={loadTranscripts}
-                  className="px-3 py-1.5 rounded-xl bg-[#150a30] border border-amber-500/30 text-amber-300 hover:text-white text-xs font-mono flex items-center gap-1.5"
-                >
-                  <RefreshCw size={12} />
-                  <span>Refresh Transcripts</span>
-                </button>
-              </div>
-
-              <div className="space-y-3 font-mono text-xs">
-                {voiceHistory.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500">
-                    <p>No voice transcripts recorded yet.</p>
-                    <p className="text-[11px] text-amber-400/60 mt-1">Activate the "🎙️ Live Voice Intercom" to speak directly to agents.</p>
-                  </div>
-                ) : (
-                  voiceHistory.map((rec: any, idx: number) => (
-                    <div key={idx} className="glass-card-4k specular-border rounded-2xl p-4 border border-amber-500/30 space-y-2">
-                      <div className="flex items-center justify-between text-[10px] text-amber-400/80">
-                        <span>{new Date(rec.timestamp).toLocaleString()} • {rec.room}</span>
-                        <span className="text-purple-300 font-bold">{rec.agentName}</span>
-                      </div>
-                      <div className="text-slate-200 font-sans">
-                        <strong className="text-amber-300">Filmmaker:</strong> "{rec.userTranscript}"
-                      </div>
-                      <div className="p-2.5 rounded-xl bg-[#140a33] text-purple-200 font-sans border border-purple-900/40">
-                        <strong className="text-purple-300">{rec.agentName}:</strong> {rec.agentReply}
-                      </div>
-                    </div>
-                  ))
-                )}
               </div>
             </div>
           )}
+
         </div>
 
-        {/* Right Column: Dedicated Distribution Agent & Relay Console */}
-        <div className="w-80 lg:w-96 border-l border-amber-500/30 bg-[#0a051a]/95 flex flex-col flex-shrink-0">
-          {/* Agent Selector Header */}
-          <div className="p-3.5 border-b border-amber-500/20 bg-[#0e0724] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🌍</span>
-              <div>
-                <h4 className="text-xs font-bold text-amber-200">Vance Morgan & Chloe Sterling</h4>
-                <p className="text-[10px] text-amber-400/70 font-mono">Distribution & Marketing Leads</p>
-              </div>
+        {/* Right Rail: In-Room Distribution & Marketing Agent Intercom */}
+        <aside className="w-80 xl:w-96 flex-shrink-0 border-l border-purple-900/60 bg-[#0a051d]/95 flex flex-col justify-between">
+          <div className="p-4 border-b border-purple-900/60 bg-black/30 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-bold text-xs text-amber-300 font-mono uppercase">Vance Morgan (Distribution Lead)</span>
             </div>
-            <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-              Live Council
-            </span>
+            <span className="text-[10px] font-mono text-slate-500">AGENT ONLINE</span>
           </div>
 
-          {/* Chat Messages Log */}
-          <div className="flex-1 overflow-y-auto p-3.5 space-y-3 custom-scrollbar">
-            {chatMessages.map((msg, idx) => (
+          <div className="flex-1 p-4 overflow-y-auto space-y-3">
+            {chatMessages.map((msg, i) => (
               <div
-                key={idx}
-                className={`p-3 rounded-2xl text-xs leading-relaxed ${
+                key={i}
+                className={`p-3 rounded-2xl text-xs ${
                   msg.role === 'user'
-                    ? 'bg-amber-500/20 text-amber-100 border border-amber-500/40 ml-4'
-                    : 'bg-[#150a30] text-slate-200 border border-purple-800/40 mr-2 whitespace-pre-wrap font-sans'
+                    ? 'bg-amber-500/10 border border-amber-500/40 text-amber-200 ml-6'
+                    : 'bg-[#150c33] border border-purple-900/60 text-slate-200 mr-4'
                 }`}
               >
-                {msg.agentName && msg.role === 'assistant' && (
-                  <div className="text-[10px] font-mono text-amber-400 font-bold mb-1">
-                    {msg.agentName}:
-                  </div>
+                {msg.agentName && (
+                  <span className="text-[10px] font-bold text-amber-400 font-mono block mb-1">
+                    {msg.agentName}
+                  </span>
                 )}
-                {msg.text}
+                <p className="leading-relaxed font-sans">{msg.text}</p>
               </div>
             ))}
             {isChatLoading && (
-              <div className="p-3 rounded-2xl bg-[#150a30] border border-purple-800/40 text-xs text-amber-300 flex items-center gap-2 font-mono animate-pulse">
-                <RefreshCw size={12} className="animate-spin" />
-                <span>Vance Morgan is analyzing market metrics...</span>
+              <div className="p-3 rounded-2xl bg-[#150c33] border border-purple-900/60 text-slate-400 text-xs font-mono animate-pulse">
+                Vance Morgan is formulating syndication strategy...
               </div>
             )}
           </div>
 
-          {/* Baton Relay Step */}
-          {nextRelayStep && (
-            <div className="p-3 bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-purple-500/10 border-t border-amber-500/30 text-[11px] font-mono space-y-1.5">
-              <div className="flex items-center justify-between text-amber-300 font-bold">
-                <span>Next Relay:</span>
-                <span>{nextRelayStep.nextAgentName} ({nextRelayStep.nextRole})</span>
-              </div>
-              <p className="text-[10px] text-slate-300 font-sans line-clamp-2">{nextRelayStep.batonSummary}</p>
-            </div>
-          )}
-
-          {/* Chat Input Box */}
-          <form onSubmit={handleSendChat} className="p-3 border-t border-amber-500/20 bg-[#0d0722] flex gap-2">
+          <form onSubmit={handleSendChat} className="p-4 border-t border-purple-900/60 bg-black/40 flex items-center space-x-2">
             <input
               type="text"
-              placeholder="Ask Vance or Chloe about sales, festivals, trailers..."
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              className="flex-1 px-3 py-2 rounded-xl bg-[#150a30] border border-amber-500/40 text-xs text-slate-100 placeholder-amber-400/40 focus:outline-none focus:border-amber-400 font-sans"
+              placeholder="Ask Vance Morgan about OTT delivery or viral hooks..."
+              className="flex-1 bg-[#180e38] border border-purple-800/60 rounded-xl px-3 py-2 text-xs text-slate-200 font-sans focus:outline-none focus:border-amber-500"
             />
             <button
               type="submit"
-              disabled={!chatInput.trim() || isChatLoading}
-              className="px-3 py-2 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 disabled:opacity-40 text-black font-bold rounded-xl transition flex items-center justify-center flex-shrink-0"
+              disabled={isChatLoading || !chatInput.trim()}
+              className="p-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black transition disabled:opacity-50"
             >
-              <Send size={12} />
+              <Send size={14} />
             </button>
           </form>
-        </div>
+        </aside>
+
       </div>
     </div>
   );

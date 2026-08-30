@@ -20,6 +20,7 @@ import BeatsRoom from '../pages/BeatsRoom';
 import CharactersRoom from '../pages/CharactersRoom';
 import IdeaRoom from '../pages/IdeaRoom';
 import DistributionRoom from '../pages/DistributionRoom';
+import AudienceTheaterPortal from './audience/AudienceTheaterPortal';
 import DepartmentAgentsHub from './agents/DepartmentAgentsHub';
 import { StudioWatermark } from './common/StudioWatermark';
 import ErrorBoundary from './ErrorBoundary';
@@ -91,6 +92,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
     | 'suites'
     | 'vault'
     | 'distribution'
+    | 'theater'
   >('agents');
 
   // Modals & Menus
@@ -468,6 +470,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                         { id: 'suites', name: 'Original Suites', icon: '🎛️' },
                         { id: 'vault', name: 'Memory Vault', icon: '🗄️' },
                         { id: 'distribution', name: '05: Distribution', icon: '🌐' },
+                        { id: 'theater', name: 'Arise Cinema', icon: '🍿' },
                       ].map((room) => (
                         <button
                           key={room.id}
@@ -936,13 +939,20 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 projectId={effectiveProjectId}
                 projectName={projectStatus.projectName}
                 onNavigateToRoom={(roomKey) => {
-                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents', 'theater'].includes(roomKey)) {
                     setMainView(roomKey as any);
                   } else {
                     setMainView('stage');
                     onStageSelect(roomKey);
                   }
                 }}
+              />
+            )}
+
+            {mainView === 'theater' && (
+              <AudienceTheaterPortal
+                initialProjectId={effectiveProjectId}
+                onSwitchToStudio={() => setMainView('stage')}
               />
             )}
             {/* Translucent Arise Productions Watermark Seal */}

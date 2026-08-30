@@ -1,0 +1,30 @@
+[mcp_servers.comfy-mcp]
+command = "/Users/finessejones1/dyad-apps/unified-3-d-production-studio/backend/comfy-mcp-env/bin/comfy-mcp"
+
+[mcp_servers.comfy-mcp.env]
+COMFY_BIN = "/Users/finessejones1/dyad-apps/unified-3-d-production-studio/backend/comfy-mcp-env/bin/comfy"
+
+[mcp_servers.hyperframes-mcp]
+command = "node"
+args = ["./backend/services/hyperframes-connector.js"]
+
+[mcp_servers.hyperframes-mcp.env]
+HYPERFRAMES_CACHE = "/Users/finessejones1/.hyperframes"
+
+[mcp_servers.openmontage-mcp]
+command = "/Users/finessejones1/OpenMontage/.venv/bin/python"
+args = [
+    "-m",
+    "lib.hyperframes_style_bridge",
+]
+
+[mcp_servers.openmontage-mcp.env]
+PYTHONPATH = "/Users/finessejones1/OpenMontage"
+
+[mcp_servers.unreal-engine-mcp]
+command = "node"
+args = ["./backend/services/unreal-connector.js"]
+
+[mcp_servers.unreal-engine-mcp.env]
+UNREAL_EDITOR_PATH = "/Applications/Film Making/UnrealEditor.app"
+UNREAL_PORT = "30010"
