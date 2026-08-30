@@ -532,6 +532,8 @@ Return a valid JSON object strictly matching this schema:
       expirationDays = 14,
     } = options;
 
+    const screenerId = `scr-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
+    const expiresAt = new Date(Date.now() + expirationDays * 24 * 60 * 60 * 1000).toISOString();
     const baseUrl = options.host || (typeof process !== 'undefined' && process.env.PUBLIC_URL ? process.env.PUBLIC_URL : 'http://2.25.113.26:4000');
     const cleanBase = baseUrl.startsWith('http') ? baseUrl : `http://${baseUrl}`;
     const playbackUrl = `${cleanBase}/?view=theater&screener=${screenerId}`;
