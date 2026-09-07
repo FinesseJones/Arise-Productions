@@ -1381,6 +1381,15 @@ stageRoutes.forEach(({ path: routePath, stage }) => {
       const realJob = { id: `job-${Date.now()}`, projectId, shotNumber, stageId: stage, inputPayload: payload };
       const output = await worker.executeJob(realJob);
       const manifest = await db.getProjectManifest(projectId);
+      if (output && output.success === false) {
+        return res.status(502).json({
+          success: false,
+          stage,
+          error: output.error || 'Stage execution failed',
+          output,
+          manifest,
+        });
+      }
       res.json({ success: true, stage, output, manifest });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });

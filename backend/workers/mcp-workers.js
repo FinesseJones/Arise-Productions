@@ -1,5 +1,5 @@
 // ==============================================================================
-// ARISE PRODUCTION - 10 PRODUCTION MCP WORKERS (WITH NVIDIA NIM AI)
+// ARISE PRODUCTION - 10 PIPELINE STAGE WORKERS (WITH NVIDIA NIM AI INFERENCE)
 // A PRODUCT OF THE AI CONTENT FOUNDRY, LLC • © 2026
 // ==============================================================================
 
@@ -12,7 +12,70 @@ import { remotionConnector } from '../services/remotion-connector.js';
 import { audioEngine } from '../services/audio-engine.js';
 import { comfyBridge } from './comfy-bridge.js';
 
-export class BaseMCPWorker {
+/**
+ * Strict JSON generation helper with automatic schema validation and 1-shot repair retry.
+ * Fail-closed: Never returns fake or canned fallback data.
+ */
+async function generateAndValidateJson({ prompt, systemPrompt, validator, maxTokens = 1200 }) {
+  if (!nvidia.hasApiKey()) {
+    return {
+      success: false,
+      error: 'NVIDIA_API_KEY is not configured or missing on the server.',
+      model: null,
+    };
+  }
+
+  // Attempt 1: Standard structured generation
+  let resp = await nvidia.generateCompletion({
+    prompt,
+    systemPrompt: `${systemPrompt}\nIMPORTANT: You must respond ONLY with raw, valid JSON matching the requested schema. Do not output markdown fences (\`\`\`json), explanations, or trailing commentary.`,
+    temperature: 0.3,
+    maxTokens,
+  });
+
+  let parsed = null;
+  if (resp.success && resp.text) {
+    try {
+      const match = resp.text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+      if (match) parsed = JSON.parse(match[0]);
+    } catch (e) {}
+  }
+
+  // Attempt 2: 1-shot repair retry if unparseable or validation failed
+  if (!resp.success || !parsed || (validator && !validator(parsed))) {
+    const repairPrompt = `The previous response failed schema validation or was malformed JSON.\nPrevious output:\n${resp.text?.slice(0, 400) || 'None'}\n\nRegenerate strictly adhering to the schema. Output raw JSON only:`;
+    resp = await nvidia.generateCompletion({
+      prompt: repairPrompt,
+      systemPrompt,
+      temperature: 0.1,
+      maxTokens,
+    });
+
+    if (resp.success && resp.text) {
+      try {
+        const match = resp.text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+        if (match) parsed = JSON.parse(match[0]);
+      } catch (e) {}
+    }
+  }
+
+  // Fail-closed validation check
+  if (!resp.success || !parsed || (validator && !validator(parsed))) {
+    return {
+      success: false,
+      error: resp.error || 'AI generation failed: Model returned unparseable or invalid schema JSON.',
+      model: resp.model || null,
+    };
+  }
+
+  return {
+    success: true,
+    data: parsed,
+    model: resp.model,
+  };
+}
+
+export class BaseStageWorker {
   constructor(stageId, name, endpoint) {
     this.stageId = stageId;
     this.name = name;
@@ -20,9 +83,9 @@ export class BaseMCPWorker {
   }
 
   async executeJob(job, onProgress = null) {
-    console.log(`[Worker:${this.name}] Starting execution for Job ${job.id} (Shot ${job.shotNumber || 1})`);
+    console.log(`[StageWorker:${this.name}] Starting execution for Job ${job.id} (Shot ${job.shotNumber || 1})`);
     
-    // 1. Mark status as IN_PROGRESS
+    // 1. Mark status as IN_PROGRESS (🟡)
     if (job.shotNumber) {
       await db.updateShotStageAtomic(job.projectId, job.shotNumber, this.stageId, '🟡', {
         jobId: job.id,
@@ -30,237 +93,369 @@ export class BaseMCPWorker {
       });
     }
 
-    if (onProgress) onProgress(25, `Initializing ${this.name} pipeline...`);
-    await new Promise((r) => setTimeout(r, 200));
+    if (onProgress) onProgress(25, `Initializing ${this.name} pipeline stage...`);
 
-    // 2. Perform domain processing (NVIDIA NIM AI powered when key configured)
-    if (onProgress) onProgress(60, `Generating domain intelligence via NVIDIA NIM in ${this.name}...`);
-    const result = await this.process(job.inputPayload);
-    await new Promise((r) => setTimeout(r, 200));
+    // 2. Perform domain processing (Real AI + Real connectors)
+    if (onProgress) onProgress(60, `Executing stage intelligence in ${this.name}...`);
+    let result;
+    try {
+      result = await this.process(job.inputPayload || {}, job);
+    } catch (err) {
+      result = { success: false, error: err.message, model: null };
+    }
 
-    // 3. Mark status as COMPLETE
+    const isSuccess = Boolean(result && result.success !== false);
+
+    // 3. Mark status: 🟢 ONLY if validated success, otherwise 🔴 (FAILED)
     if (job.shotNumber) {
-      await db.updateShotStageAtomic(job.projectId, job.shotNumber, this.stageId, '🟢', {
+      await db.updateShotStageAtomic(job.projectId, job.shotNumber, this.stageId, isSuccess ? '🟢' : '🔴', {
         jobId: job.id,
         worker: this.name,
-        completedAt: new Date().toISOString(),
-        outputSummary: result.summary,
-        aiModel: result.aiModel || 'NVIDIA-NIM-Llama-3.1-70B',
+        completedAt: isSuccess ? new Date().toISOString() : null,
+        failedAt: isSuccess ? null : new Date().toISOString(),
+        outputSummary: isSuccess ? (result.summary || 'Stage completed') : (result.error || 'Stage failed'),
+        aiModel: result?.aiModel || result?.model || null,
+        error: isSuccess ? null : (result.error || 'Execution failed'),
       });
     }
 
-    if (onProgress) onProgress(100, `Completed ${this.name} successfully.`);
+    if (onProgress) onProgress(100, isSuccess ? `Completed ${this.name} successfully.` : `Stage ${this.name} failed.`);
     return result;
   }
 
-  async process(payload) {
+  async process(payload, job) {
     throw new Error('process() must be implemented by worker subclass');
   }
 }
 
-// 1. ScriptBreak Worker (/mcp/script)
-export class ScriptBreakWorker extends BaseMCPWorker {
+// 1. ScriptBreak Stage Worker (/mcp/script)
+export class ScriptBreakWorker extends BaseStageWorker {
   constructor() { super('script', 'ScriptBreak', '/mcp/script'); }
-  async process(payload) {
-    let aiSummary = 'Screenplay parsed: 3 scenes, 4 characters, 12 dialogue blocks identified.';
-    if (nvidia.hasApiKey()) {
-      const resp = await nvidia.generateCompletion({
-        prompt: `Analyze and break down this screenplay scene for virtual production:\n${payload.scriptText || 'INT. STUDIO SOUNDSTAGE - DAY\nDirector coordinates with AI camera team.'}`,
-        systemPrompt: 'You are the ScriptBreak AI Worker. Return a concise 2-sentence summary of character dialogue blocks, locations, and sluglines.'
-      });
-      if (resp.success && resp.text) aiSummary = resp.text.slice(0, 180);
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const scriptText = (payload.scriptText || db.getProjectScript(projectId, shotNumber) || '').trim();
+
+    if (!scriptText) {
+      return { success: false, error: 'No script text found for project to break down.' };
     }
+
+    const gen = await generateAndValidateJson({
+      prompt: `Perform a professional script breakdown for virtual production based on this screenplay text:\n\n${scriptText.slice(0, 3000)}`,
+      systemPrompt: 'You are the ScriptBreak AI Worker. Return a JSON object with: { "scenes": number, "characters": string[], "locations": string[], "sluglines": string[], "summary": string }',
+      validator: (d) => typeof d.scenes === 'number' && Array.isArray(d.characters) && typeof d.summary === 'string',
+    });
+
+    if (!gen.success) return gen;
+
     return {
+      success: true,
       stage: 'script',
-      summary: aiSummary,
-      sceneBible: { scenes: 3, characters: ['Devon', 'Marcus', 'Vale', 'Cassie'], location: 'Historic Foundry' },
-      aiModel: nvidia.hasApiKey() ? (nvidia.defaultModel || 'meta/llama-3.2-11b-vision-instruct') : 'local-deterministic',
+      summary: gen.data.summary,
+      sceneBible: {
+        scenes: gen.data.scenes,
+        characters: gen.data.characters,
+        locations: gen.data.locations || [],
+        sluglines: gen.data.sluglines || [],
+      },
+      aiModel: gen.model,
     };
   }
 }
 
-// 2. Cork Board Worker (/mcp/structure)
-export class CorkBoardWorker extends BaseMCPWorker {
+// 2. Cork Board Stage Worker (/mcp/structure)
+export class CorkBoardWorker extends BaseStageWorker {
   constructor() { super('structure', 'Cork Board', '/mcp/structure'); }
-  async process(payload) {
-    let aiSummary = 'Narrative structure generated: 3 Acts, 8 Index Cards, Emotional Arc Solved.';
-    if (nvidia.hasApiKey()) {
-      const resp = await nvidia.generateCompletion({
-        prompt: 'Generate 3-act index card summaries with dramatic tension stakes.',
-        systemPrompt: 'You are the Cork Board Narrative Worker. Return a concise structural breakdown summary.'
-      });
-      if (resp.success && resp.text) aiSummary = resp.text.slice(0, 180);
-    }
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const scriptText = db.getProjectScript(projectId, shotNumber) || '';
+    const storyBible = await db.getStoryBible(projectId);
+    const context = `Project: ${projectId}. Bible summary: ${JSON.stringify(storyBible?.logline || storyBible?.synopsis || '')}. Script excerpt: ${scriptText.slice(0, 1500)}`;
+
+    const gen = await generateAndValidateJson({
+      prompt: `Generate a 3-act narrative index card structure with dramatic stakes for this production:\n\n${context}`,
+      systemPrompt: 'You are the Cork Board Narrative Worker. Return a JSON object with: { "summary": string, "indexCards": [ { "act": number, "title": string, "dramatic_beat": string } ] }',
+      validator: (d) => Array.isArray(d.indexCards) && d.indexCards.length > 0 && typeof d.summary === 'string',
+    });
+
+    if (!gen.success) return gen;
+
     return {
+      success: true,
       stage: 'structure',
-      summary: aiSummary,
-      indexCards: [{ act: 1, title: 'Inciting Beat' }, { act: 2, title: 'Midpoint Climax' }, { act: 3, title: 'Resolution' }],
-      aiModel: nvidia.hasApiKey() ? (nvidia.defaultModel || 'meta/llama-3.2-11b-vision-instruct') : 'local-deterministic',
+      summary: gen.data.summary,
+      indexCards: gen.data.indexCards,
+      aiModel: gen.model,
     };
   }
 }
 
-// 3. Master Canvas Worker (/mcp/plan)
-export class MasterCanvasWorker extends BaseMCPWorker {
+// 3. Master Canvas Stage Worker (/mcp/plan)
+export class MasterCanvasWorker extends BaseStageWorker {
   constructor() { super('plan', 'Master Canvas', '/mcp/plan'); }
-  async process(payload) {
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const scriptText = db.getProjectScript(projectId, shotNumber) || '';
+    const storyBible = await db.getStoryBible(projectId);
+
+    const gen = await generateAndValidateJson({
+      prompt: `Compile a master visual production plan and aesthetic color palette for virtual production.\nContext: ${JSON.stringify(storyBible?.aesthetic || storyBible?.themes || '')}\nScene: ${scriptText.slice(0, 1500)}`,
+      systemPrompt: 'You are the Master Canvas Planning Worker. Return a JSON object with: { "summary": string, "handoffBundle": { "colorPalette": string[], "requiredAssets": string[], "visualStyle": string } }',
+      validator: (d) => d.handoffBundle && Array.isArray(d.handoffBundle.colorPalette) && typeof d.summary === 'string',
+    });
+
+    if (!gen.success) return gen;
+
     return {
+      success: true,
       stage: 'plan',
-      summary: 'Master handoff package compiled: 14 asset requirements and moodboards locked.',
-      handoffBundle: { colorPalette: ['#0f172a', '#d97706', '#3b82f6'], assetCount: 14, continuityLock: true },
+      summary: gen.data.summary,
+      handoffBundle: gen.data.handoffBundle,
+      aiModel: gen.model,
     };
   }
 }
 
-// 4. Blockout 3D Worker (/mcp/previs)
-export class BlockoutWorker extends BaseMCPWorker {
+// 4. Blockout 3D Stage Worker (/mcp/previs)
+export class BlockoutWorker extends BaseStageWorker {
   constructor() { super('previs', 'Blockout 3D', '/mcp/previs'); }
-  async process(payload) {
-    let aiSummary = '3D camera paths and character blocking choreography solved for Unreal Engine 5.';
-    if (nvidia.hasApiKey()) {
-      const resp = await nvidia.generateCompletion({
-        prompt: `Solve 3D camera vector parameters and focal length for: ${payload.sceneReference || 'Confrontation in historic foundry'}`,
-        systemPrompt: 'You are the Virtual DP Previs Worker. Return a concise optical camera summary.'
-      });
-      if (resp.success && resp.text) aiSummary = resp.text.slice(0, 180);
-    }
-    // Attempt live parameter transmission to local Unreal Engine 5 if running
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const scriptText = db.getProjectScript(projectId, shotNumber) || '';
+
+    const gen = await generateAndValidateJson({
+      prompt: `Solve the 3D spatial camera setup, focal length, and lighting vectors for Shot ${shotNumber}:\n${scriptText.slice(0, 1500)}`,
+      systemPrompt: 'You are the Virtual DP Previs Worker. Return a JSON object with: { "summary": string, "spatialCoordinates": { "cameraFocalLength": string, "cameraAngle": string, "lightSetup": string } }',
+      validator: (d) => d.spatialCoordinates && typeof d.spatialCoordinates.cameraFocalLength === 'string' && typeof d.summary === 'string',
+    });
+
+    if (!gen.success) return gen;
+
+    // Honest DCC connection status
     const ueStatus = await unrealConnector.checkEngineStatus();
     if (ueStatus.active) {
-      await unrealConnector.setCameraParameters('CineCameraActor1', 35);
-      aiSummary += ' [Live Unreal Engine 5 Linked: CineCamera Updated]';
+      const focalNum = parseInt(gen.data.spatialCoordinates.cameraFocalLength, 10) || 35;
+      await unrealConnector.setCameraParameters('CineCameraActor1', focalNum);
     }
 
     return {
+      success: true,
       stage: 'previs',
-      summary: aiSummary,
-      spatialCoordinates: { cameraFocalLength: '35mm', pathPoints: 240, lightSetup: 'ThreePointStudio' },
-      engine: 'Unreal Engine 5 (/Applications/Film Making/UnrealEditor.app)',
+      summary: gen.data.summary + (ueStatus.active ? ' [Unreal Engine 5 Connected]' : ' [Unreal Engine 5 Offline]'),
+      spatialCoordinates: gen.data.spatialCoordinates,
       unrealConnected: ueStatus.active,
-      aiModel: nvidia.hasApiKey() ? (nvidia.defaultModel || 'meta/llama-3.2-11b-vision-instruct') : 'local-deterministic',
+      aiModel: gen.model,
     };
   }
 }
 
-// 5. Motion Previs Worker (/mcp/motion)
-export class MotionPrevisWorker extends BaseMCPWorker {
+// 5. Motion Previs Stage Worker (/mcp/motion)
+export class MotionPrevisWorker extends BaseStageWorker {
   constructor() { super('motion', 'Motion Previs Studio', '/mcp/motion'); }
-  async process(payload) {
-    const hyperResult = await hyperframesConnector.composeKeyframeSequence({
-      shotNumber: payload?.shotNumber || 1,
-      blockType: 'transitions-3d',
-      fps: 60,
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const scriptText = db.getProjectScript(projectId, shotNumber) || '';
+
+    const gen = await generateAndValidateJson({
+      prompt: `Generate character motion trajectory, choreography pacing, and camera blocking dynamics for Shot ${shotNumber}:\n${scriptText.slice(0, 1500)}`,
+      systemPrompt: 'You are the Motion Previs Worker. Return a JSON object with: { "summary": string, "motionPlan": { "characterChoreography": string, "tempo": string, "trajectoryNotes": string } }',
+      validator: (d) => d.motionPlan && typeof d.summary === 'string',
     });
+
+    if (!gen.success) return gen;
+
+    // Real connector execution
+    const hyperResult = await hyperframesConnector.composeKeyframeSequence({
+      shotNumber,
+      blockType: 'transitions-3d',
+      fps: 24,
+    });
+
     return {
+      success: true,
       stage: 'motion',
-      summary: `Hyperframes 60 FPS neural motion solve completed with transitions-3d.`,
-      trajectoryData: { boneCount: 52, trackingConfidence: 0.98, hyperframes: hyperResult },
+      summary: gen.data.summary,
+      motionPlan: gen.data.motionPlan,
+      hyperframes: hyperResult,
+      aiModel: gen.model,
     };
   }
 }
 
-// 6. Storyboard Reference Studio Worker (/mcp/boards)
-export class StoryboardWorker extends BaseMCPWorker {
+// 6. Storyboard Reference Stage Worker (/mcp/boards)
+export class StoryboardWorker extends BaseStageWorker {
   constructor() { super('boards', 'Storyboard Reference Studio', '/mcp/boards'); }
-  async process(payload) {
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const scriptText = db.getProjectScript(projectId, shotNumber) || '';
+
+    const gen = await generateAndValidateJson({
+      prompt: `Generate visual storyboard frame descriptions and camera compositions for Shot ${shotNumber}:\n${scriptText.slice(0, 1500)}`,
+      systemPrompt: 'You are the Storyboard Director Worker. Return a JSON object with: { "summary": string, "boardFrames": [ { "frame": number, "angle": string, "framing": string, "description": string } ] }',
+      validator: (d) => Array.isArray(d.boardFrames) && d.boardFrames.length > 0 && typeof d.summary === 'string',
+    });
+
+    if (!gen.success) return gen;
+
     return {
+      success: true,
       stage: 'boards',
-      summary: 'Visual storyboard descriptors and PDF animatic sequence compiled via ComfyUI.',
-      boardFrames: [{ frame: 1, angle: 'Wide Establishing' }, { frame: 2, angle: 'Close-Up' }],
+      summary: gen.data.summary,
+      boardFrames: gen.data.boardFrames,
+      aiModel: gen.model,
     };
   }
 }
 
-// 7. Slate Prompt Worker (/mcp/prompt)
-export class SlatePromptWorker extends BaseMCPWorker {
+// 7. Slate Prompt Stage Worker (/mcp/prompt)
+export class SlatePromptWorker extends BaseStageWorker {
   constructor() { super('prompt', 'Slate Prompt', '/mcp/prompt'); }
-  async process(payload) {
-    let aiSummary = 'Continuity-locked generative prompt packs confirmed for ComfyUI.';
-    if (nvidia.hasApiKey()) {
-      const resp = await nvidia.generateCompletion({
-        prompt: `Generate cinematic diffusion prompt slates with ControlNet depth weights for: ${payload.scope || 'Cinematic wide foundry sequence'}`,
-        systemPrompt: 'You are the Slate Prompt Worker. Return positive and negative prompt guidelines.'
-      });
-      if (resp.success && resp.text) aiSummary = resp.text.slice(0, 180);
-    }
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const scriptText = db.getProjectScript(projectId, shotNumber) || '';
+
+    const gen = await generateAndValidateJson({
+      prompt: `Generate diffusion generative prompts (video, audio, negative) for Shot ${shotNumber}:\n${scriptText.slice(0, 1500)}`,
+      systemPrompt: 'You are the Slate Prompt Worker. Return a JSON object with: { "summary": string, "promptPack": { "videoPrompt": string, "audioPrompt": string, "negativePrompt": string } }',
+      validator: (d) => d.promptPack && typeof d.promptPack.videoPrompt === 'string' && typeof d.summary === 'string',
+    });
+
+    if (!gen.success) return gen;
+
+    // Honest ComfyUI status check
     const comfyStatus = await comfyBridge.checkServerStatus();
-    if (comfyStatus.online) {
-      aiSummary += ' [Live Local ComfyUI Linked @ :8188]';
-    }
 
     return {
+      success: true,
       stage: 'prompt',
-      summary: aiSummary,
-      promptPack: {
-        videoPrompt: 'Cinematic wide shot, anamorphic 35mm lens, golden hour studio lighting, high fidelity 8k',
-        audioPrompt: 'Subtle ambient drone, binaural stereo separation, orchestral crescendo',
-        negativePrompt: 'blurry, distorted, artifacts, low resolution',
-      },
+      summary: gen.data.summary + (comfyStatus.online ? ' [ComfyUI Connected]' : ' [ComfyUI Offline]'),
+      promptPack: gen.data.promptPack,
       comfyConnected: comfyStatus.online,
-      aiModel: nvidia.hasApiKey() ? (nvidia.defaultModel || 'meta/llama-3.2-11b-vision-instruct') : 'local-deterministic',
+      aiModel: gen.model,
     };
   }
 }
 
-// 8. Circle Take Worker (/mcp/dailies)
-export class CircleTakeWorker extends BaseMCPWorker {
+// 8. Circle Take Stage Worker (/mcp/dailies)
+export class CircleTakeWorker extends BaseStageWorker {
   constructor() { super('dailies', 'Circle Take', '/mcp/dailies'); }
-  async process(payload) {
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const project = await db.getProject(projectId);
+    const projectName = project?.title || project?.name || 'Untitled Project';
+    const scriptText = db.getProjectScript(projectId, shotNumber) || '';
+
+    const gen = await generateAndValidateJson({
+      prompt: `Review and evaluate the dailies for Shot ${shotNumber} of "${projectName}". Context:\n${scriptText.slice(0, 1500)}`,
+      systemPrompt: 'You are the Circle Take Director Worker. Return a JSON object with: { "summary": string, "reviewNotes": string, "selectedTake": number, "directorialVerdict": string }',
+      validator: (d) => typeof d.summary === 'string' && typeof d.directorialVerdict === 'string',
+    });
+
+    if (!gen.success) return gen;
+
+    // Real video card rendering via Remotion/FFmpeg
     const videoRender = await remotionConnector.renderCinematicVideoCard({
-      title: payload?.projectName || 'A Fatherless Child',
-      subtitle: `Shot ${payload?.shotNumber || 1} • Circle Take Dailies Review`,
+      title: projectName,
+      subtitle: `Shot ${shotNumber} • Circle Take Dailies`,
       aspectRatio: '16:9',
       durationSeconds: 4,
       fps: 24,
-      outputFilename: `dailies_shot_${payload?.shotNumber || 1}_${Date.now()}.mp4`,
+      outputFilename: `dailies_shot_${shotNumber}_${Date.now()}.mp4`,
     });
 
     return {
+      success: true,
       stage: 'dailies',
-      summary: `Dailies rendered & reviewed: 4K 24FPS DCI MP4 compiled -> ${videoRender.outputUrl || 'local render'}. Take 1 selected as Circle Take winner.`,
-      videoUrl: videoRender.outputUrl,
-      outputFile: videoRender.outputFile,
-      takeReview: { approvedTakes: [1], flaggedReshoots: [], qualityScore: 9.8, ffmpegRender: videoRender },
+      summary: gen.data.summary,
+      reviewNotes: gen.data.reviewNotes,
+      directorialVerdict: gen.data.directorialVerdict,
+      selectedTake: gen.data.selectedTake || 1,
+      videoRender: {
+        outputFile: videoRender.outputFile || null,
+        outputUrl: videoRender.outputUrl || null,
+        duration: videoRender.duration || 4,
+        rendered: Boolean(videoRender.outputFile),
+      },
+      aiModel: gen.model,
     };
   }
 }
 
-// 9. Stem Studio Worker (/mcp/sound)
-export class StemStudioWorker extends BaseMCPWorker {
+// 9. Stem Studio Stage Worker (/mcp/sound)
+export class StemStudioWorker extends BaseStageWorker {
   constructor() { super('sound', 'Stem Studio', '/mcp/sound'); }
-  async process(payload) {
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const scriptText = db.getProjectScript(projectId, shotNumber) || '';
+
+    const gen = await generateAndValidateJson({
+      prompt: `Create a sound design and spatial audio mixing plan for Shot ${shotNumber}:\n${scriptText.slice(0, 1500)}`,
+      systemPrompt: 'You are the Sound Design Supervisor. Return a JSON object with: { "summary": string, "soundPlan": [ { "stem": string, "channel": string, "acousticDescription": string, "estimatedGain": string } ] }',
+      validator: (d) => Array.isArray(d.soundPlan) && d.soundPlan.length > 0 && typeof d.summary === 'string',
+    });
+
+    if (!gen.success) return gen;
+
     const status = audioEngine.getEngineStatus();
+
     return {
+      success: true,
       stage: 'sound',
-      summary: `5.1 Dolby Atmos Stem Matrix compiled: Dialogue (Open-Source Kokoro/XTTS), Foley, Music, and SFX stems locked at -24.0 LKFS loudness standards. Zero cloud dependency.`,
-      stems: [
-        { name: 'dialogue_lead.wav', channel: 'Center (C)', lkfs: -24.0, engine: 'Kokoro-82M (Open-Source / Local)' },
-        { name: 'foley_effects.wav', channel: 'Left / Right (L/R)', lkfs: -26.5, engine: 'FFmpeg Audio Matrix' },
-        { name: 'orchestral_score.wav', channel: 'Surround (Ls/Rs)', lkfs: -25.0, engine: '5.1 Spatializer' },
-        { name: 'lfe_subwoofer.wav', channel: 'LFE Sub (<120Hz)', lkfs: -28.0, engine: 'Low Frequency Crossover' },
-      ],
+      mode: 'plan',
+      summary: gen.data.summary,
+      soundPlan: gen.data.soundPlan,
       audioEngine: status,
+      aiModel: gen.model,
     };
   }
 }
 
-// 10. DaVinci MCP Worker (/mcp/edit)
-export class DaVinciWorker extends BaseMCPWorker {
-  constructor() { super('edit', 'DaVinci MCP', '/mcp/edit'); }
-  async process(payload) {
+// 10. DaVinci Stage Worker (/mcp/edit)
+export class DaVinciWorker extends BaseStageWorker {
+  constructor() { super('edit', 'DaVinci Timeline', '/mcp/edit'); }
+  async process(payload, job) {
+    const projectId = job?.projectId || payload?.projectId;
+    const shotNumber = job?.shotNumber || payload?.shotNumber || 1;
+    const project = await db.getProject(projectId);
+    const projectName = project?.title || project?.name || 'Untitled Project';
+
+    const gen = await generateAndValidateJson({
+      prompt: `Generate an editorial assembly and color conform plan for Shot ${shotNumber} of "${projectName}".`,
+      systemPrompt: 'You are the Lead Editor & Colorist Worker. Return a JSON object with: { "summary": string, "editorialNotes": { "pacing": string, "transitionStyle": string, "colorGradingAesthetic": string } }',
+      validator: (d) => d.editorialNotes && typeof d.summary === 'string',
+    });
+
+    if (!gen.success) return gen;
+
+    // Real OpenMontage timeline build
     const montageResult = await openMontageConnector.buildMontageTimeline(
-      payload?.shots || [{ shotNumber: 1 }],
-      'documentary-montage'
+      payload?.shots || [{ shotNumber }],
+      'cinematic-montage'
     );
+
     return {
+      success: true,
       stage: 'edit',
-      summary: `OpenMontage EDL conform & DaVinci ACEScc color timeline compiled successfully.`,
-      timeline: { tracks: 4, durationSeconds: 45, colorProfile: 'ACEScc Rec.709', openMontage: montageResult },
+      summary: gen.data.summary,
+      editorialNotes: gen.data.editorialNotes,
+      timeline: {
+        openMontage: montageResult,
+        edlBuilt: Boolean(montageResult?.edlPath),
+      },
+      aiModel: gen.model,
     };
   }
 }
 
-export const mcpWorkers = {
+export const stageWorkers = {
   script: new ScriptBreakWorker(),
   structure: new CorkBoardWorker(),
   plan: new MasterCanvasWorker(),
@@ -273,4 +468,7 @@ export const mcpWorkers = {
   edit: new DaVinciWorker(),
 };
 
-export default mcpWorkers;
+// Backward-compatible alias
+export const mcpWorkers = stageWorkers;
+
+export default stageWorkers;
