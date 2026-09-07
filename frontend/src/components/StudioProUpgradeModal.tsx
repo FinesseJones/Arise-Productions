@@ -71,7 +71,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
       setIsLoadingStripe(false);
       if (plan === 'enterprise') {
         toast.success(
-          `🏢 Studio Enterprise Active ($299/mo)! Dedicated H100 Cluster, Custom LoRAs & DaVinci/Unreal Plugins Enabled!`,
+          `🏢 Studio Enterprise Active ($299/mo)! Hosted NVIDIA NIM Inference Engine, Custom LoRAs & DaVinci/Unreal Bridges Enabled!`,
           { id: toastId, duration: 5000 }
         );
       } else if (plan === 'pro') {
@@ -128,7 +128,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
                   Arise Studio Production Licensing
                 </h2>
                 <p className="text-xs text-[#E2BA86] font-mono">
-                  Custom AI Fine-Tunes, Dedicated H100 GPU Clusters, Direct DaVinci & Unreal Engine 5.4 Links.
+                  Custom AI Fine-Tunes, Hosted NVIDIA NIM Cloud Inference, Direct DaVinci & Unreal Engine Bridges.
                 </p>
               </div>
             </div>
@@ -149,45 +149,45 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
               <button
                 type="button"
                 onClick={() => setBillingCycle('annual')}
-                className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${
                   billingCycle === 'annual'
-                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-extrabold shadow-sm'
+                    ? 'bg-amber-500 text-black font-bold'
                     : 'text-purple-300/70 hover:text-white'
                 }`}
               >
                 <span>Annual</span>
-                <span className="text-[9px] px-1 rounded bg-black/40 text-amber-300 font-black">
+                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                   SAVE 20%
                 </span>
               </button>
             </div>
           </div>
 
-          {/* Pricing Grid: Starter vs Pro vs Studio Enterprise */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Tier 1: Free Starter */}
-            <div className={`p-5 rounded-2xl bg-[#0c081e]/80 border flex flex-col justify-between space-y-4 ${activeTier === 'starter' ? 'border-purple-500 shadow-md' : 'border-purple-900/50'}`}>
+          {/* Pricing Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+            {/* Tier 1: Starter */}
+            <div className={`p-5 rounded-2xl bg-[#0c081e]/80 border flex flex-col justify-between space-y-4 ${activeTier === 'starter' ? 'border-amber-500 shadow-md bg-amber-950/20' : 'border-purple-900/50'}`}>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-purple-400 font-mono uppercase tracking-wider block">
+                  <span className="text-xs font-bold text-slate-300 font-mono uppercase tracking-wider block">
                     Starter Tier
                   </span>
                   {activeTier === 'starter' && (
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">ACTIVE</span>
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">ACTIVE</span>
                   )}
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-black text-white font-serif">$0</span>
-                  <span className="text-xs text-purple-400 font-mono">/ forever</span>
+                  <span className="text-xs text-purple-300 font-mono">/ month</span>
                 </div>
-                <p className="text-[11px] text-purple-300/70">
-                  Ideal for testing single scenes and early screenwriting sketches.
+                <p className="text-[11px] text-purple-200">
+                  Essential tools for exploring virtual cinematography workflows.
                 </p>
 
-                <div className="space-y-2 pt-2 border-t border-purple-900/40 text-xs text-purple-200">
+                <div className="space-y-2 pt-2 border-t border-purple-900/60 text-xs text-purple-200">
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-emerald-400 flex-shrink-0" />
-                    <span>Llama 3.1 70B & 8B inference</span>
+                    <span>Llama 3.2 11B inference</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-emerald-400 flex-shrink-0" />
@@ -199,7 +199,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
                   </div>
                   <div className="flex items-center gap-2 text-purple-400/50">
                     <Lock size={12} className="flex-shrink-0" />
-                    <span>No Dedicated H100 Cluster</span>
+                    <span>Standard NVIDIA NIM Tier</span>
                   </div>
                 </div>
               </div>
@@ -297,7 +297,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
                   </div>
                   <div className="flex items-center gap-2">
                     <Server size={14} className="text-amber-400 flex-shrink-0" />
-                    <span className="font-bold text-amber-200">Dedicated H100 GPU cluster</span>
+                    <span className="font-bold text-amber-200">High-Concurrency NVIDIA NIM API</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-emerald-400 flex-shrink-0" />
@@ -305,7 +305,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
                   </div>
                   <div className="flex items-center gap-2">
                     <Workflow size={14} className="text-teal-400 flex-shrink-0" />
-                    <span className="font-bold text-teal-200">Direct DaVinci Resolve & Unreal plugin</span>
+                    <span className="font-bold text-teal-200">DaVinci Resolve & Unreal Bridges</span>
                   </div>
                 </div>
               </div>
@@ -328,7 +328,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
               <div>
                 <span className="text-[10px] text-amber-400/80 block">GPU Compute</span>
-                <span className="text-slate-100 font-bold">8x H100 SXM5 (Online)</span>
+                <span className="text-slate-100 font-bold">Hosted NVIDIA NIM (Online)</span>
               </div>
             </div>
 
@@ -336,7 +336,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
               <div>
                 <span className="text-[10px] text-amber-400/80 block">DaVinci Resolve</span>
-                <span className="text-slate-100 font-bold">Studio 19 Bridge Synced</span>
+                <span className="text-slate-100 font-bold">Bridge Available</span>
               </div>
             </div>
 
@@ -344,7 +344,7 @@ export const StudioProUpgradeModal: React.FC<StudioProUpgradeModalProps> = ({
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
               <div>
                 <span className="text-[10px] text-amber-400/80 block">Unreal Engine</span>
-                <span className="text-slate-100 font-bold">5.4 Live Link Stream</span>
+                <span className="text-slate-100 font-bold">Live Link Available</span>
               </div>
             </div>
 

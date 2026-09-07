@@ -4,12 +4,12 @@
 *The Premier 4K 3D Virtual Film & Television Production Studio Suite*
 
 [![GitHub Release](https://img.shields.io/badge/Release-v1.0.0-gold.svg)](https://github.com/FinesseJones/Arise-Productions)
-[![Architecture](https://img.shields.io/badge/Architecture-10_MCP_Workers-amber.svg)](./docs/ARCHITECTURE.md)
-[![Model](https://img.shields.io/badge/NVIDIA_NIM-Llama_3.3_70B_Instruct-purple.svg)](https://build.nvidia.com)
+[![Architecture](https://img.shields.io/badge/Architecture-10_Pipeline_Stages-amber.svg)](./docs/ARCHITECTURE.md)
+[![Model](https://img.shields.io/badge/NVIDIA_NIM-Llama_3.2_11B_Vision_Instruct-purple.svg)](https://build.nvidia.com)
 [![Live Web Studio](https://img.shields.io/badge/Live_Studio-http%3A%2F%2F2.25.113.26%3A4000-emerald.svg)](http://2.25.113.26:4000)
 
 > 🌐 **Live Interactive Web Studio:** [**http://2.25.113.26:4000**](http://2.25.113.26:4000)  
-> *Click above to open and test the full 14-room production studio suite, AI agents, 3D soundstages, and 10 MCP pipelines directly in your browser without installing anything.*
+> *Click above to open and test the full 14-room production studio suite, AI department personas, 3D soundstages, and 10 pipeline stages directly in your browser without installing anything.*
 
 ---
 
@@ -31,24 +31,24 @@ Experience the live action studio demonstration recorded directly from the runni
 | **02** | **10-Stage Framework** | Real-time stage navigation, interactive 3D soundstage viewports, and stage progress telemetry (🟢 / 🟡 / ⚪). |
 | **03** | **00 Idea Lab & Ingest** | Social link ingestion (YouTube/TikTok/IG), script folder batch discovery, and Showrunner Sterling live pitch dissection. |
 | **04** | **Stage 01: ScriptBreak** | Full Fountain screenplay editor, real-time pagination, scripture alignment, and AI Script Doctor. |
-| **05** | **Stage 02: Cork Board** | 3-Act narrative spine, dynamic beat cards, and NVIDIA NIM Llama 3.1 70B one-click beat generation. |
-| **06** | **Stage 03: Master Canvas** | ACEScg AP1 color profiles, lighting contrast ratios (4:1 Key/Shadow), and Unreal Engine 5.4 look-dev calibration. |
+| **05** | **Stage 02: Cork Board** | 3-Act narrative spine, dynamic beat cards, and NVIDIA NIM one-click beat generation. |
+| **06** | **Stage 03: Master Canvas** | ACEScg AP1 color profiles, lighting contrast ratios (4:1 Key/Shadow), and Unreal Engine look-dev calibration. |
 | **07** | **Stage 04: Blockout 3D** | Physical BMPCC 4K sensor simulation, 24–85mm prime lens trajectories, and DaVinci Resolve / Unreal Live Link bridges. |
-| **08** | **Stage 05: Motion Previs** | 52-point skeletal kinematics, ragdoll physics solvers, velocity damping, and 60 FPS keyframe interpolation. |
-| **09** | **Stage 06: Diffusion Slate** | Continuity-locked prompt packs for Midjourney v6, FLUX.1 Pro, SDXL Turbo, and HyperFrames. |
-| **10** | **Stage 07: Dailies QC** | Quality Gate scoring (1.0–10.0), likeness locking, circle take selection, and micro-jitter artifact analysis. |
-| **11** | **Stage 08: Stem Studio** | 4-track audio stem mixing console, spatial ambient Foley, and EBU R128 -24.0 LKFS broadcast loudness compliance. |
-| **12** | **Stage 09: Conform & Edit** | Multi-cam NLE timeline, EDL/XML/FCPXML sync, and real-time Kodak 2383 3D film print LUT shaders. |
-| **13** | **Stage 10: Distribution** | Multi-agent timecoded video commentary, Hollywood Electronic Press Kit (EPK), and forensic DRM screeners. |
+| **08** | **Stage 05: Motion Previs** | Character motion planning, camera blocking dynamics, and Hyperframes keyframe interpolation. |
+| **09** | **Stage 06: Diffusion Slate** | Diffusion prompt packs for video/audio generation with optional local ComfyUI bridge. |
+| **10** | **Stage 07: Dailies QC** | Editorial take evaluation, review notes, and Remotion video card rendering. |
+| **11** | **Stage 08: Stem Studio** | Sound design plan, stem separation cues, and audio engine status reporting. |
+| **12** | **Stage 09: Conform & Edit** | Multi-cam NLE timeline assembly, OpenMontage EDL/XML build, and color grade aesthetic notes. |
+| **13** | **Stage 10: Distribution** | Multi-persona timecoded video commentary, Electronic Press Kit (EPK), and forensic screeners. |
 | **14** | **Enterprise Sync** | 3-Way automated synchronization across GitHub (`Arise-Productions`), Desktop App (`/Applications`), and Cloud VPS (`2.25.113.26`). |
 
 ---
 
 ## 🏛️ Executive Studio Overview
 
-**Arise Production Studio** is a unified, end-to-end virtual production workstation and multi-agent creative studio designed for independent filmmakers, showrunners, and production companies. It integrates **14 dedicated creative rooms**, **10 Model Context Protocol (MCP) production microservices**, **13 autonomous tool-calling departmental AI agents**, a real-time **Three.js 3D Soundstage**, and native bridges for **Unreal Engine 5**, **ComfyUI**, **FFmpeg**, **Hyperframes**, **OpenMontage**, and **DaVinci Resolve**.
+**Arise Production Studio** is a unified, end-to-end virtual production workstation and creative studio designed for independent filmmakers, showrunners, and production companies. It integrates **14 dedicated creative rooms**, **10 production pipeline stages**, **13 department personas run by one autonomous agent runtime**, a real-time **Three.js 3D Soundstage**, and optional local bridges for **Unreal Engine 5**, **ComfyUI**, **FFmpeg**, **Hyperframes**, **OpenMontage**, and **DaVinci Resolve** (active when local services are running).
 
-* 📑 **[Master Systems Paper Trail & Architectural Audit →](./docs/STUDIO_SYSTEMS_PAPER_TRAIL.md)** *(Complete technical audit of all 14 rooms, 13 agents, 10 MCPs, Asset Vault, and Relay protocol)*
+* 📑 **[Master Systems Paper Trail & Architectural Audit →](./docs/STUDIO_SYSTEMS_PAPER_TRAIL.md)** *(Complete technical audit of all 14 rooms, 13 department personas, 10 pipeline stages, Asset Vault, and Relay protocol)*
 * 📘 **[Master Operational Manual →](./docs/INSTRUCTIONS.md)**
 * 🏗️ **[System Architecture & Data Flows →](./docs/ARCHITECTURE.md)**
 
@@ -66,8 +66,8 @@ A dedicated incubation suite for pitching, developing, and categorizing story co
 
 ---
 
-### 🤖 2. Autonomous Tool-Calling Multi-Agent Boardroom
-Unlike chat-only chatbots, Arise Production agents are autonomous **tool-calling systems** capable of inspecting database scripts, modifying project manifests, executing MCP pipeline stages, and coordinating cross-room handoffs:
+### 🤖 2. Departmental Personas & Autonomous Agent Runtime
+The studio features **13 department personas run by one autonomous agent runtime**, capable of inspecting database scripts, modifying project manifests, executing pipeline stages, and coordinating cross-room handoffs:
 
 | Agent | Department | Role & Specialization |
 | :--- | :--- | :--- |
@@ -79,22 +79,22 @@ Unlike chat-only chatbots, Arise Production agents are autonomous **tool-calling
 | **🎬 CineDirector Maya** | **Direction & Camera** | **Director of Photography & DP:** 18–85mm prime lenses, Unreal CineCamera tracking, rack focus. |
 | **💡 Lux Sterling** | **Lighting & Atmosphere** | **Chief Lighting Technician & Master Gaffer:** 3-point Kelvin lighting, volumetric haze, contrast ratios. |
 | **🎨 Architect Vance** | **Art & LookDev** | **Production Designer:** ACEScg color palettes, PBR material roughness, spatial set aesthetics. |
-| **⚡ Kinetics Kai** | **Animation & Kinematics** | **Kinematics Specialist:** 52-point skeletal tracking, Chaos cloth dynamics, physical weight transfer. |
-| **⚡ Synthetix Nova** | **Prompt & VFX** | **Prompt Architect:** FLUX/SDXL negative shields, IP-Adapter face likeness locks, ControlNet depth. |
-| **🎞️ Colorist Cole** | **Post & Finishing** | **Finishing Colorist & Editor:** ACEScc color science, Kodak 2383 35mm film print emulation, CDL wheels. |
-| **🎧 Acoustic Axel** | **Audio & Sound** | **Sound Supervisor:** 5.1 Dolby Atmos surround sound, AI stem separation, Foley cue sheets. |
+| **⚡ Kinetics Kai** | **Animation & Kinematics** | **Kinematics Specialist:** Motion trajectory planning, velocity damping, physical weight transfer. |
+| **⚡ Synthetix Nova** | **Prompt & VFX** | **Prompt Architect:** Structured diffusion prompts, negative prompt shields, ComfyUI parameter packs. |
+| **🎞️ Colorist Cole** | **Post & Finishing** | **Finishing Colorist & Editor:** ACEScc color science, film print emulation notes, CDL wheels. |
+| **🎧 Acoustic Axel** | **Audio & Sound** | **Sound Supervisor:** Spatial sound design plans, stem separation cues, Foley cue sheets. |
 
 ---
 
-### 🎥 3. True Cinematic Realism vs. Generic "AI Video"
-Arise replaces random prompt guessing with **physical Hollywood cinematography stages**:
-1. **Spatial Camera Lock (Stage 4 / Three.js & Unreal Engine):** Real 35mm optical geometry and physical dolly/crane paths prevent random AI camera drift.
-2. **Identity & Depth Shield (Stage 7 / ComfyUI & IP-Adapter):** ControlNet depth maps + face vector locks ensure actors never morph between cuts.
-3. **DaVinci Resolve ACEScc & Kodak 2383 CDL (Stage 10):** Authentic 35mm film grain, 24.000 FPS motion cadence, and highlight compression deliver true movie aesthetic.
+### 🎥 3. Structured Cinematic Pipeline vs. Unconstrained Generation
+Arise structures production through **dedicated cinematography pipeline stages**:
+1. **Spatial Camera Setup (Stage 4 / Three.js & Unreal Engine Bridge):** Solves 35mm optical geometry, focal lengths, and camera vectors in 3D (syncs to Unreal Engine 5 when local instance is running).
+2. **Diffusion Prompting & Depth Controls (Stage 7 / ComfyUI Bridge):** Generates structured positive/negative diffusion prompt packs and connects to local ComfyUI instances when active.
+3. **Conform & Timeline Assembly (Stage 10 / OpenMontage & DaVinci Bridge):** Builds CMX 3600 EDL timelines, conform metadata, and color grading notes.
 
 ---
 
-### ⚙️ 4. The 10 Production MCP Microservices
+### ⚙️ 4. The 10 Production Pipeline Stages
 
 ```
  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
@@ -105,21 +105,21 @@ Arise replaces random prompt guessing with **physical Hollywood cinematography s
                                                                        │
  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────▼───────┐     ┌──────────────┐
  │   Stage 10   │     │   Stage 09   │     │   Stage 08   │     │   Stage 07   │     │   Stage 06   │
- │ DaVinci MCP  │◄────┤ Stem Studio  │◄────┤ Circle Take  │◄────┤ Slate Prompt │◄────┤Storyboard Lab│
+ │DaVinci Confr │◄────┤ Stem Studio  │◄────┤ Circle Take  │◄────┤ Slate Prompt │◄────┤Storyboard Lab│
  │  (/mcp/edit) │     │ (/mcp/sound) │     │(/mcp/dailies)│     │(/mcp/prompt) │     │(/mcp/boards) │
  └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
 ```
 
 1. **Stage 1 (ScriptBreak):** Screenplay parser, Fountain element tagger, character dialogue tracker.
-2. **Stage 2 (Cork Board):** 3-Act narrative index cards, Save-the-Cat 40-beat structures.
+2. **Stage 2 (Cork Board):** 3-Act narrative index cards, Save-the-Cat beat structures.
 3. **Stage 3 (Master Canvas):** ACEScg color swatches, PBR material roughness, asset manifests.
-4. **Stage 4 (Blockout 3D):** Unreal Engine 5 CineCamera bridge (`:30010`), 35mm/85mm optical vectors.
-5. **Stage 5 (Motion Previs):** Hyperframes 60 FPS keyframe interpolation and 3D transition blocks.
+4. **Stage 4 (Blockout 3D):** Unreal Engine 5 CineCamera bridge (`:30010`), 35mm/85mm optical vectors (when UE5 is active).
+5. **Stage 5 (Motion Previs):** Hyperframes keyframe interpolation and 3D transition blocks.
 6. **Stage 6 (Storyboard Lab):** 4-Panel visual storyboards, aspect ratio framing (`2.39:1`, `16:9`, `9:16`).
-7. **Stage 7 (Slate Prompt):** ComfyUI (`:8188`) FLUX.1 Dev prompt matrix, IP-Adapter face lock, ControlNet depth.
-8. **Stage 8 (Circle Take):** Remotion programmatic compositor, automated take scoring, continuity tracking.
-9. **Stage 9 (Stem Studio):** Dolby Atmos 5.1 4-track stem mixing console, AI dialogue cleanup.
-10. **Stage 10 (DaVinci MCP):** CMX 3600 EDL timeline assembler, ACEScc Kodak 2383 LUTs, 24.000 FPS export.
+7. **Stage 7 (Slate Prompt):** ComfyUI (`:8188`) diffusion prompt pack (connects when local ComfyUI is active).
+8. **Stage 8 (Circle Take):** Remotion programmatic compositor, automated take review notes, video card rendering.
+9. **Stage 9 (Stem Studio):** Sound design plan and 4-track stem mixing console.
+10. **Stage 10 (DaVinci Conform):** OpenMontage CMX 3600 EDL timeline assembler and color conform metadata.
 
 ---
 

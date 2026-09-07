@@ -327,7 +327,7 @@ export const OriginalSuitesHub: React.FC<OriginalSuitesHubProps> = ({ projectSta
                 Studio Suites Hub (Real NVIDIA NIM AI Workspaces)
               </h2>
               <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-                10 Department Microservices
+                10 Pipeline Stages
               </span>
             </div>
             <p className="text-xs text-[#E2BA86] font-mono mt-0.5">
