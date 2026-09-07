@@ -139,7 +139,8 @@ export async function runAgent(options = {}) {
       result = await nvidia.generateCompletion({
         messages: conversation,
         systemPrompt,
-        tools: agentToolDefinitions,
+        tools: null,
+        toolChoice: 'none',
         model,
         temperature,
         maxTokens,
@@ -178,6 +179,8 @@ export async function runAgent(options = {}) {
         result = await nvidia.generateCompletion({
           messages: conversation,
           systemPrompt,
+          tools: null,
+          toolChoice: 'none',
           model,
           temperature,
           maxTokens,
@@ -202,7 +205,23 @@ export async function runAgent(options = {}) {
     break;
   }
 
-  let replyText = result.text || result.reply || '';
+  let replyText = (result.text || result.reply || '').trim();
+
+  // If replyText is empty or the last response still has tool_calls, synthesize a natural language answer
+  if (!replyText || (result.tool_calls && result.tool_calls.length > 0)) {
+    const finalTurn = await nvidia.generateCompletion({
+      messages: conversation,
+      systemPrompt,
+      tools: null,
+      toolChoice: 'none',
+      model,
+      temperature,
+      maxTokens,
+    });
+    if (finalTurn.success && finalTurn.text) {
+      replyText = finalTurn.text.trim();
+    }
+  }
 
   // Ensure raw JSON tool call is never displayed as final answer to user
   const lingeringJson = extractJsonToolCall(replyText);
@@ -219,6 +238,8 @@ export async function runAgent(options = {}) {
       const finalTurn = await nvidia.generateCompletion({
         messages: conversation,
         systemPrompt,
+        tools: null,
+        toolChoice: 'none',
         model,
         temperature,
         maxTokens,
@@ -245,7 +266,7 @@ export async function runAgent(options = {}) {
   }
 
   return {
-    reply: replyText,
+    reply: replyText || 'System Online',
     actions: executedActions,
     model: result.model || model,
     success: true,
