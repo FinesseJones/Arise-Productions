@@ -24,12 +24,8 @@ export class NvidiaNIMClient {
     this.baseUrl = 'https://integrate.api.nvidia.com';
     this.defaultModel = 'meta/llama-3.2-11b-vision-instruct';
     this.availableModels = [
-      { id: 'nvidia/nemotron-3-super-120b-a12b', name: 'Nemotron-3-Super 120B (Active Flagship)', description: 'Primary agent brain — 128K context, high-end screenplay reasoning, and reliable autonomous tool calling' },
-      { id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning', name: 'Nemotron-3-Nano Reasoning 30B', description: 'Fast reasoning and rapid beat breakdown with full tool calling' },
-      { id: 'minimaxai/minimax-m3', name: 'MiniMax-M3 (Creative Narrative)', description: 'High-fidelity creative writing, dialogue pacing, and verified function calling' },
-      { id: 'moonshotai/kimi-k3', name: 'Moonshot Kimi K3 (Long Context)', description: 'Ultra-long context document analysis, bible ingestion, and tool execution' },
-      { id: 'google/diffusiongemma-26b-a4b-it', name: 'Google DiffusionGemma 26B', description: 'Generative prompt compilation and diffusion control tuning' },
-      { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct (Vision Tasks Only)', description: 'Multimodal vision parsing, storyboard analysis, and image inspection tasks' },
+      { id: 'meta/llama-3.2-11b-vision-instruct', name: 'Llama 3.2 11B Vision Instruct (Active)', description: 'Primary agent instruct model — Verified active on NVIDIA NIM' },
+      { id: 'poolside/laguna-xs-2.1', name: 'Poolside Laguna XS 2.1 (Fast Assistant)', description: 'Secondary text model — Verified active on NVIDIA NIM' },
     ];
   }
 

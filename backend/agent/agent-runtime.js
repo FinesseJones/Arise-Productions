@@ -210,7 +210,38 @@ export async function runAgent(options = {}) {
     try {
       const toolResult = await executeAgentTool(lingeringJson.name, lingeringJson.arguments || {}, { projectId, shotNumber });
       executedActions.push({ id: `act-${Date.now()}`, tool: lingeringJson.name, args: lingeringJson.arguments, result: toolResult });
-    } catch (e) {}
+      conversation.push({ role: 'assistant', content: replyText });
+      conversation.push({
+        role: 'user',
+        content: `[Tool Execution Result for "${lingeringJson.name}"]: ${JSON.stringify(toolResult)}\n\nProvide your final natural-language response directly answering my initial request. Do NOT emit JSON or tool calls.`,
+      });
+
+      const finalTurn = await nvidia.generateCompletion({
+        messages: conversation,
+        systemPrompt,
+        model,
+        temperature,
+        maxTokens,
+      });
+
+      if (finalTurn.success && finalTurn.text) {
+        const doubleCheck = extractJsonToolCall(finalTurn.text);
+        if (!doubleCheck) {
+          replyText = finalTurn.text.trim();
+        } else {
+          replyText = `Operation ${lingeringJson.name} completed successfully.`;
+        }
+      } else {
+        replyText = `Operation ${lingeringJson.name} completed successfully.`;
+      }
+    } catch (e) {
+      replyText = `Operation ${lingeringJson.name} processed.`;
+    }
+  }
+
+  // Safety net: if replyText is still raw JSON, replace it with clean text
+  if (extractJsonToolCall(replyText)) {
+    replyText = replyText.replace(/\{[\s\S]*"name"\s*:[\s\S]*\}/g, '').trim() || 'Action completed.';
   }
 
   return {
