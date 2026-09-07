@@ -22,7 +22,7 @@ export class NvidiaNIMClient {
   constructor(apiKey = loadEnvKey()) {
     this.apiKey = apiKey || loadEnvKey();
     this.baseUrl = 'https://integrate.api.nvidia.com';
-    this.defaultModel = 'nvidia/nemotron-3-super-120b-a12b';
+    this.defaultModel = 'meta/llama-3.2-11b-vision-instruct';
     this.availableModels = [
       { id: 'nvidia/nemotron-3-super-120b-a12b', name: 'Nemotron-3-Super 120B (Active Flagship)', description: 'Primary agent brain — 128K context, high-end screenplay reasoning, and reliable autonomous tool calling' },
       { id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning', name: 'Nemotron-3-Nano Reasoning 30B', description: 'Fast reasoning and rapid beat breakdown with full tool calling' },
