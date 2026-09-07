@@ -903,7 +903,7 @@ app.get('/api/v1/manifest', async (req, res) => {
 
 // GET /api/v1/projects - List all projects
 
-// --- Enterprise Studio Licensing & Dedicated H100 Cluster Endpoints ---
+// --- Studio Licensing & Features ---
 let currentStudioTier = 'enterprise';
 
 app.get('/api/v1/studio/tier', (req, res) => {
@@ -916,11 +916,11 @@ app.get('/api/v1/studio/tier', (req, res) => {
     features: {
       customLoRA: true,
       characterFineTunes: true,
-      dedicatedGPU: '8x NVIDIA H100 SXM5 80GB Cluster (NVLink 900 GB/s)',
+      inferenceBackend: 'Hosted NVIDIA NIM Cloud API',
       teamSeats: 'Unlimited with SSO (SAML 2.0 / Okta / Azure AD)',
-      davinciPlugin: 'Direct DaVinci Resolve Studio 19 Bridge (Connected)',
-      unrealPlugin: 'Direct Unreal Engine 5.4 Live Link (Synced)',
-      resolutionTarget: '4K ProRes 4444 XQ / 16-bit OpenEXR AcesCG',
+      davinciPlugin: 'Direct DaVinci Resolve Studio EDL Export',
+      unrealPlugin: 'Unreal Engine Remote Control Bridge (Active when UE5 running locally)',
+      resolutionTarget: 'Standard 4K Export Pipeline',
     }
   });
 });
@@ -932,23 +932,6 @@ app.post('/api/v1/studio/tier', (req, res) => {
     success: true,
     tier: currentStudioTier,
     message: `Studio license upgraded to ${currentStudioTier.toUpperCase()}`,
-  });
-});
-
-app.get('/api/v1/studio/gpu-cluster', (req, res) => {
-  res.json({
-    success: true,
-    cluster: {
-      name: 'Arise H100 Dedicated Cloud Cluster',
-      nodes: 8,
-      gpuModel: 'NVIDIA H100 SXM5 80GB HBM3',
-      totalVram: '640 GB VRAM',
-      interconnect: 'NVSwitch 900 GB/s Bi-Directional Bandwidth',
-      status: 'ONLINE_OPTIMAL',
-      inferenceFps: 120,
-      activeFineTunes: ['Character_Devon_v1', 'Character_Marcus_v1', 'Aesthetic_ACEScc_Kodak2383'],
-      queueWaitTime: '0ms (Enterprise Priority)',
-    }
   });
 });
 
@@ -1413,11 +1396,11 @@ stageRoutes.forEach(({ path: routePath, stage }) => {
 app.post('/casting/analyze', async (req, res) => {
   try {
     const {
-      character_name = 'Devon (Lead Protagonist)',
+      character_name = 'Lead Character',
       project_type = 'Feature Film',
       budget_range = 'medium',
       analysis_type = 'casting',
-      scene_context = 'A Fatherless Child - Emotional coming-of-age drama',
+      scene_context = 'Dramatic Scene Context',
     } = req.body;
 
     const systemPrompt = `You are the Lead Casting Director for Arise Production. Return a valid JSON object with detailed character breakdown, age range, traits, key scenes, suggested archetypes, casting notes, estimated budget allocation, and shooting schedule.`;
@@ -1432,30 +1415,17 @@ app.post('/casting/analyze', async (req, res) => {
 
     let parsed = null;
     try {
-      const jsonMatch = aiResp.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = aiResp.text?.match(/\{[\s\S]*\}/);
       if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
     } catch (e) {}
 
-    if (!parsed) {
-      parsed = {
-        character_name,
-        age_range: '19-24',
-        physical_description: 'Expressive, thoughtful demeanor with an intense emotional presence. Athletic, grounded posture.',
-        personality_traits: ['Resilient', 'Introspective', 'Driven', 'Emotionally Complex', 'Protective'],
-        key_scenes: [
-          'Opening monologue on the porch with weathered photograph',
-          'Heartfelt confrontation with family mentor over legacy',
-          'Climactic emotional breakthrough choosing self-worth',
-        ],
-        suggested_archetypes: [
-          'Nuanced dramatic lead capable of subtle emotional vulnerability',
-          'Strong commanding presence with deep vocal resonance',
-          'Grounded naturalistic performance style',
-        ],
-        casting_notes: 'Requires an actor capable of balancing raw vulnerability with quiet, unbreakable inner strength.',
-        budget: { total_estimated_cost: '$1.8M', breakdown: { cast: '34%', crew: '28%', camera_lighting: '18%', sound: '14%', locations: '6%' } },
-        schedule: { total_production_days: 35, pre_production: '6 weeks', principal_photography: '5 weeks', post_production: '8 weeks' },
-      };
+    if (!aiResp.success || !parsed) {
+      return res.status(502).json({
+        success: false,
+        error: 'AI generation failed',
+        detail: aiResp.error || 'unparseable model output',
+        model: aiResp.model,
+      });
     }
 
     res.json({ success: true, data: parsed, ai_powered: true, model: aiResp.model });
@@ -1467,9 +1437,9 @@ app.post('/casting/analyze', async (req, res) => {
 // POST /script/analyze - AI Script Coverage & Scene Breakdown
 app.post('/script/analyze', async (req, res) => {
   try {
-    const { script_text = '', project_title = 'A Fatherless Child' } = req.body;
+    const { script_text = '', project_title = 'Untitled Screenplay' } = req.body;
     const systemPrompt = `You are the Lead Script Coverage Analyst AI for Arise Production. Return a valid JSON object summarizing total scenes, estimated page count, runtime, tone, and detailed scene breakdowns.`;
-    const userPrompt = `Analyze this screenplay for "${project_title}". Script excerpt: ${script_text || 'EXT. URBAN NEIGHBORHOOD PORCH - MORNING. Devon (19) confronts Marcus (40s).'}. Output ONLY valid JSON.`;
+    const userPrompt = `Analyze this screenplay for "${project_title}". Script excerpt: ${script_text || 'EXT. LOCATION - DAY. Characters converse and reveal key conflict.'}. Output ONLY valid JSON.`;
 
     const aiResp = await nvidia.generateCompletion({
       prompt: userPrompt,
@@ -1480,19 +1450,17 @@ app.post('/script/analyze', async (req, res) => {
 
     let data = null;
     try {
-      const jsonMatch = aiResp.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = aiResp.text?.match(/\{[\s\S]*\}/);
       if (jsonMatch) data = JSON.parse(jsonMatch[0]);
     } catch (e) {}
 
-    if (!data) {
-      data = {
-        overview: { total_scenes: 32, total_pages: 110, estimated_runtime: '114 minutes', tone: 'Cinematic Emotional Drama', title: project_title },
-        scenes: [
-          { scene_number: 1, location: 'Urban Neighborhood Porch - Early Morning', characters: ['Devon', 'Marcus'], dramatic_beat: 'Theme Stated' },
-          { scene_number: 2, location: 'Living Room Workspace - Day', characters: ['Devon', 'Evelyn'], dramatic_beat: 'Inciting Discovery' },
-          { scene_number: 3, location: 'City Overlook - Golden Hour', characters: ['Devon'], dramatic_beat: 'Decision Point' },
-        ],
-      };
+    if (!aiResp.success || !data) {
+      return res.status(502).json({
+        success: false,
+        error: 'AI generation failed',
+        detail: aiResp.error || 'unparseable model output',
+        model: aiResp.model,
+      });
     }
 
     res.json({ success: true, data, ai_powered: true, model: aiResp.model });
@@ -1504,8 +1472,8 @@ app.post('/script/analyze', async (req, res) => {
 // POST /locations/search - AI Location Scouting & Suitability
 app.post('/locations/search', async (req, res) => {
   try {
-    const { query = 'Urban neighborhood porch and living room workspace', location_type = 'Exterior / Interior' } = req.body;
-    const systemPrompt = `You are the Location Scout Director for Arise Production. Return a valid JSON array of 3 realistic, production-viable locations with name, address, suitability_score (80-99), daily cost, and aesthetic details.`;
+    const { query = 'Film production location', location_type = 'Exterior / Interior' } = req.body;
+    const systemPrompt = `You are the Location Scout Director for Arise Production. Return a valid JSON array of 3 realistic, production-viable locations with name, address, suitability_rating (80-99), daily cost, and aesthetic details.`;
     const userPrompt = `Find optimal film locations for: "${query}". Type: ${location_type}. Respond ONLY in valid JSON.`;
 
     const aiResp = await nvidia.generateCompletion({
@@ -1517,16 +1485,17 @@ app.post('/locations/search', async (req, res) => {
 
     let locations = null;
     try {
-      const jsonMatch = aiResp.text.match(/\[[\s\S]*\]/);
+      const jsonMatch = aiResp.text?.match(/\[[\s\S]*\]/);
       if (jsonMatch) locations = JSON.parse(jsonMatch[0]);
     } catch (e) {}
 
-    if (!locations) {
-      locations = [
-        { id: 'loc_001', name: 'Historic Craftsman Porch & Frontage', address: 'Oakland Hills Historic District, CA', suitability_score: 96, cost_per_day: '$2,200', lighting: 'Natural East-Facing Morning Sun' },
-        { id: 'loc_002', name: 'Industrial Artist Loft & Workshop', address: 'West Berkeley Arts District, CA', suitability_score: 91, cost_per_day: '$3,100', lighting: 'High Ceilings & Large Skylights' },
-        { id: 'loc_003', name: 'Panoramic City Viewpoint & Overlook', address: 'Grizzly Peak Boulevard, CA', suitability_score: 94, cost_per_day: '$1,500', lighting: '360° Golden Hour Horizon' },
-      ];
+    if (!aiResp.success || !locations) {
+      return res.status(502).json({
+        success: false,
+        error: 'AI generation failed',
+        detail: aiResp.error || 'unparseable model output',
+        model: aiResp.model,
+      });
     }
 
     res.json({ success: true, data: locations, ai_powered: true, model: aiResp.model });
@@ -1538,7 +1507,7 @@ app.post('/locations/search', async (req, res) => {
 // POST /storyboard/generate - AI Cinematography Shot Generator
 app.post('/storyboard/generate', async (req, res) => {
   try {
-    const { scene_title = 'Porch Confrontation', total_shots = 4 } = req.body;
+    const { scene_title = 'Dramatic Scene', total_shots = 4 } = req.body;
     const systemPrompt = `You are the Cinematographer & Storyboard Director AI for Arise Production. Return a valid JSON object with scene_title, total_shots, and an array of shots with shot_number, lens_mm, camera_movement, framing, and visual description.`;
     const userPrompt = `Generate a 4-shot storyboard breakdown for scene: "${scene_title}". Respond ONLY in valid JSON.`;
 
@@ -1551,21 +1520,17 @@ app.post('/storyboard/generate', async (req, res) => {
 
     let parsed = null;
     try {
-      const jsonMatch = aiResp.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = aiResp.text?.match(/\{[\s\S]*\}/);
       if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
     } catch (e) {}
 
-    if (!parsed) {
-      parsed = {
-        scene_title,
-        total_shots: 4,
-        shots: [
-          { shot_number: 1, lens_mm: '24mm', type: 'Wide Establishing', movement: 'Slow Dolly In', description: 'Devon steps onto porch in golden dawn light' },
-          { shot_number: 2, lens_mm: '85mm', type: 'Emotional Close-Up', movement: 'Static Lockoff', description: 'Faded photograph in Devon trembling hands' },
-          { shot_number: 3, lens_mm: '35mm', type: 'Over-The-Shoulder', movement: 'Pan Left 15°', description: 'Marcus enters with coffee mugs' },
-          { shot_number: 4, lens_mm: '50mm', type: 'Medium Horizon', movement: 'Crane Up', description: 'Devon gazing at waking city skyline' },
-        ],
-      };
+    if (!aiResp.success || !parsed) {
+      return res.status(502).json({
+        success: false,
+        error: 'AI generation failed',
+        detail: aiResp.error || 'unparseable model output',
+        model: aiResp.model,
+      });
     }
 
     res.json({ success: true, data: parsed, ai_powered: true, model: aiResp.model });
@@ -1577,26 +1542,33 @@ app.post('/storyboard/generate', async (req, res) => {
 // POST /callsheet/generate - AI Production Call Sheet Generator
 app.post('/callsheet/generate', async (req, res) => {
   try {
-    const { production_name = 'A Fatherless Child', shoot_day = 1 } = req.body;
-    res.json({
-      success: true,
-      data: {
-        production_name,
-        shoot_day: Number(shoot_day),
-        date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-        call_time: '06:00 AM',
-        crew_call: '06:30 AM',
-        first_shot: '07:15 AM',
-        location: 'Soundstage Alpha - 3D Virtual Production Volume',
-        weather: 'Virtual Studio Controlled (3200K Sunrise Simulated)',
-        scenes_scheduled: ['Scene 1 (Ext. Porch - Day)', 'Scene 2 (Int. Living Room - Day)'],
-        key_cast: [
-          { character: 'Devon (Lead)', actor: 'Lead Talent', pickup_time: '05:30 AM', hair_makeup: '06:00 AM' },
-          { character: 'Marcus (Mentor)', actor: 'Supporting Talent', pickup_time: '06:00 AM', hair_makeup: '06:30 AM' },
-        ],
-      },
-      ai_powered: true,
+    const { production_name = 'Untitled Production', shoot_day = 1, scenes = '', notes = '' } = req.body;
+    const systemPrompt = `You are the 1st Assistant Director (1st AD) for Arise Production. Generate a realistic production call sheet as valid JSON with fields: production_name, shoot_day, date, call_time, crew_call, first_shot, location, weather, scenes_scheduled, key_cast (array of {character, actor, pickup_time, hair_makeup}), notes.`;
+    const userPrompt = `Generate a realistic call sheet for Day ${shoot_day} of "${production_name}". Scenes: ${scenes || 'Principal scenes'}. Notes: ${notes}. Respond ONLY in valid JSON.`;
+
+    const aiResp = await nvidia.generateCompletion({
+      prompt: userPrompt,
+      systemPrompt,
+      temperature: 0.5,
+      maxTokens: 1000,
     });
+
+    let parsed = null;
+    try {
+      const jsonMatch = aiResp.text?.match(/\{[\s\S]*\}/);
+      if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
+    } catch (e) {}
+
+    if (!aiResp.success || !parsed) {
+      return res.status(502).json({
+        success: false,
+        error: 'AI generation failed',
+        detail: aiResp.error || 'unparseable model output',
+        model: aiResp.model,
+      });
+    }
+
+    res.json({ success: true, data: parsed, ai_powered: true, model: aiResp.model });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
