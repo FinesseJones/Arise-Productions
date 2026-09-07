@@ -6,11 +6,15 @@ services:
     container_name: arise-production-studio
     restart: unless-stopped
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4000:4000"
     environment:
       - NODE_ENV=production
       - PORT=4000
       - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
+      - ARISE_USER=${ARISE_USER:-}
+      - ARISE_PASS=${ARISE_PASS:-}
+      - ARISE_API_TOKEN=${ARISE_API_TOKEN:-}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-}
       - VITE_API_URL=
     volumes:
       - arise_data:/app/data
@@ -22,7 +26,7 @@ services:
       - default
       - caddy_net
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/api/v1/projects"]
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/api/v1/projects', { headers: { Authorization: 'Bearer ' + (process.env.ARISE_API_TOKEN || '') } }).then(r => process.exit(r.status === 200 ? 0 : 1)).catch(() => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -10,64 +10,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Helper to auto-read NVIDIA_API_KEY from multiple persistent search locations
+// Helper to auto-read NVIDIA_API_KEY from process.env as single source of truth
 function loadEnvKey() {
   if (process.env.NVIDIA_API_KEY && process.env.NVIDIA_API_KEY.trim().startsWith('nvapi-')) {
     return process.env.NVIDIA_API_KEY.trim();
-  }
-
-  const jsonConfigPaths = [
-    path.join(process.env.HOME || '', '.arise_nvidia_key'),
-    path.join(process.env.HOME || '', '.config', 'arise', 'nvidia_key.json'),
-    path.join(__dirname, '../db/nvidia_config.json'),
-    path.join(process.cwd(), 'backend/db/nvidia_config.json'),
-    path.join(process.cwd(), 'desktop/backend/db/nvidia_config.json'),
-  ];
-
-  for (const p of jsonConfigPaths) {
-    try {
-      if (fs.existsSync(p)) {
-        const raw = fs.readFileSync(p, 'utf8').trim();
-        if (raw.startsWith('{')) {
-          const parsed = JSON.parse(raw);
-          if (parsed.apiKey && parsed.apiKey.startsWith('nvapi-')) {
-            return parsed.apiKey.trim();
-          }
-          if (parsed.NVIDIA_API_KEY && parsed.NVIDIA_API_KEY.startsWith('nvapi-')) {
-            return parsed.NVIDIA_API_KEY.trim();
-          }
-        } else if (raw.startsWith('nvapi-')) {
-          return raw;
-        }
-      }
-    } catch (e) {}
-  }
-
-  const envPaths = [
-    path.join(process.env.HOME || '', '.arise.env'),
-    path.join(process.env.HOME || '', '.env'),
-    path.resolve(process.cwd(), '.env'),
-    path.resolve(__dirname, '../../.env'),
-    path.resolve(__dirname, '../.env'),
-    path.resolve(__dirname, '.env'),
-  ];
-
-  for (const p of envPaths) {
-    try {
-      if (fs.existsSync(p)) {
-        const content = fs.readFileSync(p, 'utf8');
-        const lines = content.split(/\r?\n/);
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('NVIDIA_API_KEY=')) {
-            const val = trimmed.replace('NVIDIA_API_KEY=', '').replace(/["']/g, '').trim();
-            if (val && val.startsWith('nvapi-')) {
-              return val;
-            }
-          }
-        }
-      }
-    } catch (e) {}
   }
   return '';
 }
@@ -92,55 +38,6 @@ export class NvidiaNIMClient {
     const cleanKey = key.trim();
     this.apiKey = cleanKey;
     process.env.NVIDIA_API_KEY = cleanKey;
-
-    // 1. Save dedicated key file in user home directory (permanent across all sessions)
-    const dedicatedPaths = [
-      path.join(process.env.HOME || '', '.arise_nvidia_key'),
-      path.join(__dirname, '../db/nvidia_config.json'),
-      path.join(process.cwd(), 'backend/db/nvidia_config.json'),
-      path.join(process.cwd(), 'desktop/backend/db/nvidia_config.json'),
-    ];
-
-    for (const p of dedicatedPaths) {
-      try {
-        const dir = path.dirname(p);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-        if (p.endsWith('.json')) {
-          fs.writeFileSync(p, JSON.stringify({ apiKey: cleanKey, defaultModel: this.defaultModel, updated_at: new Date().toISOString() }, null, 2), 'utf8');
-        } else {
-          fs.writeFileSync(p, cleanKey, 'utf8');
-        }
-      } catch (e) {}
-    }
-
-    // 2. Save to .env files across project and user home
-    const envTargets = [
-      path.join(process.env.HOME || '', '.arise.env'),
-      path.join(process.env.HOME || '', '.env'),
-      path.resolve(process.cwd(), '.env'),
-      path.resolve(__dirname, '../../.env'),
-      path.resolve(__dirname, '../.env'),
-      path.resolve(__dirname, '.env'),
-    ];
-
-    for (const envPath of envTargets) {
-      try {
-        let content = '';
-        if (fs.existsSync(envPath)) {
-          content = fs.readFileSync(envPath, 'utf8');
-          if (content.includes('NVIDIA_API_KEY=')) {
-            content = content.replace(/NVIDIA_API_KEY=.*/g, `NVIDIA_API_KEY=${cleanKey}`);
-          } else {
-            content += `\nNVIDIA_API_KEY=${cleanKey}\n`;
-          }
-        } else {
-          content = `NVIDIA_API_KEY=${cleanKey}\nNVIDIA_DEFAULT_MODEL=${this.defaultModel}\n`;
-        }
-        fs.writeFileSync(envPath, content, 'utf8');
-      } catch (e) {}
-    }
-
-    console.log(`[NvidiaNIM] ✅ NVIDIA_API_KEY permanently persisted across filesystem.`);
   }
 
   setDefaultModel(modelId) {

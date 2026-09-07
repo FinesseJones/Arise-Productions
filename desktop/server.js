@@ -36,38 +36,34 @@ const PORT = process.env.PORT || 4000;
 // Create HTTP server for both Express REST and WebSocket upgrades
 const server = http.createServer(app);
 
-// Configurable CORS Policy (Safe localhost, Electron, and Local Network by default)
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:4000',
-  'http://localhost:5000',
-  'http://localhost:5002',
-  'http://localhost:5003',
-  'http://localhost:5173',
-  'http://127.0.0.1:3000',
-  'http://127.0.0.1:4000',
-  'http://127.0.0.1:5002',
-  'http://127.0.0.1:5003',
-  'http://127.0.0.1:5173',
-  'app://.',
-  'vscode-webview://',
-];
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, Electron, or curl)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.some((o) => origin.startsWith(o)) || origin.includes('localhost') || origin.includes('127.0.0.1')) {
-        return callback(null, true);
-      }
-      return callback(null, true); // Permissive in local dev, configurable in prod
-    },
-    credentials: true,
-  })
-);
+const ALLOWED = (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);            // curl / same-origin
+    return cb(null, ALLOWED.includes(origin));      // else reject
+  },
+  credentials: true,
+}));
 
 app.use(express.json({ limit: '50mb' }));
+
+const AUTH_USER = process.env.ARISE_USER;
+const AUTH_PASS = process.env.ARISE_PASS;
+const API_TOKEN = process.env.ARISE_API_TOKEN;
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') return next();               // CORS preflight
+  if (!AUTH_USER || !AUTH_PASS) {                            // fail closed
+    return res.status(503).json({ error: 'Server auth not configured' });
+  }
+  const hdr = req.headers.authorization || '';
+  if (hdr.startsWith('Basic ')) {
+    const [u, p] = Buffer.from(hdr.slice(6), 'base64').toString().split(':');
+    if (u === AUTH_USER && p === AUTH_PASS) return next();   // browser login
+  }
+  if (API_TOKEN && hdr === `Bearer ${API_TOKEN}`) return next(); // api/curl
+  res.set('WWW-Authenticate', 'Basic realm="Arise Studio"');
+  return res.status(401).json({ error: 'Unauthorized' });
+});
 
 // Serve compiled frontend assets
 const distPath = path.join(__dirname, 'frontend/dist');
@@ -122,10 +118,7 @@ app.get('/api/v1/nvidia/status', (req, res) => {
 
 // POST /api/v1/nvidia/set-key - Set user NVIDIA NIM API Key
 app.post('/api/v1/nvidia/set-key', (req, res) => {
-  const { apiKey } = req.body;
-  if (!apiKey) return res.status(400).json({ success: false, error: 'API Key is required' });
-  nvidia.setApiKey(apiKey);
-  res.json({ success: true, message: 'NVIDIA API Key saved successfully', ...nvidia.getStatus() });
+  return res.status(403).json({ error: 'Disabled. Set NVIDIA_API_KEY on the server .env.' });
 });
 
 // POST /api/v1/nvidia/set-model - Switch default NVIDIA NIM model
@@ -765,194 +758,8 @@ app.post('/api/v1/ingest/analyze-discuss', async (req, res) => {
 });
 
 // POST /api/v1/projects/ingest-folder - Auto-import a folder of scripts into studio projects
-// Supported: .fountain (film scripts), .docx (expanded manuscripts), .md (reference/research)
-// Each .fountain or .docx becomes a new studio project; .md files are stored as IP Vault assets
 app.post('/api/v1/projects/ingest-folder', async (req, res) => {
-  try {
-    let { folderPath, defaultFormat } = req.body || {};
-    if (!folderPath || typeof folderPath !== 'string') {
-      folderPath = 'storage/ingested/TACF_Hybrid_Film_Scripts';
-    }
-    folderPath = folderPath.trim();
-
-    // Resilient path resolution across Mac local paths, Docker containers, and VPS directories
-    let targetDir = folderPath;
-    if (!fs.existsSync(targetDir)) {
-      const candidates = [
-        path.resolve(__dirname, folderPath),
-        path.resolve(__dirname, 'storage/ingested', path.basename(folderPath)),
-        path.resolve(__dirname, 'storage/ingested/TACF_Hybrid_Film_Scripts'),
-        path.resolve(__dirname, 'storage/ingested'),
-        path.resolve(process.cwd(), folderPath),
-        path.resolve(process.cwd(), 'storage/ingested', path.basename(folderPath)),
-        path.resolve(process.cwd(), 'storage/ingested/TACF_Hybrid_Film_Scripts'),
-        path.resolve(process.cwd(), 'storage/ingested'),
-        '/app/storage/ingested/TACF_Hybrid_Film_Scripts',
-        '/app/storage/ingested',
-        '/root/Arise-Productions/storage/ingested/TACF_Hybrid_Film_Scripts',
-        '/root/Arise-Productions/storage/ingested',
-        '/Volumes/FinesseJones1 External 1/Archive/Documents/TACF_Hybrid_Film_Scripts',
-      ];
-      for (const cand of candidates) {
-        if (fs.existsSync(cand)) {
-          targetDir = cand;
-          break;
-        }
-      }
-    }
-
-    if (!fs.existsSync(targetDir)) {
-      return res.json({
-        success: false,
-        error: `Could not locate folder "${folderPath}". Please use "Pick Mac Folder" or "Select Script Files" to upload directly from your device.`,
-      });
-    }
-
-    const walk = (dir, depth = 0) => {
-      if (depth > 3) return [];
-      try {
-        const entries = fs.readdirSync(dir, { withFileTypes: true });
-        let files = [];
-        for (const e of entries) {
-          if (e.name.startsWith('.') || e.name.startsWith('~$') || e.name === 'node_modules' || e.name === '.git') continue;
-          const full = path.join(dir, e.name);
-          if (e.isDirectory()) {
-            files = files.concat(walk(full, depth + 1));
-          } else {
-            files.push(full);
-          }
-        }
-        return files;
-      } catch (err) {
-        console.warn(`[Ingest] Directory walk warning in ${dir}:`, err.message);
-        return [];
-      }
-    };
-
-    const allFiles = walk(targetDir);
-    const scriptFiles = allFiles.filter((f) => /\.(fountain|docx|txt)$/i.test(f) && !path.basename(f).startsWith('~$'));
-    const referenceFiles = allFiles.filter((f) => /\.md$/i.test(f) && !path.basename(f).startsWith('.'));
-
-    const inferFormat = (filename) => {
-      const base = path.basename(filename).toLowerCase();
-      if (/series|episode|episodic|sabbath_class|tv|season/.test(base)) return 'episodic_tv';
-      if (/short|reel/.test(base)) return 'short_form';
-      return defaultFormat || 'long_form';
-    };
-
-    const titleFromFilename = (filename) => {
-      return path.basename(filename, path.extname(filename))
-        .replace(/^Expanded_/i, '')
-        .replace(/_TACF$/i, '')
-        .replace(/[_-]+/g, ' ')
-        .replace(/\b\w/g, (c) => c.toUpperCase())
-        .trim();
-    };
-
-    const createdProjects = [];
-    for (const scriptPath of scriptFiles) {
-      try {
-        const title = titleFromFilename(scriptPath);
-        const format = inferFormat(scriptPath);
-        const ext = path.extname(scriptPath).replace('.', '').toLowerCase();
-        const agentRoom = ext === 'fountain' ? 'Script Room' : 'Showrunner / Bible Room';
-
-        let rawContent = '';
-        if (ext === 'fountain' || ext === 'txt') {
-          try {
-            rawContent = fs.readFileSync(scriptPath, 'utf8');
-          } catch (e) {}
-        }
-
-        const proj = await MediaIngestionEngine.createProject({
-          title,
-          format,
-          sourceType: 'folder_import',
-          sourceUrl: scriptPath,
-          rawContent,
-        });
-
-        const projStorageDir = path.resolve(__dirname, 'storage/projects', proj.id, 'scripts');
-        if (!fs.existsSync(projStorageDir)) fs.mkdirSync(projStorageDir, { recursive: true });
-        const destFilename = `${Date.now()}_${path.basename(scriptPath)}`;
-        const destPath = path.join(projStorageDir, destFilename);
-        fs.copyFileSync(scriptPath, destPath);
-
-        if (rawContent) {
-          db.saveProjectScript(proj.id, 1, rawContent);
-        }
-
-        let fileSize = '0 KB';
-        try {
-          fileSize = `${(fs.statSync(scriptPath).size / 1024).toFixed(1)} KB`;
-        } catch {}
-
-        db.saveAsset({
-          name: title,
-          projectId: proj.id,
-          format,
-          category: 'script',
-          assetType: 'script',
-          fileUrl: `/storage/projects/${proj.id}/scripts/${destFilename}`,
-          fileSize,
-          extension: ext,
-          tags: ['imported', 'tacf', agentRoom.toLowerCase().replace(/\s+/g, '-')],
-          metadata: { sourceFile: scriptPath, agentRoom, importedAt: new Date().toISOString() },
-          uploaded_by: 'FolderIngest',
-        });
-
-        createdProjects.push({ ...proj, agentRoom, sourceFile: scriptPath, genre: 'Scripture-Based Drama' });
-      } catch (err) {
-        console.error(`[Ingest] Error creating project for ${scriptPath}:`, err.message);
-      }
-    }
-
-    const ingestedRefs = [];
-    const refStorageDir = path.resolve(__dirname, 'storage/ingested/references');
-    if (!fs.existsSync(refStorageDir)) fs.mkdirSync(refStorageDir, { recursive: true });
-
-    for (const refPath of referenceFiles) {
-      try {
-        const title = titleFromFilename(refPath);
-        const destFilename = `${Date.now()}_${path.basename(refPath)}`;
-        fs.copyFileSync(refPath, path.join(refStorageDir, destFilename));
-        let fileSize = '0 KB';
-        try {
-          fileSize = `${(fs.statSync(refPath).size / 1024).toFixed(1)} KB`;
-        } catch {}
-
-        const asset = db.saveAsset({
-          name: title,
-          projectId: 'ip-vault',
-          format: 'reference',
-          category: 'research',
-          assetType: 'document',
-          fileUrl: `/storage/ingested/references/${destFilename}`,
-          fileSize,
-          extension: 'md',
-          tags: ['reference', 'scripture', 'research', 'tacf'],
-          metadata: { sourceFile: refPath, agentRoom: 'IP Vault / Research', importedAt: new Date().toISOString() },
-          uploaded_by: 'FolderIngest',
-        });
-        ingestedRefs.push(asset);
-      } catch (err) {
-        console.warn(`[Ingest] Error saving reference file ${refPath}:`, err.message);
-      }
-    }
-
-    res.json({
-      success: true,
-      message: `Ingested ${createdProjects.length} scripts as projects and ${ingestedRefs.length} reference docs to IP Vault.`,
-      projectsCreated: createdProjects.length,
-      referenceFilesStored: ingestedRefs.length,
-      projects: createdProjects,
-      references: ingestedRefs,
-      scannedDirectory: targetDir,
-    });
-  } catch (err) {
-    console.error('Folder ingest error:', err);
-    res.status(500).json({ success: false, error: err.message });
-  }
+  return res.status(403).json({ error: 'Disabled. Use the browser upload (ingest-files) instead.' });
 });
 
 // POST /api/v1/projects/ingest-files - Direct browser batch file & folder upload
