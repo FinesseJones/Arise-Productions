@@ -26,6 +26,12 @@ import { StudioWatermark } from './common/StudioWatermark';
 import ErrorBoundary from './ErrorBoundary';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
+import { ToolDetectionPanel } from './ToolDetectionPanel';
+import { RenderingEngineSelector } from './RenderingEngineSelector';
+import { KeyboardShortcutsPanel } from './KeyboardShortcutsPanel';
+import { ViewportControls } from './ViewportControls';
+import { AdvancedViewportFeatures } from './AdvancedViewportFeatures';
+import { loadSavedTheme } from '../theme-presets';
 import {
   Building2,
   LayoutGrid,
@@ -93,6 +99,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
     | 'vault'
     | 'distribution'
     | 'theater'
+    | 'tools'
   >('agents');
 
   // Modals & Menus
@@ -104,6 +111,11 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
   const [showDCCModal, setShowDCCModal] = useState<boolean>(false);
   const [showVideoTourModal, setShowVideoTourModal] = useState<boolean>(false);
   const [briefingType, setBriefingType] = useState<'morning' | 'evening' | null>(null);
+
+  // Initialize theme presets on load
+  useEffect(() => {
+    loadSavedTheme();
+  }, []);
 
   // Auto-fire Morning Briefing once per day
   useEffect(() => {
@@ -554,6 +566,19 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 <span>00: Ideas</span>
               </button>
 
+              {/* Production Tools */}
+              <button
+                onClick={() => setMainView('tools')}
+                className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
+                  mainView === 'tools'
+                    ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                    : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
+                }`}
+              >
+                <Sliders size={12} />
+                <span>Tools</span>
+              </button>
+
               {/* 2. Sagas Plot Room */}
               <button
                 onClick={() => setMainView('plot')}
@@ -848,7 +873,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                   onStageSelect('script');
                 }}
                 onNavigateToRoom={(roomKey) => {
-                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents', 'tools'].includes(roomKey)) {
                     setMainView(roomKey as any);
                   } else {
                     setMainView('stage');
@@ -858,11 +883,25 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               />
             )}
 
+            {mainView === 'tools' && (
+              <div className="p-6 space-y-6">
+                <h2 className="text-2xl font-bold text-white mb-4">Production Tools</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <ToolDetectionPanel />
+                  <RenderingEngineSelector />
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <ViewportControls />
+                  <AdvancedViewportFeatures />
+                </div>
+              </div>
+            )}
+
             {mainView === 'plot' && (
               <PlotRoom
                 projectName={projectStatus.projectName}
                 onNavigateToRoom={(roomKey) => {
-                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents', 'tools'].includes(roomKey)) {
                     setMainView(roomKey as any);
                   } else {
                     setMainView('stage');
@@ -876,7 +915,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <CharactersRoom
                 projectName={projectStatus.projectName}
                 onNavigateToRoom={(roomKey) => {
-                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents', 'tools'].includes(roomKey)) {
                     setMainView(roomKey as any);
                   } else {
                     setMainView('stage');
@@ -890,7 +929,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <ActsRoom
                 projectName={projectStatus.projectName}
                 onNavigateToRoom={(roomKey) => {
-                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents', 'tools'].includes(roomKey)) {
                     setMainView(roomKey as any);
                   } else {
                     setMainView('stage');
@@ -904,7 +943,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
               <BeatsRoom
                 projectName={projectStatus.projectName}
                 onNavigateToRoom={(roomKey) => {
-                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents'].includes(roomKey)) {
+                  if (['plot', 'characters', 'acts', 'beats', 'screening', 'architecture', 'suites', 'vault', 'distribution', 'ideas', 'agents', 'tools'].includes(roomKey)) {
                     setMainView(roomKey as any);
                   } else {
                     setMainView('stage');
@@ -982,6 +1021,9 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
           activeStage={activeStage}
           telemetry={telemetry}
         />
+
+        {/* Keyboard Shortcuts Panel */}
+        <KeyboardShortcutsPanel />
 
         {/* Copyright Notice */}
         <div className="px-6 py-1.5 bg-slate-950 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 select-none">

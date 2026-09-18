@@ -1,0 +1,8 @@
+{
+  "name": "electronics",
+  "version": "1.0.0",
+  "description": "Version-pinned syntax, element, workflow, checklist, and template guidance for authoring tscircuit circuits.",
+  "author": {
+    "name": "Nimbalyst"
+  }
+}

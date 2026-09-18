@@ -20,12 +20,17 @@
     "typecheck": "npm run --prefix frontend typecheck"
   },
   "dependencies": {
+    "@remotion/bundler": "^4.0.526",
+    "@remotion/cli": "^4.0.526",
+    "@remotion/renderer": "^4.0.526",
     "@stripe/react-stripe-js": "^4.0.2",
     "@stripe/stripe-js": "^7.9.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "react-hot-toast": "^2.6.0",
-    "stripe": "^18.5.0"
+    "remotion": "^4.0.526",
+    "stripe": "^18.5.0",
+    "ws": "^8.21.3"
   },
   "keywords": [
     "arise-production",

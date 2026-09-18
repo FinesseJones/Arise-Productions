@@ -26,6 +26,8 @@ import { comfyBridge } from './backend/workers/comfy-bridge.js';
 import { audioEngine } from './backend/services/audio-engine.js';
 import { DistributionEngine } from './backend/services/distribution-engine.js';
 import { openMontageConnector } from './backend/services/openmontage-connector.js';
+import toolsRouter from './backend/api/tools.js';
+import remotionRouter from './backend/api/remotion.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1648,6 +1650,16 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+// ==============================================================================
+// TOOLS DETECTION & LAUNCH API
+// ==============================================================================
+app.use('/api/tools', toolsRouter);
+
+// ==============================================================================
+// REMOTION RENDERING API
+// ==============================================================================
+app.use('/api/remotion', remotionRouter);
 
 // ==============================================================================
 // 5. SERVER STARTUP & ROBUST ERROR HANDLING

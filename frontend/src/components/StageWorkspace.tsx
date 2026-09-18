@@ -5,6 +5,8 @@ import { Play, Sparkles, Sliders, ShieldCheck, Columns, Maximize2, Minimize2, Pa
 import toast from 'react-hot-toast';
 import Interactive3DRoom from './3d/Interactive3DRoom';
 import RoomAIChat from './RoomAIChat';
+import { ViewportControls } from './ViewportControls';
+import { AdvancedViewportFeatures } from './AdvancedViewportFeatures';
 
 interface StageWorkspaceProps {
   stage?: Stage;
@@ -133,6 +135,16 @@ const StageWorkspace: React.FC<StageWorkspaceProps> = ({
               : 'col-span-12 lg:col-span-7 xl:col-span-7'
           }`}
         >
+          {/* Viewport Controls */}
+          <div className="mb-2">
+            <ViewportControls />
+          </div>
+          
+          {/* Advanced Viewport Features */}
+          <div className="mb-2">
+            <AdvancedViewportFeatures />
+          </div>
+          
           <Interactive3DRoom
             stageId={stageKey}
             roomName={currentStage.name}

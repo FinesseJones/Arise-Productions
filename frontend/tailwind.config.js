@@ -41,6 +41,48 @@ export default {
           amber: "hsl(var(--studio-amber))",
         },
         
+        // Professional Production Studio colors (DaVinci Resolve inspired)
+        production: {
+          // Timeline colors
+          timeline: '#1a1a1a',
+          timelineTrack: '#2a2a2a',
+          timelinePlayhead: '#ff6b00',
+          timelineSelection: '#3b82f6',
+          
+          // Viewport areas
+          viewport: '#0d0d0d',
+          viewportHighlight: '#1e1e1e',
+          viewportGrid: '#252525',
+          
+          // Media bins
+          mediaBin: '#151515',
+          mediaItemSelected: '#2a2a2a',
+          mediaBinHover: '#1f1f1f',
+          
+          // Inspector panels
+          inspector: '#121212',
+          inspectorSection: '#1a1a1a',
+          inspectorField: '#252525',
+          
+          // Status colors (industry standard)
+          status: {
+            recording: '#ef4444',
+            ready: '#22c55e',
+            render: '#f59e0b',
+            complete: '#3b82f6',
+            warning: '#eab308',
+            error: '#dc2626',
+          },
+          
+          // ACES color grading inspired
+          aces: {
+            primary: '#1a1a1a',
+            secondary: '#2d2d2d',
+            accent: '#ff6b00',
+            highlight: '#fbbf24',
+          },
+        },
+        
         // Chart colors
         chart: {
           "1": "hsl(var(--chart-1))",
@@ -68,9 +110,22 @@ export default {
         sm: "var(--radius-sm)",
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'SF Mono', 'Fira Code', 'monospace'],
         display: ['Inter', 'system-ui', 'sans-serif'],
+        timecode: ['JetBrains Mono', 'SF Mono', 'monospace'],
+        script: ['Courier Prime', 'Courier New', 'monospace'],
+      },
+      fontSize: {
+        // 4K-optimized typography scale
+        '4k-xs': '14px',   // Minimum readable on 4K
+        '4k-sm': '16px',   // Body text
+        '4k-base': '18px', // Default
+        '4k-lg': '20px',   // Headers
+        '4k-xl': '24px',   // Section headers
+        '4k-2xl': '32px',  // Page titles
+        '4k-3xl': '40px',  // Hero titles
+        '4k-4xl': '48px',  // Display
       },
       animation: {
         "float": "float 6s ease-in-out infinite",
@@ -119,6 +174,11 @@ export default {
         '18': '4.5rem',
         '88': '22rem',
         '128': '32rem',
+        // 4K-optimized spacing
+        '4k-compact': '0.5rem',   // 8px
+        '4k-normal': '1rem',      // 16px
+        '4k-comfortable': '1.5rem', // 24px
+        '4k-spacious': '2rem',    // 32px
       },
       backdropBlur: {
         'xs': '2px',

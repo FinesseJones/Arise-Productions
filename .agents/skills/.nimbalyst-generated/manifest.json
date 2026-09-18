@@ -1,0 +1,429 @@
+{
+  "entries": [
+    {
+      "id": "workspace-claude-skill:user:skill:ask-matt",
+      "name": "ask-matt",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:claude-handoff",
+      "name": "claude-handoff",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:code-review",
+      "name": "code-review",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:codebase-design",
+      "name": "codebase-design",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:diagnosing-bugs",
+      "name": "diagnosing-bugs",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:domain-modeling",
+      "name": "domain-modeling",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:gepeto",
+      "name": "gepeto",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:git-guardrails-claude-code",
+      "name": "git-guardrails-claude-code",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:graphify",
+      "name": "graphify",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:grill-me",
+      "name": "grill-me",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:grill-with-docs",
+      "name": "grill-with-docs",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:grilling",
+      "name": "grilling",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:handoff",
+      "name": "handoff",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:implement",
+      "name": "implement",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:implement-spec",
+      "name": "implement-spec",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:improve-codebase-architecture",
+      "name": "improve-codebase-architecture",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:loop-me",
+      "name": "loop-me",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:migrate-to-shoehorn",
+      "name": "migrate-to-shoehorn",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:paseo",
+      "name": "paseo",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:paseo-advisor",
+      "name": "paseo-advisor",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:paseo-committee",
+      "name": "paseo-committee",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:paseo-handoff",
+      "name": "paseo-handoff",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:paseo-help",
+      "name": "paseo-help",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:paseo-plugin",
+      "name": "paseo-plugin",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:pinokio",
+      "name": "pinokio",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:prototype",
+      "name": "prototype",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-best-practices",
+      "name": "remotion-best-practices",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-captions",
+      "name": "remotion-captions",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-create",
+      "name": "remotion-create",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-docs",
+      "name": "remotion-docs",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-interactivity",
+      "name": "remotion-interactivity",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-maps",
+      "name": "remotion-maps",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-markup",
+      "name": "remotion-markup",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-multimedia",
+      "name": "remotion-multimedia",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-render",
+      "name": "remotion-render",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-saas",
+      "name": "remotion-saas",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-studio",
+      "name": "remotion-studio",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:remotion-upgrade",
+      "name": "remotion-upgrade",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:research",
+      "name": "research",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:resolving-merge-conflicts",
+      "name": "resolving-merge-conflicts",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:retro",
+      "name": "retro",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:scaffold-exercises",
+      "name": "scaffold-exercises",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:setup-matt-pocock-skills",
+      "name": "setup-matt-pocock-skills",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:setup-pre-commit",
+      "name": "setup-pre-commit",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:setup-ts-deep-modules",
+      "name": "setup-ts-deep-modules",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:tdd",
+      "name": "tdd",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:teach",
+      "name": "teach",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:to-questionnaire",
+      "name": "to-questionnaire",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:to-spec",
+      "name": "to-spec",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:to-tickets",
+      "name": "to-tickets",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:triage",
+      "name": "triage",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:wait-what",
+      "name": "wait-what",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:wayfinder",
+      "name": "wayfinder",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:wizard",
+      "name": "wizard",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:writing-beats",
+      "name": "writing-beats",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:writing-for-agents",
+      "name": "writing-for-agents",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:writing-fragments",
+      "name": "writing-fragments",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "workspace-claude-skill:user:skill:writing-shape",
+      "name": "writing-shape",
+      "sourceType": "workspace-claude-skill"
+    },
+    {
+      "id": "extension-workflow:com.nimbalyst.electronics:skill:electronics:tscircuit",
+      "name": "electronics-tscircuit",
+      "sourceType": "extension-workflow"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.mindmap:skill:com-nimbalyst-mindmap:mindmap-format",
+      "name": "com-nimbalyst-mindmap-mindmap-format",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.mindmap:command:com-nimbalyst-mindmap:mindmap",
+      "name": "com-nimbalyst-mindmap-mindmap",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.slides:skill:com-nimbalyst-slides:presentations",
+      "name": "com-nimbalyst-slides-presentations",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.slides:command:com-nimbalyst-slides:presentation",
+      "name": "com-nimbalyst-slides-presentation",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.animation:skill:animation:animation",
+      "name": "animation-animation",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.animation:command:animation:animate",
+      "name": "animation-animate",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.automations:command:automations:automation",
+      "name": "automations-automation",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.canvas:skill:canvas:canvas",
+      "name": "canvas-canvas",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.datamodellm:skill:datamodellm:datamodellm",
+      "name": "datamodellm-datamodellm",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.datamodellm:command:datamodellm:datamodel",
+      "name": "datamodellm-datamodel",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.developer:skill:developer:git-commit",
+      "name": "developer-git-commit",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.excalidraw:skill:excalidraw:excalidraw",
+      "name": "excalidraw-excalidraw",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.extension-dev-kit:skill:extension-dev-kit:extension-development",
+      "name": "extension-dev-kit-extension-development",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.extension-dev-kit:command:extension-dev-kit:new-extension",
+      "name": "extension-dev-kit-new-extension",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.feedback:skill:feedback:feedback-intake",
+      "name": "feedback-feedback-intake",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.feedback:command:feedback:bug-report",
+      "name": "feedback-bug-report",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.feedback:command:feedback:feature-request",
+      "name": "feedback-feature-request",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.mockuplm:skill:mockuplm:mockuplm",
+      "name": "mockuplm-mockuplm",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.mockuplm:command:mockuplm:mockup",
+      "name": "mockuplm-mockup",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.planning:skill:planning:planning",
+      "name": "planning-planning",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.planning:command:planning:design",
+      "name": "planning-design",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.planning:command:planning:implement",
+      "name": "planning-implement",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.planning:command:planning:launch-new-session",
+      "name": "planning-launch-new-session",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.planning:command:planning:nimbalyst-coach",
+      "name": "planning-nimbalyst-coach",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.planning:command:planning:session-cleanup",
+      "name": "planning-session-cleanup",
+      "sourceType": "legacy-claude-plugin"
+    },
+    {
+      "id": "legacy-claude-plugin:com.nimbalyst.planning:command:planning:track",
+      "name": "planning-track",
+      "sourceType": "legacy-claude-plugin"
+    }
+  ]
+}
