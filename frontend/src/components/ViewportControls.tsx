@@ -69,10 +69,10 @@ export const ViewportControls: React.FC<ViewportControlsProps> = ({
   };
 
   return (
-    <div className="bg-surface-2 border border-gray-700 rounded-lg p-2 flex items-center gap-4">
+    <div className="bg-[#0c0819]/90 border border-amber-500/30 rounded-lg p-2 flex items-center gap-4">
       {/* Viewport Mode */}
       <div className="flex items-center gap-2">
-        <span className="text-4k-xs text-contrast-muted">View:</span>
+        <span className="text-[10px] font-mono text-amber-200/70">View:</span>
         <div className="flex gap-1">
           {viewportModes.map((mode) => (
             <button
@@ -80,8 +80,8 @@ export const ViewportControls: React.FC<ViewportControlsProps> = ({
               onClick={() => onModeChange?.(mode.value)}
               className={`p-2 rounded transition-colors ${
                 currentMode === mode.value
-                  ? 'bg-surface-4 text-contrast-primary'
-                  : 'hover:bg-surface-3 text-contrast-secondary'
+                  ? 'bg-amber-500/30 border border-amber-400 text-amber-200'
+                  : 'hover:bg-[#060508] border border-slate-700 text-slate-400 hover:border-amber-500/50 hover:text-amber-300'
               }`}
               title={mode.label}
             >
@@ -93,11 +93,11 @@ export const ViewportControls: React.FC<ViewportControlsProps> = ({
 
       {/* Resolution */}
       <div className="flex items-center gap-2">
-        <span className="text-4k-xs text-contrast-muted">Res:</span>
+        <span className="text-[10px] font-mono text-amber-200/70">Res:</span>
         <select
           value={currentResolution}
           onChange={(e) => onResolutionChange?.(e.target.value as Resolution)}
-          className="bg-surface-3 text-contrast-primary text-4k-xs rounded px-2 py-1 border border-gray-700 focus:outline-none focus:border-purple-500"
+          className="bg-[#060508] text-amber-200 text-[10px] font-mono rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-amber-400"
         >
           {resolutions.map((res) => (
             <option key={res} value={res}>
@@ -109,11 +109,11 @@ export const ViewportControls: React.FC<ViewportControlsProps> = ({
 
       {/* Aspect Ratio */}
       <div className="flex items-center gap-2">
-        <span className="text-4k-xs text-contrast-muted">Ratio:</span>
+        <span className="text-[10px] font-mono text-amber-200/70">Ratio:</span>
         <select
           value={currentAspectRatio}
           onChange={(e) => onAspectRatioChange?.(e.target.value as AspectRatio)}
-          className="bg-surface-3 text-contrast-primary text-4k-xs rounded px-2 py-1 border border-gray-700 focus:outline-none focus:border-purple-500"
+          className="bg-[#060508] text-amber-200 text-[10px] font-mono rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-amber-400"
         >
           {aspectRatios.map((ratio) => (
             <option key={ratio.value} value={ratio.value}>
@@ -129,8 +129,8 @@ export const ViewportControls: React.FC<ViewportControlsProps> = ({
           onClick={onGridToggle}
           className={`p-2 rounded transition-colors ${
             showGrid
-              ? 'bg-surface-4 text-contrast-primary'
-              : 'hover:bg-surface-3 text-contrast-secondary'
+              ? 'bg-amber-500/30 border border-amber-400 text-amber-200'
+              : 'hover:bg-[#060508] border border-slate-700 text-slate-400 hover:border-amber-500/50 hover:text-amber-300'
           }`}
           title="Toggle Grid"
         >
@@ -140,8 +140,8 @@ export const ViewportControls: React.FC<ViewportControlsProps> = ({
           onClick={onSafeAreaToggle}
           className={`p-2 rounded transition-colors ${
             showSafeArea
-              ? 'bg-surface-4 text-contrast-primary'
-              : 'hover:bg-surface-3 text-contrast-secondary'
+              ? 'bg-amber-500/30 border border-amber-400 text-amber-200'
+              : 'hover:bg-[#060508] border border-slate-700 text-slate-400 hover:border-amber-500/50 hover:text-amber-300'
           }`}
           title="Toggle Safe Area"
         >
@@ -153,7 +153,7 @@ export const ViewportControls: React.FC<ViewportControlsProps> = ({
       <div className="ml-auto">
         <button
           onClick={handleFullscreen}
-          className="p-2 rounded hover:bg-surface-3 text-contrast-secondary transition-colors"
+          className="p-2 rounded hover:bg-[#060508] border border-slate-700 text-slate-400 hover:border-amber-500/50 hover:text-amber-300 transition-colors"
           title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
         >
           {isFullscreen ? (

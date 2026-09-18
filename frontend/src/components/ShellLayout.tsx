@@ -473,6 +473,7 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                         { id: 'agents', name: 'Command Center', icon: '🏛️' },
                         { id: 'stage', name: '3D Soundstage', icon: '🎬' },
                         { id: 'ideas', name: '00: Ideas', icon: '💡' },
+                        { id: 'tools', name: 'Tools', icon: '🔧' },
                         { id: 'plot', name: '01: Plot Room', icon: '📖' },
                         { id: 'characters', name: '02: Cast Room', icon: '🎭' },
                         { id: 'acts', name: '03: Acts Room', icon: '📑' },

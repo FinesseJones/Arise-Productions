@@ -93,7 +93,13 @@ export const ToolDetectionPanel: React.FC = () => {
       const data = await response.json();
       setDetectionResults(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to detect tools');
+      const errorMsg = err instanceof Error ? err.message : 'Failed to detect tools';
+      // Check if it's a connection error (backend not running)
+      if (errorMsg.includes('fetch') || errorMsg.includes('ECONNREFUSED') || errorMsg.includes('Failed to fetch')) {
+        setError('Backend server not running. Please restart the application.');
+      } else {
+        setError(errorMsg);
+      }
     } finally {
       setLoading(false);
     }

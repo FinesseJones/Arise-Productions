@@ -26,6 +26,10 @@ import { StudioWatermark } from './common/StudioWatermark';
 import ErrorBoundary from './ErrorBoundary';
 import { useStudioSocket } from '../hooks/useStudioSocket';
 import { stages } from '../types/stages';
+import ToolDetectionPanel from './ToolDetectionPanel';
+import RenderingEngineSelector from './RenderingEngineSelector';
+import ViewportControls from './ViewportControls';
+import AdvancedViewportFeatures from './AdvancedViewportFeatures';
 import {
   Building2,
   LayoutGrid,
@@ -554,6 +558,19 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
                 <span>00: Ideas</span>
               </button>
 
+              {/* Production Tools */}
+              <button
+                onClick={() => setMainView('tools')}
+                className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
+                  mainView === 'tools'
+                    ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                    : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
+                }`}
+              >
+                <Sliders size={12} />
+                <span>Tools</span>
+              </button>
+
               {/* 2. Sagas Plot Room */}
               <button
                 onClick={() => setMainView('plot')}
@@ -928,6 +945,20 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
             {mainView === 'suites' && (
               <OriginalSuitesHub projectStatus={projectStatus} />
+            )}
+
+            {mainView === 'tools' && (
+              <div className="p-6 space-y-6">
+                <h2 className="text-2xl font-bold text-white mb-4">Production Tools</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <ToolDetectionPanel />
+                  <RenderingEngineSelector />
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <ViewportControls />
+                  <AdvancedViewportFeatures />
+                </div>
+              </div>
             )}
 
             {mainView === 'vault' && (

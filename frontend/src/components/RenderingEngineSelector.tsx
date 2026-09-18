@@ -43,8 +43,14 @@ export const RenderingEngineSelector: React.FC = () => {
         setSelectedEngine('ffmpeg');
       }
     } catch (err) {
-      console.error('Failed to fetch engine status:', err);
-      toast.error('Failed to fetch rendering engine status');
+      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch engine status';
+      // Check if it's a connection error (backend not running)
+      if (errorMsg.includes('fetch') || errorMsg.includes('ECONNREFUSED') || errorMsg.includes('Failed to fetch')) {
+        console.error('Backend server not running - rendering engine status unavailable');
+        // Don't show toast for connection errors, it's expected if backend isn't running
+      } else {
+        toast.error('Failed to fetch rendering engine status');
+      }
     } finally {
       setLoading(false);
     }
