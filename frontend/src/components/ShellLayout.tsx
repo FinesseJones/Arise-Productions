@@ -543,15 +543,34 @@ const ShellLayout: React.FC<ShellLayoutProps> = ({
 
               {/* 1. 3D Soundstage */}
               <button
-                onClick={() => setMainView('stage')}
+                onClick={() => {
+                  setMainView('stage');
+                  onStageSelect?.('script');
+                }}
                 className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
-                  mainView === 'stage'
+                  mainView === 'stage' && activeStage !== 'previs'
                     ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
                     : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
                 }`}
               >
                 <LayoutGrid size={12} />
-                <span>3D Soundstage</span>
+                <span>3D Stages</span>
+              </button>
+
+              {/* 1.1 Direct 3D Previs Soundstage Room */}
+              <button
+                onClick={() => {
+                  setMainView('stage');
+                  onStageSelect?.('previs');
+                }}
+                className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
+                  mainView === 'stage' && activeStage === 'previs'
+                    ? 'bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#D97706] text-black font-extrabold shadow-md shadow-amber-500/20'
+                    : 'text-amber-200/80 hover:text-white hover:bg-amber-950/40'
+                }`}
+              >
+                <Camera size={12} className="text-amber-400" />
+                <span>🎥 3D Previs</span>
               </button>
 
               {/* 1.5. 00 Idea Lab & IP Concept Vault */}

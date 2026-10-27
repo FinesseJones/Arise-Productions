@@ -14,7 +14,7 @@ export interface RemotionTitleCardProps {
 }
 
 export const RemotionTitleCard: React.FC<RemotionTitleCardProps> = ({
-  title = 'A Fatherless Child',
+  title = 'Untitled Production',
   episode = 'Episode 1: Echoes of Absence',
   characterName,
   characterRole,

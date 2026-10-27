@@ -62,7 +62,7 @@ export class DistributionEngine {
    */
   static async generateStreamingDeliveryPackage(options = {}) {
     const {
-      projectTitle = 'A Fatherless Child',
+      projectTitle = 'Untitled Production',
       format = 'episodic_tv',
       season = 1,
       episode = 1,
@@ -199,7 +199,7 @@ export class DistributionEngine {
    */
   static async generateSocialMediaCampaignPackage(options = {}) {
     const {
-      projectTitle = 'A Fatherless Child',
+      projectTitle = 'Untitled Production',
       logline = "Devon grapples with identity and legacy after discovering his late father's unprocessed 16mm film reels.",
       genre = 'Emotional Family Drama',
     } = options;
@@ -279,7 +279,7 @@ export class DistributionEngine {
    */
   static async renderSocialVideoClip(options = {}) {
     const {
-      projectTitle = 'A Fatherless Child',
+      projectTitle = 'Untitled Production',
       hookText = 'HE FOUND HIS FATHER\'S SECRET REELS...',
       aspectRatio = '9:16',
       durationSeconds = 6,

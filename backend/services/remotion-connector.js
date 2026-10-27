@@ -75,7 +75,7 @@ export class RemotionStudioConnector {
    */
   async renderCinematicVideoCard(options = {}) {
     const {
-      title = 'A Fatherless Child',
+      title = 'Untitled Production',
       subtitle = 'Episode 1 • Produced with Arise Production Studio',
       aspectRatio = '16:9',
       durationSeconds = 5,

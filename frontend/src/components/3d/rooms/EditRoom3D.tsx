@@ -233,7 +233,7 @@ export const EditRoomHolo: React.FC<EditRoom3DProps> = ({
               {/* Remotion 4K Animated Motion Graphics & Subtitles Overlay */}
               {showRemotionOverlay && (
                 <RemotionTitleCard
-                  title={projectName || 'A Fatherless Child'}
+                  title={projectName || 'Untitled Production'}
                   episode="Episode 1: Echoes of Absence"
                   characterName="DEVON"
                   characterRole="Protagonist"

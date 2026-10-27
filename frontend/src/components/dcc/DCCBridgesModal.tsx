@@ -8,9 +8,10 @@ import toast from 'react-hot-toast';
 interface DCCBridgesModalProps {
   isOpen: boolean;
   onClose: () => void;
+  projectName?: string;
 }
 
-export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
+export function DCCBridgesModal({ isOpen, onClose, projectName = 'Untitled Production' }: DCCBridgesModalProps) {
   const apiBase = getAPIBaseURL();
   const [loading, setLoading] = useState(false);
   const [statusData, setStatusData] = useState<any>(null);
@@ -199,7 +200,7 @@ export function DCCBridgesModal({ isOpen, onClose }: DCCBridgesModalProps) {
           scene: '1',
           shot: '1',
           take: 1,
-          projectTitle: 'A Fatherless Child',
+          projectTitle: projectName || 'Untitled Production',
           director: 'AI Showrunner',
         }),
       });

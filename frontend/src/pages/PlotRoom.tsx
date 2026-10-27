@@ -24,7 +24,7 @@ interface PlotRoomProps {
   onNavigateToRoom?: (roomKey: string) => void;
 }
 
-export function PlotRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: PlotRoomProps) {
+export function PlotRoom({ projectName = 'Untitled Production', onNavigateToRoom }: PlotRoomProps) {
   const apiBase = getAPIBaseURL();
   const initialPlot = getProjectPlot(projectName);
   const [title, setTitle] = useState<string>(initialPlot.title);

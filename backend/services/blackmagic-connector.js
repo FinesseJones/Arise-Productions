@@ -440,7 +440,7 @@ export class BlackmagicStudioConnector {
    */
   async setSlateMetadata(slateData = {}) {
     const {
-      projectTitle = 'A Fatherless Child',
+      projectTitle = 'Untitled Production',
       scene = '1',
       shot = '1',
       take = 1,
@@ -542,7 +542,7 @@ export class BlackmagicStudioConnector {
    * Generate a DaVinci Resolve Timeline / Project XML pre-configured with BMPCC 4K Gen 5 Color Science
    */
   generateDaVinciProjectDescriptor(projectData = {}) {
-    const { title = 'A Fatherless Child', fps = 24, resolution = '4096x2160' } = projectData;
+    const { title = 'Untitled Production', fps = 24, resolution = '4096x2160' } = projectData;
 
     return {
       projectTitle: title,

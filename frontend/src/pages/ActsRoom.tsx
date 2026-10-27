@@ -10,7 +10,7 @@ interface ActsRoomProps {
   onNavigateToRoom?: (roomKey: string) => void;
 }
 
-export function ActsRoom({ projectName = 'A Fatherless Child', onNavigateToRoom }: ActsRoomProps) {
+export function ActsRoom({ projectName = 'Untitled Production', onNavigateToRoom }: ActsRoomProps) {
   const initialActs = getProjectActs(projectName);
   const [teaser, setTeaser] = useState(initialActs.teaser);
   const [act1, setAct1] = useState(initialActs.act1);

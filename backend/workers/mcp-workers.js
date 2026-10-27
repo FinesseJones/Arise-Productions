@@ -207,7 +207,7 @@ export class CircleTakeWorker extends BaseMCPWorker {
   constructor() { super('dailies', 'Circle Take', '/mcp/dailies'); }
   async process(payload) {
     const videoRender = await remotionConnector.renderCinematicVideoCard({
-      title: payload?.projectName || 'A Fatherless Child',
+      title: payload?.projectName || 'Untitled Production',
       subtitle: `Shot ${payload?.shotNumber || 1} • Circle Take Dailies Review`,
       aspectRatio: '16:9',
       durationSeconds: 4,

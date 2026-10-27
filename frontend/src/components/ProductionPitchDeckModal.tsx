@@ -20,7 +20,7 @@ export const ProductionPitchDeckModal: React.FC<ProductionPitchDeckModalProps> =
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const projectId = projectStatus.projectId || 'proj-fatherless-child';
-  const projectName = projectStatus.projectName || 'A Fatherless Child';
+  const projectName = projectStatus.projectName || 'Untitled Production';
   const cleanSlug = projectName.replace(/[^a-zA-Z0-9]/g, '_');
 
   const defaultPlot = getProjectPlot(projectName);

@@ -115,10 +115,10 @@ const App: React.FC = () => {
   const folderInputRef = useRef<HTMLInputElement>(null);
   const filesInputRef = useRef<HTMLInputElement>(null);
   const [projectName, setProjectName] = useState<string>(() => {
-    return localStorage.getItem('arise_last_project_name') || 'A Fatherless Child';
+    return localStorage.getItem('arise_last_project_name') || (DEFAULT_CATALOGUE[0]?.name || 'Untitled Production');
   });
   const [projectId, setProjectId] = useState<string>(() => {
-    return localStorage.getItem('arise_last_project_id') || 'proj-fatherless-child';
+    return localStorage.getItem('arise_last_project_id') || (DEFAULT_CATALOGUE[0]?.id || 'proj-default');
   });
   const [activeStageId, setActiveStageId] = useState<string | null>(() => {
     return localStorage.getItem('arise_last_stage_id') || 'script';
